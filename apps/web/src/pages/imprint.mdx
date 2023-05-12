@@ -1,0 +1,27 @@
+import { MarketingLayout } from "components/MarketingLayout";
+
+# Imprint
+
+**dynabase Technologies GmbH**  
+Von-Werth-Str. 37  
+50670 Köln  
+Telefon: [+49-221-588-307-0](tel:+49-221-588-307-0)  
+Telefax: [+49-221-588-307-0](fax:+49-221-588-307-00)
+E-Mail: [mail@dynabase.de](mailto:mail@dynabase.de)
+
+Geschäftsführer: Daniel Angileri, Norman Wenk  
+Registergericht: Amtsgericht Köln  
+Registernummer: HRB 91004 - USt-IdNr.: DE312712619  
+Inhaltlich Verantwortliche: Daniel Angileri, Norman Wenk
+
+export default ({ children }) => (
+  <MarketingLayout seoTitle="Imprint" isMarkdown>
+    {children}
+  </MarketingLayout>
+);
+
+export const getStaticProps = () => {
+  return {
+    props: {},
+  };
+};

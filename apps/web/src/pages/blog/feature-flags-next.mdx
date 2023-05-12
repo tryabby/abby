@@ -1,0 +1,128 @@
+import { BlogLayout } from "components/BlogLayout";
+
+export const meta = {
+  title: "Feature Flags in Next.js",
+  imageUrl: "/img/feature-flags-next.png",
+  publishedAt: "2023-04-29",
+};
+
+## What are Feature Flags
+
+Feature Flags (or Feature Toggles) are an important tool when it comes to deploying changes and updates to an application.
+With a Feature Flag, developers can easily toggle on or off different features and updates, allowing for easier testing and deployment of changes.
+This technique is especially useful for applications that are constantly being updated and changed and has become popular with [Trunk Based Development](https://trunkbaseddevelopment.com/feature-flags/).
+
+Feature Flags are used to selectively enable or disable certain features of an application.
+This makes it easy to test new features and updates without having to actually deploy them to production.
+With Feature Flags, developers can easily turn off certain features if they are causing problems or if they are not ready for production yet.
+
+## Stages of Feature Flags
+
+### Hardcoded
+
+Feature Flags can be used in a variety of different ways, depending on the needs of the application.
+The most basic way to use a Feature Flag is by just using a boolean variable that is either true or false and hard coded:
+
+```ts
+const featureFlag = true;
+
+function MyButton() {
+  // lets try if an actual button works, too
+  if (featureFlag) {
+    return <button>Click Me</button>;
+  }
+  // TODO: use a real button here
+  return <div role="button">Click Me</div>;
+}
+```
+
+#### Pros
+
+The pros of using a hardcoded Feature Flag are that it is very simple and easy to implement.
+They don't require any additional libraries or dependencies and can be used in any application.
+
+#### Cons
+
+The cons of using a hardcoded Feature Flag are that it is not very flexible.
+You will need to update the code every time you want to change the value of the Feature Flag and therefore re-deploy the application.
+This also means that only developers can change the value of the Feature Flag, which can be a problem if you want to give non-developers access to the Feature Flag.
+This way of implementing Feature Flags will also give you the same results for all environments, which can be a problem if you want to test the Feature Flag in different environments.
+
+### Environment Variables
+
+Another way to implement Feature Flags is by using environment variables.
+This way of implementing Feature Flags is very similar to the hardcoded way, but instead of using a boolean variable, we will use an environment variable:
+
+```ts
+const featureFlag = process.env.FEATURE_FLAG === "true";
+
+function MyButton() {
+  // lets try if an actual button works, too
+  if (featureFlag) {
+    return <button>Click Me</button>;
+  }
+  // TODO: use a real button here
+  return <div role="button">Click Me</div>;
+}
+```
+
+#### Pros
+
+The pros of using environment variables for Feature Flags are that they are very flexible.
+You can easily change the value of the Feature Flag without having to re-deploy the application.
+This way of implementing Feature Flags will also give you different results for different environments, which can be useful if you want to test the Feature Flag in different environments.
+
+#### Cons
+
+This implementation is a good middleground between the hardcoded way and the full-services way, but it still has some drawbacks.
+The biggest drawback is that you will need to update the environment variable every time you want to change the value of the Feature Flag.
+This can be a problem if you want to give non-developers access to the Feature Flag. It can also be a problem if there is no simple way of updating
+environment variables in your application. This implementation also relies on the environment variables being set correctly,
+which can lead to errors when having typos in either the name of the variable or the value.
+
+### Services
+
+The most flexible way of implementing Feature Flags is by using a Service such as [A/BBY](https://tryabby.com).
+This way of implementing Feature Flags is very similar to the environment variable way, but instead of using an environment variable, we will use a service:
+
+```ts
+import { useFeatureFlag, getFeatureFlagValue } from "lib/abby";
+
+function MyButton() {
+  const featureFlag = useFeatureFlag("FEATURE_FLAG");
+
+  // lets try if an actual button works, too
+  if (featureFlag) {
+    return <button>Click Me</button>;
+  }
+  // TODO: use a real button here
+  return <div role="button">Click Me</div>;
+}
+```
+
+#### Pros
+
+The pros of using a service for Feature Flags are that they are very flexible.
+It gives you the ability to change the value of the Feature Flag without having to re-deploy the application.
+You can also define different values for different environments, which can be useful if you want to test the Feature Flag in different environments.
+Toggling is Feature Flag in a Service like A/BBY is also a breeze, as you can just toggle it on or off in the dashboard which means that non-devs
+can also easily toggle the Feature Flag.
+
+The biggest benefit of using A/BBY is the developer experience and tight integration with Next.js.
+A/BBY is fully typed and provides a hook to easily use Feature Flags in your application. It also allows include your Feature Flags
+on the Server whether you are using SSR or SSG.
+
+#### Cons
+
+The cons of using a service for Feature Flags are that it requires you to use a third-party service.
+It also means that you will need to pay for the service, which can be a problem if you are on a tight budget.
+A/BBY offers a generous free tier, but if you need more than that, you will need to pay for it.
+
+Using Feature Flags with the `useFeatureFlag` hook from A/BBY is a great way to quickly and easily deploy changes and updates to a Next.js application.
+With this hook, developers can easily toggle on or off different features and updates, allowing for easier testing and deployment of changes.
+
+export default ({ children }) => (
+  <BlogLayout seoTitle="A/BBY & Next.js" meta={meta}>
+    {children}
+  </BlogLayout>
+);
