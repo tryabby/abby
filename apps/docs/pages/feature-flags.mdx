@@ -1,0 +1,10 @@
+# Feature Flags
+
+A feature flag in A/BBY is basically just a boolean that can be toggled via the Dashboard in A/BBY.
+This is useful for testing new features, or for hiding features that are not yet ready for production.
+
+A feature flag is always toggled for a certain [Environment](/environments) which allows you to test features in different environments.
+For example, you can have a feature flag that is enabled in the `development` environment, but disabled in the `production` environment.
+
+When a feature flag is toggled for an environment, every user will see the same value for that feature flag.
+If you want to test a feature for a specific user, you can use [A/B Tests](/a-b-testing).

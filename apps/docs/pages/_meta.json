@@ -1,0 +1,27 @@
+{
+  "index": "Getting Started",
+  "integrations": "Integrations",
+  "reference": "Reference",
+  "-- Guides --": {
+    "type": "separator",
+    "title": "Guides"
+  },
+  "nextjs": "Next.js",
+  "devtools": "Devtools",
+  "-- Concepts --": {
+    "type": "separator",
+    "title": "Concepts"
+  },
+  "a-b-testing": "A/B Tests",
+  "feature-flags": "Feature Flags",
+  "environments": "Environments",
+  "-- More --": {
+    "type": "separator",
+    "title": "More"
+  },
+  "abby_link": {
+    "title": "A/BBY ↗",
+    "href": "https://tryabby.com",
+    "newWindow": true
+  }
+}

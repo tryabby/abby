@@ -1,0 +1,193 @@
+import { Tab, Tabs } from "nextra-theme-docs";
+
+# Using A/BBY with Next.js
+
+A/BBY was built to be the best solution for Feature Flags and A/B Testing in Next.js.
+It deeply integrates with Next.js and provides a seamless developer experience.
+
+## Installation
+
+Install the `@tryabby/next` package using your favorite package manager:
+
+<Tabs items={["npm", "yarn", "pnpm"]}>
+  <Tab>
+    ```bash
+    npm i @tryabby/next
+    ```
+    </Tab>
+
+  <Tab>
+    ```bash
+    yarn add @tryabby/next
+    ```
+</Tab>
+  <Tab>
+    ```bash
+    pnpm i @tryabby/next 
+    ```
+    </Tab>
+</Tabs>
+
+## Configuration
+
+In order to use A/BBY you need to create a **free** account at [tryabby.com](https://tryabby.com) first.
+
+You can then use the button in the top right corner of the dashboard to easily copy your A/BBY config.
+
+Create a file called `abby.ts` (or whatever you want to call this file) somewhere in your source code. That's it! You're ready to go!
+
+For this example my `abby.ts` file looks like this:
+
+```ts
+// abby.ts
+import { createAbby } from "@tryabby/next";
+
+export const { useAbby, AbbyProvider, useFeatureFlag, withAbby } = createAbby({
+  projectId: "YOUR_PROJECT",
+  // For testing purposes we only want to use the production environment
+  currentEnvironment: "production",
+  tests: {
+    theme: {
+      variants: ["light", "dark"],
+    },
+  },
+  flags: ["useDarkmode"],
+});
+```
+
+Now you will need to wrap your app with the `AbbyProvider` component. This is done in the `_app.tsx` file.
+If you also wrap your app with `withAbby`, you will have access to the Feature Flags for Server Side Rendering or Static Generation as well.
+
+This is highly recommended so that there is no flicker on the inital load of your app. It also allows for proper crawling of your app by search engines.
+
+```tsx
+// _app.tsx
+import { AbbyProvider } from "lib/abby";
+
+function MyApp({
+  Component,
+  pageProps: { __ABBY_PROJECT_DATA__, ...pageProps },
+}) {
+  return (
+    <AbbyProvider initialData={__ABBY_PROJECT_DATA__}>
+      <Component {...pageProps} />
+    </AbbyProvider>
+  );
+}
+
+export default withAbby(MyApp);
+```
+
+If you only want client side rendering, you can skip the `withAbby` part and just wrap your app with the `AbbyProvider` (and omit `initialData`).
+
+## Usage
+
+### Hooks
+
+#### Feature Flags
+
+```tsx
+// index.tsx
+
+import { useFeatureFlag } from "lib/abby";
+
+export function HomePage() {
+  const useDarkmode = useFeatureFlag("useDarkmode");
+
+  return (
+    <>
+      <h1>My Homepage</h1>
+      {useDarkmode && <p>Darkmode is enabled</p>}
+    </>
+  );
+}
+```
+
+You can now go to the A/BBY dashboard and enable the `useDarkmode` flag for your project. You will see the text "Darkmode is enabled" on your homepage.
+
+#### A/B Tests
+
+```tsx
+// index.tsx
+export function HomePage() {
+  const { variant, onAct } = useAbby("theme");
+
+  return (
+    <>
+      <h1>My Homepage</h1>
+      <button
+        onClick={() => {
+          onAct();
+          // React to the user clicking the button
+        }}
+        className={`button ${variant === "dark" && "bg-dark"} ${
+          variant === "light" && "bg-light"
+        }`}
+      >
+        BUY IT
+      </button>
+    </>
+  );
+}
+```
+
+This is a simple example of an A/B Test. Once you loaded the page you will get either the "light" or the "dark" variant of the button.
+
+### Non-React Context
+
+You might want to use A/BBY outside of React. For example in your app's middleware or in a Next.js API route.
+
+#### Edge Functions
+
+[Edge Functions](https://vercel.com/docs/concepts/functions/edge-functions) are Vercel's globally distributed serverless functions.
+They are a great way to run code on the edge of the Vercel network and use a leaner runtime with less functionality.
+A/BBY works perfectly with Edge Functions.
+
+The best usecase with Edge Functions and A/BBY is to use them in your middleware, for example to redirect users to a beta version of your app.
+
+```ts
+// middleware.ts
+import { withAbbyEdge } from "lib/abby";
+import { NextResponse } from "next/server";
+
+export default withAbbyEdge((req) => {
+  const myFlag = getFeatureFlagValue("test-flag");
+
+  // make sure to use the req object here
+  const [currentVariant, setCookie] = getABTestValue("test-abtest", req);
+
+  if (myFlag && currentVariant === "beta-user") {
+    const res = NextResponse.redirect("/beta");
+
+    // update the user's cookie
+    setCookie(res);
+    return res;
+  }
+
+  return NextResponse.next();
+});
+```
+
+#### API Routes
+
+You can access feature flags and A/B tests in your API routes as well.
+
+```ts
+// /api/test.ts
+import { withAbbyApiHandler } from "lib/abby";
+
+export default withAbbyApiHandler((req, res) => {
+  const myFlag = getFeatureFlagValue("test-flag");
+
+  // make sure to use the req object here
+  const [currentVariant, setCookie] = getABTestValue("test-abtest", req);
+
+  if (myFlag && currentVariant === "beta-user") {
+    // update the user's cookie
+    setCookie(res);
+    return res.status(200).end();
+  }
+
+  res.status(404).end();
+});
+```

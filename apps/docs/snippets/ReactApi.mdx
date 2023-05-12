@@ -1,0 +1,78 @@
+## createAbby
+
+### Parameters
+
+**Options** - Object
+
+- `projectId`: The ID of your project in Abby
+- `apiUrl` _(optional)_: The URL of the Abby API. Defaults to the hosted version
+- `currentEnvironment`: The current environment of your application ([details](/environments))
+- `tests` _(optional)_: An object containing your defined A/B Tests ([details](#tests))
+- `flags` _(optional)_: An array containing your defined Feature Flags ([details](#flags));
+- `settings` _(optional)_: An object with additional settings for A/BBY ([details](#settings));
+
+### Return Values
+
+#### useAbby
+
+`useAbby` is a react hook that used to access the value of an A/B Test.
+Recurring users will always get the same value for a test.
+New users will get a random value for a test depending on the defined weights
+
+**Parameter:**
+
+- `string`: The name of the test or flag, needs to be one of the defined tests.
+
+**Return Values:**
+
+- `variant` : The variant of the test
+
+- `onAct`: A function to call when the user performs an action associated with the test _Type: `function`_
+
+#### useFeatureFlag
+
+`useFeatureFlag` is a react hook that used to access the value of a Feature Flag.
+
+**Parameter:**
+
+The name of the test or flag, needs to be one of the defined flags.
+
+**Return Value:**
+The value of the flag _Type: `boolean`_
+
+#### AbbyProvider
+
+A react component to wrap your application.
+
+**Props:**
+
+- `children`: The children of the component
+- `initialData (optional)`: The data (weights, tests, etc). If not provided, the data will be fetched on the client.
+
+#### getFeatureFlagValue
+
+`getFeatureFlagValue` is a function to access the value of a feature flag. This can be called in a non-react scope.
+
+**Parameter:**
+
+The name of the test or flag, needs to be one of the defined flags.
+
+#### **abby**
+
+`__abby__` is the Abby instance. It can be used to access the data of the current user.
+In most cases you will not need to use this.
+
+#### withDevtools
+
+`withDevtools` is a higher order function to wrap the Devtools from [`@tryabby/devtools`](/devtools) for usage within Reacts.
+
+**Parameter:**
+
+The Devtools component from `@tryabby/devtools`
+
+**Example:**
+
+```jsx
+import { AbbyDevTools } from "@tryabby/devtools";
+export const AbbyDevtools = withDevtools(AbbyDevTools);
+```

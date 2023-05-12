@@ -1,0 +1,52 @@
+{
+  "name": "@tryabby/devtools",
+  "version": "3.2.1",
+  "type": "module",
+  "files": [
+    "dist"
+  ],
+  "main": "dist/index.umd.cjs",
+  "module": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "require": "./dist/index.umd.cjs",
+      "types": "./dist/index.d.ts"
+    }
+  },
+  "scripts": {
+    "dev": "vite build --watch",
+    "build": "vite build",
+    "check": "svelte-check --tsconfig ./tsconfig.json",
+    "storybook": "STORYBOOK=1 storybook dev -p 6006",
+    "build-storybook": "storybook build",
+    "prepare": "pnpm run build"
+  },
+  "devDependencies": {
+    "@storybook/addon-essentials": "^7.0.5",
+    "@storybook/addon-interactions": "^7.0.5",
+    "@storybook/addon-links": "^7.0.5",
+    "@storybook/blocks": "^7.0.5",
+    "@storybook/svelte": "^7.0.5",
+    "@storybook/svelte-vite": "^7.0.5",
+    "@storybook/testing-library": "^0.0.14-next.2",
+    "@sveltejs/vite-plugin-svelte": "^2.0.3",
+    "@tryabby/core": "workspace:^",
+    "@tsconfig/svelte": "^3.0.0",
+    "@types/mousetrap": "^1.6.11",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "shared": "workspace:^",
+    "storybook": "^7.0.5",
+    "svelte": "^3.55.1",
+    "svelte-check": "^2.10.3",
+    "tslib": "^2.5.0",
+    "typescript": "^4.9.3",
+    "vite": "^4.2.0",
+    "vite-plugin-dts": "2.3.0"
+  },
+  "dependencies": {
+    "mousetrap": "^1.6.5"
+  }
+}

@@ -1,0 +1,103 @@
+import { Tab, Tabs, Callout } from "nextra-theme-docs";
+
+# Devtools
+
+A/BBY comes with a Devtools that allows you to see the different variants of your A/B Tests and Feature Flags.
+To use them simply add the `<AbbyDevTools />` component to your app.
+
+## Installation
+
+Install the `@tryabby/devtools` package using your favorite package manager:
+
+<Tabs items={["npm", "yarn", "pnpm"]}>
+  <Tab>
+    ```bash
+    npm i @tryabby/devtools
+    ```
+    </Tab>
+
+  <Tab>
+    ```bash
+    yarn add @tryabby/devtools
+    ```
+</Tab>
+  <Tab>
+    ```bash
+    pnpm i @tryabby/devtools 
+    ```
+    </Tab>
+</Tabs>
+
+## Configuration
+
+In order to use the Devtools you will need to wrap them for your specific integration.
+
+<Callout type="info" emoji="💡">
+  The Devtools will be omited in the production build!
+</Callout>
+
+<Tabs items={["Next.js", "React"]}>
+  <Tab>
+  
+````tsx
+// lib/abby.ts
+import { createAbby } from "@tryabby/next";
+import abbyDevtools from "@tryabby/devtools";
+
+export const { AbbyProvider, withAbby, withDevtools } = createAbby({
+  // ...your Config
+});
+
+// Wrap the Devtools for Next.js
+export const AbbyDevtools = withDevtools(abbyDevtools, { defaultShow: true });
+
+`````
+
+</Tab>
+  <Tab>
+
+````tsx
+// lib/abby.ts
+import { createAbby } from "@tryabby/react";
+import abbyDevtools from "@tryabby/devtools";
+
+export const { AbbyProvider, withDevtools } = createAbby({
+  // ...your Config
+});
+
+// Wrap the Devtools for React
+export const AbbyDevtools = withDevtools(abbyDevtools, { defaultShow: true });
+
+
+````
+  </Tab>
+</Tabs>
+
+
+You then need to simply place the Devtools inside of your `AbbyProvider`
+
+````tsx
+import { AbbyProvider, AbbyDevTools } from "lib/abby";
+
+// ... your application
+export function App() {
+  return (
+    <AbbyProvider>
+      <AbbyDevtools />
+      <Component {...pageProps} />
+    </AbbyProvider>
+  );
+}
+````
+
+### Usage
+
+The devtools will appear on every page if you set `defaultShow: true`.
+Otherwise you can toggle them with <kbd>CMD/CTRL + .</kbd> (or the shortcut you set in the config)
+
+<Callout type="warning" emoji="💡">
+  You will only be able to update feature flags that are consumed via hooks in
+  the current page! If you need to update a feature flag that is consumed via
+  `getFeatureFlagValue` set in the `createAbby` config.
+</Callout>
+`````

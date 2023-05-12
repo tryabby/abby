@@ -1,0 +1,113 @@
+import { Tab, Tabs, Callout } from "nextra-theme-docs";
+
+# React
+
+Our React integration works with React 16.8.0 or later. It works with SPAs as well as server side rendered apps.
+
+<Callout>
+  If you're using Next.js please check out our [Next
+  integration](/integrations/nextjs)
+</Callout>
+
+### Installation
+
+To get started make sure to install the package using your favorite package manager.
+
+<Tabs items={["npm", "yarn", "pnpm"]}>
+  <Tab>
+    ```bash
+    npm i @tryabby/react
+    ```
+    </Tab>
+
+  <Tab>
+    ```bash
+    yarn add @tryabby/react
+    ```
+</Tab>
+  <Tab>
+    ```bash
+    pnpm i @tryabby/react 
+    ```
+    </Tab>
+</Tabs>
+
+### Usage
+
+#### Create your Instance
+
+To use Abby in your code you will need to create a typed Hook and Provider first. You can do this by using the `createAbby` function.
+Please copy the id of your project from the dashboard to get started.
+
+```jsx
+import { createAbby } from "@tryabby/react";
+
+const { AbbyProvider, useAbby } = createAbby({
+  projectId: "<YOUR_PROJECT_ID>",
+  currentEnvironment: process.env.NODE_ENV,
+  tests: {
+    test: { variants: ["A", "B"] },
+    footer: { variants: ["dark", "orange", "green"] },
+    // ... your tests
+  },
+  flags: ["darkMode", "newFeature"],
+});
+```
+
+#### Wrap your Application
+
+You will need to wrap your application with the `AbbyProvider` to make sure the hook works.
+If you're using Next.js you should do this in the `_app.js` file.
+
+### Hooks
+
+You can now import the hooks created by `createAbby` and use it in your components.
+
+#### useAbby
+
+The `useAbby` hook returns an object with the following values:
+
+- `variant` - The variant that is currently active
+- `onAct` - A function that you can call to trigger any kind of interaction with the tested component (will be used to track conversions)
+
+```tsx
+import { useAbby } from "./abby";
+
+function MyButton() {
+  const { variant, onAct } = useAbby("footer");
+  return (
+    <main className="p-6">
+      <h1>Abby Test Page:</h1>
+      <button
+        className={`rounded-lg py-2 px-4 
+        ${variant === "dark" && "bg-gray-900 text-white"} 
+        ${variant === "orange" && "bg-orange-500 text-white"} 
+        ${variant === "green" && "bg-green-500 text-white"}`}
+        onClick={onAct}
+      >
+        Cool Button
+      </button>
+    </main>
+  );
+}
+```
+
+#### useFeatureFlag
+
+The `useFeatureFlag` hook returns a boolean value that indicates if the flag is active or not.
+
+```tsx
+import { useFeatureFlag } from "./abby";
+
+function HomePage() {
+  const hasNewFeature = useFeatureFlag("newFeature");
+
+  return (
+    <main className="p-6">
+      <h1>Welcome back, User</h1>
+      {hasNewFeature && <p>Here is the new feature</p>}
+      <p>This is our super boring page</p>
+    </main>
+  );
+}
+```

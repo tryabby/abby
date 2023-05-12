@@ -1,0 +1,18 @@
+{
+    "$schema": "https://json.schemastore.org/tsconfig",
+    "display": "Angular Library",
+    "extends": "./base.json",
+    "compilerOptions": {
+      "lib": ["ES2022", "dom"],
+      "module": "ES2022",
+      "target": "ES2022", 
+      "strictPropertyInitialization": false,
+      "experimentalDecorators": true
+    },
+    "types": [
+        "node"
+    ], 
+    "scripts": {
+      "postinstall": "ngcc"
+    }
+  }

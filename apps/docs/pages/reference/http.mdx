@@ -1,0 +1,54 @@
+# API Reference (HTTP API)
+
+## Endpoints
+
+- [GET `/api/v1/data/:projectId`](#get-apiv1dataprojectid)
+- [POST `/api/v1/track`](#post-apiv1track)
+
+### GET `/api/v1/data/:projectId`
+
+Returns the data for the given project.
+
+#### Query Parameters
+
+- `environment` (optional): The environment to filter by. If not provided, all environments will be returned.
+
+#### Path Parameters
+
+- `projectId`: The project ID.
+
+#### Response
+
+```json
+{
+  "tests": [
+    {
+      "name": "Test 1",
+      "weights": [0.5, 0.5]
+    }
+  ],
+  "flags": [
+    {
+      "name": "Flag 1",
+      "isEnabled": true
+    }
+  ]
+}
+```
+
+### POST `/api/v1/track`
+
+Tracks an event.
+
+#### Request Body
+
+The `type` field can be either `0` (track view) or `1` (track interaction).
+
+```json
+{
+  "type": 1,
+  "projectId": "<PROJECT_ID>",
+  "testName": "<TEST_NAME>",
+  "selectedVariant": "<SELECTED_VARIANT>"
+}
+```

@@ -1,0 +1,51 @@
+{
+  "name": "@tryabby/next",
+  "version": "3.3.0",
+  "description": "",
+  "main": "dist/index.js",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsup src/index.tsx",
+    "dev": "pnpm run build --watch",
+    "test": "vitest",
+    "prepare": "pnpm run build"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "homepage": "https://docs.tryabby.com",
+  "devDependencies": {
+    "@testing-library/jest-dom": "^5.16.5",
+    "@testing-library/react": "^13.4.0",
+    "@testing-library/react-hooks": "^8.0.1",
+    "@tryabby/core": "workspace:*",
+    "@tryabby/devtools": "workspace:^",
+    "@types/js-cookie": "^3.0.3",
+    "@types/react": "^18.0.26",
+    "@vitejs/plugin-react": "^2.2.0",
+    "jsdom": "^20.0.3",
+    "msw": "^0.49.1",
+    "next": ">=13",
+    "node-fetch": "^3.3.0",
+    "react": "^18.2.0",
+    "react-dom": "18.2.0",
+    "shared": "workspace:*",
+    "tsconfig": "workspace:*",
+    "tsup": "^6.5.0",
+    "typescript": "^4.9.3",
+    "vite": "^3.2.5",
+    "vitest": "^0.25.3"
+  },
+  "peerDependencies": {
+    "next": ">=13",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0"
+  },
+  "dependencies": {
+    "@tryabby/react": "workspace:*",
+    "js-cookie": "^3.0.1",
+    "ts-toolbelt": "^9.6.0"
+  }
+}

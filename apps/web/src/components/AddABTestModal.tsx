@@ -1,0 +1,92 @@
+import { TRPCClientError } from "@trpc/client";
+import { TRPC_ERROR_CODES_BY_KEY } from "@trpc/server/rpc";
+import { useRef, useState } from "react";
+import { toast } from "react-hot-toast";
+import { trpc } from "utils/trpc";
+import { Modal } from "./Modal";
+import { CreateTestSection } from "./Test/CreateTestSection";
+
+type UIVariant = { name: string; weight: number };
+
+const INITIAL_VARIANTS: Array<UIVariant> = [
+  {
+    name: "A",
+  },
+  {
+    name: "B",
+  },
+  // give each variant a weight of 100 / number of variants
+].map((v, _, array) => ({ ...v, weight: 100 / array.length }));
+
+const INITIAL_TEST_NAME = "New Test";
+
+type Props = {
+  onClose: () => void;
+  isOpen: boolean;
+  projectId: string;
+};
+
+export const AddABTestModal = ({ onClose, isOpen, projectId }: Props) => {
+  const [testName, setTestName] = useState(INITIAL_TEST_NAME);
+  const [variants, setVariants] =
+    useState<Array<{ name: string; weight: number }>>(INITIAL_VARIANTS);
+  const createTestMutation = trpc.tests.createTest.useMutation();
+
+  const trpcContext = trpc.useContext();
+
+  const onCreateClick = async () => {
+    try {
+      if (!variants.length || !variants[0]) throw new Error();
+
+      if (variants.reduce((acc, curr) => acc + curr.weight, 0) !== 100) {
+        toast.error("Weights must add up to 100");
+        return;
+      }
+
+      await createTestMutation.mutateAsync({
+        name: testName,
+        variants: variants.map((v) => ({
+          name: v.name,
+          weight: v.weight / 100,
+        })),
+        projectId: projectId,
+      });
+
+      trpcContext.project.getProjectData.invalidate({
+        projectId: projectId,
+      });
+
+      setTestName(INITIAL_TEST_NAME);
+      setVariants(INITIAL_VARIANTS);
+
+      onClose();
+      toast.success("Test created");
+    } catch (e) {
+      toast.error(
+        e instanceof TRPCClientError &&
+          e.shape.code === TRPC_ERROR_CODES_BY_KEY.FORBIDDEN
+          ? e.message
+          : "Could not create test"
+      );
+    }
+  };
+
+  return (
+    <Modal
+      isOpen={isOpen}
+      onClose={onClose}
+      title="Create new feature flag"
+      confirmText="Create"
+      onConfirm={onCreateClick}
+      size="full"
+      isConfirming={createTestMutation.isLoading}
+    >
+      <CreateTestSection
+        setTestName={setTestName}
+        setVariants={setVariants}
+        testName={testName}
+        variants={variants}
+      />
+    </Modal>
+  );
+};
