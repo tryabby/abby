@@ -1,13 +1,28 @@
 // vite.config.ts
-import { sveltekit } from '@sveltejs/kit/vite';
+import { svelte } from "@sveltejs/vite-plugin-svelte";
 import type { UserConfig } from 'vite';
 import { configDefaults, type UserConfig as VitestConfig } from 'vitest/config';
+import dts from 'vite-plugin-dts'
 
 const config: UserConfig & { test: VitestConfig['test'] } = {
-  plugins: [sveltekit()],
+  plugins: [dts(), svelte()],
   define: {
     // Eliminate in-source test code
     'import.meta.vitest': 'undefined'
+  },
+  build: {
+    lib: {
+      entry: ["src/lib/index.ts"],
+      formats: ["es"],
+      fileName: "index",
+      name: "abbySvelte",
+    },
+    rollupOptions: {
+      output: {
+        preserveModules: true,
+        inlineDynamicImports: false
+      }
+    }
   },
   test: {
     // jest like globals

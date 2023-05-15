@@ -5,7 +5,7 @@
 	"homepage": "https://docs.tryabby.dev",
 	"scripts": {
 		"dev": "vite dev",
-		"build": "vite build && npm run package",
+		"build": "vite build",
 		"preview": "vite preview",
 		"package": "svelte-kit sync && svelte-package && publint",
 		"prepublishOnly": "npm run package",
@@ -54,7 +54,8 @@
 	"dependencies": {
 		"@tryabby/core": "workspace:*",
 		"js-cookie": "^3.0.5",
-		"ts-toolbelt": "^9.6.0"
+		"ts-toolbelt": "^9.6.0",
+		"vite-plugin-dts": "2.3.0"
 	},
 	"svelte": "./dist/index.js",
 	"types": "./dist/index.d.ts",
