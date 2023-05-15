@@ -1,3 +1,0 @@
----
-'@tryabby/svelte': minor
----
