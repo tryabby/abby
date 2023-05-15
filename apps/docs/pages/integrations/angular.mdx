@@ -1,0 +1,106 @@
+import { Tab, Tabs, Callout } from "nextra-theme-docs";
+
+# Angular
+
+Our Angular integration works with Angular 15 or later. It works with SPAs as well as server side rendered apps.
+
+### Installation
+
+To get started make sure to install the package using your favorite package manager.
+
+<Tabs items={["npm", "yarn", "pnpm"]}>
+  <Tab>
+    ```bash
+    npm i @tryabby/angular
+    ```
+    </Tab>
+
+  <Tab>
+    ```bash
+    yarn add @tryabby/angular
+    ```
+</Tab>
+  <Tab>
+    ```bash
+    pnpm i @tryabby/angular 
+    ```
+    </Tab>
+</Tabs>
+
+### Usage
+
+#### Create your Module
+
+To use Abby in your code you will need to import the AbbyModule in your app module first. You will need to call AbbyModule.forRoot() method with the configuration object. Please copy the id of your project from the dashboard to get started.
+
+```ts
+import { AbbyModule } from "@tryabby/angular";
+
+@NgModule({
+  declarations: [AppComponent],
+  imports: [
+    BrowserModule,
+    AbbyModule.forRoot({
+      projectId: "<YOUR_PROJECT_ID>",
+      currentEnvironment: environment.production ? "production" : "development",
+      tests: {
+        test: { variants: ["A", "B"] },
+        footer: { variants: ["dark", "orange", "green"] },
+        // ... your tests
+      },
+      flags: ["darkMode", "newFeature"],
+    }),
+  ],
+  providers: [],
+  bootstrap: [AppComponent],
+})
+export class AppModule {}
+```
+
+#### Using Abby in your Component
+
+You can now use Abby in your components. You will have access to the `AbbyService` which can be used to get the variant and act on any test.
+
+```tsx
+import { AbbyService } from '@tryabby/angular';
+
+@Component({...})
+export class MyComponent {
+  footerVariant: string;
+
+  constructor(private abbyService: AbbyService) {
+    this.abbyService.getVariant('footer').subscribe((variant) => {
+      this.footerVariant = variant;
+    });
+  }
+
+  onAct() {
+    this.abbyService.onAct('footer');
+  }
+}
+```
+
+#### Using Abby Directives
+
+You can also use Abby's directives to conditionally show elements based on the variant or feature flag.
+
+```html
+<ng-container *featureFlag="'newFeature'">
+  <!-- This will only be shown if the newFeature flag is active. -->
+  <p>Here is the new feature</p>
+</ng-container>
+
+<ng-container *abbyTest="{testName: 'test', variant: 'A'}">
+  <!-- This will only be shown if the test variant matches the variant. -->
+  <p>Here is Variant A</p>
+</ng-container>
+
+<div
+  class="footer"
+  [ngStyle]="{'color': footerVariant === 'dark' ? 'black' : 
+  footerVariant === 'orange' ? 'orange' : 
+  footerVariant === 'green' ? 'green'}"
+>
+  Here is a Foooter
+</div>
+```
