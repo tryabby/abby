@@ -1,4 +1,4 @@
-import { TestStorageService } from "$lib/StorageService";
+import { TestStorageService } from "../lib/StorageService";
 import { HttpService, AbbyEventType } from "shared";
 import { createAbby } from "../lib/createAbby";
 import {
