@@ -5,7 +5,15 @@ import { configDefaults, type UserConfig as VitestConfig } from 'vitest/config';
 import dts from 'vite-plugin-dts'
 
 const config: UserConfig & { test: VitestConfig['test'] } = {
-  plugins: [dts(), svelte()],
+  plugins: [dts(),     svelte({
+    include: ["src/**/*.svelte"],
+    compilerOptions: {
+      // eslint-disable-next-line turbo/no-undeclared-env-vars
+      // customElement: process.env.STORYBOOK !== "1",
+    },
+    emitCss: false,
+    prebundleSvelteLibraries: true,
+  }),],
   define: {
     // Eliminate in-source test code
     'import.meta.vitest': 'undefined'
@@ -13,13 +21,13 @@ const config: UserConfig & { test: VitestConfig['test'] } = {
   build: {
     lib: {
       entry: ["src/lib/index.ts"],
-      formats: ["es"],
+      formats: ["es", "umd"],
       fileName: "index",
       name: "abbySvelte",
     },
     rollupOptions: {
       output: {
-        preserveModules: true,
+        preserveModules: false,
         inlineDynamicImports: false
       }
     }
