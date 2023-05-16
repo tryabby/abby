@@ -1,5 +1,11 @@
 # @tryabby/svelte
 
+## 0.1.2
+
+### Patch Changes
+
+- fix types
+
 ## 0.1.1
 
 ### Patch Changes

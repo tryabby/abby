@@ -1,6 +1,6 @@
 {
 	"name": "@tryabby/svelte",
-	"version": "0.1.1",
+	"version": "0.1.2",
 	"homepage": "https://docs.tryabby.dev",
 	"type": "module",
 	"files": [
