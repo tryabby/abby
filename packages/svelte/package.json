@@ -1,6 +1,6 @@
 {
 	"name": "@tryabby/svelte",
-	"version": "0.1.0",
+	"version": "0.1.1",
 	"main": "dist/index.js",
 	"homepage": "https://docs.tryabby.dev",
 	"scripts": {
