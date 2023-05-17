@@ -5,23 +5,26 @@
 	const serverFeatureFlag = useFeatureFlag('test3');
 </script>
 
-<body class="bg-red-100">
-	<h1>
-		AB testing with buckets In this demo we use cookies to assign a bucket with the variant to show.
-	</h1>
-	<p>Visit one of the pages below and a bucket will be assigned to you.</p>
-	<ul>
-		<li>
-			<a href="/home"> /home </a>
-		</li>
-		<li>
-			<a href="/marketing"> /marketing </a>
-		</li>
-	</ul>
-	{#if $clientFeatureFlag}
-		<p>If you see this text the client flag is enabled</p>
-	{/if}
-	{#if $serverFeatureFlag}
-		If you see this text the server side flag is enabled
-	{/if}
-</body>
+<h1>
+	AB testing with buckets In this demo we use cookies to assign a bucket with the variant to show.
+</h1>
+<p>Visit one of the pages below and a bucket will be assigned to you.</p>
+<ul>
+	<li>
+		<a href="/home"> /home </a>
+	</li>
+	<li>
+		<a href="/marketing"> /marketing </a>
+	</li>
+</ul>
+{#if $clientFeatureFlag}
+	<p>If you see this text the client flag is enabled</p>
+{/if}
+{#if $serverFeatureFlag}
+	If you see this text the server side flag is enabled
+{/if}
+
+<style lang="postcss">
+	:global(html) {
+	}
+</style>
