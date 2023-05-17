@@ -6,7 +6,7 @@ import { useSession } from "next-auth/react";
 import Link from "next/link";
 import { Fragment } from "react";
 import { GiHamburgerMenu } from "react-icons/gi";
-import { DOCS_URL } from "shared";
+import { DOCS_URL } from "@tryabby/core";
 import { trpc } from "utils/trpc";
 
 const NAV_ITEMS = [
