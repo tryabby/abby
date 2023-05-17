@@ -10,7 +10,8 @@
     ".": {
       "require": "./dist/index.js",
       "import": "./dist/index.mjs"
-    }
+    },
+    "./shared": "./dist/shard/index.js"
   },
   "scripts": {
     "build": "tsup src/",
@@ -25,12 +26,12 @@
     "@vitejs/plugin-react": "^2.2.0",
     "msw": "^0.49.1",
     "node-fetch": "^3.3.0",
-    "shared": "workspace:*",
     "tsconfig": "workspace:*",
     "tsup": "^6.5.0",
     "typescript": "^4.9.3",
     "vite": "^3.2.5",
-    "vitest": "^0.25.3"
+    "vitest": "^0.25.3",
+    "zod": "^3.19.1"
   },
   "dependencies": {
     "ts-toolbelt": "^9.6.0"

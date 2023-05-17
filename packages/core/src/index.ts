@@ -2,8 +2,8 @@ import {
   ABBY_AB_STORAGE_PREFIX,
   ABBY_FF_STORAGE_PREFIX,
   AbbyDataResponse,
-} from "shared";
-import { HttpService } from "shared/src/http";
+} from "./shared/";
+import { HttpService } from "./shared";
 import { F } from "ts-toolbelt";
 import { getWeightedRandomVariant } from "./mathHelpers";
 import { parseCookies } from "./helpers";

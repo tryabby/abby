@@ -84,7 +84,7 @@
     "react-hook-form": "^7.43.9",
     "react-hot-toast": "^2.4.0",
     "react-icons": "^4.8.0",
-    "shared": "workspace:*",
+    "@tryabby/core": "workspace:*",
     "shiki": "^0.11.1",
     "stripe": "^11.18.0",
     "superjson": "1.9.1",
