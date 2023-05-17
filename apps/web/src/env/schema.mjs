@@ -26,6 +26,7 @@ export const serverSchema = z.object({
   EMAIL_SERVER: z.string().url(),
   LOGSNAG_API_KEY: z.string().min(1),
   REDIS_URL: z.string().url(),
+  ABBY_FROM_EMAIL: z.string().email(),
 });
 
 /**
