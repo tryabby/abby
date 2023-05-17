@@ -1,5 +1,5 @@
 import { Abby, type AbbyConfig, type ABConfig } from "@tryabby/core";
-import { HttpService , AbbyEventType} from "shared";
+import { HttpService , AbbyEventType} from "@tryabby/core";
 import { derived } from "svelte/store";
 import type { F } from "ts-toolbelt";
 // import type { LayoutServerLoad, LayoutServerLoadEvent } from "../routes/$types"; TODO fix import

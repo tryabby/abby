@@ -300,6 +300,9 @@ importers:
       '@trpc/server':
         specifier: ^10.19.1
         version: 10.19.1
+      '@tryabby/core':
+        specifier: workspace:*
+        version: link:../../packages/core
       '@tryabby/devtools':
         specifier: workspace:*
         version: link:../../packages/devtools
@@ -396,9 +399,6 @@ importers:
       react-icons:
         specifier: ^4.8.0
         version: 4.8.0(react@18.2.0)
-      shared:
-        specifier: workspace:*
-        version: link:../../packages/shared
       shiki:
         specifier: ^0.11.1
         version: 0.11.1
@@ -566,9 +566,6 @@ importers:
       rxjs:
         specifier: ~7.8.0
         version: 7.8.0
-      shared:
-        specifier: workspace:*
-        version: link:../shared
       ts-toolbelt:
         specifier: ^9.6.0
         version: 9.6.0
@@ -597,9 +594,6 @@ importers:
       node-fetch:
         specifier: ^3.3.0
         version: 3.3.0
-      shared:
-        specifier: workspace:*
-        version: link:../shared
       tsconfig:
         specifier: workspace:*
         version: link:../tsconfig
@@ -615,6 +609,9 @@ importers:
       vitest:
         specifier: ^0.25.3
         version: 0.25.8(jsdom@20.0.3)
+      zod:
+        specifier: ^3.19.1
+        version: 3.21.4
 
   packages/devtools:
     dependencies:
@@ -661,9 +658,6 @@ importers:
       react-dom:
         specifier: ^18.2.0
         version: 18.2.0(react@18.2.0)
-      shared:
-        specifier: workspace:^
-        version: link:../shared
       storybook:
         specifier: ^7.0.5
         version: 7.0.5
@@ -762,9 +756,6 @@ importers:
       react-dom:
         specifier: 18.2.0
         version: 18.2.0(react@18.2.0)
-      shared:
-        specifier: workspace:*
-        version: link:../shared
       tsconfig:
         specifier: workspace:*
         version: link:../tsconfig
@@ -832,9 +823,6 @@ importers:
       react-dom:
         specifier: 18.2.0
         version: 18.2.0(react@18.2.0)
-      shared:
-        specifier: workspace:*
-        version: link:../shared
       tsconfig:
         specifier: workspace:*
         version: link:../tsconfig
@@ -850,15 +838,6 @@ importers:
       vitest:
         specifier: ^0.25.3
         version: 0.25.8(jsdom@20.0.3)
-
-  packages/shared:
-    dependencies:
-      typescript:
-        specifier: ^4.8.4
-        version: 4.9.3
-      zod:
-        specifier: ^3.19.1
-        version: 3.19.1
 
   packages/svelte:
     dependencies:
@@ -932,9 +911,6 @@ importers:
       publint:
         specifier: ^0.1.11
         version: 0.1.11
-      shared:
-        specifier: workspace:*
-        version: link:../shared
       svelte:
         specifier: ^3.55.1
         version: 3.58.0
@@ -20721,10 +20697,6 @@ packages:
     optionalDependencies:
       commander: 9.5.0
     dev: true
-
-  /zod@3.19.1:
-    resolution: {integrity: sha512-LYjZsEDhCdYET9ikFu6dVPGp2YH9DegXjdJToSzD9rO6fy4qiRYFoyEYwps88OseJlPyl2NOe2iJuhEhL7IpEA==}
-    dev: false
 
   /zod@3.20.2:
     resolution: {integrity: sha512-1MzNQdAvO+54H+EaK5YpyEy0T+Ejo/7YLHS93G3RnYWh5gaotGHwGeN/ZO687qEDU2y4CdStQYXVHIgrUl5UVQ==}

@@ -1,5 +1,5 @@
 import { compose, rest } from "msw";
-import { AbbyDataResponse, ABBY_BASE_URL } from "shared";
+import { AbbyDataResponse, ABBY_BASE_URL } from "../../src/shared";
 
 export const handlers = [
   rest.get(

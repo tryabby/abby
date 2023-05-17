@@ -1,16 +1,12 @@
 # @tryabby/svelte
 
-## 0.1.2
-
-### Patch Changes
-
-- fix types
-
 ## 0.1.1
 
 ### Patch Changes
 
--
+- refactor shard package
+- Updated dependencies
+  - @tryabby/core@3.3.1
 
 ## 0.1.0
 

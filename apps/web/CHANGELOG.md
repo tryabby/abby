@@ -1,5 +1,15 @@
 # web
 
+## 0.2.18
+
+### Patch Changes
+
+- refactor shard package
+- Updated dependencies
+  - @tryabby/devtools@3.2.2
+  - @tryabby/core@3.3.1
+  - @tryabby/next@3.3.1
+
 ## 0.2.17
 
 ### Patch Changes

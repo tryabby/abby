@@ -2,7 +2,7 @@ import { NextApiRequest, NextApiResponse } from "next";
 import { z } from "zod";
 import { prisma } from "server/db/client";
 import NextCors from "nextjs-cors";
-import { AbbyDataResponse } from "shared";
+import { AbbyDataResponse } from "@tryabby/core";
 import { EventService } from "server/services/EventService";
 import { trackPlanOverage } from "lib/logsnag";
 import { RequestCache } from "server/services/RequestCache";
