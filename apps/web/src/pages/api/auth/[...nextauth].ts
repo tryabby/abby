@@ -69,7 +69,7 @@ export const authOptions: NextAuthOptions = {
       clientSecret: env.GITHUB_SECRET,
     }),
     EmailProvider({
-      from: "A/BBY <no-reply@tryabby.com>",
+      from: `A/BBY <${env.ABBY_FROM_EMAIL}>`,
       server: env.EMAIL_SERVER,
     }),
     // ...add more providers here
