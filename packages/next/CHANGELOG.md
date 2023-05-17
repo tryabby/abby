@@ -1,5 +1,13 @@
 # @tryabby/next
 
+## 3.3.1
+
+### Patch Changes
+
+- refactor shard package
+- Updated dependencies
+  - @tryabby/react@3.3.1
+
 ## 3.3.0
 
 ### Minor Changes
