@@ -11,7 +11,10 @@
       "require": "./dist/index.js",
       "import": "./dist/index.mjs"
     },
-    "./shared": "./dist/shard/index.js"
+    "./shared": {
+      "require": "./dist/shard/index.js",
+      "import": "./dist/shard/index.js"
+    }
   },
   "scripts": {
     "build": "tsup src/",
