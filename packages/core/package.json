@@ -9,11 +9,13 @@
   "exports": {
     ".": {
       "require": "./dist/index.js",
-      "import": "./dist/index.mjs"
+      "import": "./dist/index.mjs",
+      "types": "./dist/index.d.ts"
     },
-    "./shared": {
-      "require": "./dist/shard/index.js",
-      "import": "./dist/shard/index.js"
+    "./shared/": {
+      "require": "./dist/shared/index.js",
+      "import": "./dist/shared/index.js",
+      "types": "./dist/shared/index.d.ts"
     }
   },
   "scripts": {
