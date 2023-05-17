@@ -1,4 +1,4 @@
-import { getABStorageKey, getFFStorageKey } from "shared";
+import { getABStorageKey, getFFStorageKey } from "@tryabby/core";
 import Cookie from "js-cookie";
 
 export interface IStorageService {

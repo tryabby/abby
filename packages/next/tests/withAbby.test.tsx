@@ -1,6 +1,6 @@
 import { render } from "@testing-library/react";
 import { createAbby } from "../src";
-import { ABBY_FF_STORAGE_PREFIX } from "shared";
+import { ABBY_FF_STORAGE_PREFIX } from "@tryabby/core";
 const OLD_ENV = process.env;
 
 beforeEach(() => {
