@@ -63,6 +63,5 @@
 		"@tryabby/core": "workspace:*",
 		"js-cookie": "^3.0.5",
 		"ts-toolbelt": "^9.6.0"
-	},
-	"svelte": "./dist/index.js"
+	}
 }

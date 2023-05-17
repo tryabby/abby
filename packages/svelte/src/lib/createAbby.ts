@@ -5,7 +5,7 @@ import type { F } from "ts-toolbelt";
 // import type { LayoutServerLoad, LayoutServerLoadEvent } from "../routes/$types"; TODO fix import
 import { FlagStorageService, TestStorageService } from "./StorageService";
 import AbbyProvider from "./AbbyProvider.svelte";
-import AbbyDevtools from "./abbyDevtools.svelte";
+import AbbyDevtools from "./AbbyDevtools.svelte";
 
 export function createAbby<
   FlagName extends string,
