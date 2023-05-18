@@ -12,7 +12,7 @@
     "start": "next start",
     "seed:events": "ts-node --compiler-options {\\\"module\\\":\\\"CommonJS\\\"} prisma/seedEvents.ts",
     "db:migrate": "prisma migrate dev",
-    "generate:coupons": "pn ts-node -r tsconfig-paths/register  --compiler-options {\"module\":\"CommonJS\"} prisma/generateCoupons.ts"
+    "generate:coupons": "pnpm ts-node -r tsconfig-paths/register  --compiler-options {\"module\":\"CommonJS\"} prisma/generateCoupons.ts"
   },
   "dependencies": {
     "@code-hike/mdx": "0.8.3-next.1",
