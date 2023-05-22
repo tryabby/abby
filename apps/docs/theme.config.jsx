@@ -17,7 +17,7 @@ export default {
           "A/BBY is a SaaS tool for developers to streamline A/B testing and feature flagging. Make data-driven decisions and improve user experience with ease.",
         images: [
           {
-            url: "https://tryabby.com/og.png",
+            url: "https://www.tryabby.com/og.png",
             width: 1200,
             height: 630,
             alt: "A/BBY",
@@ -30,7 +30,7 @@ export default {
   },
   head: (
     <>
-      <link rel="icon" href="https://tryabby.com/favicon.png" />
+      <link rel="icon" href="https://www.tryabby.com/favicon.png" />
     </>
   ),
   logo: <span style={{ fontSize: "1.75rem", fontWeight: "bold" }}>A/BBY</span>,
