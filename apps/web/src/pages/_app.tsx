@@ -30,7 +30,7 @@ const MyApp: AppType<{ session: Session | null }> = ({
 }: AppPropsWithLayout) => {
   const router = useRouter();
 
-  const currentPageUrl = `https://tryabby.com${router.asPath}`;
+  const currentPageUrl = `https://www.tryabby.com${router.asPath}`;
   // Use the layout defined at the page level, if available
   const getLayout = Component.getLayout ?? ((page) => page);
   return (
@@ -54,7 +54,7 @@ const MyApp: AppType<{ session: Session | null }> = ({
                       "A/BBY is a SaaS tool for developers to streamline A/B testing and feature flagging. Make data-driven decisions and improve user experience with ease.",
                     images: [
                       {
-                        url: "https://tryabby.com/og.png",
+                        url: "https://www.tryabby.com/og.png",
                         width: 1200,
                         height: 630,
                         alt: "A/BBY",
