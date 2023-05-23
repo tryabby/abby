@@ -1,12 +1,12 @@
 {
   "name": "@tryabby/angular",
-  "version": "0.0.3",
+  "version": "0.1.0",
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
     "build": "ng-packagr -p ng-package.json",
     "watch": "ng build --watch --configuration development",
-    "test": "ng test --no-watch --no-progress", 
+    "test": "ng test --no-watch --no-progress",
     "prepare": "pnpm run build"
   },
   "peerDependencies": {

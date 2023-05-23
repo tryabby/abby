@@ -1,5 +1,16 @@
 # @tryabby/svelte
 
+## 0.2.0
+
+### Minor Changes
+
+- move shared package content to @tryabby/core
+
+### Patch Changes
+
+- Updated dependencies
+  - @tryabby/core@3.4.0
+
 ## 0.1.1
 
 ### Patch Changes
