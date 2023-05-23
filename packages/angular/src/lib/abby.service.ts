@@ -82,12 +82,6 @@ export class AbbyService<
     this.log(this.selectedVariants);
 
     return of(variant);
-
-    // return this.resolveData().pipe(
-    //   map((data) => data.tests[testName]?.selectedVariant ?? ""),
-    //   tap((variant) => (this.selectedVariants[testName] = variant)),
-    //   tap((variant) => this.log(`getVariant(${testName}) =>`, variant))
-    // );
   }
 
   public onAct(testName: string): void {

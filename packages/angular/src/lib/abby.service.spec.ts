@@ -84,13 +84,9 @@ describe("AbbyService", () => {
       imports: [AbbyModule.forRoot(mockConfig)],
     });
     service = TestBed.inject(AbbyService);
-
-
-  })
-
-  beforeEach(() => {
-
   });
+
+  beforeEach(() => {});
 
   it("should be created", () => {
     const fetchSpy = spyOn(window, "fetch");
@@ -106,13 +102,12 @@ describe("AbbyService", () => {
   });
 
   it("gets the stored feature flag value using a function properly", () => {
-
     const mockedResponse = new Response(JSON.stringify(mockedData), {
       status: 200,
       headers: { "Content-type": "application/json" },
     });
 
-    const getFetchSpy = spyOn(window, 'fetch').and.callFake(() =>
+    const getFetchSpy = spyOn(window, "fetch").and.callFake(() =>
       Promise.resolve(mockedResponse)
     );
 
@@ -147,7 +142,6 @@ describe("AbbyService", () => {
   // });
 
   it("uses the devOverrides", () => {
-
     const fetchSpy = spyOn(window, "fetch");
 
     const mockedResponse = new Response(JSON.stringify(mockedData), {
@@ -190,7 +184,7 @@ describe("AbbyService", () => {
       expect(setSpy).not.toHaveBeenCalled();
       expect(getSpy).toHaveBeenCalled();
       expect(value).toEqual(persistedValue);
-    }); 
+    });
   });
 
   // it("should notify the server with OnAct", () => {
@@ -203,10 +197,9 @@ describe("AbbyService", () => {
   //     Promise.resolve(mockedResponse)
   //   );
 
-  //   console.log(getFetchSpy); 
+  //   console.log(getFetchSpy);
 
   //   const onActSpy = spyOn(service, "onAct").and.identity
-
 
   //   // fetchSpy.and.returnValue(Promise.resolve(mockedResponse)).and.callThrough;
 

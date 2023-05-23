@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-export const ABBY_BASE_URL = "https://tryabby.dev/";
+export const ABBY_BASE_URL = "https://tryabby.com/";
 
 export type AbbyEvent = z.infer<typeof abbyEventSchema>;
 

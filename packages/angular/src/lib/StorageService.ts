@@ -3,7 +3,7 @@ import { getABStorageKey, getFFStorageKey } from "./shared";
 export interface IStorageService {
   get(projectId: string, key: string): string | null;
   set(projectId: string, key: string, value: string): void;
-  // remove(projectId: string, key: string): void;
+  remove(projectId: string, key: string): void;
 }
 
 class ABStorageService implements IStorageService {
@@ -25,7 +25,6 @@ class ABStorageService implements IStorageService {
   }
 
   set(projectId: string, testName: string, value: string): void {
-    // Cookie.set(getABStorageKey(projectId, testName), value);
     const token = getABStorageKey(projectId, testName);
     document.cookie = `${token}=${value}`;
   }
