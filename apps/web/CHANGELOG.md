@@ -1,5 +1,14 @@
 # web
 
+## 0.2.19
+
+### Patch Changes
+
+- Updated dependencies
+  - @tryabby/core@3.4.0
+  - @tryabby/devtools@3.3.0
+  - @tryabby/next@3.4.0
+
 ## 0.2.18
 
 ### Patch Changes

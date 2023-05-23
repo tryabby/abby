@@ -1,5 +1,16 @@
 # @tryabby/react
 
+## 3.4.0
+
+### Minor Changes
+
+- move shared package content to @tryabby/core
+
+### Patch Changes
+
+- Updated dependencies
+  - @tryabby/core@3.4.0
+
 ## 3.3.1
 
 ### Patch Changes
