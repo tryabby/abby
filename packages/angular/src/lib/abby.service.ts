@@ -75,13 +75,14 @@ export class AbbyService<
   public getVariant<T extends TestName>(testName: T): Observable<string> {
     this.log(`getVariant(${testName})`);
 
-    const variant = this.abby.getTestVariant(testName);
-
-    this.selectedVariants[testName] = variant;
-    this.log("Variante = " + variant);
-    this.log(this.selectedVariants);
-
-    return of(variant);
+    return this.resolveData().pipe(
+      map((data) => {
+        const variant = this.abby.getTestVariant(testName);
+        this.selectedVariants[testName] = variant;
+        this.log(`getVariant(${testName}) =>`, variant);
+        return variant;
+      })
+    );
   }
 
   public onAct(testName: string): void {
