@@ -1,4 +1,4 @@
-import { type AbbyDataResponse } from "shared";
+import { type AbbyDataResponse } from "@tryabby/core";
 import { type AbbyConfig } from "./index";
 
 // taken from https://stackoverflow.com/questions/52489261/typescript-can-i-define-an-n-length-tuple-type

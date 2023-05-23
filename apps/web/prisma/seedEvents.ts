@@ -1,5 +1,5 @@
 import { PrismaClient, Prisma } from "@prisma/client";
-import { AbbyEventType } from "shared";
+import { AbbyEventType } from "@tryabby/core";
 
 const prisma = new PrismaClient();
 

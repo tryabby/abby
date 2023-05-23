@@ -1,5 +1,11 @@
 # @tryabby/devtools
 
+## 3.2.2
+
+### Patch Changes
+
+- refactor shard package
+
 ## 3.2.1
 
 ### Patch Changes
