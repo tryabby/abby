@@ -76,12 +76,9 @@ export class AbbyService<
     this.log(`getVariant(${testName})`);
 
     return this.resolveData().pipe(
-      map((data) => {
-        const variant = this.abby.getTestVariant(testName);
-        this.selectedVariants[testName] = variant;
-        this.log(`getVariant(${testName}) =>`, variant);
-        return variant;
-      })
+      map((data) => this.abby.getTestVariant(testName)),
+      tap((variant) => (this.selectedVariants[testName] = variant)),
+      tap((variant) => this.log(`getVariant(${testName}) =>`, variant))
     );
   }
 
