@@ -19,8 +19,8 @@
   "files": [
     "dist"
   ],
-  "main": "./dist/esm2020/index.mjs",
-  "module": "./dist/esm2020/index.mjs",
+  "main": "./dist/esm2020/tryabby-angular.mjs",
+  "module": "./dist/esm2020/tryabby-angular.mjs",
   "types": "./dist/index.d.ts",
   "devDependencies": {
     "@angular-devkit/build-angular": "^15.2.1",
