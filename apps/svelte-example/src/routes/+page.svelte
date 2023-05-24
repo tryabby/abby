@@ -23,8 +23,3 @@
 {#if $serverFeatureFlag}
 	If you see this text the server side flag is enabled
 {/if}
-
-<style lang="postcss">
-	:global(html) {
-	}
-</style>
