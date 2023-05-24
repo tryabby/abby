@@ -1,5 +1,5 @@
 import { ABBY_BASE_URL } from "./constants";
-import type { AbbyEventType, AbbyEvent, AbbyDataResponse } from "..";
+import type { AbbyEventType, AbbyEvent, AbbyDataResponse } from "./index";
 export abstract class HttpService {
   static async getProjectData({
     projectId,

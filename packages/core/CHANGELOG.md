@@ -1,5 +1,17 @@
 # @tryabby/core
 
+## 3.4.0
+
+### Minor Changes
+
+- move shared package content to @tryabby/core
+
+## 3.3.1
+
+### Patch Changes
+
+- refactor shard package
+
 ## 3.3.0
 
 ### Minor Changes

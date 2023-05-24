@@ -28,6 +28,7 @@ type Limit = {
 
 export const getLimitByPlan = (plan: PlanName | null): Limit => {
   switch (plan) {
+    case "STARTUP_LIFETIME":
     case "STARTUP":
       return {
         eventsPerMonth: 10_000,

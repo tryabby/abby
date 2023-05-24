@@ -1,5 +1,5 @@
-import { TestStorageService } from "../lib/StorageService";
-import { HttpService, AbbyEventType } from "shared";
+import { TestStorageService } from "$lib/StorageService";
+import { HttpService, AbbyEventType } from "@tryabby/core";
 import { createAbby } from "../lib/createAbby";
 import {
   it,

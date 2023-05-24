@@ -4,10 +4,10 @@ import {
   createAbby as baseCreateAbby,
   withDevtoolsFunction,
 } from "@tryabby/react";
-import { AbbyDataResponse, getABStorageKey } from "shared";
+import { AbbyDataResponse, getABStorageKey } from "@tryabby/core";
 import type { F } from "ts-toolbelt";
 import { ABBY_DATA_KEY, withAbby } from "./withAbby";
-import { HttpService } from "shared/src/http";
+import { HttpService } from "@tryabby/core";
 import type { NextMiddleware, NextRequest, NextResponse } from "next/server";
 import Cookie from "js-cookie";
 import type { NextApiHandler, NextApiRequest, NextApiResponse } from "next";

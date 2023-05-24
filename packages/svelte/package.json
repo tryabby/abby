@@ -1,6 +1,7 @@
 {
 	"name": "@tryabby/svelte",
-	"version": "0.1.2",
+	"version": "0.2.0",
+	"main": "dist/index.js",
 	"homepage": "https://docs.tryabby.dev",
 	"type": "module",
 	"files": [
@@ -50,7 +51,6 @@
 		"prettier": "^2.8.8",
 		"prettier-plugin-svelte": "^2.10.0",
 		"publint": "^0.1.11",
-		"shared": "workspace:*",
 		"svelte": "^3.55.1",
 		"svelte-check": "^2.10.3",
 		"tslib": "^2.5.0",

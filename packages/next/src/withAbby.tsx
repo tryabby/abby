@@ -5,9 +5,9 @@ import type {
 } from "next/dist/shared/lib/utils";
 import { AbbyConfig } from "@tryabby/react";
 import { NextRouter } from "next/router";
-import { HttpService } from "shared/src/http";
+import { HttpService } from "@tryabby/core";
 import type { Abby } from "@tryabby/core";
-import { AbbyDataResponse } from "shared";
+import { AbbyDataResponse } from "@tryabby/core";
 import { PromiseCache } from "./cache";
 
 export const ABBY_DATA_KEY = "__ABBY_PROJECT_DATA__";

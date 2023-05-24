@@ -7,7 +7,7 @@ import InviteEmail, { Props as InviteEmailProps } from "./invite";
 const transporter = createTransport({
   pool: true,
   url: env.EMAIL_SERVER,
-  from: "A/BBY <no-reply@tryabby.com>",
+  from: `A/BBY <${env.ABBY_FROM_EMAIL}>`,
 });
 
 export function sendInviteEmail(props: InviteEmailProps) {
@@ -15,7 +15,7 @@ export function sendInviteEmail(props: InviteEmailProps) {
 
   return transporter.sendMail({
     to: props.invitee.email,
-    from: "A/BBY <no-reply@tryabby.com>",
+    from: `A/BBY <${env.ABBY_FROM_EMAIL}>`,
     subject: `Join ${props.inviter.name} on A/BBY`,
     html: email,
   });

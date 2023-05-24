@@ -1,5 +1,24 @@
 # @tryabby/next
 
+## 3.4.0
+
+### Minor Changes
+
+- move shared package content to @tryabby/core
+
+### Patch Changes
+
+- Updated dependencies
+  - @tryabby/react@3.4.0
+
+## 3.3.1
+
+### Patch Changes
+
+- refactor shard package
+- Updated dependencies
+  - @tryabby/react@3.3.1
+
 ## 3.3.0
 
 ### Minor Changes

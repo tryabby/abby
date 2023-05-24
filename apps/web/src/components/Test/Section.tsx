@@ -1,6 +1,6 @@
 import { Event, Test } from "@prisma/client";
 import { ReactNode, useId, useState } from "react";
-import { AbbyEventType } from "shared";
+import { AbbyEventType } from "@tryabby/core";
 import { Serves } from "./Serves";
 import { Metrics } from "./Metrics";
 import Weights from "./Weights";
