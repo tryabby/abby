@@ -1,6 +1,6 @@
 {
   "name": "@tryabby/devtools",
-  "version": "3.2.1",
+  "version": "3.3.0",
   "type": "module",
   "files": [
     "dist"
@@ -37,7 +37,6 @@
     "@types/mousetrap": "^1.6.11",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "shared": "workspace:^",
     "storybook": "^7.0.5",
     "svelte": "^3.55.1",
     "svelte-check": "^2.10.3",

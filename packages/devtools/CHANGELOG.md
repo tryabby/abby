@@ -1,5 +1,17 @@
 # @tryabby/devtools
 
+## 3.3.0
+
+### Minor Changes
+
+- move shared package content to @tryabby/core
+
+## 3.2.2
+
+### Patch Changes
+
+- refactor shard package
+
 ## 3.2.1
 
 ### Patch Changes

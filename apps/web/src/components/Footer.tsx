@@ -1,7 +1,7 @@
 import { Github } from "lucide-react";
 import { BsDiscord } from "react-icons/bs";
 import Link from "next/link";
-import { DOCS_URL } from "shared";
+import { DOCS_URL } from "@tryabby/core";
 
 export function Footer() {
   return (

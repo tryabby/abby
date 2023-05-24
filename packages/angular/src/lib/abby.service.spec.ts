@@ -11,7 +11,7 @@ import { Component, Injectable } from "@angular/core";
 import { TestStorageService } from "./StorageService";
 // import { TestStorageService } from "./StorageService";
 // import { HttpService } from "shared/src/http";
-// import { AbbyEventType } from "shared";
+// import { AbbyEventType } from "@tryabby/core";
 // import { Routes } from "@angular/router";
 // import { forkJoin } from "rxjs";
 

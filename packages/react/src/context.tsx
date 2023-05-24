@@ -6,9 +6,9 @@ import React, {
   useState,
   type PropsWithChildren,
 } from "react";
-import { HttpService } from "shared/src/http";
-import { ABBY_INSTANCE_KEY } from "shared/src/constants";
-import { AbbyDataResponse, AbbyEventType } from "shared/src/types";
+import { HttpService } from "@tryabby/core";
+import { ABBY_INSTANCE_KEY } from "@tryabby/core";
+import { AbbyDataResponse, AbbyEventType } from "@tryabby/core";
 import { F } from "ts-toolbelt";
 import { FlagStorageService, TestStorageService } from "./StorageService";
 import type { AbbyDevtoolProps, DevtoolsFactory } from "@tryabby/devtools";

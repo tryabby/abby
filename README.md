@@ -1,16 +1,28 @@
-# A/BBY
+![A/BBY Banner](https://github.com/tryabby/abby/assets/20679094/dd415956-25b4-4528-95fb-f010b21011c9)
 
-A/BBY is a open-source project that aims to provide a simple and easy to use interface for the [A/B Testing](https://en.wikipedia.org/wiki/A/B_testing) process. It aims to provide a simple and easy to use solution for developers with simple analytics and a simple interface for the end user.
+# About A/BBY
+
+A/BBY is a open source feature management and A/B testing platform. It is designed to be easy to use and easy to integrate into your existing applications. It aims to improve the developer experience by providing a simple and statically typed API for feature management and A/B testing.
+
+Besides its official SDKS it also offers a friendly and easy to understand Dashboard for the non-developers in your team.
+
+A/BBY focuses on privacy. This means it won't track any user data and uses no marketing cookies. It also doesn't use any third party services.
+You can self host it or use the hosted version available at [tryabby.com](https://www.tryabby.com).
 
 
 ## Getting Started
+
 *TL;DR:*
 ```
+git clone git@github.com:tryabby/abby.git
 pnpm i
-docker-compose up
+pnpm db:start
 pnpm db:migrate
+cp apps/web/.env.example apps/web/.env
 pnpm dev
 ```
+
+Now open your browser at http://localhost:3000 and have fun :)
 
 ## What's inside?
 
@@ -20,9 +32,11 @@ This turborepo uses [pnpm](https://pnpm.io) as a package manager. It includes th
 
 - `docs`: a [Next.js](https://nextjs.org/) with [Nextra](https://nextra.site/)
 - `web`: another [Next.js](https://nextjs.org/) app using the [T3 Stack](https://create.t3.gg/)
-- `ui`: a stub React component library shared by both `web` and `docs` applications
-- `eslint-config-custom`: `eslint` configurations (includes `eslint-config-next` and `eslint-config-prettier`)
-- `tsconfig`: `tsconfig.json`s used throughout the monorepo
+- `core`: The A/BBY core JavaScript SDK which all other JS SDKs are based on
+- `react`: The A/BBY React SDK
+- `next`: The A/BBY Next.js SDK
+- `angular`: The A/BBY Angular SDK
+- `svelte`: The A/BBY Svelte SDK
 
 Each package/app is 100% [TypeScript](https://www.typescriptlang.org/).
 
@@ -33,43 +47,6 @@ This turborepo has some additional tools already setup for you:
 - [TypeScript](https://www.typescriptlang.org/) for static type checking
 - [ESLint](https://eslint.org/) for code linting
 - [Prettier](https://prettier.io) for code formatting
-
-### Build
-
-To build all apps and packages, run the following command:
-
-```
-cd my-turborepo
-pnpm run build
-```
-
-### Develop
-
-To develop all apps and packages, run the following command:
-
-```
-cd my-turborepo
-pnpm run dev
-```
-
-### Remote Caching
-
-Turborepo can use a technique known as [Remote Caching](https://turbo.build/repo/docs/core-concepts/remote-caching) to share cache artifacts across machines, enabling you to share build caches with your team and CI/CD pipelines.
-
-By default, Turborepo will cache locally. To enable Remote Caching you will need an account with Vercel. If you don't have an account you can [create one](https://vercel.com/signup), then enter the following commands:
-
-```
-cd my-turborepo
-pnpm dlx turbo login
-```
-
-This will authenticate the Turborepo CLI with your [Vercel account](https://vercel.com/docs/concepts/personal-accounts/overview).
-
-Next, you can link your Turborepo to your Remote Cache by running the following command from the root of your turborepo:
-
-```
-pnpm dlx turbo link
-```
 
 ## Useful Links
 

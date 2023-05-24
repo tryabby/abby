@@ -1,5 +1,5 @@
 import { prisma } from "server/db/client";
-import { AbbyEvent } from "shared";
+import { AbbyEvent } from "@tryabby/core";
 
 export abstract class InviteService {
   static async acceptInvite(inviteId: string, userId: string) {

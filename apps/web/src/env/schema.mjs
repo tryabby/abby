@@ -27,6 +27,7 @@ export const serverSchema = z.object({
   LOGSNAG_API_KEY: z.string().min(1),
   REDIS_URL: z.string().url(),
   ABBY_FROM_EMAIL: z.string().email(),
+  GITHUB_OAUTH_TOKEN: z.string().optional(),
 });
 
 /**

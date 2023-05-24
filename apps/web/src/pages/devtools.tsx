@@ -1,6 +1,6 @@
 import { MarketingLayout } from "components/MarketingLayout";
 import { NextPageWithLayout } from "./_app";
-import { HttpService } from "shared/src/http";
+import { HttpService } from "@tryabby/core";
 
 import { createAbby } from "@tryabby/next";
 import abbyDevtools from "@tryabby/devtools";
