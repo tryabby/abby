@@ -1,6 +1,6 @@
 {
   "name": "@tryabby/angular",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
@@ -16,6 +16,12 @@
   "dependencies": {
     "tslib": "^2.3.0"
   },
+  "files": [
+    "dist"
+  ],
+  "main": "./dist/esm2020/index.mjs",
+  "module": "./dist/esm2020/index.mjs",
+  "types": "./dist/index.d.ts",
   "devDependencies": {
     "@angular-devkit/build-angular": "^15.2.1",
     "@angular/animations": "^15.2.0",

@@ -1,5 +1,9 @@
 # web
 
+## 0.2.20
+
+- added angular code snippets
+
 ## 0.2.19
 
 ### Patch Changes

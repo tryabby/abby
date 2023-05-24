@@ -39,7 +39,7 @@ export type CodeSnippetData = {
   html: string;
 };
 
-export type Integrations = "react" | "nextjs" | "svelte";
+export type Integrations = "react" | "nextjs" | "svelte" | "angular";
 
 export async function generateCodeSnippets({
   projectId,
@@ -88,7 +88,22 @@ export async function generateCodeSnippets({
     `import { createAbby } from "@tryabby/svelte"; 
     
     export const { useAbby, AbbyProvider, useFeatureFlag, withAbby } = createAbby(${baseConfig})`
-  )
+  );
+
+  const angularCode = formatCode(
+    `import { AbbyModule } from "@tryabby/angular"; 
+
+    @NgModule({
+      declarations: [
+        // your declarations
+      ],
+      imports: [
+        AbbyModule.forRoot(${baseConfig})
+      ],
+      bootstrap: [AppComponent]
+    })
+    export class AppModule {}`
+  );
 
   const highlighter = await getHighlighter({
     // it is in-fact a proper theme, but the types are wrong
@@ -115,8 +130,14 @@ export async function generateCodeSnippets({
     svelte: {
       code: svelteCode,
       html: highlighter.codeToHtml(svelteCode, {
-        lang: "svelte"
+        lang: "svelte",
       }),
-    }
+    },
+    angular: {
+      code: angularCode,
+      html: highlighter.codeToHtml(angularCode, {
+        lang: "tsx",
+      }),
+    },
   };
 }

@@ -1,10 +1,15 @@
 import { Inject, Injectable } from "@angular/core";
-import { AbbyConfig, ABConfig, Abby } from "@tryabby/core";
+import {
+  AbbyConfig,
+  ABConfig,
+  Abby,
+  AbbyEventType,
+  HttpService,
+} from "@tryabby/core";
 import { FlagStorageService, TestStorageService } from "./StorageService";
 import { from, map, Observable, of, shareReplay, tap } from "rxjs";
 import { F } from "ts-toolbelt";
 import { Route } from "@angular/router";
-import { AbbyEventType, HttpService } from "./shared";
 
 type LocalData<
   FlagName extends string = string,
@@ -75,19 +80,11 @@ export class AbbyService<
   public getVariant<T extends TestName>(testName: T): Observable<string> {
     this.log(`getVariant(${testName})`);
 
-    const variant = this.abby.getTestVariant(testName);
-
-    this.selectedVariants[testName] = variant;
-    this.log("Variante = " + variant);
-    this.log(this.selectedVariants);
-
-    return of(variant);
-
-    // return this.resolveData().pipe(
-    //   map((data) => data.tests[testName]?.selectedVariant ?? ""),
-    //   tap((variant) => (this.selectedVariants[testName] = variant)),
-    //   tap((variant) => this.log(`getVariant(${testName}) =>`, variant))
-    // );
+    return this.resolveData().pipe(
+      map((data) => this.abby.getTestVariant(testName)),
+      tap((variant) => (this.selectedVariants[testName] = variant)),
+      tap((variant) => this.log(`getVariant(${testName}) =>`, variant))
+    );
   }
 
   public onAct(testName: string): void {
