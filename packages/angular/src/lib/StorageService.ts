@@ -1,4 +1,4 @@
-import { getABStorageKey, getFFStorageKey } from "./shared";
+import { getABStorageKey, getFFStorageKey } from "@tryabby/core";
 
 export interface IStorageService {
   get(projectId: string, key: string): string | null;

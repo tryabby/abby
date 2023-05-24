@@ -1,10 +1,15 @@
 import { Inject, Injectable } from "@angular/core";
-import { AbbyConfig, ABConfig, Abby } from "@tryabby/core";
+import {
+  AbbyConfig,
+  ABConfig,
+  Abby,
+  AbbyEventType,
+  HttpService,
+} from "@tryabby/core";
 import { FlagStorageService, TestStorageService } from "./StorageService";
 import { from, map, Observable, of, shareReplay, tap } from "rxjs";
 import { F } from "ts-toolbelt";
 import { Route } from "@angular/router";
-import { AbbyEventType, HttpService } from "./shared";
 
 type LocalData<
   FlagName extends string = string,
