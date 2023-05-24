@@ -11,7 +11,7 @@ import Image from "next/image";
 import abbyScreenshot from "../../public/screenshot.png";
 import Link from "next/link";
 import { signIn } from "next-auth/react";
-import { DOCS_URL } from "shared";
+import { DOCS_URL } from "@tryabby/core";
 import { Footer } from "components/Footer";
 import { NextPageWithLayout } from "./_app";
 import { MarketingLayout } from "components/MarketingLayout";

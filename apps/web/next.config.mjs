@@ -34,7 +34,7 @@ const config = {
   reactStrictMode: true,
   swcMinify: true,
   pageExtensions: ["ts", "tsx", "js", "jsx", "md", "mdx"],
-  transpilePackages: ["shared", "lodash-es"],
+  transpilePackages: ["lodash-es"],
   i18n: {
     locales: ["en"],
     defaultLocale: "en",

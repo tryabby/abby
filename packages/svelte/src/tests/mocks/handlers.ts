@@ -1,5 +1,5 @@
 import { rest } from "msw";
-import { type AbbyDataResponse, ABBY_BASE_URL } from "shared";
+import { type AbbyDataResponse, ABBY_BASE_URL } from "@tryabby/core";
 
 export const handlers = [
   rest.get(`${ABBY_BASE_URL}api/dashboard/:projectId/data`, (req, res, ctx) => {

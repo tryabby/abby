@@ -10,6 +10,7 @@ import { projectUserRouter } from "./project-user";
 import { testRouter } from "./tests";
 import { userRouter } from "./user";
 import { couponRouter } from "./coupons";
+import { miscRouter } from "./misc";
 
 export const appRouter = router({
   example: exampleRouter,
@@ -22,7 +23,8 @@ export const appRouter = router({
   tests: testRouter,
   flags: flagRouter,
   environments: environmentRouter,
-  coupons: couponRouter
+  coupons: couponRouter,
+  misc: miscRouter,
 });
 
 // export type definition of API

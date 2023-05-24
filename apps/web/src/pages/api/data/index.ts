@@ -1,6 +1,6 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import { EventService } from "server/services/EventService";
-import { AbbyEventType, abbyEventSchema } from "shared";
+import { AbbyEventType, abbyEventSchema } from "@tryabby/core";
 import NextCors from "nextjs-cors";
 import isBot from "isbot";
 

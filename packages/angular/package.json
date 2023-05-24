@@ -1,12 +1,13 @@
 {
   "name": "@tryabby/angular",
-  "version": "0.0.2",
+  "version": "0.1.0",
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
     "build": "ng-packagr -p ng-package.json",
     "watch": "ng build --watch --configuration development",
-    "test": "ng test --no-watch --no-progress"
+    "test": "ng test --no-watch --no-progress",
+    "prepare": "pnpm run build"
   },
   "peerDependencies": {
     "@angular/common": "^15.2.0",
@@ -39,7 +40,6 @@
     "karma-junit-reporter": "^2.0.1",
     "ng-packagr": "^15.2.2",
     "rxjs": "~7.8.0",
-    "shared": "workspace:*",
     "ts-toolbelt": "^9.6.0",
     "typescript": "~4.9.4",
     "zod": "^3.21.4",

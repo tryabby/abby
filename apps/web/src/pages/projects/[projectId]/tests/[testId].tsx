@@ -34,7 +34,7 @@ import {
 import colors from "tailwindcss/colors";
 import { useMemo } from "react";
 import { getColorByIndex } from "lib/graphs";
-import { AbbyEventType } from "shared";
+import { AbbyEventType } from "@tryabby/core";
 
 const INTERVAL_PARAM_NAME = "interval";
 
