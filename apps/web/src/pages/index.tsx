@@ -60,11 +60,11 @@ const Home: NextPageWithLayout<
           <div className="grid grid-cols-1 gap-8 md:grid-cols-2">
             <Feature
               icon={GiPadlock}
-              title="Security"
+              title="Privacy First"
               subtitle="Avoid big companies that track you and sell your data"
             >
-              A/BBY is all about privacy and transparency. You and your users
-              will thank you.
+              A/BBY is all about privacy and transparency. We prove this by
+              being Open-Source. You and your users will thank you.
             </Feature>
             <Feature
               icon={BsCodeSlash}
@@ -209,7 +209,6 @@ export const getStaticProps = async () => {
       },
     ],
   });
-
 
   return {
     props: {

@@ -28,11 +28,14 @@ export function BlogLayout({ children, seoTitle, meta }: Props) {
           {children}
         </section>
 
-        <div className="mx-auto mt-8 max-w-2xl rounded-lg bg-white p-4 text-lg font-semibold shadow-lg">
-          A/BBY is a SaaS tool for developers to streamline A/B testing and
-          feature flagging. Make data-driven decisions and improve user
-          experience with ease.
-          <SignupButton className="mt-2" />
+        <div className="mx-auto mt-12 w-full rounded-lg bg-white p-4 text-center text-lg font-semibold leading-loose shadow-lg">
+          A/BBY is an Open Source SaaS for developers to streamline A/B testing
+          and feature flagging.
+          <br />
+          Make data-driven decisions and improve user experience with ease.
+          <br />
+          Made for developers, by developers.
+          <SignupButton className="mt-2 px-3 py-3 text-lg" />
         </div>
       </main>
     </MarketingLayout>

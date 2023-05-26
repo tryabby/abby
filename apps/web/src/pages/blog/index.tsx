@@ -56,7 +56,7 @@ export const getStaticProps: GetStaticProps = async () => {
     path.resolve(process.cwd(), "src", "pages", "blog")
   );
 
-  const posts: Array<{ title: string; imageUrl: string }> = await Promise.all(
+  const posts: Array<PostMeta> = await Promise.all(
     files
       .filter((file) => file.endsWith(".mdx"))
       .map(async (post) => {
@@ -69,7 +69,9 @@ export const getStaticProps: GetStaticProps = async () => {
   );
 
   return {
-    props: { posts },
+    props: {
+      posts: posts.sort((a, b) => b.publishedAt.localeCompare(a.publishedAt)),
+    },
   };
 };
 
