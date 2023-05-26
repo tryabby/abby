@@ -2,16 +2,19 @@ import { MarketingLayout } from "components/MarketingLayout";
 import { SignupButton } from "components/SignupButton";
 import { AsyncCodeExample } from "components/AsyncCodeExample";
 import { DOCS_URL } from "@tryabby/core";
+import Image from "next/image";
+import CoverImage from "../../public/abby_next.png";
 
 # A/BBY + Next.js
 
-<img
-  src="/abby_next.png"
+<Image
+  src={CoverImage}
   className="mx-auto rounded-sm shadow-md"
   alt="A/BBY + Next.js Logos"
+  priority
 />
 
-A/BBY is a next-gen tool for A/B Testing and Feature Flags.
+A/BBY is an Open-Source tool for A/B Testing and Feature Flags.
 The motivation behind building A/BBY was to provide a simple and easy to use tool
 for A/B Testing and Feature Flags that flawlessly integrates with Next.js.
 
@@ -32,7 +35,7 @@ typed and can be installed with your favorite package manager.
 
 **Example:**
 
-<div className="not-prose">
+<div className="not-prose mx-auto max-w-5xl">
   <AsyncCodeExample />
   <div className="flex items-center">
     <a
@@ -50,11 +53,18 @@ There are many possible ways of creating pages in Next.js. You can render the pa
 or even statically. A/BBY works with all of the ways and makes sure that the A/B Testing and Feature Flags are
 applied to the pages correctly. All of this while keeping the Developer Experience as good as possible.
 
-<SignupButton />
-
 export default ({ children }) => (
   <MarketingLayout seoTitle="A/BBY & Next.js" isMarkdown>
     {children}
+    <div className="mx-auto mt-12 w-full rounded-lg bg-white p-4 text-center text-lg font-semibold leading-loose shadow-lg">
+      A/BBY is an Open Source SaaS for developers to streamline A/B testing and
+      feature flagging.
+      <br />
+      Make data-driven decisions and improve user experience with ease.
+      <br />
+      Made for developers, by developers.
+      <SignupButton className="mt-2 px-3 py-3 text-lg" />
+    </div>
   </MarketingLayout>
 );
 

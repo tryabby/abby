@@ -1,7 +1,6 @@
 import { OnInit, ViewChild } from "@angular/core";
-import { ElementRef } from "@angular/core";
-import { Component } from "@angular/core";
-import { AbbyDevtoolProps, DevtoolsFactory } from "@tryabby/devtools";
+import { ElementRef, Component } from "@angular/core";
+import { AbbyDevtoolProps } from "@tryabby/devtools";
 import { AbbyService } from "./abby.service";
 import abbyDevTool from "@tryabby/devtools";
 

@@ -24,6 +24,8 @@ type AppPropsWithLayout = AppProps & {
   Component: NextPageWithLayout;
 };
 
+const seoDescription = `Discover the benefits of using A/BBY, the open-source feature management and A/B testing SaaS. Increase transparency, collaboration, and trust. Try it now!`;
+
 const MyApp: AppType<{ session: Session | null }> = ({
   Component,
   pageProps: { session, __ABBY_PROJECT_DATA__, ...pageProps },
@@ -42,16 +44,15 @@ const MyApp: AppType<{ session: Session | null }> = ({
             <SessionProvider session={session}>
               <main className={`font-sans`}>
                 <DefaultSeo
-                  defaultTitle="A/BBY - A/B Testing & Feature Flags Made Easy"
+                  defaultTitle="A/BBY - Open Source A/B Testing & Feature Flags"
                   titleTemplate="%s | A/BBY"
-                  description="A/BBY is a SaaS tool for developers to streamline A/B testing and feature flagging. Make data-driven decisions and improve user experience with ease."
+                  description={seoDescription}
                   canonical={currentPageUrl}
                   openGraph={{
                     url: currentPageUrl,
                     title: "A/BBY",
                     type: "website",
-                    description:
-                      "A/BBY is a SaaS tool for developers to streamline A/B testing and feature flagging. Make data-driven decisions and improve user experience with ease.",
+                    description: seoDescription,
                     images: [
                       {
                         url: "https://www.tryabby.com/og.png",

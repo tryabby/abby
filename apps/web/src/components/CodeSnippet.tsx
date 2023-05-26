@@ -1,8 +1,8 @@
 import clsx from "clsx";
 import { useState } from "react";
 import toast from "react-hot-toast";
-import { FaCopy, FaReact } from "react-icons/fa";
-import { TbBrandSvelte } from "react-icons/tb";
+import { FaAngular, FaCopy, FaReact } from "react-icons/fa";
+import { TbBrandAngular, TbBrandSvelte } from "react-icons/tb";
 import { TbBrandNextjs } from "react-icons/tb";
 import type { CodeSnippetData, Integrations } from "utils/snippets";
 import { trpc } from "utils/trpc";
@@ -25,8 +25,12 @@ const INTEGRATIONS: Record<
   },
   svelte: {
     name: "Svelte",
-    icon: TbBrandSvelte
-  }
+    icon: TbBrandSvelte,
+  },
+  angular: {
+    name: "Angular",
+    icon: TbBrandAngular,
+  },
 };
 
 type Props = {
@@ -58,7 +62,7 @@ export function BaseCodeSnippet(props: Record<Integrations, CodeSnippetData>) {
               role="button"
               onClick={() => setCurrentIntegration(key as Integrations)}
               className={clsx(
-                "flex cursor-pointer items-center py-2 px-3 font-semibold text-white transition-colors ease-in-out hover:bg-gray-900",
+                "flex cursor-pointer items-center px-3 py-2 font-semibold text-white transition-colors ease-in-out hover:bg-gray-900",
                 key === currentIntegration && "bg-gray-900"
               )}
             >
@@ -73,7 +77,7 @@ export function BaseCodeSnippet(props: Record<Integrations, CodeSnippetData>) {
         title="Copy code snippet"
         aria-label="Copy code snippet"
         onClick={onCopyClick}
-        className="absolute top-24 right-6 hidden rounded-lg border border-gray-300 p-3 text-white transition-colors ease-in-out hover:bg-gray-800 active:bg-gray-700 md:block"
+        className="absolute right-6 top-24 hidden rounded-lg border border-gray-300 p-3 text-white transition-colors ease-in-out hover:bg-gray-800 active:bg-gray-700 md:block"
       >
         <FaCopy />
       </button>
