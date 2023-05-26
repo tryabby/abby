@@ -1,0 +1,62 @@
+import { BlogLayout } from "components/BlogLayout";
+
+export const meta = {
+  title:
+    "Why We Open-Sourced A/BBY: The Benefits of Using an Open-Source Solution",
+  imageUrl: "/img/abby-open-source.png",
+  publishedAt: "2023-05-26",
+};
+
+# Ideen
+
+# Why We Open-Sourced A/BBY: The Benefits of Using an Open-Source Solution
+
+## Introduction
+
+We recently made the decision to open-source our software solution, A/BBY.
+This was what we intended A/BBY to be in the first place when it was built: Open Source and transparent.
+In this blog post, we will discuss our reasoning behind open-sourcing A/BBY and explore the benefits of using an open-source solution.
+
+## Increased Transparency
+
+The main reason why we decided to open-source A/BBY was increased transparency.
+With closed-source software, users have no way of knowing what is happening behind the scenes.
+They have to trust that the developers are making choices that are in their best interest.
+With open-source software, users can view the source code and see exactly how the software works.
+This transparency can lead to increased trust between users and developers, as users can see that the software is doing what it claims to do.
+We always claimed that we care about privacy but the only way to _really_ prove this is by actually showing the code behind A/BBY!
+
+## Caring about Developers
+
+Besides privacy A/BBY always wanted to be one thing: The best A/B-Testing and Feature Management solution for Developers.
+This is quite a bold statement as devs have different opinions on what is good and was is bad.
+The only way to truly satisfy the needs of developers is by giving them the chance to tell us what they think about it, what they like and what they think could be improved.
+Or even more: to help us build the perfect solution by contributing.
+
+## Increased Collaboration
+
+By making our solution open-source, we are inviting developers from all over the world to contribute to the project.
+This increased collaboration can lead to faster development, better bug detection, and new feature implementations.
+We believe that by opening up our solution to the community, we can create a better product for our users.
+We are really looking forward to discussions about features and implementations as well bug reports (well obviously we don’t have any bugs at all 😉).
+
+## Self Hosting
+
+While A/BBY still and will always exist as a SaaS version at [https://tryabby.com](https://tryabby.com), it is now possible to **fully self host** A/BBY.
+This is a great solution if you just want to try out A/BBY locally or your restricted to use a SaaS by some policies.
+Self Hosting A/BBY allows you to keep all the data but also means that you need to provide a server.
+
+## Conclusion
+
+In conclusion, we believe that open-sourcing A/BBY was the right decision for our company and our users.
+By doing so, we can encourage collaboration, increase transparency, and provide a self-hosted solution for our users.
+In addition, open-sourcing A/BBY allows us to tap into the vast pool of talent and knowledge that exists in the open-source community.
+This community can help us identify and fix bugs, suggest new features, and provide valuable feedback on how to improve A/BBY.
+Moreover, open-sourcing A/BBY allows us to build a stronger relationship with our users by giving them the opportunity to contribute to the product's development.
+This can help us create a more engaged user base and increase customer loyalty. We are excited to see how the open-source community will help us improve A/BBY and create a better product for everyone.
+
+export default ({ children }) => (
+  <BlogLayout seoTitle="A/BBY goes Open Source" meta={meta}>
+    {children}
+  </BlogLayout>
+);
