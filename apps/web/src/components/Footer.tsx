@@ -3,6 +3,8 @@ import { BsDiscord } from "react-icons/bs";
 import Link from "next/link";
 import { DOCS_URL } from "@tryabby/core";
 
+const GITHUB_URL = "https://github.com/tryabby/abby";
+
 export function Footer() {
   return (
     <footer className="bg-gray-900 text-white">
@@ -11,8 +13,8 @@ export function Footer() {
           <div>
             <h1 className="mb-3 text-2xl font-bold">A/BBY</h1>
             <h2 className="mb-8 text-gray-400">
-              A simple and easy to use A/B testing & Feature Flags tool for
-              developers.
+              A simple and easy to use Open-Source A/B testing & Feature Flags
+              tool for developers.
             </h2>
           </div>
           <div className="flex flex-col gap-y-4 md:gap-0">
@@ -29,6 +31,18 @@ export function Footer() {
             >
               Next.js
             </Link>
+            <Link
+              href={`${DOCS_URL}integrations/svelte`}
+              className="text-gray-400 transition-colors duration-200 hover:text-pink-300"
+            >
+              Svelte
+            </Link>
+            <Link
+              href={`${DOCS_URL}integrations/angular`}
+              className="text-gray-400 transition-colors duration-200 hover:text-pink-300"
+            >
+              Angular
+            </Link>
           </div>
           <div className="flex flex-col gap-y-4 md:gap-0">
             <h1 className="mb-2 text-2xl font-bold md:mb-3">Links</h1>
@@ -43,6 +57,12 @@ export function Footer() {
               className="text-gray-400 transition-colors duration-200 hover:text-pink-300"
             >
               Documentation
+            </Link>
+            <Link
+              href={GITHUB_URL}
+              className="text-gray-400 transition-colors duration-200 hover:text-pink-300"
+            >
+              Github
             </Link>
             <Link
               href="https://discord.gg/nk7wKf7Pv2"
@@ -78,7 +98,7 @@ export function Footer() {
         <div className="flex flex-col justify-between gap-y-4 border-t border-gray-600 px-6 py-6 text-gray-400 sm:flex-row md:px-16">
           <p>© {new Date().getFullYear()} A/BBY. All rights reserved.</p>
           <div className="flex items-center space-x-4">
-            <a href="https://github.com/tryabby">
+            <a href={GITHUB_URL}>
               <Github className="transition-colors duration-200 hover:text-pink-300" />
             </a>
             <a href="https://discord.gg/nk7wKf7Pv2">

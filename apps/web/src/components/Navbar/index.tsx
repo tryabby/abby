@@ -167,7 +167,7 @@ export function Navbar({ isInverted }: { isInverted?: boolean }) {
       <div className="flex items-center space-x-3">
         <Link
           href="https://github.com/tryabby/abby"
-          className="hidden h-full items-center justify-center space-x-2 rounded-lg border-2 border-pink-600 px-4 py-2 font-medium transition-colors ease-in-out hover:bg-pink-300/20 lg:flex"
+          className="border- hidden h-full items-center justify-center space-x-2 rounded-lg border-2 border-black px-4 py-2 font-medium transition-colors duration-200 ease-out hover:bg-pink-300/50 lg:flex"
         >
           <Star className="h-5 w-5" />
           <span>{isStarsLoading ? "0" : `${starsCount}`}</span>
