@@ -21,7 +21,6 @@ export class DevtoolsComponent implements OnInit {
     abbyDevTool.create({
       ...this.props,
       abby: abbyInstance,
-      target: this.devtoolsContainerRef,
     });
   }
 }
