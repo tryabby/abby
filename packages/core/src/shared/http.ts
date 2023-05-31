@@ -1,5 +1,7 @@
 import { ABBY_BASE_URL } from "./constants";
 import type { AbbyEventType, AbbyEvent, AbbyDataResponse } from "./index";
+import { fetch } from "cross-fetch";
+
 export abstract class HttpService {
   static async getProjectData({
     projectId,
@@ -12,8 +14,7 @@ export abstract class HttpService {
   }) {
     try {
       const res = await fetch(
-        `${url ?? ABBY_BASE_URL}api/dashboard/${projectId}/data${
-          environment ? `?environment=${environment}` : ""
+        `${url ?? ABBY_BASE_URL}api/dashboard/${projectId}/data${environment ? `?environment=${environment}` : ""
         }`
       );
 
@@ -52,6 +53,6 @@ export abstract class HttpService {
       body: JSON.stringify({ type, ...data }),
       // catch error and forget about them for now
       // TODO: add error debugging
-    }).catch(() => {});
+    }).catch(() => { });
   }
 }
