@@ -1,14 +1,13 @@
-import express from "express"
-// import { useFeatureFlag } from "./lib/abby.ts";
+import express, { NextFunction, Request, Response } from "express"
+import { featureFlagMiddleware } from "./express/abbyMiddleware.ts";
 
-console.log("hi")
 const app = express();
 const port = 3000;
 
+app.use("/", (req: Request, res: Response, next: NextFunction) => featureFlagMiddleware(req, res, "testAbby", next))
+
 app.get('/', async (req, res) => {
-    if (1) {
-        res.send("not enabled")
-    }
+    res.send("very nice content that needs to be protected")
 });
 
 app.listen(port, () => console.log(`Express app running on port ${port}!`));

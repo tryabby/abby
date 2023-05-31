@@ -11,12 +11,12 @@ export function createAbby<
         abbyConfig
     );
 
-    const useFeatureFlag = async <F extends NonNullable<ConfigType["flags"]>[number]>(
+    const getFeatureFlagValue = async <F extends NonNullable<ConfigType["flags"]>[number]>(
         name: F
-    ) => {   
-        console.log(2)
-        return true
+    ) => {
+        await abby.loadProjectData();
+        return abby.getFeatureFlag(name);
     };
 
-    return { useFeatureFlag }
+    return { getFeatureFlagValue }
 }
