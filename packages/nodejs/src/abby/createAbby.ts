@@ -1,6 +1,7 @@
 import { ABConfig, Abby, AbbyConfig, HttpService, ABBY_BASE_URL } from "@tryabby/core";
 import { F } from "ts-toolbelt"
 import { Request } from "express";
+import { TestStorageService } from "./StorageService.ts";
 
 export function createAbby<
     FlagName extends string,
@@ -12,19 +13,15 @@ export function createAbby<
         abbyConfig,
         {
             get: (key: string) => {
-                if (typeof window === "undefined") return null;
-                return "askdjsalj"
-                //   return TestStorageService.get(abbyConfig.projectId, key);
+                return TestStorageService.get(abbyConfig.projectId, key);
             },
             set: (key: string, value: any) => {
-                if (typeof window === "undefined") return;
-                //   TestStorageService.set(abbyConfig.projectId, key, value);
+
             },
         },
     );
 
     const getABTestValue = <T extends keyof Tests>(req: Request, name: T) => {
-        console.log(req)
         const value = abby.getTestVariant(name);
         return value;
     }

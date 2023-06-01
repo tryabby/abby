@@ -2,6 +2,7 @@
 //TODO fix eslint
 import { getFeatureFlagValue, getABTestValue } from "../abby/abby.ts";
 import { Express, NextFunction, Request, Response } from "express";
+import { setRequest } from "../abby/requestContext.ts";
 
 export const featureFlagMiddleware = async (req: Request, res: Response, name: string, next: NextFunction) => { //Todo fix types
     const flagValue = await getFeatureFlagValue(name as any); //type?
@@ -14,6 +15,7 @@ export const featureFlagMiddleware = async (req: Request, res: Response, name: s
 }
 
 export const AbTestMiddleware = (req: Request, res: Response, name: string, next: NextFunction) => {
+    setRequest(req)
     const value = getABTestValue(req, name as any);
     res.cookie("test", "5555")
     console.log(value);

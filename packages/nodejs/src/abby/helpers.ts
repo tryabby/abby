@@ -2,7 +2,7 @@ import { Request } from "express";
 
 /**
  * helper function to parse express cookie
- * @param req express Request object
+ * @param req express Request
  */
 export function parseCookies(req: Request) {
     const cookies = req.headers.cookie;
@@ -11,6 +11,5 @@ export function parseCookies(req: Request) {
         const parsedCookie = res.trim().split("=");
         cookieMap.set(parsedCookie[0], parsedCookie[1])
     })
-    console.log(cookieMap)
     return cookieMap;
 }
