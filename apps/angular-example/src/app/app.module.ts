@@ -26,14 +26,7 @@ import { FlagComponent } from './test_components/flag.component';
     AppRoutingModule,
     AbbyModule.forRoot(abby),
   ],
-  providers: [
-    {
-      provide: APP_INITIALIZER,
-      useFactory: (abby: Abby) => () => abby.init(),
-      deps: [Abby],
-      multi: true,
-    },
-  ],
+  providers: [],
   bootstrap: [AppComponent],
 })
 export class AppModule {}
