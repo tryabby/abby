@@ -2,7 +2,7 @@ import { Tab, Tabs, Callout } from "nextra-theme-docs";
 
 # Angular
 
-Our Angular integration works with Angular 15 or later. It works with SPAs as well as server side rendered apps.
+Our Angular integration works with Angular 15 or later.
 
 ### Installation
 
@@ -28,6 +28,9 @@ To get started make sure to install the package using your favorite package mana
 </Tabs>
 
 ### Usage
+<Callout>
+Make sure, that you have set skipLibCheck to true in your tsconfig
+</Callout>
 
 #### Create your Module
 
@@ -79,6 +82,8 @@ export class MyComponent {
   }
 }
 ```
+<Callout>
+For this Example "strictPropertyInitialization" has to be set to false in your tsconfig. Otherwise you have to initialize "footerVariant" with an default value.</Callout>
 
 #### Using Abby Directives
 
