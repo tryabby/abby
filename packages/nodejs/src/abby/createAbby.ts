@@ -16,7 +16,7 @@ export function createAbby<
                 return TestStorageService.get(abbyConfig.projectId, key);
             },
             set: (key: string, value: any) => {
-
+                TestStorageService.set(abbyConfig.projectId, key, value)
             },
         },
     );
