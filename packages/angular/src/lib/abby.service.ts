@@ -14,7 +14,7 @@ import {
   shareReplay,
   startWith,
   Subject,
-  switchMap,
+  switchMap, take,
   tap
 } from "rxjs";
 import { F } from "ts-toolbelt";
@@ -47,9 +47,8 @@ export class AbbyService<
 
   private config: F.Narrow<AbbyConfig<FlagName, Tests>>;
 
-  private projectData$: Observable<
-      LocalData<FlagName, TestName>
-  > | null = null;
+  private projectData$?: Observable<LocalData<FlagName, TestName>>;
+
 
   private log = (...args: any[]) =>
     this.config.debug ? console.log(`ng.AbbyService`, ...args) : () => {};
@@ -83,12 +82,6 @@ export class AbbyService<
           this.cookieChanged$.next();
         },
       }
-    );
-
-    this.projectData$ = this.cookieChanged$.pipe(
-         startWith(undefined),
-         switchMap(() => from(this.abby.getProjectDataAsync())),
-         shareReplay(1)
     );
 
     this.config = config;
@@ -146,7 +139,12 @@ export class AbbyService<
   }
 
   private resolveData(): Observable<LocalData<FlagName, TestName>> {
-     return this.projectData$!;
+    this.projectData$ ??= this.cookieChanged$.pipe(
+        startWith(undefined), // to make sure projectData$ emits immediately
+        switchMap(() => from(this.abby.getProjectDataAsync()).pipe(take(1))),
+        shareReplay(1)
+    );
+    return this.projectData$;
   }
 
 
