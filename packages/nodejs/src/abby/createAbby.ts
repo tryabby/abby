@@ -21,11 +21,23 @@ export function createAbby<
         },
     );
 
+    //load data and initialise the abby Object
+    // await abby.loadProjectData();
+
+    /**
+     * @param req express request object
+     * @param name Name of the test that the variant should be retrieved for
+     * @returns Value of the currently selected variant
+     */
     const getABTestValue = <T extends keyof Tests>(req: Request, name: T) => {
         const value = abby.getTestVariant(name);
         return value;
     }
-
+    /**
+     * 
+     * @param name Name of the feature flag
+     * @returns Value of the feature flag
+     */
     const getFeatureFlagValue = async <F extends NonNullable<ConfigType["flags"]>[number]>(
         name: F
     ) => {
