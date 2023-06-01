@@ -1,7 +1,7 @@
 /* eslint-disable react-hooks/rules-of-hooks */
 //TODO fix eslint
 import { getFeatureFlagValue, getABTestValue } from "../abby/abby.ts";
-import { Express, NextFunction, Request, Response } from "express";
+import { NextFunction, Request, Response } from "express";
 import { setRequest } from "../abby/contexts/requestContext.ts";
 import { setResponse } from "../abby/contexts/responseContext.ts";
 
@@ -19,7 +19,6 @@ export const AbTestMiddleware = (req: Request, res: Response, name: string, next
     setRequest(req)
     setResponse(res)
     const value = getABTestValue(req, name as any);
-    res.cookie("test", "5555")
     console.log(value);
     next();
 }
