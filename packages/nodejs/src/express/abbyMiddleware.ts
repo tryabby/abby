@@ -1,6 +1,6 @@
 /* eslint-disable react-hooks/rules-of-hooks */
 //TODO fix eslint
-import { getFeatureFlagValue } from "../abby/abby.ts";
+import { getFeatureFlagValue, getABTestValue } from "../abby/abby.ts";
 import { Express, NextFunction, Request, Response } from "express";
 
 export const featureFlagMiddleware = async (req: Request, res: Response, name: string, next: NextFunction) => { //Todo fix types
@@ -10,5 +10,12 @@ export const featureFlagMiddleware = async (req: Request, res: Response, name: s
         res.sendStatus(403);
         return;
     }
+    next();
+}
+
+export const AbTestMiddleware = (req: Request, res: Response, name: string, next: NextFunction) => {
+    const value = getABTestValue(req, name as any);
+    res.cookie("test", "5555")
+    console.log(value);
     next();
 }
