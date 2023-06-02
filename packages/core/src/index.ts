@@ -71,7 +71,7 @@ export class Abby<
 
   private flagDevtoolOverrides: Map<FlagName, boolean> = new Map();
 
-  #flagTimeoutMap = new Map<string, Date>
+  #flagTimeoutMap:Map<string, Date> = new Map;
 
   #data: LocalData<FlagName, TestName> = {
     tests: {} as any,
