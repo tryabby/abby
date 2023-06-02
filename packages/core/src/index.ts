@@ -35,7 +35,7 @@ type LocalData<
       selectedVariant?: string;
     }
   >;
-  flags: Record<FlagName, boolean>;
+  flags: Record<FlagName, { isEnabled: boolean, validUntil: Date }>;
 };
 
 interface PersistentStorage {
@@ -62,7 +62,7 @@ export class Abby<
   Tests extends Record<string, ABConfig>
 > {
   private log = (...args: any[]) =>
-    this.config.debug ? console.log(`core.Abby`, ...args) : () => {};
+    this.config.debug ? console.log(`core.Abby`, ...args) : () => { };
 
   private testDevtoolOverrides: Map<
     keyof Tests,
@@ -151,9 +151,10 @@ export class Abby<
         return acc;
       }, (this.config.tests ?? {}) as any),
       flags: data.flags.reduce((acc, { name, isEnabled }) => {
-        acc[name] = isEnabled;
+        const validUntil = new Date(new Date().getTime() + 1000 * 60);
+        acc[name] = { isEnabled, validUntil };
         return acc;
-      }, {} as Record<string, boolean>),
+      }, {} as Record<string, { isEnabled: boolean, validUntil: Date }>),
     };
   }
 
@@ -177,7 +178,7 @@ export class Abby<
         this.#data.tests
       ),
       flags: Object.keys(this.#data.flags).reduce((acc, flagName) => {
-        acc[flagName as FlagName] = this.getFeatureFlag(flagName as FlagName);
+        acc[flagName as FlagName] = {isEnabled: this.getFeatureFlag(flagName as FlagName), validUntil: this.getFeatureFlagTimeout(flagName as FlagName)}
         return acc;
       }, this.#data.flags),
     };
@@ -204,6 +205,37 @@ export class Abby<
   }
 
   /**
+   * Helper function to retrieve the time a flag is valid
+   * @param key 
+   * @returns 
+   */
+  getFeatureFlagTimeout<F extends FlagName>(key: F) {
+    return this.#data.flags[key].validUntil;
+  }
+
+  /**
+   * 
+   * @param key name of the featureflag
+   * @returns value of flag
+   */
+  checkFeatureFlagTimeout<F extends FlagName>(key: F) {
+    const flag = this.#data.flags[key];
+    if (!flag?.validUntil) return;
+    const now = new Date();
+    if (flag.validUntil.getTime() <= now.getTime()) {
+      console.log(flag)
+      console.log("until", flag.validUntil.toLocaleTimeString(), "  now:", now.toLocaleTimeString())
+      console.log("fetch new flag")
+      this.loadProjectData()
+      // refetch
+      // set new data
+      // const newFlag = await 
+      // this.#data.flags[key] = newFlag;
+    }
+    return flag.isEnabled;
+  }
+
+  /**
    * Function to get the value of a feature flag. This includes
    * the overrides from the dev tools and the local overrides if in development mode
    * otherwise it will return the value retrieved from the server
@@ -212,11 +244,9 @@ export class Abby<
    */
   getFeatureFlag<T extends FlagName>(key: T) {
     this.log(`getFeatureFlag()`, key);
-
-    const storedValue = this.#data.flags[key];
-
+  
     const localOverride = this.flagOverrides?.get(key);
-
+    
     if (localOverride != null) {
       return localOverride;
     }
@@ -227,7 +257,7 @@ export class Abby<
      * 1. DevTools
      * 2. DevOverrides from config
      * 3. DevDefault from config
-     */
+    */
     if (process.env.NODE_ENV === "development") {
       const devOverride = (this.config.settings?.flags?.devOverrides as any)?.[
         key
@@ -239,6 +269,8 @@ export class Abby<
         return this.config.settings.flags.devDefault;
       }
     }
+
+    const storedValue = this.checkFeatureFlagTimeout(key);
 
     if (storedValue != null) {
       this.log(`getFeatureFlag() => storedValue:`, storedValue);
