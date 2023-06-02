@@ -110,6 +110,39 @@ describe("Abby", () => {
 
     expect(abby.getFeatureFlag("flag1")).toBe(false);
   });
+
+  it("refetches an expired flag", async () =>{
+    const date = new Date() //current date
+    vi.setSystemTime(date)
+    const abby = new Abby({
+      projectId: "expired",
+      flags: ["flag1", "flag2"],
+    });
+    await abby.loadProjectData();
+    const expiredDate = new Date(new Date().getTime() + 1000 * 60  * 10) //date in 10minutes
+    vi.setSystemTime(expiredDate)
+    const spy = vi.spyOn(abby, "loadProjectData")
+
+    expect(abby.getFeatureFlag("flag1")).toBeTruthy();
+    expect(abby.getFeatureFlag("flag2")).toBeFalsy();
+    expect(spy).toBeCalled()
+  })
+
+  it("non expired flag does not get refetched", async () => {
+    const date = new Date() //current date
+    vi.setSystemTime(date)
+    const abby = new Abby({
+      projectId: "expired",
+      flags: ["flag1", "flag2"],
+    });
+    await abby.loadProjectData();
+
+    const spy = vi.spyOn(abby, "loadProjectData")
+
+    expect(abby.getFeatureFlag("flag1")).toBeTruthy();
+    expect(abby.getFeatureFlag("flag2")).toBeFalsy();
+    expect(spy).not.toBeCalled()
+  })
 });
 
 describe("Math helpers", () => {
