@@ -35,7 +35,7 @@ type LocalData<
       selectedVariant?: string;
     }
   >;
-  flags: Record<FlagName, { isEnabled: boolean, validUntil: Date }>;
+  flags: Record<FlagName, boolean>;
 };
 
 interface PersistentStorage {
@@ -70,6 +70,8 @@ export class Abby<
   > = new Map();
 
   private flagDevtoolOverrides: Map<FlagName, boolean> = new Map();
+
+  #flagTimeoutMap = new Map<string, Date>
 
   #data: LocalData<FlagName, TestName> = {
     tests: {} as any,
@@ -151,10 +153,11 @@ export class Abby<
         return acc;
       }, (this.config.tests ?? {}) as any),
       flags: data.flags.reduce((acc, { name, isEnabled }) => {
-        const validUntil = new Date(new Date().getTime() + 1000 * 60);
-        acc[name] = { isEnabled, validUntil };
+        const validUntil = new Date(new Date().getTime() + 1000 * 60); // flagdefault timeout is 1 minute
+        this.#flagTimeoutMap.set(name, validUntil)
+        acc[name] = isEnabled;
         return acc;
-      }, {} as Record<string, { isEnabled: boolean, validUntil: Date }>),
+      }, {} as Record<string, boolean>),
     };
   }
 
@@ -178,7 +181,7 @@ export class Abby<
         this.#data.tests
       ),
       flags: Object.keys(this.#data.flags).reduce((acc, flagName) => {
-        acc[flagName as FlagName] = {isEnabled: this.getFeatureFlag(flagName as FlagName), validUntil: this.getFeatureFlagTimeout(flagName as FlagName)}
+        acc[flagName as FlagName] = this.getFeatureFlag(flagName as FlagName);
         return acc;
       }, this.#data.flags),
     };
@@ -210,29 +213,22 @@ export class Abby<
    * @returns 
    */
   getFeatureFlagTimeout<F extends FlagName>(key: F) {
-    return this.#data.flags[key].validUntil;
+    return this.#flagTimeoutMap.get(key)
   }
 
   /**
-   * 
+   * Helper function to check if a featureflag should be refetched
    * @param key name of the featureflag
    * @returns value of flag
    */
-  checkFeatureFlagTimeout<F extends FlagName>(key: F) {
-    const flag = this.#data.flags[key];
-    if (!flag?.validUntil) return;
+  getValidFlag<F extends FlagName>(key: F) {
+    const flagTime = this.#flagTimeoutMap.get(key)
+    if (!flagTime) return this.#data.flags[key];
     const now = new Date();
-    if (flag.validUntil.getTime() <= now.getTime()) {
-      console.log(flag)
-      console.log("until", flag.validUntil.toLocaleTimeString(), "  now:", now.toLocaleTimeString())
-      console.log("fetch new flag")
+    if (flagTime.getTime() <= now.getTime()) {
       this.loadProjectData()
-      // refetch
-      // set new data
-      // const newFlag = await 
-      // this.#data.flags[key] = newFlag;
     }
-    return flag.isEnabled;
+    return this.#data.flags[key];
   }
 
   /**
@@ -244,9 +240,9 @@ export class Abby<
    */
   getFeatureFlag<T extends FlagName>(key: T) {
     this.log(`getFeatureFlag()`, key);
-  
+
     const localOverride = this.flagOverrides?.get(key);
-    
+
     if (localOverride != null) {
       return localOverride;
     }
@@ -270,7 +266,7 @@ export class Abby<
       }
     }
 
-    const storedValue = this.checkFeatureFlagTimeout(key);
+    const storedValue = this.getValidFlag(key);
 
     if (storedValue != null) {
       this.log(`getFeatureFlag() => storedValue:`, storedValue);
