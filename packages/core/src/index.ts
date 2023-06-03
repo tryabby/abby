@@ -43,6 +43,11 @@ interface PersistentStorage {
   set: (key: string, value: string) => void;
 }
 
+type flagCacheConfig = {
+  refetchFlags: boolean,
+  expirationTimeInMinutes: number
+}
+
 export type AbbyConfig<
   FlagName extends string = string,
   Tests extends Record<string, ABConfig> = Record<string, ABConfig>
@@ -54,6 +59,7 @@ export type AbbyConfig<
   flags?: Array<FlagName>;
   settings?: Settings<F.NoInfer<FlagName>>;
   debug?: boolean;
+  flagCacheConfig?: flagCacheConfig,
 };
 
 export class Abby<
@@ -153,7 +159,7 @@ export class Abby<
         return acc;
       }, (this.config.tests ?? {}) as any),
       flags: data.flags.reduce((acc, { name, isEnabled }) => {
-        const validUntil = new Date(new Date().getTime() + 1000 * 60); // flagdefault timeout is 1 minute
+        const validUntil = new Date(new Date().getTime() + 1000 * 60 *( this.config.flagCacheConfig?.expirationTimeInMinutes ?? 1)); // flagdefault timeout is 1 minute
         this.#flagTimeoutMap.set(name, validUntil)
         acc[name] = isEnabled;
         return acc;
@@ -226,9 +232,16 @@ export class Abby<
     if (!flagTime) return this.#data.flags[key];
     const now = new Date();
     if (flagTime.getTime() <= now.getTime()) {
-      this.loadProjectData()
+      this.refetchFlags()
     }
     return this.#data.flags[key];
+  }
+
+  /**
+   * helper function to make testing easier
+   */
+  refetchFlags() {
+    this.loadProjectData();
   }
 
   /**
@@ -266,7 +279,7 @@ export class Abby<
       }
     }
 
-    const storedValue = this.getValidFlag(key);
+    const storedValue = this.config.flagCacheConfig?.refetchFlags ?  this.getValidFlag(key) : this.#data.flags[key];
 
     if (storedValue != null) {
       this.log(`getFeatureFlag() => storedValue:`, storedValue);

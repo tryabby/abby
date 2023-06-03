@@ -117,13 +117,17 @@ describe("Abby", () => {
     const abby = new Abby({
       projectId: "expired",
       flags: ["flag1", "flag2"],
+      flagCacheConfig: {
+        refetchFlags: true,
+        expirationTimeInMinutes: 2
+      }
     });
-    await abby.loadProjectData();
-    const expiredDate = new Date(new Date().getTime() + 1000 * 60  * 10) //date in 10minutes
+    await abby.loadProjectData()
+    const expiredDate = new Date(new Date().getTime() + 1000 * 60  * 10) //date in 100 minutes
     vi.setSystemTime(expiredDate)
-    const spy = vi.spyOn(abby, "loadProjectData")
+    const spy = vi.spyOn(abby, "refetchFlags")
 
-    expect(abby.getFeatureFlag("flag1")).toBeTruthy();
+   expect(abby.getFeatureFlag("flag1")).toBeTruthy();
     expect(abby.getFeatureFlag("flag2")).toBeFalsy();
     expect(spy).toBeCalled()
   })
@@ -134,10 +138,15 @@ describe("Abby", () => {
     const abby = new Abby({
       projectId: "expired",
       flags: ["flag1", "flag2"],
+      flagCacheConfig: {
+        refetchFlags: true,
+        expirationTimeInMinutes: 2
+      }
     });
+
     await abby.loadProjectData();
 
-    const spy = vi.spyOn(abby, "loadProjectData")
+    const spy = vi.spyOn(abby, "refetchFlags")
 
     expect(abby.getFeatureFlag("flag1")).toBeTruthy();
     expect(abby.getFeatureFlag("flag2")).toBeFalsy();
