@@ -45,7 +45,7 @@ interface PersistentStorage {
 
 type flagCacheConfig = {
   refetchFlags: boolean,
-  expirationTimeInMinutes: number
+  timeToLive: number
 }
 
 export type AbbyConfig<
@@ -159,7 +159,7 @@ export class Abby<
         return acc;
       }, (this.config.tests ?? {}) as any),
       flags: data.flags.reduce((acc, { name, isEnabled }) => {
-        const validUntil = new Date(new Date().getTime() + 1000 * 60 *( this.config.flagCacheConfig?.expirationTimeInMinutes ?? 1)); // flagdefault timeout is 1 minute
+        const validUntil = new Date(new Date().getTime() + 1000 * 60 *( this.config.flagCacheConfig?.timeToLive ?? 1)); // flagdefault timeout is 1 minute
         this.#flagTimeoutMap.set(name, validUntil)
         acc[name] = isEnabled;
         return acc;
