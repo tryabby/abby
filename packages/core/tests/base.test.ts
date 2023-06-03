@@ -229,6 +229,23 @@ describe("Abby", () => {
 
 });
 
+it("respects the default behaviour", async () => {
+  const date = new Date() //current date
+  vi.setSystemTime(date)
+  const abby = new Abby({
+    projectId: "expired",
+    flags: ["flag1", "flag2"],
+  });
+
+  await abby.loadProjectData();
+  
+  const spy = vi.spyOn(abby, "refetchFlags")
+  
+  expect(abby.getFeatureFlag("flag1")).toBeTruthy();
+  expect(abby.getFeatureFlag("flag2")).toBeFalsy();
+  expect(spy).not.toBeCalled()
+})
+
 describe("Math helpers", () => {
   it("validates weight", () => {
     const variants = ["variant1", "variant2"];
