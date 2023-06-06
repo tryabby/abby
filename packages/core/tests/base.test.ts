@@ -110,7 +110,145 @@ describe("Abby", () => {
 
     expect(abby.getFeatureFlag("flag1")).toBe(false);
   });
+
+  it("refetches an expired flag", async () =>{
+    const date = new Date() //current date
+    vi.setSystemTime(date)
+    const abby = new Abby({
+      projectId: "expired",
+      flags: ["flag1", "flag2"],
+      flagCacheConfig: {
+        refetchFlags: true,
+        timeToLive: 2
+      }
+    });
+    await abby.loadProjectData()
+    const expiredDate = new Date(new Date().getTime() + 1000 * 60  * 10) //date in 100 minutes
+    vi.setSystemTime(expiredDate)
+    const spy = vi.spyOn(abby, "refetchFlags")
+
+   expect(abby.getFeatureFlag("flag1")).toBeTruthy();
+    expect(abby.getFeatureFlag("flag2")).toBeFalsy();
+    expect(spy).toBeCalled()
+  })
+
+  it("non expired flag does not get refetched", async () => {
+    const date = new Date() //current date
+    vi.setSystemTime(date)
+    const abby = new Abby({
+      projectId: "expired",
+      flags: ["flag1", "flag2"],
+      flagCacheConfig: {
+        refetchFlags: true,
+        timeToLive: 2
+      }
+    });
+
+    await abby.loadProjectData();
+
+    const spy = vi.spyOn(abby, "refetchFlags")
+
+    expect(abby.getFeatureFlag("flag1")).toBeTruthy();
+    expect(abby.getFeatureFlag("flag2")).toBeFalsy();
+    expect(spy).not.toBeCalled()
+  })
+
+  it("respects the featureFlagCacheConfig refetchFlags value set to false", async () => {
+    const date = new Date() //current date
+    vi.setSystemTime(date)
+    const abby = new Abby({
+      projectId: "expired",
+      flags: ["flag1", "flag2"],
+      flagCacheConfig: {
+        refetchFlags: false,
+        timeToLive: 2
+      }
+    });
+
+    await abby.loadProjectData();
+
+    const spy = vi.spyOn(abby, "refetchFlags")
+
+    expect(abby.getFeatureFlag("flag1")).toBeTruthy();
+    expect(abby.getFeatureFlag("flag2")).toBeFalsy();
+    expect(spy).not.toBeCalled()    
+  })
+
+  it("", async () => {
+    const date = new Date() //current date
+    vi.setSystemTime(date)
+    const abby = new Abby({
+      projectId: "expired",
+      flags: ["flag1", "flag2"],
+      flagCacheConfig: {
+        refetchFlags: true,
+        timeToLive: 2
+      }
+    });
+
+    await abby.loadProjectData();
+
+    const spy = vi.spyOn(abby, "refetchFlags")
+
+    //set date to 5 Minutes in the future
+    const dateIn3Minutes = new Date(new Date().getTime() + 1000 * 60 * 5);
+    vi.setSystemTime(dateIn3Minutes)
+
+    expect(abby.getFeatureFlag("flag1")).toBeTruthy();
+    expect(abby.getFeatureFlag("flag2")).toBeFalsy();
+    expect(spy).toBeCalled()
+  })
+
+  it("respects the featureFlagCacheCOnfig expiration time", async () => {
+    const date = new Date() //current date
+    vi.setSystemTime(date)
+    const abby = new Abby({
+      projectId: "expired",
+      flags: ["flag1", "flag2"],
+      flagCacheConfig: {
+        refetchFlags: true,
+        timeToLive: 2
+      }
+    });
+
+    await abby.loadProjectData();
+    
+    const spy = vi.spyOn(abby, "refetchFlags")
+    
+    expect(abby.getFeatureFlag("flag1")).toBeTruthy();
+    expect(abby.getFeatureFlag("flag2")).toBeFalsy();
+    expect(spy).not.toBeCalled()
+
+    //set date to 5 Minutes in the future
+    const dateIn3Minutes = new Date(new Date().getTime() + 1000 * 60 * 5);
+    vi.setSystemTime(dateIn3Minutes)
+    expect(abby.getFeatureFlag("flag1")).toBeTruthy();
+    expect(abby.getFeatureFlag("flag2")).toBeFalsy();
+    expect(spy).toBeCalled()
+  })
+
 });
+
+it("respects the default behaviour", async () => {
+  const date = new Date() //current date
+  vi.setSystemTime(date)
+  const abby = new Abby({
+    projectId: "expired",
+    flags: ["flag1", "flag2"],
+  });
+
+  await abby.loadProjectData();
+  
+  const spy = vi.spyOn(abby, "refetchFlags")
+  
+    //set date to 5 Minutes in the future
+    const dateIn3Minutes = new Date(new Date().getTime() + 1000 * 60 * 5);
+    vi.setSystemTime(dateIn3Minutes)
+
+  expect(abby.getFeatureFlag("flag1")).toBeTruthy();
+  expect(abby.getFeatureFlag("flag2")).toBeFalsy();
+  expect(spy).not.toBeCalled()
+})
 
 describe("Math helpers", () => {
   it("validates weight", () => {
