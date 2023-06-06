@@ -9,4 +9,8 @@ export const { getFeatureFlagValue, getABTestValue } = await createAbby({
         },
     },
     flags: ["lol", "test3", "testAbby"],
+    flagCacheConfig: {
+        refetchFlags: true,
+        timeToLive: 1
+    }
 });
