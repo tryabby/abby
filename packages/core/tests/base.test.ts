@@ -241,6 +241,10 @@ it("respects the default behaviour", async () => {
   
   const spy = vi.spyOn(abby, "refetchFlags")
   
+    //set date to 5 Minutes in the future
+    const dateIn3Minutes = new Date(new Date().getTime() + 1000 * 60 * 5);
+    vi.setSystemTime(dateIn3Minutes)
+
   expect(abby.getFeatureFlag("flag1")).toBeTruthy();
   expect(abby.getFeatureFlag("flag2")).toBeFalsy();
   expect(spy).not.toBeCalled()
