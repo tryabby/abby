@@ -6,7 +6,8 @@
   "type": "module",
   "scripts": {
     "test": "vitest ",
-    "dev": "nodemon ./src/index.ts"
+    "dev": "nodemon ./src/index.ts",
+    "dev:debugger": "nodemon ./src/index.ts --inspect"
   },
   "keywords": [],
   "author": "",

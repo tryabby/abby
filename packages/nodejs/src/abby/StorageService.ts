@@ -14,7 +14,7 @@ class ABStorageService implements IStorageService {
     }
     set(projectId: string, key: string, value: string): void {
         const response = getResponse();
-        if (!response) throw new Error("no response object")
+        if (!response) return;
         const cookieKey = getABStorageKey(projectId, key);
         response.cookie(cookieKey, value)
     }

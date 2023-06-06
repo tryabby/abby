@@ -1,6 +1,6 @@
 import { createAbby } from "./createAbby.ts";
 
-export const { getFeatureFlagValue, getABTestValue } = createAbby({
+export const { getFeatureFlagValue, getABTestValue } = await createAbby({
     projectId: "clfn3hs1t0002kx08x3kidi80",
     currentEnvironment: process.env.NODE_ENV,
     tests: {

@@ -3,7 +3,7 @@ import { F } from "ts-toolbelt"
 import { Request } from "express";
 import { TestStorageService } from "./StorageService.ts";
 
-export function createAbby<
+export async function createAbby<
     FlagName extends string,
     TestName extends string,
     Tests extends Record<TestName, ABConfig>,
@@ -20,9 +20,9 @@ export function createAbby<
             },
         },
     );
-    //TODO find way to await initialisation
+
     //load data and initialise the abby Object
-    // await abby.loadProjectData();
+    await abby.loadProjectData();
 
     /**
      * @param req express request object
