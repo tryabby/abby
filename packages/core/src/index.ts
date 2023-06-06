@@ -125,8 +125,8 @@ export class Abby<
 
     if (!this.dataInitialized) {
       await this.loadProjectData();
+      this.dataInitialized = true;
     }
-    this.dataInitialized = true;
     return this.getProjectData();
   }
 

@@ -1,4 +1,4 @@
-import { Inject, Injectable } from "@angular/core";
+import {Inject, Injectable} from "@angular/core";
 import {
   AbbyConfig,
   ABConfig,
@@ -7,9 +7,19 @@ import {
   HttpService,
 } from "@tryabby/core";
 import { FlagStorageService, TestStorageService } from "./StorageService";
-import { from, map, Observable, of, shareReplay, tap } from "rxjs";
+import {
+  from,
+  map, merge,
+  Observable, of,
+  shareReplay,
+  startWith,
+  Subject,
+  switchMap, take,
+  tap
+} from "rxjs";
 import { F } from "ts-toolbelt";
 import { Route } from "@angular/router";
+import {ABBY_CONFIG_TOKEN} from "./abby.module";
 
 type LocalData<
   FlagName extends string = string,
@@ -40,11 +50,14 @@ export class AbbyService<
 
   private projectData$?: Observable<LocalData<FlagName, TestName>>;
 
+
   private log = (...args: any[]) =>
     this.config.debug ? console.log(`ng.AbbyService`, ...args) : () => {};
+  private cookieChanged$ = new Subject<void>();
+
 
   constructor(
-    @Inject(AbbyService) config: F.Narrow<AbbyConfig<FlagName, Tests>>
+      @Inject(ABBY_CONFIG_TOKEN) config: F.Narrow<AbbyConfig<FlagName, Tests>>,
   ) {
     this.abby = new Abby<FlagName, TestName, Tests>(
       config,
@@ -56,6 +69,7 @@ export class AbbyService<
         set: (key: string, value: any) => {
           if (typeof window === "undefined") return;
           TestStorageService.set(config.projectId, key, value);
+          this.cookieChanged$.next();
         },
       },
       {
@@ -66,6 +80,7 @@ export class AbbyService<
         set: (key: string, value: any) => {
           if (typeof window === "undefined") return;
           FlagStorageService.set(config.projectId, key, value);
+          this.cookieChanged$.next();
         },
       }
     );
@@ -74,7 +89,10 @@ export class AbbyService<
   }
 
   public init(): Observable<void> {
-    return this.resolveData().pipe(map(() => void 0));
+    return this.resolveData().pipe(
+        tap(() => {}),
+        map(() => void 0)
+    );
   }
 
   public getVariant<T extends TestName>(testName: T): Observable<string> {
@@ -116,20 +134,31 @@ export class AbbyService<
   public getFeatureFlagValue<
     F extends NonNullable<ConfigType["flags"]>[number]
   >(name: F): Observable<boolean> {
-    this.log(`getFeatureFlagValue(${name})`);
+    this.log(`getFeatureFlagValue(${name})`)
 
     return this.resolveData().pipe(
-      map((data) => data.flags[name]),
+      map((data) => data["flags"][name]),
       tap((value) => this.log(`getFeatureFlagValue(${name}) =>`, value))
     );
   }
 
+
   private resolveData(): Observable<LocalData<FlagName, TestName>> {
     this.projectData$ ??= from(this.abby.getProjectDataAsync()).pipe(
-      shareReplay(1)
-    );
-    return this.projectData$;
-  }
+          switchMap((data) => {
+            const initialData$ = of(data); // Create an observable with the initial data
+
+            return merge(this.cookieChanged$, initialData$).pipe(
+                switchMap(() => from(this.abby.getProjectDataAsync())),
+                startWith(data) // Ensure that the initial data is emitted first
+            );
+          }),
+          shareReplay(1)
+      );
+    return this.projectData$
+    }
+
+
 
   public getAbbyInstance(): Abby<FlagName, TestName, Tests> {
     return this.abby;

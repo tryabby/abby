@@ -27,6 +27,7 @@ export class AbbyFlag implements OnInit {
       flagName = this.featureFlag.substring(1);
     else flagName = this.featureFlag;
     this.abby.getFeatureFlagValue(flagName).subscribe((value: boolean) => {
+      this._viewContainer.clear();
       if (
         (value && this.featureFlag[0] != "!") ||
         (this.featureFlag[0] == "!" && !value)
