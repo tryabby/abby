@@ -14,8 +14,8 @@
     "@angular/core": "^15.2.0"
   },
   "dependencies": {
-    "tslib": "^2.3.0",
-    "@tryabby/core": "workspace:*"
+    "@tryabby/core": "workspace:*",
+    "tslib": "^2.3.0"
   },
   "files": [
     "dist"
@@ -37,6 +37,7 @@
     "@angular/router": "^15.2.0",
     "@tryabby/devtools": "workspace:*",
     "@types/jasmine": "~4.3.0",
+    "@types/node": "^20.2.5",
     "jasmine-core": "~4.5.0",
     "karma": "~6.4.0",
     "karma-chrome-launcher": "~3.1.0",
