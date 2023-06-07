@@ -13,7 +13,7 @@ export function createAbby<
   Tests extends Record<TestName, ABConfig>,
   ConfigType extends AbbyConfig<FlagName, Tests> = AbbyConfig<FlagName, Tests>
 >(config: F.Narrow<AbbyConfig<FlagName, Tests>>) {
-  const abby = new Abby(
+  const abby = new Abby<FlagName, TestName, Tests>(
     config,
     {
       get: (key: string) => {
