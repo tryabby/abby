@@ -1,5 +1,5 @@
 import { Abby, type AbbyConfig, type ABConfig } from "@tryabby/core";
-import { HttpService , AbbyEventType} from "@tryabby/core";
+import { HttpService, AbbyEventType } from "@tryabby/core";
 import { derived } from "svelte/store";
 import type { F } from "ts-toolbelt";
 // import type { LayoutServerLoad, LayoutServerLoadEvent } from "../routes/$types"; TODO fix import
@@ -12,7 +12,7 @@ export function createAbby<
   TestName extends string,
   Tests extends Record<TestName, ABConfig>,
   ConfigType extends AbbyConfig<FlagName, Tests> = AbbyConfig<FlagName, Tests>
->(config: F.Narrow<AbbyConfig>) {
+>(config: F.Narrow<AbbyConfig<FlagName, Tests>>) {
   const abby = new Abby(
     config,
     {
@@ -56,7 +56,7 @@ export function createAbby<
 
   const useAbby = <K extends keyof Tests>(testName: K) => {
     const variant = derived<any, string>(abby, ($v) => {
-      return abby.getTestVariant(testName as string);
+      return abby.getTestVariant(testName);
     });
     let selectedVariant: string = "";
     variant.subscribe((data) => {
@@ -79,7 +79,7 @@ export function createAbby<
 
   const getVariants = <T extends keyof Tests>(testName: T) => {
     return derived<any, Readonly<string[]>>(abby, ($v) => {
-      return abby.getVariants(testName as string);
+      return abby.getVariants(testName);
     });
   };
 
@@ -93,7 +93,7 @@ export function createAbby<
   };
 
   const getABTestValue = <T extends keyof Tests>(testName: T) => {
-    return abby.getTestVariant(testName as string);
+    return abby.getTestVariant(testName);
   };
 
   const getFeatureFlagValue = <
