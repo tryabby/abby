@@ -114,7 +114,8 @@ export function createAbby<
     });
   };
 
-  const withAbby = (handler?: any) => { //TODO fix type import
+  const withAbby = (handler?: any) => {
+    //TODO fix type import
     return async (evt: any) => {
       const data = await handler?.(evt);
       const __abby__data = await HttpService.getProjectData({

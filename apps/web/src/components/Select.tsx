@@ -40,7 +40,7 @@ export function Select({ items, onChange, value, isLoading, label }: Props) {
                   {currentItem?.label}
                 </span>
               )}
-              <HiOutlineSelector className="pointer-events-none absolute top-1/2 right-3 -translate-y-1/2" />
+              <HiOutlineSelector className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2" />
             </Listbox.Button>
 
             <Transition

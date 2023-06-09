@@ -14,7 +14,7 @@ import {
 } from "react";
 import { GiHamburgerMenu } from "react-icons/gi";
 import { FiServer } from "react-icons/fi";
-import { MdSettings, MdSpaceDashboard , MdAdd } from "react-icons/md";
+import { MdSettings, MdSpaceDashboard, MdAdd } from "react-icons/md";
 import { RiToggleLine } from "react-icons/ri";
 import { trpc } from "../utils/trpc";
 import { Select } from "./Select";
@@ -89,7 +89,7 @@ const SideBar =
               />
               <button
                 className={
-                  "mt-4 flex items-center rounded-lg px-4 w-full py-2 text-lg font-bold transition-colors duration-150 ease-in-out hover:bg-gray-600"
+                  "mt-4 flex w-full items-center rounded-lg px-4 py-2 text-lg font-bold transition-colors duration-150 ease-in-out hover:bg-gray-600"
                 }
                 onClick={openCreateProjectModal}
               >
