@@ -1,32 +1,10 @@
-/* To learn more about this file see: https://angular.io/config/tsconfig. */
 {
+  "extends": "tsconfig/angular-library.json",
   "compileOnSave": false,
   "compilerOptions": {
     "paths": {
       "angular": ["dist"]
-    },
-    "baseUrl": "./",
-    "outDir": "./dist/out-tsc",
-    "forceConsistentCasingInFileNames": true,
-    "strict": true,
-    "noImplicitOverride": true,
-    "noPropertyAccessFromIndexSignature": true,
-    "noImplicitReturns": true,
-    "noFallthroughCasesInSwitch": true,
-    "sourceMap": true,
-    "declaration": false,
-    "downlevelIteration": true,
-    "moduleResolution": "node",
-    "importHelpers": true,
-    "target": "ES2022",
-    "module": "ES2022",
-    "useDefineForClassFields": false,
-    "allowSyntheticDefaultImports": true,
-    "esModuleInterop": true,
-    "lib": ["ES2022", "dom"],
-    "experimentalDecorators": true,
-    "strictPropertyInitialization": false,
-    "skipLibCheck": true
+    }
   },
   "angularCompilerOptions": {
     "enableI18nLegacyMessageIdFormat": false,
