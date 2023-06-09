@@ -12,8 +12,8 @@ export function createAbby<
   TestName extends string,
   Tests extends Record<TestName, ABConfig>,
   ConfigType extends AbbyConfig<FlagName, Tests> = AbbyConfig<FlagName, Tests>
->(config: F.Narrow<AbbyConfig>) {
-  const abby = new Abby(
+>(config: F.Narrow<AbbyConfig<FlagName, Tests>>) {
+  const abby = new Abby<FlagName, TestName, Tests>(
     config,
     {
       get: (key: string) => {
@@ -41,6 +41,8 @@ export function createAbby<
     return abby;
   });
 
+  const abbyConfig = config as unknown as ConfigType;
+
   const notify = <N extends keyof Tests>(name: N, selectedVariant: string) => {
     if (!name || !selectedVariant) return;
     HttpService.sendData({
@@ -56,7 +58,7 @@ export function createAbby<
 
   const useAbby = <K extends keyof Tests>(testName: K) => {
     const variant = derived<any, string>(abby, ($v) => {
-      return abby.getTestVariant(testName as string);
+      return abby.getTestVariant(testName);
     });
     let selectedVariant: string = "";
     variant.subscribe((data) => {
@@ -79,7 +81,7 @@ export function createAbby<
 
   const getVariants = <T extends keyof Tests>(testName: T) => {
     return derived<any, Readonly<string[]>>(abby, ($v) => {
-      return abby.getVariants(testName as string);
+      return abby.getVariants(testName);
     });
   };
 
@@ -93,7 +95,7 @@ export function createAbby<
   };
 
   const getABTestValue = <T extends keyof Tests>(testName: T) => {
-    return abby.getTestVariant(testName as string);
+    return abby.getTestVariant(testName);
   };
 
   const getFeatureFlagValue = <

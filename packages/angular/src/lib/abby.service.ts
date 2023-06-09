@@ -96,13 +96,15 @@ export class AbbyService<
     );
   }
 
-  public getVariant<T extends TestName>(testName: T): Observable<string> {
-    this.log(`getVariant(${testName})`);
+  public getVariant<T extends keyof Tests>(testName: T): Observable<string> {
+    this.log(`getVariant(${testName as string})`);
 
     return this.resolveData().pipe(
       map((data) => this.abby.getTestVariant(testName)),
-      tap((variant) => (this.selectedVariants[testName] = variant)),
-      tap((variant) => this.log(`getVariant(${testName}) =>`, variant))
+      tap((variant) => (this.selectedVariants[testName as string] = variant)),
+      tap((variant) =>
+        this.log(`getVariant(${testName as string}) =>`, variant)
+      )
     );
   }
 
