@@ -62,7 +62,7 @@ export const CreateProjectModal = ({ onClose }: Props) => {
         className="form-input rounded-md border border-gray-500 bg-gray-600 px-8 py-2 text-white placeholder-gray-400 shadow-sm focus:outline-none focus:ring-2 focus:ring-gray-400 focus:ring-offset-2"
       />
       {!isValidName && (
-        <div className="text-red-600 pt-4">
+        <div className="pt-4 text-red-600">
           Please enter a name with atleast 3 characters{" "}
         </div>
       )}

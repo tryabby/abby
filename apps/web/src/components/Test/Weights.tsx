@@ -22,7 +22,7 @@ const Weight = ({
     <>
       <label
         htmlFor={option.id}
-        className="mt-2 mb-0 flex justify-between text-sm font-medium text-pink-100 dark:text-white"
+        className="mb-0 mt-2 flex justify-between text-sm font-medium text-pink-100 dark:text-white"
       >
         <span>{option.identifier}</span>
         <span>{Math.round(value)}%</span>

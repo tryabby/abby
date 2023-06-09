@@ -34,7 +34,7 @@ describe("useAbby", () => {
           variants: ["SimonsText", "MatthiasText", "TomsText", "TimsText"],
         },
       },
-      flags: ["flagA", "flagB"]
+      flags: ["flagA", "flagB"],
     });
 
     const wrapper = ({ children }: PropsWithChildren) => (
@@ -47,9 +47,13 @@ describe("useAbby", () => {
       wrapper,
     });
 
-    expectTypeOf(result.current.variant).toEqualTypeOf<"OldFooter" | "NewFooter">();
+    expectTypeOf(result.current.variant).toEqualTypeOf<
+      "OldFooter" | "NewFooter"
+    >();
 
-    expectTypeOf(useFeatureFlag).parameters.toEqualTypeOf<["flagA" | "flagB"]>();
+    expectTypeOf(useFeatureFlag).parameters.toEqualTypeOf<
+      ["flagA" | "flagB"]
+    >();
 
     const { result: ffResult } = renderHook(() => useFeatureFlag("flagA"), {
       wrapper,

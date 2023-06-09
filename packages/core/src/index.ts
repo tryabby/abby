@@ -8,7 +8,7 @@ import { F } from "ts-toolbelt";
 import { getWeightedRandomVariant } from "./mathHelpers";
 import { parseCookies } from "./helpers";
 
-export * from './shared/index';
+export * from "./shared/index";
 
 export type ABConfig<T extends string = string> = {
   variants: ReadonlyArray<T>;
@@ -133,8 +133,8 @@ export class Abby<
 
     if (!this.dataInitialized) {
       await this.loadProjectData();
+      this.dataInitialized = true;
     }
-    this.dataInitialized = true;
     return this.getProjectData();
   }
 
