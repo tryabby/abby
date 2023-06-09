@@ -66,7 +66,7 @@ function EnvironmentItem({
   return (
     <div
       key={environment.id}
-      className="col flex items-center justify-between rounded-xl bg-gray-800 py-3 px-4"
+      className="col flex items-center justify-between rounded-xl bg-gray-800 px-4 py-3"
       ref={setNodeRef}
       style={style}
       {...attributes}
@@ -109,27 +109,28 @@ const DeleteEnvironmentModal = ({
 }) => {
   const trpcContext = trpc.useContext();
 
- 
-  const { mutate: deleteEnvironment } = trpc.environments.deleteEnvironment.useMutation({
-    onSuccess: () => {
-      toast.success("Deleted environment");
-      trpcContext.flags.getFlags.invalidate({ projectId });
-    },
-    onError() {
-      toast.error("Failed to delete environment");
-    },
-  });
+  const { mutate: deleteEnvironment } =
+    trpc.environments.deleteEnvironment.useMutation({
+      onSuccess: () => {
+        toast.success("Deleted environment");
+        trpcContext.flags.getFlags.invalidate({ projectId });
+      },
+      onError() {
+        toast.error("Failed to delete environment");
+      },
+    });
 
   return (
     <Modal
       title="Delete Environment"
       confirmText="Delete"
-      onConfirm={() => deleteEnvironment({ environmentId : environment.id})}
+      onConfirm={() => deleteEnvironment({ environmentId: environment.id })}
       isOpen={isOpen}
       onClose={onClose}
     >
       <p>
-        Are you sure that you want to delete the environment <b>{environment.name}</b>?
+        Are you sure that you want to delete the environment{" "}
+        <b>{environment.name}</b>?
       </p>
     </Modal>
   );
@@ -141,9 +142,9 @@ const EnvironmentPage: NextPageWithLayout = () => {
   const [isCreateEnvironmentModalOpen, setIsCreateEnvironmentModalOpen] =
     useState(false);
   const [activeEnvironmentInfo, setActiveEnvironmentInfo] = useState<{
-      id: string;
-      action: "delete";
-    } | null>(null);
+    id: string;
+    action: "delete";
+  } | null>(null);
   const projectId = useProjectId();
 
   const { data, isLoading, isError } = trpc.flags.getFlags.useQuery(
@@ -156,8 +157,9 @@ const EnvironmentPage: NextPageWithLayout = () => {
       },
     }
   );
-  const activeEnvironment = data?.environments
-  .find((environment) => environment.id === activeEnvironmentInfo?.id)
+  const activeEnvironment = data?.environments.find(
+    (environment) => environment.id === activeEnvironmentInfo?.id
+  );
   const { mutate } = trpc.environments.updateEnvironmentSort.useMutation({
     onSuccess: () => {
       trpcContext.flags.getFlags.invalidate({ projectId });
@@ -245,7 +247,7 @@ const EnvironmentPage: NextPageWithLayout = () => {
                   key={environment.id}
                   environment={environment}
                   projectId={projectId}
-                  setDeleteState= {()=>{
+                  setDeleteState={() => {
                     setActiveEnvironmentInfo({
                       id: environment.id,
                       action: "delete",
@@ -258,7 +260,7 @@ const EnvironmentPage: NextPageWithLayout = () => {
         </section>
       </div>
       {activeEnvironment && (
-        <>         
+        <>
           <DeleteEnvironmentModal
             environment={activeEnvironment}
             projectId={projectId}

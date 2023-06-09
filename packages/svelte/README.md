@@ -93,7 +93,7 @@ A store providing the value of the flag _Type: `boolean`_
 
 #### AbbyProvider
 
-A svelte component to wrap your application. 
+A svelte component to wrap your application.
 
 ##### Props
 
@@ -152,8 +152,8 @@ If you use this in your layout.server.ts, all occurances of `useFeatureFlag` wil
 ```ts
 // layout.server.ts
 import { abby } from "$lib/abby";
- 
-export const load = abby.withAbby()
+
+export const load = abby.withAbby();
 ```
 
 #### getABResetFunction
@@ -164,5 +164,3 @@ This means the cookie will be deleted and the user will get a new variant on the
 #### Parameters
 
 The name of the test, needs to be one of the defined tests.
-
-

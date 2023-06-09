@@ -1,5 +1,5 @@
 import { Abby, type AbbyConfig, type ABConfig } from "@tryabby/core";
-import { HttpService , AbbyEventType} from "@tryabby/core";
+import { HttpService, AbbyEventType } from "@tryabby/core";
 import { derived } from "svelte/store";
 import type { F } from "ts-toolbelt";
 // import type { LayoutServerLoad, LayoutServerLoadEvent } from "../routes/$types"; TODO fix import
@@ -112,7 +112,8 @@ export function createAbby<
     });
   };
 
-  const withAbby = (handler?: any) => { //TODO fix type import
+  const withAbby = (handler?: any) => {
+    //TODO fix type import
     return async (evt: any) => {
       const data = await handler?.(evt);
       const __abby__data = await HttpService.getProjectData({

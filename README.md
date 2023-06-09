@@ -9,10 +9,10 @@ Besides its official SDKS it also offers a friendly and easy to understand Dashb
 A/BBY focuses on privacy. This means it won't track any user data and uses no marketing cookies. It also doesn't use any third party services.
 You can self host it or use the hosted version available at [tryabby.com](https://www.tryabby.com).
 
-
 ## Getting Started
 
-*TL;DR:*
+_TL;DR:_
+
 ```
 git clone git@github.com:tryabby/abby.git
 pnpm i

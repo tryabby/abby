@@ -165,7 +165,7 @@ The name of the feature flag. The name can be prefixed with ! to invert the flag
 
 The DevtoolsComponent is an Angular component provided by @tryabby/angular package that renders the Abby Devtools in your application. The component is used to wrap the HTML code that renders the Abby Devtools.
 
-The DevtoolsComponent won't work with Server Side Rendering using Angular Universal. 
+The DevtoolsComponent won't work with Server Side Rendering using Angular Universal.
 
 ### Example
 
