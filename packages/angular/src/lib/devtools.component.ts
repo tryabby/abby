@@ -17,7 +17,7 @@ export class DevtoolsComponent implements OnInit {
 
   ngOnInit(): void {
     if (
-      this.props?.["dangerouslyForceShow"] ??
+      this.props?.["dangerouslyForceShow"] ||
       process.env["NODE_ENV"] === "development"
     ) {
       const abbyInstance = this.abby.getAbbyInstance();
