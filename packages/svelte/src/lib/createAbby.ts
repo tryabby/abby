@@ -41,6 +41,8 @@ export function createAbby<
     return abby;
   });
 
+  const abbyConfig = config as unknown as ConfigType;
+
   const notify = <N extends keyof Tests>(name: N, selectedVariant: string) => {
     if (!name || !selectedVariant) return;
     HttpService.sendData({
