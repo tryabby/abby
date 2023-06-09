@@ -47,6 +47,7 @@
     "ng-packagr": "^15.2.2",
     "rxjs": "~7.8.0",
     "ts-toolbelt": "^9.6.0",
+    "tsconfig": "workspace:*",
     "typescript": "~4.9.4",
     "zod": "^3.21.4",
     "zone.js": "~0.12.0"
