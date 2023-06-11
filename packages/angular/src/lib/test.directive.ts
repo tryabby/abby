@@ -16,7 +16,6 @@ export class AbbyTest implements OnInit {
 
   constructor(
     private readonly abby: AbbyService,
-
     private _viewContainer: ViewContainerRef,
     private _templateRef: TemplateRef<any>
   ) {}
@@ -25,14 +24,12 @@ export class AbbyTest implements OnInit {
     this.abby
       .getVariant(this.abbyTest.testName)
       .subscribe((selectedVariant: string) => {
-        if (selectedVariant == this.abbyTest.variant) {
+        // Clear the viewContainer before creating a new view.
+        this._viewContainer.clear();
+
+        if (selectedVariant === this.abbyTest.variant) {
           this._viewContainer.createEmbeddedView(this._templateRef);
         }
       });
   }
-}
-
-export interface AbbyTestConfig {
-  testName: string;
-  variant: string;
 }

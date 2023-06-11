@@ -33,7 +33,7 @@ export const INTERVALS = [
   },
 ] as const;
 
-type INTERVAL = typeof INTERVALS[number]["value"];
+type INTERVAL = (typeof INTERVALS)[number]["value"];
 
 export function isValidInterval(interval: string): interval is INTERVAL {
   return INTERVALS.map((i) => i.value).includes(interval as INTERVAL);
@@ -78,7 +78,7 @@ export function getFormattingByInterval(interval: INTERVAL) {
 }
 
 export function getLabelsByInterval(
-  interval: typeof INTERVALS[number]["value"],
+  interval: (typeof INTERVALS)[number]["value"],
   fistEventDate: Date
 ): Array<string> {
   const formatting = getFormattingByInterval(interval);

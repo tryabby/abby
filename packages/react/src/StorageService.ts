@@ -1,11 +1,9 @@
-import { getABStorageKey, getFFStorageKey } from "@tryabby/core";
+import {
+  getABStorageKey,
+  getFFStorageKey,
+  type IStorageService,
+} from "@tryabby/core";
 import Cookie from "js-cookie";
-
-export interface IStorageService {
-  get(projectId: string, key: string): string | null;
-  set(projectId: string, key: string, value: string): void;
-  remove(projectId: string, key: string): void;
-}
 
 class ABStorageService implements IStorageService {
   get(projectId: string, testName: string): string | null {

@@ -5,7 +5,7 @@ export default function BPage() {
   const router = useRouter();
   const onReset = () => {
     const resetCookie = getABResetFunction("SignupButton");
-    resetCookie()
+    resetCookie();
     router.reload();
   };
   return (

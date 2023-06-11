@@ -197,10 +197,15 @@ export const projectRouter = router({
         },
       });
     }),
-    createProject: protectedProcedure.input(z.object({projectName: z.string()})).mutation(async ({ ctx, input }) => {  
+  createProject: protectedProcedure
+    .input(z.object({ projectName: z.string() }))
+    .mutation(async ({ ctx, input }) => {
       const userId = ctx.session.user.id;
-      const project = await ProjectService.createProject({projectName: input.projectName, userId});
-      await updateProjectsOnSession(ctx , project.id);
-    return project;
-  })
+      const project = await ProjectService.createProject({
+        projectName: input.projectName,
+        userId,
+      });
+      await updateProjectsOnSession(ctx, project.id);
+      return project;
+    }),
 });
