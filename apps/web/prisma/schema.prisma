@@ -23,6 +23,12 @@ enum ROLE {
   USER
 }
 
+enum FeatureFlagType {
+  BOOLEAN
+  STRING
+  NUMBER
+}
+
 // Necessary for Next auth
 model Account {
   id                       String  @id @default(cuid())
@@ -177,6 +183,7 @@ model FeatureFlag {
 
   description String?            @db.Text
   values      FeatureFlagValue[]
+  type        FeatureFlagType    @default(BOOLEAN)
 
   @@unique([projectId, name])
   @@index([projectId])
@@ -190,8 +197,8 @@ model FeatureFlagValue {
   environmentId String
   environment   Environment @relation(fields: [environmentId], references: [id], onDelete: Cascade)
 
-  isEnabled Boolean              @default(false)
-  history   FeatureFlagHistory[]
+  value   String               @db.LongText
+  history FeatureFlagHistory[]
 
   @@index([flagId])
   @@index([environmentId])
@@ -219,8 +226,8 @@ model FeatureFlagHistory {
   id        String   @id @default(cuid())
   createdAt DateTime @default(now())
 
-  oldValue Boolean?
-  newValue Boolean?
+  oldValue String? @db.LongText
+  newValue String? @db.LongText
 
   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId String

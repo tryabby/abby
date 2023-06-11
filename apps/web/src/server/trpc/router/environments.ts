@@ -3,6 +3,7 @@ import { getProjectPaidPlan } from "lib/stripe";
 import { getLimitByPlan } from "server/common/plans";
 import { z } from "zod";
 import { protectedProcedure, router } from "../trpc";
+import { FeatureFlagType } from "@prisma/client";
 
 export const environmentRouter = router({
   addEnvironment: protectedProcedure
@@ -59,6 +60,12 @@ export const environmentRouter = router({
               data: {
                 flagId: flag.id,
                 environmentId: newEnv.id,
+                value:
+                  flag.type === FeatureFlagType.BOOLEAN
+                    ? "false"
+                    : flag.type === FeatureFlagType.STRING
+                    ? ""
+                    : "0",
               },
             })
           )
@@ -66,8 +73,9 @@ export const environmentRouter = router({
         return tx.featureFlagHistory.createMany({
           data: newFlagValues.map((flag) => ({
             userId: ctx.session.user.id,
-            newValue: false,
+            newValue: "false",
             flagValueId: flag.id,
+            oldValue: null,
           })),
         });
       });

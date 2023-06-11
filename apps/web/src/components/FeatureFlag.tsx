@@ -12,12 +12,10 @@ import { RouterOutputs, trpc } from "utils/trpc";
 import { Avatar } from "./Avatar";
 import { LoadingSpinner } from "./LoadingSpinner";
 import { Modal } from "./Modal";
-import {
-  TooltipProvider,
-  TooltipTrigger,
-  TooltipContent,
-  Tooltip,
-} from "components/Tooltip";
+import { TooltipTrigger, TooltipContent, Tooltip } from "components/Tooltip";
+import { FlagValue } from "@tryabby/core";
+import { FlagIcon } from "./FlagIcon";
+import { env } from "env/client.mjs";
 
 dayjs.extend(relativeTime);
 
@@ -25,7 +23,7 @@ const getHistoryEventDescription = (event: FeatureFlagHistory) => {
   return match(event)
     .with(
       {
-        newValue: false,
+        newValue: P.not(P.nullish),
         oldValue: null,
       },
       () => "created" as const
@@ -64,7 +62,7 @@ const HistoryButton = ({ flagValueId }: { flagValueId: string }) => {
         </Popover.Trigger>
         <Popover.Portal>
           <Popover.Content
-            className="max-w-lg select-none rounded-[4px] bg-gray-800 px-[15px] py-[10px] text-[15px] leading-none text-pink-50 shadow-md will-change-[transform,opacity] focus:shadow-md data-[state=open]:data-[side=top]:animate-slideDownAndFade data-[state=open]:data-[side=right]:animate-slideLeftAndFade data-[state=open]:data-[side=bottom]:animate-slideUpAndFade data-[state=open]:data-[side=left]:animate-slideRightAndFade"
+            className="max-w-lg select-none rounded-[4px] bg-gray-800 px-[15px] py-[10px] text-[15px] leading-none text-pink-50 shadow-md will-change-[transform,opacity] focus:shadow-md data-[state=open]:data-[side=bottom]:animate-slideUpAndFade data-[state=open]:data-[side=left]:animate-slideRightAndFade data-[state=open]:data-[side=right]:animate-slideLeftAndFade data-[state=open]:data-[side=top]:animate-slideDownAndFade"
             sideOffset={5}
           >
             {isLoading && <LoadingSpinner />}
@@ -103,13 +101,12 @@ const HistoryButton = ({ flagValueId }: { flagValueId: string }) => {
   );
 };
 
-const ConfirmToggleModal = ({
+const ConfirmUpdateModal = ({
   isOpen,
   onClose,
   flagValueId,
   description,
   projectId,
-  isEnabled,
   flagName,
 }: {
   isOpen: boolean;
@@ -117,13 +114,13 @@ const ConfirmToggleModal = ({
   flagValueId: string;
   description: string;
   projectId: string;
-  isEnabled: boolean;
   flagName: string;
 }) => {
+  const [newValue, setNewValue] = useState("");
   const trpcContext = trpc.useContext();
 
-  const { mutate: toggleFlag } = trpc.flags.toggleFlag.useMutation({
-    onSuccess(_, { enabled, flagValueId }) {
+  const { mutate: updateFlag } = trpc.flags.updateFlag.useMutation({
+    onSuccess(_, { value, flagValueId }) {
       trpcContext.flags.getFlags.setData({ projectId }, (prev) => {
         if (!prev) return prev;
 
@@ -137,7 +134,7 @@ const ConfirmToggleModal = ({
         );
         if (!valueToUpdate) return;
 
-        valueToUpdate.isEnabled = enabled;
+        valueToUpdate.value = value.toString();
         return prev;
       });
 
@@ -152,13 +149,13 @@ const ConfirmToggleModal = ({
   return (
     <Modal
       title="Confirm Toggle"
-      confirmText={`Toggle ${isEnabled ? "off" : "on"}`}
-      onConfirm={() => toggleFlag({ enabled: !isEnabled, flagValueId })}
+      confirmText={`Update Flag`}
+      onConfirm={() => updateFlag({ value: newValue, flagValueId })}
       isOpen={isOpen}
       onClose={onClose}
     >
       <h2>
-        Are you sure that you want to toggle the flag <i>{flagName}</i>?
+        Are you sure that you want to update the flag <i>{flagName}</i>?
       </h2>
       <h3 className="mt-4 text-sm font-semibold">Description:</h3>
       <p dangerouslySetInnerHTML={{ __html: description }} />
@@ -168,7 +165,6 @@ const ConfirmToggleModal = ({
 
 type Props = {
   flag: RouterOutputs["flags"]["getFlags"]["flags"][number];
-  isEnabled: boolean;
   projectId: string;
   environmentName: string;
   flagValueId: string;
@@ -177,11 +173,10 @@ type Props = {
 export function FeatureFlag({
   flag,
   projectId,
-  isEnabled,
   environmentName,
   flagValueId,
 }: Props) {
-  const [isToggleConfirmationModalOpen, setIsToggleConfirmationModalOpen] =
+  const [isUpdateConfirmationModalOpen, setIsUpdateConfirmationModalOpen] =
     useState(false);
 
   return (
@@ -190,18 +185,13 @@ export function FeatureFlag({
         key={flag.id}
         className="mr-2 flex w-full items-center justify-between space-x-3 rounded-xl bg-gray-100 py-3 pl-3 pr-4 text-sm font-medium text-gray-800 dark:bg-gray-700 dark:text-gray-300"
       >
-        <Toggle
-          label={environmentName}
-          onChange={() => setIsToggleConfirmationModalOpen(true)}
-          isChecked={isEnabled}
-        />
+        <p>{environmentName}</p>
         <HistoryButton flagValueId={flagValueId} />
       </span>
 
-      <ConfirmToggleModal
-        isOpen={isToggleConfirmationModalOpen}
-        onClose={() => setIsToggleConfirmationModalOpen(false)}
-        isEnabled={isEnabled}
+      <ConfirmUpdateModal
+        isOpen={isUpdateConfirmationModalOpen}
+        onClose={() => setIsUpdateConfirmationModalOpen(false)}
         flagValueId={flagValueId}
         description={flag.description ?? ""}
         projectId={projectId}

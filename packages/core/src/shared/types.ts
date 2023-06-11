@@ -1,3 +1,5 @@
+import { FlagValue } from "./schemas";
+
 export enum AbbyEventType {
   PING,
   ACT,
@@ -8,5 +10,8 @@ export type AbbyDataResponse = {
     name: string;
     weights: number[];
   }>;
-  flags: Array<{ name: string; isEnabled: boolean }>;
+  flags: Array<{
+    name: string;
+    value: FlagValue;
+  }>;
 };

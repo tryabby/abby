@@ -24,6 +24,7 @@ import {
 import { BsThreeDotsVertical } from "react-icons/bs";
 import { EditIcon, FileEditIcon, TrashIcon } from "lucide-react";
 import { Input } from "components/Input";
+import { FlagIcon } from "components/FlagIcon";
 
 const EditTitleModal = ({
   flagId,
@@ -226,14 +227,17 @@ const FeatureFlagsPage: NextPageWithLayout = () => {
                 className="w-full rounded-md bg-gray-600/50 p-4"
               >
                 <div className="flex justify-between">
-                  <div className="flex items-center ">
+                  <div className="flex items-center space-x-3">
+                    <div className="flex items-center space-x-2 rounded-md border border-gray-200 px-2 py-1 text-xs">
+                      <span>{currentFlag.type}</span>
+                    </div>
                     <h2 className="font-bold text-pink-200">
                       {currentFlag.name}
                     </h2>
 
                     <Tooltip>
                       <TooltipTrigger asChild>
-                        <button className="ml-5">
+                        <button>
                           <BiInfoCircle />
                         </button>
                       </TooltipTrigger>
@@ -312,7 +316,6 @@ const FeatureFlagsPage: NextPageWithLayout = () => {
                       <FeatureFlag
                         key={flagValue.flagId + flagValue.environment.id}
                         flag={currentFlag}
-                        isEnabled={flagValue.isEnabled}
                         projectId={projectId}
                         environmentName={flagValue.environment.name}
                         flagValueId={flagValue.id}

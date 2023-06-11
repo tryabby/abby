@@ -5,6 +5,8 @@ import {
   Abby,
   AbbyEventType,
   HttpService,
+  FlagValueString,
+  FlagValue,
 } from "@tryabby/core";
 import { FlagStorageService, TestStorageService } from "./StorageService";
 import { from, map, Observable, of, shareReplay, tap } from "rxjs";
@@ -22,7 +24,7 @@ type LocalData<
       selectedVariant?: string;
     }
   >;
-  flags: Record<FlagName, boolean>;
+  flags: Record<FlagName, FlagValue>;
 };
 
 @Injectable({ providedIn: "root" })
@@ -30,13 +32,17 @@ export class AbbyService<
   FlagName extends string = string,
   TestName extends string = string,
   Tests extends Record<TestName, ABConfig> = Record<TestName, ABConfig>,
+  Flags extends Record<FlagName, FlagValueString> = Record<
+    FlagName,
+    FlagValueString
+  >,
   ConfigType extends AbbyConfig<FlagName, Tests> = AbbyConfig<FlagName, Tests>
 > {
-  private abby: Abby<FlagName, TestName, Tests>;
+  private abby: Abby<FlagName, TestName, Tests, Flags>;
 
   private selectedVariants: { [key: string]: string } = {};
 
-  private config: F.Narrow<AbbyConfig<FlagName, Tests>>;
+  private config: F.Narrow<AbbyConfig<FlagName, Tests, Flags>>;
 
   private projectData$?: Observable<LocalData<FlagName, TestName>>;
 
@@ -44,9 +50,9 @@ export class AbbyService<
     this.config.debug ? console.log(`ng.AbbyService`, ...args) : () => {};
 
   constructor(
-    @Inject(AbbyService) config: F.Narrow<AbbyConfig<FlagName, Tests>>
+    @Inject(AbbyService) config: F.Narrow<AbbyConfig<FlagName, Tests, Flags>>
   ) {
-    this.abby = new Abby<FlagName, TestName, Tests>(
+    this.abby = new Abby<FlagName, TestName, Tests, Flags>(
       config,
       {
         get: (key: string) => {
@@ -113,9 +119,7 @@ export class AbbyService<
     });
   }
 
-  public getFeatureFlagValue<
-    F extends NonNullable<ConfigType["flags"]>[number]
-  >(name: F): Observable<boolean> {
+  public getFeatureFlagValue<F extends FlagName>(name: F) {
     this.log(`getFeatureFlagValue(${name})`);
 
     return this.resolveData().pipe(
@@ -131,7 +135,7 @@ export class AbbyService<
     return this.projectData$;
   }
 
-  public getAbbyInstance(): Abby<FlagName, TestName, Tests> {
+  public getAbbyInstance(): Abby<FlagName, TestName, Tests, Flags> {
     return this.abby;
   }
 

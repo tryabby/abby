@@ -67,7 +67,7 @@ export default async function getWeightsHandler(
       flags: flags.map((flagValue) => {
         return {
           name: flagValue.flag.name,
-          isEnabled: flagValue.isEnabled,
+          value: flagValue.value,
         };
       }),
     };

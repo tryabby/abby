@@ -5,7 +5,8 @@ import { getLimitByPlan } from "server/common/plans";
 import { ProjectService } from "server/services/ProjectService";
 import { z } from "zod";
 import { protectedProcedure, router } from "../trpc";
-import { Prisma } from "@prisma/client";
+import { FeatureFlagType, Prisma } from "@prisma/client";
+import { flagValue } from "@tryabby/core";
 
 export const flagRouter = router({
   getFlags: protectedProcedure
@@ -48,10 +49,26 @@ export const flagRouter = router({
     }),
   addFlag: protectedProcedure
     .input(
-      z.object({
-        projectId: z.string(),
-        name: z.string().min(1),
-      })
+      z.discriminatedUnion("type", [
+        z.object({
+          projectId: z.string(),
+          name: z.string(),
+          type: z.literal(FeatureFlagType.BOOLEAN),
+          value: z.boolean(),
+        }),
+        z.object({
+          projectId: z.string(),
+          name: z.string(),
+          type: z.literal(FeatureFlagType.NUMBER),
+          value: z.number(),
+        }),
+        z.object({
+          projectId: z.string(),
+          name: z.string(),
+          type: z.literal(FeatureFlagType.STRING),
+          value: z.string(),
+        }),
+      ])
     )
     .mutation(async ({ ctx, input }) => {
       const project = await ctx.prisma.project.findFirst({
@@ -90,6 +107,7 @@ export const flagRouter = router({
           data: {
             name: input.name,
             projectId: input.projectId,
+            type: input.type,
           },
         });
 
@@ -99,6 +117,7 @@ export const flagRouter = router({
               data: {
                 environmentId: env.id,
                 flagId: newFlag.id,
+                value: input.value.toString(),
               },
             })
           )
@@ -108,44 +127,42 @@ export const flagRouter = router({
           data: featureFlagValues.map((featureFlag) => ({
             userId: ctx.session.user.id,
             flagValueId: featureFlag.id,
-            newValue: false,
+            newValue: input.value.toString(),
           })) satisfies Prisma.FeatureFlagHistoryCreateManyInput[],
         });
       });
     }),
-  toggleFlag: protectedProcedure
+  updateFlag: protectedProcedure
     .input(
       z.object({
         flagValueId: z.string(),
-        enabled: z.boolean(),
+        value: flagValue,
       })
     )
     .mutation(async ({ ctx, input }) => {
-      const canUpdate = await ctx.prisma.featureFlag.findFirst({
+      const currentFlag = await ctx.prisma.featureFlagValue.findFirst({
         where: {
-          values: {
-            some: {
-              id: input.flagValueId,
-            },
-          },
-          project: {
-            users: {
-              some: {
-                userId: ctx.session.user.id,
+          id: input.flagValueId,
+          flag: {
+            project: {
+              users: {
+                some: {
+                  userId: ctx.session.user.id,
+                },
               },
             },
           },
         },
       });
 
-      if (!canUpdate) throw new TRPCError({ code: "UNAUTHORIZED" });
+      if (!currentFlag) throw new TRPCError({ code: "UNAUTHORIZED" });
 
       await ctx.prisma.featureFlagValue.update({
         where: {
           id: input.flagValueId,
         },
         data: {
-          isEnabled: input.enabled,
+          value: input.value.toString(),
         },
       });
 
@@ -153,8 +170,8 @@ export const flagRouter = router({
         data: {
           userId: ctx.session.user.id,
           flagValueId: input.flagValueId,
-          oldValue: !input.enabled,
-          newValue: input.enabled,
+          oldValue: currentFlag.value,
+          newValue: input.value.toString(),
         },
       });
     }),

@@ -58,7 +58,10 @@ describe("useFeatureFlag", () => {
   it("returns the correct types", () => {
     const { AbbyProvider, useFeatureFlag } = createAbby({
       projectId: "123",
-      flags: ["test", "test2"],
+      flags: {
+        test: "Boolean",
+        test2: "String",
+      },
     });
 
     const wrapper = ({ children }: PropsWithChildren) => (
@@ -75,11 +78,15 @@ describe("useFeatureFlag", () => {
     const {} = createAbby({
       projectId: "123",
       currentEnvironment: "test",
-      flags: ["test", "test2"],
+      flags: {
+        test: "Boolean",
+        test2: "String",
+      },
       settings: {
         flags: {
           devOverrides: {
             test: true,
+            test2: "test",
           },
         },
       },
@@ -96,7 +103,9 @@ describe("useFeatureFlag", () => {
             variants: ["ONLY_ONE_VARIANT"],
           },
         },
-        flags: ["test", "test2"],
+        flags: {
+          test: "Boolean",
+        },
         settings: {
           flags: {
             devOverrides: {
