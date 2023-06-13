@@ -133,11 +133,11 @@ describe("AbbyService", () => {
     });
   });
 
-  // it("should repect the default values for feature flags", () => {
-  //   service.getFeatureFlagValue("defaultFlag").subscribe((value: boolean) => {
-  //     expect(value).toEqual(false);
-  //   });
-  // });
+  it("should repect the default values for feature flags", () => {
+    service.getFeatureFlagValue("defaultFlag").subscribe((value: boolean) => {
+      expect(value).toEqual(false);
+    });
+  });
 
   it("uses the devOverrides", () => {
     const fetchSpy = spyOn(window, "fetch");
