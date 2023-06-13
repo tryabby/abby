@@ -180,9 +180,7 @@ export class AbbyService<
     return this.resolveData().pipe(map((data) => this.abby.getVariants(name)));
   };
 
-  public getABResetFunction = <T extends keyof Tests>(name: T) => {
-    return () => {
-      TestStorageService.remove(this.config.projectId, name as string);
-    };
+  public resetAB = <T extends keyof Tests>(name: T) => {
+    TestStorageService.remove(this.config.projectId, name as string);
   };
 }
