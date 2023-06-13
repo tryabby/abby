@@ -23,6 +23,9 @@ const mockConfig = {
     test2: {
       variants: ["A", "B"],
     },
+    defaultTest: {
+      variants: ["A", "B"],
+    },
   },
   flags: ["flag1", "flag2", "overridedFlag1", "overridedFlag2", "defaultFlag"],
   settings: {
@@ -136,6 +139,12 @@ describe("AbbyService", () => {
   it("should repect the default values for feature flags", () => {
     service.getFeatureFlagValue("defaultFlag").subscribe((value: boolean) => {
       expect(value).toEqual(false);
+    });
+  });
+
+  it("should repect the default values for variants", () => {
+    service.getVariant("defaultTest").subscribe((value: string) => {
+      expect(["A", "B"]).toContain(value);
     });
   });
 
