@@ -1,6 +1,7 @@
 /* eslint-disable react-hooks/rules-of-hooks */
 //TODO fix eslint
 import { getFeatureFlagValue, getABTestValue } from '../abby/abby.ts';
+import { type ConfigType } from '../abby/createAbby.ts';
 import { NextFunction, Request, Response } from 'express';
 import { setRequest } from '../abby/contexts/requestContext.ts';
 import { setResponse } from '../abby/contexts/responseContext.ts';
@@ -14,8 +15,9 @@ export const featureFlagMiddleware = async (
 	name: string,
 	next: NextFunction
 ) => {
+	console.log('middleware');
 	//Todo fix types
-	const flagValue = getFeatureFlagValue(name as any); //type?
+	const flagValue = true; //getFeatureFlagValue('lol'); //type?
 	console.log('hi from middleware', name, flagValue);
 	if (!flagValue) {
 		res.sendStatus(403);

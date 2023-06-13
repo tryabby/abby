@@ -21,6 +21,8 @@ export async function createAbby<
 	//load data and initialise the abby Object
 	await abby.loadProjectData();
 
+	const config = abbyConfig as unknown as ConfigType;
+
 	/**
 	 * @param req express request object
 	 * @param name Name of the test that the variant should be retrieved for

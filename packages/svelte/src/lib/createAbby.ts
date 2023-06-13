@@ -2,7 +2,6 @@ import { Abby, type AbbyConfig, type ABConfig } from "@tryabby/core";
 import { HttpService, AbbyEventType } from "@tryabby/core";
 import { derived } from "svelte/store";
 import type { F } from "ts-toolbelt";
-// import type { LayoutServerLoad, LayoutServerLoadEvent } from "../routes/$types"; TODO fix import
 import { FlagStorageService, TestStorageService } from "./StorageService";
 import AbbyProvider from "./AbbyProvider.svelte";
 import AbbyDevtools from "./AbbyDevtools.svelte";
@@ -42,6 +41,7 @@ export function createAbby<
   });
 
   const abbyConfig = config as unknown as ConfigType;
+
 
   const notify = <N extends keyof Tests>(name: N, selectedVariant: string) => {
     if (!name || !selectedVariant) return;
@@ -114,7 +114,7 @@ export function createAbby<
     });
   };
 
-  const withAbby = (handler?: any) => {
+  const withAbby = (handler?: ) => {
     //TODO fix type import
     return async (evt: any) => {
       const data = await handler?.(evt);
@@ -149,4 +149,5 @@ export function createAbby<
     AbbyProvider,
     withDevTools,
   };
+  export type {ConfigType};
 }
