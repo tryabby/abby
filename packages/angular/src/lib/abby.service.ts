@@ -175,4 +175,8 @@ export class AbbyService<
       ...baseRoute.abbyVariants[test],
     };
   }
+
+  public getVariants = <T extends keyof Tests>(name: T) => {
+    return this.abby.getVariants(name);
+  };
 }
