@@ -7,6 +7,7 @@ import { Component, Injectable } from "@angular/core";
 import { TestStorageService } from "./StorageService";
 import { zip } from "rxjs";
 import { Routes } from "@angular/router";
+import { AbbyFlag } from "./flag.directive";
 // import { TestStorageService } from "./StorageService";
 // import { HttpService } from "shared/src/http";
 // import { AbbyEventType } from "@tryabby/core";
@@ -85,11 +86,7 @@ describe("AbbyService", () => {
       imports: [AbbyModule.forRoot(mockConfig)],
     });
     service = TestBed.inject(AbbyService);
-  });
 
-  beforeEach(() => {});
-
-  it("should be created", () => {
     const fetchSpy = spyOn(window, "fetch");
 
     const mockedResponse = new Response(JSON.stringify(mockedData), {
@@ -98,20 +95,15 @@ describe("AbbyService", () => {
     });
 
     fetchSpy.and.returnValue(Promise.resolve(mockedResponse));
+  });
 
+  beforeEach(() => {});
+
+  it("should be created", () => {
     expect(service).toBeTruthy();
   });
 
   it("gets the stored feature flag value using a function properly", () => {
-    const mockedResponse = new Response(JSON.stringify(mockedData), {
-      status: 200,
-      headers: { "Content-type": "application/json" },
-    });
-
-    const getFetchSpy = spyOn(window, "fetch").and.callFake(() =>
-      Promise.resolve(mockedResponse)
-    );
-
     service.getFeatureFlagValue("flag1").subscribe((value: boolean) => {
       expect(value).toEqual(true);
     });
@@ -122,15 +114,6 @@ describe("AbbyService", () => {
   });
 
   it("returns the correct variant", () => {
-    const fetchSpy = spyOn(window, "fetch");
-
-    const mockedResponse = new Response(JSON.stringify(mockedData), {
-      status: 200,
-      headers: { "Content-type": "application/json" },
-    });
-
-    fetchSpy.and.returnValue(Promise.resolve(mockedResponse));
-
     service.getVariant("test2").subscribe((value: string) => {
       expect(value).toEqual("A");
     });
@@ -149,15 +132,6 @@ describe("AbbyService", () => {
   });
 
   it("uses the devOverrides", () => {
-    const fetchSpy = spyOn(window, "fetch");
-
-    const mockedResponse = new Response(JSON.stringify(mockedData), {
-      status: 200,
-      headers: { "Content-type": "application/json" },
-    });
-
-    fetchSpy.and.returnValue(Promise.resolve(mockedResponse));
-
     service
       .getFeatureFlagValue("overridedFlag1")
       .subscribe((value: boolean) => {
@@ -175,15 +149,8 @@ describe("AbbyService", () => {
     const persistedValue = "A";
     const variants = ["A", "B", "C", "D"];
 
-    const fetchSpy = spyOn(window, "fetch");
     const getSpy = spyOn(TestStorageService, "get");
     const setSpy = spyOn(TestStorageService, "set");
-    const mockedResponse = new Response(JSON.stringify(mockedData), {
-      status: 200,
-      headers: { "Content-type": "application/json" },
-    });
-
-    fetchSpy.and.returnValue(Promise.resolve(mockedResponse));
 
     getSpy.and.returnValue(persistedValue);
 
@@ -193,34 +160,6 @@ describe("AbbyService", () => {
       expect(value).toEqual(persistedValue);
     });
   });
-
-  // it("should notify the server with OnAct", () => {
-  //   const mockedResponse = new Response(JSON.stringify(mockedData), {
-  //     status: 200,
-  //     headers: { "Content-type": "application/json" },
-  //   });
-
-  //   const getFetchSpy = spyOn(window, 'fetch').and.callFake(() =>
-  //     Promise.resolve(mockedResponse)
-  //   );
-
-  //   console.log(getFetchSpy);
-
-  //   const onActSpy = spyOn(service, "onAct").and.identity
-
-  //   // fetchSpy.and.returnValue(Promise.resolve(mockedResponse)).and.callThrough;
-
-  //   service.onAct("test");
-
-  //   // expect(fetchSpy).toHaveBeenCalled();
-
-  //   // const type = fetchSpy.calls.argsFor(0)[0].valueOf();
-  //   // fetchSpy.calls.argsFor(0)[0].type;
-
-  //   //expect(spy).toHaveBeenCalledWith();
-
-  //   //expect(type).toBe(AbbyEventType.ACT);
-  // });
 
   it("should get the correct router variant", () => {
     @Component({})
@@ -282,4 +221,25 @@ describe("AbbyService", () => {
       expect(routes).not.toEqual([]);
     });
   });
+
+  // it("directives should work", () => {
+  //   @Component({
+  //     template: `
+  //       <div *featureFlag="'flag1'">
+  //         <h1>Flag 1</h1>
+  //       </div>
+  //       <div *featureFlag="'flag2'">
+  //         <h1>Flag 2</h1>
+  //       </div>
+  //     `,
+  //   })
+  //   class TestComponent {}
+
+  //   const fixture = TestBed.createComponent(TestComponent);
+  //   fixture.detectChanges();
+
+  //   const compiled = fixture.nativeElement as HTMLElement;
+
+  //   expect(compiled.querySelector("h1")?.textContent).toEqual("Flag 1");
+  // });
 });
