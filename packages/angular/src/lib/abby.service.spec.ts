@@ -3,8 +3,10 @@ import { TestBed } from "@angular/core/testing";
 import { AbbyService } from "./abby.service";
 import { AbbyModule } from "./abby.module";
 
-import { Injectable } from "@angular/core";
+import { Component, Injectable } from "@angular/core";
 import { TestStorageService } from "./StorageService";
+import { zip } from "rxjs";
+import { Routes } from "@angular/router";
 // import { TestStorageService } from "./StorageService";
 // import { HttpService } from "shared/src/http";
 // import { AbbyEventType } from "@tryabby/core";
@@ -211,48 +213,64 @@ describe("AbbyService", () => {
   //   //expect(type).toBe(AbbyEventType.ACT);
   // });
 
-  // it("should get the correct router variant", () => {
-  //   let routes: Routes = [];
+  it("should get the correct router variant", () => {
+    @Component({})
+    class ATestComponent {}
 
-  //   forkJoin({
-  //     angularTest: service.getVariant("test"),
-  //     angularFlag: service.getFeatureFlagValue("flag1"),
-  //   }).subscribe(({ angularTest, angularFlag }) => {
-  //     routes = [
-  //       service.getRouterVariant(angularTest, {
-  //         path: "test",
-  //         outlet: "test",
-  //         abbyVariants: {
-  //           A: {
-  //             title: "TEST A",
-  //             component: "ATestComponent" as any,
-  //           },
-  //           B: {
-  //             title: "TEST B",
-  //             component: "BTestComponent" as any,
-  //           },
-  //           C: {
-  //             title: "TEST C",
-  //             component: "CTestComponent" as any,
-  //           },
-  //           D: {
-  //             title: "TEST D",
-  //             component: "DTestComponent" as any,
-  //           },
-  //         },
-  //       }),
-  //       {
-  //         ...(angularFlag
-  //           ? {
-  //               path: "flag",
-  //               title: "Flag",
-  //               component: "FlagComponent" as any,
-  //               outlet: "flag",
-  //             }
-  //           : undefined),
-  //       },
-  //     ];
-  //     console.log(routes);
-  //   });
-  // });
+    @Component({})
+    class BTestComponent {}
+
+    @Component({})
+    class CTestComponent {}
+
+    @Component({})
+    class DTestComponent {}
+
+    @Component({})
+    class FlagComponent {}
+
+    let routes: Routes = [];
+
+    zip(
+      service.getVariant("test"),
+      service.getFeatureFlagValue("flag1")
+    ).subscribe(([angularTest, angularFlag]) => {
+      routes = [
+        service.getRouterVariant(angularTest, {
+          path: "test",
+          outlet: "test",
+          abbyVariants: {
+            A: {
+              title: "TEST A",
+              component: ATestComponent,
+            },
+            B: {
+              title: "TEST B",
+              component: BTestComponent,
+            },
+            C: {
+              title: "TEST C",
+              component: CTestComponent,
+            },
+            D: {
+              title: "TEST D",
+              component: DTestComponent,
+            },
+          },
+        }),
+        ...(angularFlag
+          ? [
+              {
+                path: "flag",
+                title: "Flag",
+                component: FlagComponent,
+              },
+            ]
+          : []),
+      ];
+      console.log(routes);
+
+      expect(routes).not.toEqual([]);
+    });
+  });
 });
