@@ -34,13 +34,13 @@ describe('it works', () => {
 		const { getABTestValue } = await createAbby({
 			projectId: '123',
 			tests: {
-				test: {
+				test2: {
 					variants
 				}
 			}
 		});
 
-		const variant = getABTestValue('test');
+		const variant = getABTestValue('test2');
 
 		expect(variant).toBe('A');
 	});
