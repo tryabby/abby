@@ -222,6 +222,12 @@ describe("AbbyService", () => {
     });
   });
 
+  it("returns the correct possible variant values", () => {
+    service.getVariants("test").subscribe((value: readonly string[]) => {
+      expect(value).toEqual(["A", "B", "C", "D"]);
+    });
+  });
+
   // it("directives should work", () => {
   //   @Component({
   //     template: `
