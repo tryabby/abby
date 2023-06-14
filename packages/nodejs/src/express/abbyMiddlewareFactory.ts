@@ -22,9 +22,7 @@ export const abbyMiddlewareFactory = async <
   const config = abbyConfig as unknown as ConfigType;
   const abby = await createAbby(abbyConfig);
 
-  const featureFlagMiddleware = <
-    F extends NonNullable<ConfigType["flags"]>[number]
-  >(
+  const featureFlagMiddleware = <F extends NonNullable<ConfigType["flags"]>[number]>(
     name: F,
     req: Request,
     res: Response,
@@ -33,6 +31,7 @@ export const abbyMiddlewareFactory = async <
     const flagValue = abby.getFeatureFlagValue(name);
     if (!flagValue) {
       res.sendStatus(403);
+      console.log("return");
       return;
     }
     next();
