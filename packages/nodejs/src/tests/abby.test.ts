@@ -9,18 +9,39 @@ describe('it works', () => {
 			flags: ['flag1', 'flag2']
 		});
 
-		console.log(await getFeatureFlagValue('flag1'));
-
 		expect(await getFeatureFlagValue('flag1')).toBeTruthy();
 		expect(await getFeatureFlagValue('flag2')).toBeFalsy();
 	});
 
-	test.skip('getABTestValue working', async () => {
-		const { getABTestValue, getFeatureFlagValue } = await createAbby({
+	test('it returns a correct variant', async () => {
+		const variants = ['A', 'B', 'C', 'D'];
+		const { getABTestValue } = await createAbby({
 			projectId: '123',
 			tests: {
-				'New Test1': {}
+				test: {
+					variants
+				}
 			}
 		});
+
+		const variant = getABTestValue('test');
+
+		expect(variant).toContain(variant);
+	});
+
+	test('it returns a correct variant with respect to the weights', async () => {
+		const variants = ['A', 'B'];
+		const { getABTestValue } = await createAbby({
+			projectId: '123',
+			tests: {
+				test: {
+					variants
+				}
+			}
+		});
+
+		const variant = getABTestValue('test');
+
+		expect(variant).toBe('A');
 	});
 });

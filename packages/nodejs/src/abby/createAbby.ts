@@ -24,11 +24,10 @@ export async function createAbby<
 	const config = abbyConfig as unknown as ConfigType;
 
 	/**
-	 * @param req express request object
 	 * @param name Name of the test that the variant should be retrieved for
 	 * @returns Value of the currently selected variant
 	 */
-	const getABTestValue = <T extends keyof Tests>(req: Request, name: T) => {
+	const getABTestValue = <T extends keyof Tests>(name: T) => {
 		const value = abby.getTestVariant(name);
 		return value;
 	};

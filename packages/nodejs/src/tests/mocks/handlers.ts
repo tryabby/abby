@@ -1,11 +1,8 @@
 import { rest } from 'msw';
 import { type AbbyDataResponse, ABBY_BASE_URL } from '@tryabby/core';
 
-console.log('call m ock');
-
 export const handlers = [
 	rest.get(`${ABBY_BASE_URL}api/dashboard/123/data`, (req, res, ctx) => {
-		console.log('call mock');
 		return res(
 			ctx.json({
 				tests: [
