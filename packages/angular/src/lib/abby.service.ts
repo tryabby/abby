@@ -140,7 +140,7 @@ export class AbbyService<
     this.log(`getFeatureFlagValue(${name})`);
 
     return this.resolveData().pipe(
-      map((data) => data["flags"][name]),
+      map((data) => this.abby.getFeatureFlag(name)),
       tap((value) => this.log(`getFeatureFlagValue(${name}) =>`, value))
     );
   }
@@ -175,4 +175,12 @@ export class AbbyService<
       ...baseRoute.abbyVariants[test],
     };
   }
+
+  public getVariants = <T extends keyof Tests>(name: T) => {
+    return this.resolveData().pipe(map((data) => this.abby.getVariants(name)));
+  };
+
+  public resetAB = <T extends keyof Tests>(name: T) => {
+    TestStorageService.remove(this.config.projectId, name as string);
+  };
 }
