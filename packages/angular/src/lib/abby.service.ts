@@ -140,7 +140,7 @@ export class AbbyService<
     this.log(`getFeatureFlagValue(${name})`);
 
     return this.resolveData().pipe(
-      map((data) => data["flags"][name]),
+      map((data) => this.abby.getFeatureFlag(name)),
       tap((value) => this.log(`getFeatureFlagValue(${name}) =>`, value))
     );
   }

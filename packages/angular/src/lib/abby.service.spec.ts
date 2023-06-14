@@ -1,4 +1,4 @@
-import { TestBed } from "@angular/core/testing";
+import { ComponentFixture, TestBed } from "@angular/core/testing";
 
 import { AbbyService } from "./abby.service";
 import { AbbyModule } from "./abby.module";
@@ -8,11 +8,6 @@ import { TestStorageService } from "./StorageService";
 import { zip } from "rxjs";
 import { Routes } from "@angular/router";
 import { AbbyFlag } from "./flag.directive";
-// import { TestStorageService } from "./StorageService";
-// import { HttpService } from "shared/src/http";
-// import { AbbyEventType } from "@tryabby/core";
-// import { Routes } from "@angular/router";
-// import { forkJoin } from "rxjs";
 
 const mockConfig = {
   projectId: "mock-project-id",
@@ -80,13 +75,27 @@ export class Abby extends AbbyService<
 
 describe("AbbyService", () => {
   let service: AbbyService;
+  let fixture: ComponentFixture<TestComponent>;
 
-  beforeAll(() => {
-    TestBed.configureTestingModule({
-      imports: [AbbyModule.forRoot(mockConfig)],
-    });
-    service = TestBed.inject(AbbyService);
+  @Component({
+    template: `
+      <div *featureFlag="'flag1'">
+        <h1>Flag 1</h1>
+      </div>
+      <div *featureFlag="'flag2'">
+        <h1>Flag 2</h1>
+      </div>
+      <div *abbyTest="{ testName: 'test2', variant: 'A' }">
+        <h2>A</h2>
+      </div>
+      <div *abbyTest="{ testName: 'test2', variant: 'B' }">
+        <h3>B</h3>
+      </div>
+    `,
+  })
+  class TestComponent {}
 
+  beforeAll(async () => {
     const fetchSpy = spyOn(window, "fetch");
 
     const mockedResponse = new Response(JSON.stringify(mockedData), {
@@ -95,6 +104,17 @@ describe("AbbyService", () => {
     });
 
     fetchSpy.and.returnValue(Promise.resolve(mockedResponse));
+
+    await TestBed.configureTestingModule({
+      declarations: [TestComponent],
+      imports: [AbbyModule.forRoot(mockConfig)],
+    })
+      .compileComponents()
+      .then(() => {
+        fixture = TestBed.createComponent(TestComponent);
+        fixture.detectChanges();
+      });
+    service = TestBed.inject(AbbyService);
   });
 
   beforeEach(() => {});
@@ -216,7 +236,6 @@ describe("AbbyService", () => {
             ]
           : []),
       ];
-      console.log(routes);
 
       expect(routes).not.toEqual([]);
     });
@@ -228,24 +247,17 @@ describe("AbbyService", () => {
     });
   });
 
-  // it("directives should work", () => {
-  //   @Component({
-  //     template: `
-  //       <div *featureFlag="'flag1'">
-  //         <h1>Flag 1</h1>
-  //       </div>
-  //       <div *featureFlag="'flag2'">
-  //         <h1>Flag 2</h1>
-  //       </div>
-  //     `,
-  //   })
-  //   class TestComponent {}
+  it("directives should work", () => {
+    const compiled = fixture.nativeElement as HTMLElement;
+    let flagElement = compiled.querySelector("h1");
+    let testAElement = compiled.querySelector("h2");
+    let testBElement = compiled.querySelector("h3");
 
-  //   const fixture = TestBed.createComponent(TestComponent);
-  //   fixture.detectChanges();
-
-  //   const compiled = fixture.nativeElement as HTMLElement;
-
-  //   expect(compiled.querySelector("h1")?.textContent).toEqual("Flag 1");
-  // });
+    if (flagElement) {
+      expect(flagElement.textContent).toEqual("Flag 1");
+    } else fail("querySelector is null");
+    if (testAElement) {
+      expect(testAElement.textContent).toEqual("A");
+    } else fail("querySelector is null");
+  });
 });
