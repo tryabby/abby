@@ -175,4 +175,12 @@ export class AbbyService<
       ...baseRoute.abbyVariants[test],
     };
   }
+
+  public getVariants = <T extends keyof Tests>(name: T) => {
+    return this.resolveData().pipe(map((data) => this.abby.getVariants(name)));
+  };
+
+  public resetAB = <T extends keyof Tests>(name: T) => {
+    TestStorageService.remove(this.config.projectId, name as string);
+  };
 }
