@@ -1,12 +1,12 @@
-import { expect, afterEach } from "vitest";
-import { cleanup } from "@testing-library/react";
+import { expect, afterEach } from 'vitest';
+import { cleanup } from '@testing-library/react';
 /// @ts-ignore it doesn't have types
-import matchers from "@testing-library/jest-dom/matchers";
-import { server } from "./mocks/server";
-import fetch from "node-fetch";
+import matchers from '@testing-library/jest-dom/matchers';
+import { server } from './mocks/server';
+// import fetch from "node-fetch";
 
-/// @ts-ignore
-global.fetch = fetch;
+// /// @ts-ignore
+// global.fetch = fetch;
 
 // Establish API mocking before all tests.
 beforeAll(() => server.listen());
@@ -19,8 +19,8 @@ expect.extend(matchers);
 
 // runs a cleanup after each test case (e.g. clearing jsdom)
 afterEach(() => {
-  // Reset any request handlers that we may add during the tests,
-  // so they don't affect other tests.
-  server.resetHandlers();
-  cleanup();
+	// Reset any request handlers that we may add during the tests,
+	// so they don't affect other tests.
+	server.resetHandlers();
+	cleanup();
 });
