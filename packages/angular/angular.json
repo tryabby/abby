@@ -25,13 +25,17 @@
           "defaultConfiguration": "production"
         },
         "test": {
-          "builder": "@angular-devkit/build-angular:karma",
+          "builder": "@angular-builders/custom-webpack:karma",
           "options": {
+            "customWebpackConfig": {
+              "path": "karma-webpack.config.js"
+            },
             "tsConfig": "./tsconfig.spec.json",
             "polyfills": [
               "zone.js",
               "zone.js/testing"
             ],
+            "assets": ["src/mockServiceWorker.ts"],
             "karmaConfig": "karma.conf.js"
           }
         }
