@@ -1,13 +1,12 @@
-import { expect, test, describe, beforeEach } from "vitest";
+import { expect, test, describe, beforeAll } from "vitest";
 import express from "express";
-import request, { Response, Request } from "supertest";
+import request from "supertest";
 import { abbyMiddlewareFactory } from "../express/abbyMiddlewareFactory.ts";
-import { A } from "ts-toolbelt";
 
 describe("express middleware working", () => {
   let app: express.Application;
 
-  beforeEach(async () => {
+  beforeAll(async () => {
     const { AbTestMiddleware, featureFlagMiddleware } = await abbyMiddlewareFactory({
       abbyConfig: {
         projectId: "123",
@@ -26,37 +25,51 @@ describe("express middleware working", () => {
 
     app = express();
     // Add any other middlewares or routes necessary for your test
-    app.use("/featureFlagEnabled", (req, res, next) =>
+    app.use("/featureFlag/Enabled", (req, res, next) =>
       featureFlagMiddleware("flag1", req, res, next)
     );
-    app.use("/featureFlagDisabled", (req, res, next) =>
+    app.use("/featureFlag/Disabled", (req, res, next) =>
       featureFlagMiddleware("flag2", req, res, next)
     );
-    app.get("/featureFlagEnabled", (req, res) => res.send(""));
-    app.get("/featureFlagDisabled", (req, res) => res.send(""));
+    app.get("/featureFlag/Enabled", (req, res) => res.send(""));
+    app.get("/featureFlag/Disabled", (req, res) => res.send(""));
 
-    app.use("/cookieNeedToBeSet", (req, res, next) => AbTestMiddleware("test2", req, res, next));
-    app.get("/cookieSet", (req, res) => {
+    app.use("/cookie", (req, res, next) => AbTestMiddleware("test2", req, res, next));
+    app.get("/cookie/notSet", (req, res) => {
+      const variant = req.body.ABBY;
+      if (variant) {
+        res.send(variant);
+        return;
+      }
+      res.sendStatus(404);
+    });
+    app.get("/cookie/Set", (req, res) => {
       res.send("hiadsa");
     });
   });
 
-  test.skip("abTestMiddleware respects the set cookie", async () => {
+  //TODO for whatever reason middleware tests need to be executed first, else it does not work
+  test("featureFlag Middleware working", async () => {
+    //check if feature flag value is respected
+
+    const succesFullResponse = await request(app).get("/featureFlag/Enabled");
+    const forbiddenResponse = await request(app).get("/featureFlag/Disabled");
+    expect(succesFullResponse.statusCode).toBe(200);
+    expect(forbiddenResponse.statusCode).toBe(403);
+  });
+  test("abTestMiddleware respects the set cookie", async () => {
+    const cookieVariant = "D";
     //test cookie retrieval
+    const response = await request(app)
+      .get("/cookie/notSet")
+      .set("Cookie", [`__abby__ab__123_test2=${cookieVariant}; Path=/`]);
+
+    expect(response.text).toBe(cookieVariant);
   });
 
   test("abTestMiddleware sets the right cookie", async () => {
-    const res = await request(app).get("/cookieNeedToBeSet");
+    const res = await request(app).get("/cookie/Set");
     const cookies = res.headers["set-cookie"]; //res headers is any so need to be carefull
     expect(cookies[0]).toBe("__abby__ab__123_test2=A; Path=/");
-  });
-
-  test.skip("featureFlag Middleware working", async () => {
-    //check if feature flag value is respected
-
-    const succesFullResponse = await request(app).get("/featureFlagEnabled");
-    const forbiddenResponse = await request(app).get("/featureFlagDisabled");
-    expect(succesFullResponse.statusCode).toBe(200);
-    expect(forbiddenResponse.statusCode).toBe(403);
   });
 });

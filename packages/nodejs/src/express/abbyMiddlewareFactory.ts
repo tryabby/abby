@@ -30,8 +30,7 @@ export const abbyMiddlewareFactory = async <
   ) => {
     const flagValue = abby.getFeatureFlagValue(name);
     if (!flagValue) {
-      res.sendStatus(403);
-      console.log("return");
+      res.status(403).json({});
       return;
     }
     next();
@@ -46,6 +45,10 @@ export const abbyMiddlewareFactory = async <
     setRequest(req);
     setResponse(res);
     const value = abby.getABTestValue(name);
+    //make sure body is defined
+    req.body = req.body ?? {};
+    // appends test to body
+    req.body.ABBY = value;
     next();
   };
 
