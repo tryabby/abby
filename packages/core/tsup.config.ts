@@ -7,5 +7,5 @@ export default defineConfig({
   clean: true,
   sourcemap: true,
   treeshake: true,
-  format: ["cjs", "esm"]
+  format: ["cjs", "esm"],
 });

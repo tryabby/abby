@@ -1,5 +1,11 @@
 # @tryabby/core
 
+## 3.4.1
+
+### Minor Changes
+
+- update abby base url
+
 ## 3.4.0
 
 ### Minor Changes

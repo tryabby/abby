@@ -1,5 +1,11 @@
 # web
 
+## 0.2.21
+
+### Patch Changes
+
+- update projectid env
+
 ## 0.2.20
 
 - added angular code snippets

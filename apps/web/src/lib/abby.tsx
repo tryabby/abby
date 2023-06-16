@@ -14,7 +14,7 @@ export const {
   withAbbyApiHandler,
   getABResetFunction,
 } = createAbby({
-  projectId: process.env.ABBY_PROJECT_ID!,
+  projectId: process.env.NEXT_PUBLIC_ABBY_PROJECT_ID!,
   currentEnvironment: process.env.VERCEL_ENV ?? process.env.NODE_ENV,
   tests: {
     SignupButton: {

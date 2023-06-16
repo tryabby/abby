@@ -1,5 +1,9 @@
 # @tryabby/angular
 
+## 0.1.5
+
+- make it reactive
+
 ## 0.1.2
 
 - fix package.json
