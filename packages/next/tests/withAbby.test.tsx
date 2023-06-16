@@ -17,7 +17,7 @@ describe("withAbby", () => {
     const { getFeatureFlagValue, withAbby } = createAbby({
       projectId: "123",
       tests: {},
-      flags: ["flag1", "flag2"],
+      flags: { flag1: "Boolean", flag2: "String" },
     });
 
     const Component = withAbby(() => <></>);
@@ -43,7 +43,7 @@ describe("withAbby", () => {
     const { getFeatureFlagValue, withAbby, __abby__ } = createAbby({
       projectId: "123",
       tests: {},
-      flags: ["flag1", "flag2"],
+      flags: { flag1: "Boolean", flag2: "Boolean" },
     });
 
     const Component = withAbby(() => <></>);

@@ -1,5 +1,5 @@
 import { compose, rest } from "msw";
-import { AbbyDataResponse, ABBY_BASE_URL } from "@tryabby/core/shared/";
+import { AbbyDataResponse, ABBY_BASE_URL } from "@tryabby/core";
 
 export const handlers = [
   rest.get(`${ABBY_BASE_URL}api/dashboard/:projectId/data`, (req, res, ctx) => {
@@ -18,11 +18,11 @@ export const handlers = [
         flags: [
           {
             name: "flag1",
-            isEnabled: true,
+            value: true,
           },
           {
             name: "flag2",
-            isEnabled: false,
+            value: false,
           },
         ],
       } as AbbyDataResponse)

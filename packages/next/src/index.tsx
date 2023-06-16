@@ -4,7 +4,7 @@ import {
   createAbby as baseCreateAbby,
   withDevtoolsFunction,
 } from "@tryabby/react";
-import { AbbyDataResponse, getABStorageKey } from "@tryabby/core";
+import { AbbyDataResponse, FlagValueString, getABStorageKey } from "@tryabby/core";
 import type { F } from "ts-toolbelt";
 import { ABBY_DATA_KEY, withAbby } from "./withAbby";
 import { HttpService } from "@tryabby/core";
@@ -17,8 +17,9 @@ import { getIsomorphicCookies, isBrowser, isEdgeFunction } from "./helpers";
 export function createAbby<
   FlagName extends string,
   TestName extends string,
-  Tests extends Record<TestName, ABConfig>
->(config: F.Narrow<AbbyConfig<FlagName, Tests>>) {
+  Tests extends Record<TestName, ABConfig>,
+  Flags extends Record<FlagName, FlagValueString> = Record<FlagName, FlagValueString>
+>(config: F.Narrow<AbbyConfig<FlagName, Tests, Flags>>) {
   const {
     AbbyProvider,
     useAbby,
@@ -27,12 +28,10 @@ export function createAbby<
     __abby__,
     getVariants,
     withDevtools,
-  } = baseCreateAbby<FlagName, TestName, Tests>(config);
+  } = baseCreateAbby<FlagName, TestName, Tests, Flags>(config);
 
   const abbyApiHandler =
-    <HandlerType extends NextApiHandler | NextMiddleware>(
-      handler: HandlerType
-    ) =>
+    <HandlerType extends NextApiHandler | NextMiddleware>(handler: HandlerType) =>
     async (...args: Parameters<HandlerType>) => {
       const data = await HttpService.getProjectData({
         projectId: config.projectId,
@@ -67,9 +66,7 @@ export function createAbby<
     getABTestValue<
       T extends keyof Tests,
       RequestType extends NextRequest | NextApiRequest | undefined = undefined,
-      ResponseType extends
-        | NextResponse
-        | NextApiResponse = RequestType extends NextRequest
+      ResponseType extends NextResponse | NextApiResponse = RequestType extends NextRequest
         ? NextResponse
         : RequestType extends NextApiRequest
         ? NextApiResponse
@@ -79,32 +76,23 @@ export function createAbby<
       req?: RequestType
     ): [
       Tests[T]["variants"][number],
-      RequestType extends NextRequest | NextApiRequest
-        ? (res: ResponseType) => void
-        : () => void
+      RequestType extends NextRequest | NextApiRequest ? (res: ResponseType) => void : () => void
     ] {
       const cookies = getIsomorphicCookies(req);
 
-      const storedValue = cookies.get(
-        getABStorageKey(config.projectId, name as string)
-      );
+      const storedValue = cookies.get(getABStorageKey(config.projectId, name as string));
 
       const cookieKey = getABStorageKey(config.projectId, name as string);
 
       if (storedValue) {
-        return [
-          typeof storedValue === "string" ? storedValue : storedValue.value,
-          () => {},
-        ];
+        return [typeof storedValue === "string" ? storedValue : storedValue.value, () => {}];
       }
 
       const newValue = __abby__.getTestVariant(name);
 
       const setCookieFunc = (res?: ResponseType) => {
         if (!res && typeof window === "undefined")
-          throw new Error(
-            "You must pass a response object to setABTestValue on the server"
-          );
+          throw new Error("You must pass a response object to setABTestValue on the server");
 
         if (isBrowser(res)) {
           Cookie.set(cookieKey, newValue, {
@@ -134,9 +122,7 @@ export function createAbby<
     getABResetFunction: <
       T extends keyof Tests,
       RequestType extends NextRequest | NextApiRequest | undefined = undefined,
-      ResponseType extends
-        | NextResponse
-        | NextApiResponse = RequestType extends NextRequest
+      ResponseType extends NextResponse | NextApiResponse = RequestType extends NextRequest
         ? NextResponse
         : RequestType extends NextApiRequest
         ? NextApiResponse
@@ -153,9 +139,7 @@ export function createAbby<
 
       return (res?: ResponseType) => {
         if (!res && typeof window === "undefined")
-          throw new Error(
-            "You must pass a response object to setABTestValue on the server"
-          );
+          throw new Error("You must pass a response object to setABTestValue on the server");
 
         if (isBrowser(res)) {
           cookies.delete(cookieKey);

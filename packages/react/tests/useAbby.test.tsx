@@ -31,9 +31,7 @@ describe("useAbby", () => {
       },
     });
 
-    const wrapper = ({ children }: PropsWithChildren) => (
-      <AbbyProvider>{children}</AbbyProvider>
-    );
+    const wrapper = ({ children }: PropsWithChildren) => <AbbyProvider>{children}</AbbyProvider>;
 
     const { result } = renderHook(() => useAbby("test"), {
       wrapper,
@@ -59,9 +57,7 @@ describe("useAbby", () => {
       },
     });
 
-    const wrapper = ({ children }: PropsWithChildren) => (
-      <AbbyProvider>{children}</AbbyProvider>
-    );
+    const wrapper = ({ children }: PropsWithChildren) => <AbbyProvider>{children}</AbbyProvider>;
 
     const { result } = renderHook(() => useAbby("test"), {
       wrapper,
@@ -83,18 +79,14 @@ describe("useAbby", () => {
       },
     });
 
-    const wrapper = ({ children }: PropsWithChildren) => (
-      <AbbyProvider>{children}</AbbyProvider>
-    );
+    const wrapper = ({ children }: PropsWithChildren) => <AbbyProvider>{children}</AbbyProvider>;
 
     renderHook(() => useAbby("test"), {
       wrapper,
     });
 
     act(() => {
-      expect(spy).toHaveBeenCalledWith(
-        expect.objectContaining({ type: AbbyEventType.PING })
-      );
+      expect(spy).toHaveBeenCalledWith(expect.objectContaining({ type: AbbyEventType.PING }));
     });
   });
 
@@ -107,9 +99,7 @@ describe("useAbby", () => {
       },
     });
 
-    const wrapper = ({ children }: PropsWithChildren) => (
-      <AbbyProvider>{children}</AbbyProvider>
-    );
+    const wrapper = ({ children }: PropsWithChildren) => <AbbyProvider>{children}</AbbyProvider>;
 
     const { result } = renderHook(() => useAbby("test"), {
       wrapper,
@@ -120,21 +110,19 @@ describe("useAbby", () => {
     });
 
     // first call is tested above
-    expect(spy).toHaveBeenNthCalledWith(
-      2,
-      expect.objectContaining({ type: AbbyEventType.ACT })
-    );
+    expect(spy).toHaveBeenNthCalledWith(2, expect.objectContaining({ type: AbbyEventType.ACT }));
   });
 
   it("should return the correct feature flags", () => {
     const { AbbyProvider, useFeatureFlag } = createAbby({
       projectId: "123",
-      flags: ["flag1", "flag2"],
+      flags: {
+        flag1: "Boolean",
+        flag2: "String",
+      },
     });
 
-    const wrapper = ({ children }: PropsWithChildren) => (
-      <AbbyProvider>{children}</AbbyProvider>
-    );
+    const wrapper = ({ children }: PropsWithChildren) => <AbbyProvider>{children}</AbbyProvider>;
 
     const { result: flag1 } = renderHook(() => useFeatureFlag("flag1"), {
       wrapper,
@@ -147,30 +135,27 @@ describe("useAbby", () => {
       wrapper,
     });
 
-    expect(flag2.current).toEqual(false);
+    expect(flag2.current).toEqual("");
+
+    // wait for the flag to be fetched
+    waitFor(() => expect(flag2.current).toEqual("test"));
   });
 
   it("should respect the default values for feature flags", () => {
     const { AbbyProvider, useFeatureFlag } = createAbby({
       projectId: "123",
-      flags: ["flag1", "flag2"],
-      currentEnvironment: "a",
-      settings: {
-        flags: {
-          default: true,
-        },
+      flags: {
+        flag1: "Boolean",
+        flag2: "Boolean",
       },
+      currentEnvironment: "a",
     });
 
-    const wrapper = ({ children }: PropsWithChildren) => (
-      <AbbyProvider>{children}</AbbyProvider>
-    );
+    const wrapper = ({ children }: PropsWithChildren) => <AbbyProvider>{children}</AbbyProvider>;
 
     const { result: flag2 } = renderHook(() => useFeatureFlag("flag2"), {
       wrapper,
     });
-
-    expect(flag2.current).toEqual(true);
 
     // wait for the flag to be fetched
     waitFor(() => expect(flag2.current).toEqual(false));
@@ -180,7 +165,10 @@ describe("useAbby", () => {
     process.env.NODE_ENV = "development";
     const { AbbyProvider, useFeatureFlag } = createAbby({
       projectId: "123",
-      flags: ["flag1", "flag2"],
+      flags: {
+        flag1: "Boolean",
+        flag2: "Boolean",
+      },
       currentEnvironment: "a",
       settings: {
         flags: {
@@ -192,9 +180,7 @@ describe("useAbby", () => {
       },
     });
 
-    const wrapper = ({ children }: PropsWithChildren) => (
-      <AbbyProvider>{children}</AbbyProvider>
-    );
+    const wrapper = ({ children }: PropsWithChildren) => <AbbyProvider>{children}</AbbyProvider>;
 
     const { result: flag1 } = renderHook(() => useFeatureFlag("flag1"), {
       wrapper,
@@ -218,7 +204,10 @@ describe("useAbby", () => {
   it("gets the stored feature flag value using a function properly", () => {
     const { getFeatureFlagValue } = createAbby({
       projectId: "123",
-      flags: ["flag1", "flag2"],
+      flags: {
+        flag1: "Boolean",
+        flag2: "Boolean",
+      },
       currentEnvironment: "a",
     });
 

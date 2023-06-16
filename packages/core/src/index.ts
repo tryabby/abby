@@ -19,22 +19,19 @@ export type ABConfig<T extends string = string> = {
 
 type Settings<
   FlagName extends string,
-  Flags extends Record<FlagName, FlagValueString> = Record<
-    FlagName,
-    FlagValueString
-  >
+  Flags extends Record<FlagName, FlagValueString> = Record<FlagName, FlagValueString>
 > = {
   flags?: {
+    defaultValues?: {
+      [K in keyof Flags]?: FlagValueStringToType<Flags[K]>;
+    };
     devOverrides?: {
       [K in keyof Flags]?: FlagValueStringToType<Flags[K]>;
     };
   };
 };
 
-type LocalData<
-  FlagName extends string = string,
-  TestName extends string = string
-> = {
+type LocalData<FlagName extends string = string, TestName extends string = string> = {
   tests: Record<
     TestName,
     ABConfig & {
@@ -53,10 +50,7 @@ interface PersistentStorage {
 export type AbbyConfig<
   FlagName extends string = string,
   Tests extends Record<string, ABConfig> = Record<string, ABConfig>,
-  Flags extends Record<FlagName, FlagValueString> = Record<
-    FlagName,
-    FlagValueString
-  >
+  Flags extends Record<FlagName, FlagValueString> = Record<FlagName, FlagValueString>
 > = {
   projectId: string;
   apiUrl?: string;
@@ -76,43 +70,31 @@ export class Abby<
   private log = (...args: any[]) =>
     this.config.debug ? console.log(`core.Abby`, ...args) : () => {};
 
-  private testDevtoolOverrides: Map<
-    keyof Tests,
-    Tests[keyof Tests]["variants"][number]
-  > = new Map();
-
-  private flagDevtoolOverrides: Map<
-    keyof Flags,
-    FlagValueStringToType<Flags[keyof Flags]>
-  > = new Map();
-
   #data: LocalData<FlagName, TestName> = {
     tests: {} as any,
     flags: {} as any,
   };
 
-  private listeners = new Set<
-    (newData: LocalData<FlagName, TestName>) => void
-  >();
+  private listeners = new Set<(newData: LocalData<FlagName, TestName>) => void>();
 
   private dataInitialized: Boolean = false;
 
-  private flagOverrides = new Map<
-    string,
-    FlagValueStringToType<Flags[keyof Flags]>
-  >();
+  private flagOverrides = new Map<string, FlagValueStringToType<Flags[keyof Flags]>>();
 
-  private testOverrides: Map<
-    keyof Tests,
-    Tests[keyof Tests]["variants"][number]
-  > = new Map();
+  private testOverrides: Map<keyof Tests, Tests[keyof Tests]["variants"][number]> = new Map();
 
   constructor(
     private config: F.Narrow<AbbyConfig<FlagName, Tests, Flags>>,
     private persistantTestStorage?: PersistentStorage,
     private persistantFlagStorage?: PersistentStorage
   ) {
-    this.#data.flags = config.flags ?? ({} as any);
+    this.#data.flags = Object.keys(config.flags ?? {}).reduce((acc, flagName) => {
+      acc[flagName as FlagName] = this.getDefaultFlagValue(
+        flagName as FlagName,
+        config.flags as any
+      );
+      return acc;
+    }, {} as Record<FlagName, FlagValue>);
     this.#data.tests = config.tests ?? ({} as any);
   }
 
@@ -181,16 +163,13 @@ export class Abby<
     this.log(`getProjectData()`);
 
     return {
-      tests: Object.entries(this.#data.tests).reduce(
-        (acc, [testName, test]) => {
-          acc[testName as TestName] = {
-            ...(test as Tests[TestName]),
-            selectedVariant: this.getTestVariant(testName as TestName),
-          };
-          return acc;
-        },
-        this.#data.tests
-      ),
+      tests: Object.entries(this.#data.tests).reduce((acc, [testName, test]) => {
+        acc[testName as TestName] = {
+          ...(test as Tests[TestName]),
+          selectedVariant: this.getTestVariant(testName as TestName),
+        };
+        return acc;
+      }, this.#data.tests),
       flags: Object.keys(this.#data.flags).reduce((acc, flagName) => {
         acc[flagName as FlagName] = this.getFeatureFlag(flagName as FlagName);
         return acc;
@@ -225,10 +204,9 @@ export class Abby<
    * @param key the name of the feature flag
    * @returns the value of the feature flag
    */
-  getFeatureFlag<
-    T extends keyof Flags,
-    CurrentFlag extends Flags[T] = Flags[T]
-  >(key: T): FlagValueStringToType<CurrentFlag> {
+  getFeatureFlag<T extends keyof Flags, CurrentFlag extends Flags[T] = Flags[T]>(
+    key: T
+  ): FlagValueStringToType<CurrentFlag> {
     this.log(`getFeatureFlag()`, key);
 
     const storedValue = this.#data.flags[key as unknown as FlagName];
@@ -247,9 +225,7 @@ export class Abby<
      * 3. DevDefault from config
      */
     if (process.env.NODE_ENV === "development") {
-      const devOverride = (this.config.settings?.flags?.devOverrides as any)?.[
-        key
-      ];
+      const devOverride = (this.config.settings?.flags?.devOverrides as any)?.[key];
       if (devOverride != null) {
         return devOverride;
       }
@@ -300,10 +276,7 @@ export class Abby<
    * @param key the name of the test
    * @param override the value to override the test variant with
    */
-  updateLocalVariant<T extends keyof Tests>(
-    key: T,
-    override: Tests[T]["variants"][number]
-  ) {
+  updateLocalVariant<T extends keyof Tests>(key: T, override: Tests[T]["variants"][number]) {
     this.testOverrides.set(key, override);
     this.persistantTestStorage?.set(key as string, override);
 
@@ -315,10 +288,7 @@ export class Abby<
    * @param name the name of the feature flag
    * @param value the value to override the feature flag with
    */
-  updateFlag<F extends FlagName>(
-    name: F,
-    value: FlagValueStringToType<Flags[F]>
-  ) {
+  updateFlag<F extends FlagName>(name: F, value: FlagValueStringToType<Flags[F]>) {
     this.flagOverrides.set(name, value);
     if (process.env.NODE_ENV === "development") {
       this.persistantFlagStorage?.set(name, value.toString());
@@ -389,5 +359,26 @@ export class Abby<
         this.flagOverrides.set(flagName, (cookieValue === "true") as any);
       }
     });
+  }
+
+  private getDefaultFlagValue<FlagName extends string>(flagName: FlagName, flags: Flags) {
+    const flagType = flags[flagName as unknown as keyof Flags];
+
+    const defaultValue = (this.config.settings?.flags?.defaultValues as any)?.[flagName] as
+      | FlagValue
+      | undefined;
+
+    if (defaultValue != null) return defaultValue;
+
+    switch (flagType) {
+      case "Boolean":
+        return false;
+      case "String":
+        return "";
+      case "Number":
+        return 0;
+      default:
+        throw new Error(`Unknown flag type: ${flagType}`);
+    }
   }
 }

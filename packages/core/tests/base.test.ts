@@ -44,17 +44,20 @@ describe("Abby", () => {
     expect(abby.getTestVariant("a")).toBe(variants[1]);
   });
 
-  it("gets a feature flag", () => {
+  it("gets a feature flag", async () => {
     const abby = new Abby({
-      projectId: "",
+      projectId: "abc",
       flags: {
         flag1: "String",
         flag2: "Boolean",
       },
     });
 
-    expect(abby.getFeatureFlag("flag1")).toBeDefined();
-    expect(abby.getFeatureFlag("flag2")).toBeDefined();
+    await abby.loadProjectData();
+
+    expect(abby.getFeatureFlag("flag1")).toBe(true);
+
+    expect(abby.getFeatureFlag("flag2")).toEqual("test");
   });
 
   it("uses the devOverrides", () => {

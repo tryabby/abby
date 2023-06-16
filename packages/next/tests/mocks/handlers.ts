@@ -1,4 +1,4 @@
-import { compose, rest } from "msw";
+import { rest } from "msw";
 import { AbbyDataResponse, ABBY_BASE_URL } from "@tryabby/core";
 
 export const handlers = [
@@ -18,11 +18,11 @@ export const handlers = [
         flags: [
           {
             name: "flag1",
-            isEnabled: true,
+            value: true,
           },
           {
             name: "flag2",
-            isEnabled: false,
+            value: "test",
           },
         ],
       } as AbbyDataResponse)

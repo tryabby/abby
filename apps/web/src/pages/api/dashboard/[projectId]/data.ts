@@ -60,7 +60,7 @@ export default async function getWeightsHandler(
       }),
     ]);
 
-    const response: AbbyDataResponse = {
+    const response = {
       tests: tests.map((test) => ({
         name: test.name,
         weights: test.options.map((o) => o.chance.toNumber()),
@@ -69,10 +69,9 @@ export default async function getWeightsHandler(
         return {
           name: flagValue.flag.name,
           value: transformFlagValue(flagValue.value, flagValue.flag.type),
-          type: flagValue.flag.type,
         };
       }),
-    };
+    } satisfies AbbyDataResponse;
 
     res.json(response);
 

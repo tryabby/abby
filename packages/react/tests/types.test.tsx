@@ -15,12 +15,7 @@ afterAll(() => {
 
 describe("useAbby", () => {
   it("returns the correct types", () => {
-    const test2Variants = [
-      "SimonsText",
-      "MatthiasText",
-      "TomsText",
-      "TimsText",
-    ] as const;
+    const test2Variants = ["SimonsText", "MatthiasText", "TomsText", "TimsText"] as const;
 
     const { AbbyProvider, useAbby } = createAbby({
       projectId: "123",
@@ -32,9 +27,7 @@ describe("useAbby", () => {
       },
     });
 
-    const wrapper = ({ children }: PropsWithChildren) => (
-      <AbbyProvider>{children}</AbbyProvider>
-    );
+    const wrapper = ({ children }: PropsWithChildren) => <AbbyProvider>{children}</AbbyProvider>;
 
     const { result: test1Result } = renderHook(() => useAbby("test"), {
       wrapper,
@@ -64,13 +57,17 @@ describe("useFeatureFlag", () => {
       },
     });
 
-    const wrapper = ({ children }: PropsWithChildren) => (
-      <AbbyProvider>{children}</AbbyProvider>
-    );
+    const wrapper = ({ children }: PropsWithChildren) => <AbbyProvider>{children}</AbbyProvider>;
 
-    renderHook(() => useFeatureFlag("test"), {
+    const { result: testFlagResult } = renderHook(() => useFeatureFlag("test"), {
       wrapper,
     });
+    const { result: test2FlagResult } = renderHook(() => useFeatureFlag("test2"), {
+      wrapper,
+    });
+
+    expectTypeOf(testFlagResult.current).toEqualTypeOf<boolean>();
+    expectTypeOf(test2FlagResult.current).toEqualTypeOf<string>();
   });
 
   // TODO: the types don't work for this yet
