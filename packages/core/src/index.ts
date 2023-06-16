@@ -71,9 +71,13 @@ export class Abby<
     }, {} as any);
     this.#data.tests = config.tests ?? ({} as any);
     this.config = config;
+    this.persistantTestStorage = persistantTestStorage;
+    this.persistantFlagStorage = persistantFlagStorage;
   }
 
   private config: F.Narrow<AbbyConfig<FlagName, Tests>>;
+  private persistantTestStorage: PersistentStorage | undefined;
+  private persistantFlagStorage: PersistentStorage | undefined;
 
   private log = (...args: any[]) =>
     this.config.debug ? console.log(`core.Abby`, ...args) : () => {};
