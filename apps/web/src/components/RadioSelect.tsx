@@ -5,13 +5,17 @@ import { cn } from "lib/utils";
 type RadioSelectProps<T extends string> = {
   options: Array<{ label: string | React.ReactNode; value: T }>;
   onChange: (value: T) => void;
+  initialValue?: T;
 };
 
 export function RadioSelect<T extends string = string>({
   options,
   onChange,
+  initialValue,
 }: RadioSelectProps<T>) {
-  const [selected, setSelected] = React.useState(options[0]?.value);
+  const [selected, setSelected] = React.useState(
+    initialValue ?? options[0]?.value
+  );
   return (
     <RadioGroup.Root
       className="flex gap-2.5"

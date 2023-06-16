@@ -7,7 +7,6 @@ import { FeatureFlag } from "components/FeatureFlag";
 import { Layout } from "components/Layout";
 import { FullPageLoadingSpinner } from "components/LoadingSpinner";
 import { Modal } from "components/Modal";
-import { TitleEdit } from "components/TitleEdit";
 import { useProjectId } from "lib/hooks/useProjectId";
 import { NextPageWithLayout } from "pages/_app";
 import { useState } from "react";
@@ -24,7 +23,9 @@ import {
 import { BsThreeDotsVertical } from "react-icons/bs";
 import { EditIcon, FileEditIcon, TrashIcon } from "lucide-react";
 import { Input } from "components/Input";
-import { FlagIcon } from "components/FlagIcon";
+
+import { cn } from "lib/utils";
+import { getFlagTypeClassName } from "lib/flags";
 
 const EditTitleModal = ({
   flagId,
@@ -228,7 +229,12 @@ const FeatureFlagsPage: NextPageWithLayout = () => {
               >
                 <div className="flex justify-between">
                   <div className="flex items-center space-x-3">
-                    <div className="flex items-center space-x-2 rounded-md border border-gray-200 px-2 py-1 text-xs">
+                    <div
+                      className={cn(
+                        "flex items-center space-x-2 rounded-md border px-2 py-1 text-xs",
+                        getFlagTypeClassName(currentFlag.type)
+                      )}
+                    >
                       <span>{currentFlag.type}</span>
                     </div>
                     <h2 className="font-bold text-pink-200">

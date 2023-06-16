@@ -21,7 +21,11 @@ export const {
       variants: ["A", "B"],
     },
   },
-  flags: ["AdvancedTestStats", "showFooter", "test"],
+  flags: {
+    AdvancedTestStats: "Boolean",
+    showFooter: "Boolean",
+    test: "Boolean",
+  },
 });
 
 export const AbbyDevtools = withDevtools(abbyDevtools, {});

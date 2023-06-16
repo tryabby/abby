@@ -5,6 +5,9 @@ export function getFlagCount(flags: Array<FeatureFlag>) {
   return Object.keys(groupBy(flags, (f) => f.name)).length;
 }
 
+/**
+ * Helper function to transform a string value of a flag to the correct type
+ */
 export function transformFlagValue(value: string, type: FeatureFlagType) {
   switch (type) {
     case FeatureFlagType.BOOLEAN:
@@ -13,5 +16,18 @@ export function transformFlagValue(value: string, type: FeatureFlagType) {
       return parseInt(value);
     default:
       return value;
+  }
+}
+
+export function getFlagTypeClassName(type: FeatureFlagType) {
+  switch (type) {
+    case FeatureFlagType.BOOLEAN:
+      return "text-orange-400 border-orange-400";
+    case FeatureFlagType.NUMBER:
+      return "text-blue-400 border-blue-400";
+    case FeatureFlagType.STRING:
+      return "text-green-400 border-green-400";
+    default:
+      throw new Error(`Unknown flag type: ${type}`);
   }
 }

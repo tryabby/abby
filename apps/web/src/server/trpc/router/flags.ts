@@ -122,7 +122,9 @@ export const flagRouter = router({
     .input(
       z.object({
         flagValueId: z.string(),
-        value: flagValue,
+        value: z.string(),
+        type: z.nativeEnum(FeatureFlagType),
+        name: z.string(),
       })
     )
     .mutation(async ({ ctx, input }) => {
@@ -143,23 +145,33 @@ export const flagRouter = router({
 
       if (!currentFlag) throw new TRPCError({ code: "UNAUTHORIZED" });
 
-      await ctx.prisma.featureFlagValue.update({
-        where: {
-          id: input.flagValueId,
-        },
-        data: {
-          value: input.value.toString(),
-        },
-      });
-
-      await ctx.prisma.featureFlagHistory.create({
-        data: {
-          userId: ctx.session.user.id,
-          flagValueId: input.flagValueId,
-          oldValue: currentFlag.value,
-          newValue: input.value.toString(),
-        },
-      });
+      await ctx.prisma.$transaction([
+        ctx.prisma.featureFlagValue.update({
+          where: {
+            id: input.flagValueId,
+          },
+          data: {
+            value: input.value,
+          },
+        }),
+        ctx.prisma.featureFlag.update({
+          where: {
+            id: currentFlag.flagId,
+          },
+          data: {
+            name: input.name,
+            type: input.type,
+          },
+        }),
+        ctx.prisma.featureFlagHistory.create({
+          data: {
+            userId: ctx.session.user.id,
+            flagValueId: input.flagValueId,
+            oldValue: currentFlag.value,
+            newValue: input.value,
+          },
+        }),
+      ]);
     }),
   removeFlag: protectedProcedure
     .input(

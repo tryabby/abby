@@ -39,19 +39,20 @@ export const environmentRouter = router({
         });
       }
 
-      const newEnv = await ctx.prisma.environment.create({
-        data: {
-          name: input.name,
-          projectId: input.projectId,
-          sortIndex: project.environments.length,
-        },
-      });
-
-      const featureFlags = await ctx.prisma.featureFlag.findMany({
-        where: {
-          projectId: input.projectId,
-        },
-      });
+      const [newEnv, featureFlags] = await Promise.all([
+        ctx.prisma.environment.create({
+          data: {
+            name: input.name,
+            projectId: input.projectId,
+            sortIndex: project.environments.length,
+          },
+        }),
+        ctx.prisma.featureFlag.findMany({
+          where: {
+            projectId: input.projectId,
+          },
+        }),
+      ]);
 
       await ctx.prisma.$transaction(async (tx) => {
         const newFlagValues = await Promise.all(
@@ -64,7 +65,7 @@ export const environmentRouter = router({
                   flag.type === FeatureFlagType.BOOLEAN
                     ? "false"
                     : flag.type === FeatureFlagType.STRING
-                    ? ""
+                    ? "new value"
                     : "0",
               },
             })

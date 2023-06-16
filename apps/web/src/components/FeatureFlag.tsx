@@ -3,7 +3,7 @@ import dayjs from "dayjs";
 import { FaHistory } from "react-icons/fa";
 import { match, P } from "ts-pattern";
 
-import { FeatureFlagHistory } from "@prisma/client";
+import { FeatureFlagHistory, FeatureFlagType } from "@prisma/client";
 import { Tooltip, TooltipContent, TooltipTrigger } from "components/Tooltip";
 import relativeTime from "dayjs/plugin/relativeTime";
 import { useState } from "react";
@@ -13,6 +13,7 @@ import { Avatar } from "./Avatar";
 import { LoadingSpinner } from "./LoadingSpinner";
 import { Modal } from "./Modal";
 import { Edit } from "lucide-react";
+import { ChangeFlagForm, FlagFormValues } from "./AddFeatureFlagModal";
 
 dayjs.extend(relativeTime);
 
@@ -101,19 +102,27 @@ const HistoryButton = ({ flagValueId }: { flagValueId: string }) => {
 const ConfirmUpdateModal = ({
   isOpen,
   onClose,
-  flagValueId,
+  currentValue,
   description,
   projectId,
   flagName,
+  type,
+  flagValueId,
 }: {
   isOpen: boolean;
   onClose: () => void;
-  flagValueId: string;
+  currentValue: string;
+  type: FeatureFlagType;
   description: string;
   projectId: string;
   flagName: string;
+  flagValueId: string;
 }) => {
-  const [newValue, setNewValue] = useState("");
+  const [state, setState] = useState<FlagFormValues>({
+    name: flagName,
+    value: currentValue,
+    type,
+  });
   const trpcContext = trpc.useContext();
 
   const { mutate: updateFlag } = trpc.flags.updateFlag.useMutation({
@@ -145,17 +154,29 @@ const ConfirmUpdateModal = ({
 
   return (
     <Modal
-      title="Confirm Toggle"
+      title="Update Flag"
       confirmText={`Update Flag`}
-      onConfirm={() => updateFlag({ value: newValue, flagValueId })}
+      onConfirm={() => updateFlag({ ...state, flagValueId })}
       isOpen={isOpen}
       onClose={onClose}
+      size="full"
     >
-      <h2>
-        Are you sure that you want to update the flag <i>{flagName}</i>?
-      </h2>
-      <h3 className="mt-4 text-sm font-semibold">Description:</h3>
-      <p dangerouslySetInnerHTML={{ __html: description }} />
+      <ChangeFlagForm
+        key={flagValueId}
+        initialValues={{
+          name: flagName,
+          value: currentValue,
+          type,
+        }}
+        onChange={(newState) => setState(newState)}
+        errors={{}}
+      />
+      <h3 className="mt-8 text-sm font-semibold">Description:</h3>
+      {!description ? (
+        "No description provided"
+      ) : (
+        <p dangerouslySetInnerHTML={{ __html: description }} />
+      )}
     </Modal>
   );
 };
@@ -187,7 +208,10 @@ export function FeatureFlag({
       <span className="mr-2 flex w-full items-center justify-between space-x-3 rounded-xl bg-gray-100 py-3 pl-3 pr-4 text-sm font-medium text-gray-800 dark:bg-gray-700 dark:text-gray-300">
         <div className="flex items-center space-x-2">
           <p>{environmentName}</p>
-          <code className="max-w-[60px] overflow-hidden text-ellipsis rounded-md bg-gray-600 p-1">
+          <code
+            title={currentFlagValue}
+            className="max-w-[60px] overflow-hidden text-ellipsis whitespace-nowrap rounded-md bg-gray-600 p-1"
+          >
             {currentFlagValue}
           </code>
         </div>
@@ -206,6 +230,8 @@ export function FeatureFlag({
         description={flag.description ?? ""}
         projectId={projectId}
         flagName={flag.name}
+        type={flag.type}
+        currentValue={currentFlagValue}
       />
     </>
   );
