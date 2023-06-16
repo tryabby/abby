@@ -229,7 +229,7 @@ export function createAbby<
    */
   const getABResetFunction = <T extends keyof Tests>(name: T) => {
     return () => {
-      FlagStorageService.remove(config.projectId, name as string);
+      TestStorageService.remove(config.projectId, name as string);
     };
   };
 

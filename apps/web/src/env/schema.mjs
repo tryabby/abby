@@ -41,6 +41,7 @@ export const clientSchema = z.object({
   NEXT_PUBLIC_DISABLE_ANALYTICS: z.boolean(),
   NEXT_PUBLIC_STRIPE_STARTER_PLAN_PRICE_ID: z.string().min(1),
   NEXT_PUBLIC_STRIPE_PRO_PLAN_PRICE_ID: z.string().min(1),
+  NEXT_PUBLIC_ABBY_PROJECT_ID: z.string().min(1),
 });
 
 /**
@@ -60,4 +61,5 @@ export const clientEnv = {
   NEXT_PUBLIC_DISABLE_ANALYTICS: Boolean(
     process.env.NEXT_PUBLIC_DISABLE_ANALYTICS
   ),
+  NEXT_PUBLIC_ABBY_PROJECT_ID: process.env.NEXT_PUBLIC_ABBY_PROJECT_ID,
 };
