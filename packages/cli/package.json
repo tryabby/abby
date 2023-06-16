@@ -1,0 +1,33 @@
+{
+  "name": "@tryabby/cli",
+  "version": "0.0.0",
+  "private": true,
+  "main": "./lib/index.js",
+  "bin": {
+    "abby": "./lib/index.js"
+  },
+  "scripts": {
+    "start": "nodemon --watch 'src/**/*.ts' --exec 'ts-node' src/index.ts",
+    "start:windows": "nodemon --watch 'src/**/*.ts' --exec \"npx ts-node\" src/index.ts",
+    "create": "npm run build && npm run test",
+    "build": "tsc -p .",
+    "local": "sudo npm i -g && pizza",
+    "refresh": "rm -rf ./node_modules ./package-lock.json && npm install"
+  },
+  "dependencies": {
+    "chalk": "^5.2.0",
+    "clear": "^0.1.0",
+    "commander": "^10.0.1",
+    "figlet": "^1.6.0",
+    "path": "^0.12.7",
+    "tsup": "^6.5.0"
+  },
+  "devDependencies": {
+    "@types/figlet": "^1.5.6",
+    "@types/node": "^20.3.1",
+    "nodemon": "^2.0.22",
+    "ts-node": "^10.9.1",
+    "tsconfig": "workspace:*",
+    "typescript": "^5.1.3"
+  }
+}
