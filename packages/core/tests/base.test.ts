@@ -17,11 +17,13 @@ describe("Abby", () => {
     const variants = ["variant1", "variant2"];
 
     const abby = new Abby({
-      projectId: "",
-      tests: {
-        a: { variants },
-        b: {
-          variants: ["test"],
+      config: {
+        projectId: "",
+        tests: {
+          a: { variants },
+          b: {
+            variants: ["test"],
+          },
         },
       },
     });
@@ -33,9 +35,11 @@ describe("Abby", () => {
     const variants = ["variant1", "variant2"];
 
     const abby = new Abby({
-      projectId: "",
-      tests: {
-        a: { variants },
+      config: {
+        projectId: "",
+        tests: {
+          a: { variants },
+        },
       },
     });
 
@@ -46,8 +50,10 @@ describe("Abby", () => {
 
   it("gets a feature flag", () => {
     const abby = new Abby({
-      projectId: "",
-      flags: ["flag1", "flag2"],
+      config: {
+        projectId: "",
+        flags: ["flag1", "flag2"],
+      },
     });
 
     expect(abby.getFeatureFlag("flag1")).toBeDefined();
@@ -56,12 +62,14 @@ describe("Abby", () => {
 
   it("uses the devOverrides", () => {
     const abby = new Abby({
-      projectId: "",
-      flags: ["flag1", "flag2"],
-      settings: {
-        flags: {
-          devOverrides: {
-            flag1: false,
+      config: {
+        projectId: "",
+        flags: ["flag1", "flag2"],
+        settings: {
+          flags: {
+            devOverrides: {
+              flag1: false,
+            },
           },
         },
       },
@@ -80,11 +88,13 @@ describe("Abby", () => {
     process.env.NODE_ENV = "development";
 
     const abby = new Abby({
-      projectId: "",
-      tests: {
-        a: { variants: ["variant1", "variant2"] },
-        b: {
-          variants: ["test"],
+      config: {
+        projectId: "",
+        tests: {
+          a: { variants: ["variant1", "variant2"] },
+          b: {
+            variants: ["test"],
+          },
         },
       },
     });
@@ -98,8 +108,10 @@ describe("Abby", () => {
 
   it("updates local feature flag", () => {
     const abby = new Abby({
-      projectId: "",
-      flags: ["flag1", "flag2"],
+      config: {
+        projectId: "",
+        flags: ["flag1", "flag2"],
+      },
     });
 
     abby.init({ flags: [{ name: "flag1", isEnabled: true }], tests: [] });
