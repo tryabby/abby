@@ -6,6 +6,7 @@ import { AbbyDataResponse } from "@tryabby/core";
 import { EventService } from "server/services/EventService";
 import { trackPlanOverage } from "lib/logsnag";
 import { RequestCache } from "server/services/RequestCache";
+import { transformFlagValue } from "lib/flags";
 
 const incomingQuerySchema = z.object({
   projectId: z.string(),
@@ -55,7 +56,7 @@ export default async function getWeightsHandler(
             projectId,
           },
         },
-        include: { flag: { select: { name: true } } },
+        include: { flag: { select: { name: true, type: true } } },
       }),
     ]);
 
@@ -67,7 +68,8 @@ export default async function getWeightsHandler(
       flags: flags.map((flagValue) => {
         return {
           name: flagValue.flag.name,
-          value: flagValue.value,
+          value: transformFlagValue(flagValue.value, flagValue.flag.type),
+          type: flagValue.flag.type,
         };
       }),
     };

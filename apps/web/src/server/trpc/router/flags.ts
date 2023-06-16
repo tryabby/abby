@@ -49,26 +49,12 @@ export const flagRouter = router({
     }),
   addFlag: protectedProcedure
     .input(
-      z.discriminatedUnion("type", [
-        z.object({
-          projectId: z.string(),
-          name: z.string(),
-          type: z.literal(FeatureFlagType.BOOLEAN),
-          value: z.boolean(),
-        }),
-        z.object({
-          projectId: z.string(),
-          name: z.string(),
-          type: z.literal(FeatureFlagType.NUMBER),
-          value: z.number(),
-        }),
-        z.object({
-          projectId: z.string(),
-          name: z.string(),
-          type: z.literal(FeatureFlagType.STRING),
-          value: z.string(),
-        }),
-      ])
+      z.object({
+        projectId: z.string(),
+        name: z.string(),
+        type: z.nativeEnum(FeatureFlagType),
+        value: z.string(),
+      })
     )
     .mutation(async ({ ctx, input }) => {
       const project = await ctx.prisma.project.findFirst({

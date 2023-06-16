@@ -2,9 +2,9 @@ import * as Popover from "@radix-ui/react-popover";
 import dayjs from "dayjs";
 import { FaHistory } from "react-icons/fa";
 import { match, P } from "ts-pattern";
-import { Toggle } from "./Toggle";
 
 import { FeatureFlagHistory } from "@prisma/client";
+import { Tooltip, TooltipContent, TooltipTrigger } from "components/Tooltip";
 import relativeTime from "dayjs/plugin/relativeTime";
 import { useState } from "react";
 import { toast } from "react-hot-toast";
@@ -12,10 +12,7 @@ import { RouterOutputs, trpc } from "utils/trpc";
 import { Avatar } from "./Avatar";
 import { LoadingSpinner } from "./LoadingSpinner";
 import { Modal } from "./Modal";
-import { TooltipTrigger, TooltipContent, Tooltip } from "components/Tooltip";
-import { FlagValue } from "@tryabby/core";
-import { FlagIcon } from "./FlagIcon";
-import { env } from "env/client.mjs";
+import { Edit } from "lucide-react";
 
 dayjs.extend(relativeTime);
 
@@ -179,14 +176,27 @@ export function FeatureFlag({
   const [isUpdateConfirmationModalOpen, setIsUpdateConfirmationModalOpen] =
     useState(false);
 
+  const currentFlagValue = flag.values.find((f) => f.id === flagValueId)?.value;
+
+  if (!currentFlagValue) {
+    return null;
+  }
+
   return (
     <>
-      <span
-        key={flag.id}
-        className="mr-2 flex w-full items-center justify-between space-x-3 rounded-xl bg-gray-100 py-3 pl-3 pr-4 text-sm font-medium text-gray-800 dark:bg-gray-700 dark:text-gray-300"
-      >
-        <p>{environmentName}</p>
-        <HistoryButton flagValueId={flagValueId} />
+      <span className="mr-2 flex w-full items-center justify-between space-x-3 rounded-xl bg-gray-100 py-3 pl-3 pr-4 text-sm font-medium text-gray-800 dark:bg-gray-700 dark:text-gray-300">
+        <div className="flex items-center space-x-2">
+          <p>{environmentName}</p>
+          <code className="max-w-[60px] overflow-hidden text-ellipsis rounded-md bg-gray-600 p-1">
+            {currentFlagValue}
+          </code>
+        </div>
+        <div className="flex space-x-2">
+          <button onClick={() => setIsUpdateConfirmationModalOpen(true)}>
+            <Edit size={18} />
+          </button>
+          <HistoryButton flagValueId={flagValueId} />
+        </div>
       </span>
 
       <ConfirmUpdateModal
