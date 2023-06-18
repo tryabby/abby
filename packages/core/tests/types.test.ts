@@ -1,10 +1,11 @@
 import { AbbyConfig } from "../dist";
 import { Abby } from "../src/index";
+import fetch from "node-fetch";
 
 describe("types", () => {
   it("produces proper types", () => {
-    const abby = new Abby({
-      config: {
+    const abby = new Abby(
+      {
         projectId: "",
         flags: ["flag1", "flag2"],
         tests: {
@@ -16,7 +17,10 @@ describe("types", () => {
           },
         },
       },
-    });
+      undefined,
+      undefined,
+      fetch
+    );
 
     assertType<boolean>(abby.getFeatureFlag("flag1"));
     expectTypeOf(abby.getFeatureFlag).parameter(0).toEqualTypeOf<"flag1" | "flag2">();

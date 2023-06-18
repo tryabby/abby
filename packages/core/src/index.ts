@@ -3,6 +3,7 @@ import { HttpService } from "./shared";
 import { F } from "ts-toolbelt";
 import { getWeightedRandomVariant } from "./mathHelpers";
 import { parseCookies } from "./helpers";
+import type fetch from "node-fetch";
 
 export * from "./shared/index";
 
@@ -54,30 +55,21 @@ export class Abby<
   TestName extends string,
   Tests extends Record<string, ABConfig>
 > {
-  constructor({
-    config,
-    persistantFlagStorage,
-    persistantTestStorage,
-    nodeFetch,
-  }: {
-    config: F.Narrow<AbbyConfig<FlagName, Tests>>;
-    persistantTestStorage?: PersistentStorage;
-    persistantFlagStorage?: PersistentStorage;
-    nodeFetch?: typeof fetch;
-  }) {
+  constructor(
+    private config: F.Narrow<AbbyConfig<FlagName, Tests>>,
+    private persistantFlagStorage?: PersistentStorage,
+    private persistantTestStorage?: PersistentStorage,
+    nodeFetch?: typeof fetch | typeof globalThis.fetch
+  ) {
     this.#data.flags = (config.flags ?? []).reduce((acc, flag) => {
       acc[flag] = null;
       return acc;
     }, {} as any);
     this.#data.tests = config.tests ?? ({} as any);
-    this.config = config;
-    this.persistantTestStorage = persistantTestStorage;
-    this.persistantFlagStorage = persistantFlagStorage;
+    this.httpService = new HttpService({ fetch2: nodeFetch });
   }
 
-  private config: F.Narrow<AbbyConfig<FlagName, Tests>>;
-  private persistantTestStorage: PersistentStorage | undefined;
-  private persistantFlagStorage: PersistentStorage | undefined;
+  private httpService;
 
   private log = (...args: any[]) =>
     this.config.debug ? console.log(`core.Abby`, ...args) : () => {};
@@ -86,8 +78,6 @@ export class Abby<
     new Map();
 
   private flagDevtoolOverrides: Map<FlagName, boolean> = new Map();
-
-  private httpService: HttpService = new HttpService({});
 
   #data: LocalData<FlagName, TestName> = {
     tests: {} as any,

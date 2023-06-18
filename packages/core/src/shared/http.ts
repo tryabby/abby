@@ -1,10 +1,12 @@
+import { TypeOf } from "zod";
 import { ABBY_BASE_URL } from "./constants";
 import type { AbbyEventType, AbbyEvent, AbbyDataResponse } from "./index";
+import fetch from "node-fetch";
 export class HttpService {
-  constructor({ fetch }: { fetch?: typeof globalThis.fetch } = {}) {
-    this.#fetchFunction = fetch ?? globalThis.fetch;
+  constructor({ fetch2 }: { fetch2?: typeof globalThis.fetch | typeof fetch } = {}) {
+    this.#fetchFunction = fetch2 ?? globalThis.fetch;
   }
-  #fetchFunction: typeof globalThis.fetch;
+  #fetchFunction: typeof globalThis.fetch | typeof fetch;
 
   async getProjectData({
     projectId,
