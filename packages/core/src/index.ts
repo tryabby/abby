@@ -1,5 +1,5 @@
 import { ABBY_AB_STORAGE_PREFIX, ABBY_FF_STORAGE_PREFIX, AbbyDataResponse } from "./shared/";
-import { HttpService } from "./shared";
+import { HttpService, AbbyEvent, AbbyEventType } from "./shared";
 import { F } from "ts-toolbelt";
 import { getWeightedRandomVariant } from "./mathHelpers";
 import { parseCookies } from "./helpers";
@@ -362,5 +362,17 @@ export class Abby<
         this.flagOverrides.set(flagName, cookieValue === "true");
       }
     });
+  }
+
+  sendData({
+    url,
+    type,
+    data,
+  }: {
+    url?: string;
+    type: AbbyEventType;
+    data: Omit<AbbyEvent, "type">;
+  }) {
+    this.httpService.sendData({ url, type, data });
   }
 }
