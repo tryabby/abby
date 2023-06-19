@@ -1,11 +1,5 @@
 import { Abby, AbbyConfig, ABConfig } from "@tryabby/core";
-import React, {
-  useCallback,
-  useEffect,
-  useRef,
-  useState,
-  type PropsWithChildren,
-} from "react";
+import React, { useCallback, useEffect, useRef, useState, type PropsWithChildren } from "react";
 import { HttpService } from "@tryabby/core";
 import { ABBY_INSTANCE_KEY } from "@tryabby/core";
 import { AbbyDataResponse, AbbyEventType } from "@tryabby/core";
@@ -90,15 +84,14 @@ export function createAbby<
     // lazily get the tests
     useEffect(() => {
       setSelectedVariant(
-        abby.getProjectData().tests[name as unknown as TestName]
-          ?.selectedVariant ?? ""
+        abby.getProjectData().tests[name as unknown as TestName]?.selectedVariant ?? ""
       );
     }, [name]);
 
     useEffect(() => {
       if (!name || !selectedVariant) return;
 
-      HttpService.sendData({
+      abby.sendData({
         url: config.apiUrl,
         type: AbbyEventType.PING,
         data: {
@@ -112,7 +105,7 @@ export function createAbby<
     const onAct = useCallback(() => {
       if (!selectedVariant) return;
 
-      HttpService.sendData({
+      abby.sendData({
         url: config.apiUrl,
         type: AbbyEventType.ACT,
         data: {
@@ -134,9 +127,7 @@ export function createAbby<
     };
   };
 
-  const useFeatureFlag = <F extends NonNullable<ConfigType["flags"]>[number]>(
-    name: F
-  ): boolean => {
+  const useFeatureFlag = <F extends NonNullable<ConfigType["flags"]>[number]>(name: F): boolean => {
     const data = useAbbyData();
     return data.flags[name];
   };
@@ -172,17 +163,13 @@ export function createAbby<
     return <AbbyContext.Provider value={data}>{children}</AbbyContext.Provider>;
   };
 
-  const getFeatureFlagValue = <
-    F extends NonNullable<ConfigType["flags"]>[number]
-  >(
+  const getFeatureFlagValue = <F extends NonNullable<ConfigType["flags"]>[number]>(
     name: F
   ): boolean => {
     return abby.getFeatureFlag(name);
   };
 
-  const getABTestValue = <K extends keyof Tests>(
-    name: K
-  ): Tests[K]["variants"][number] => {
+  const getABTestValue = <K extends keyof Tests>(name: K): Tests[K]["variants"][number] => {
     return abby.getTestVariant(name);
   };
 
@@ -196,10 +183,7 @@ export function createAbby<
           return;
         }
 
-        if (
-          !props?.dangerouslyForceShow &&
-          process.env.NODE_ENV !== "development"
-        ) {
+        if (!props?.dangerouslyForceShow && process.env.NODE_ENV !== "development") {
           return;
         }
 
