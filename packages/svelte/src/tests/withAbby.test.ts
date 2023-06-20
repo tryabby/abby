@@ -7,9 +7,10 @@ import { HttpService } from "@tryabby/core";
 
 describe("withabby working", () => {
   it("works properly", async () => {
-    const data = await HttpService.getProjectData({
-      projectId: "123",
-    });
+    const data = await abby.__abby__.loadProjectData();
+
+    console.log("data", data);
+
     if (!data) throw new Error("");
 
     abby.__abby__.init(data);

@@ -109,6 +109,7 @@ export class Abby<
       return;
     }
     this.init(data);
+    return data;
   }
 
   async getProjectDataAsync(): Promise<LocalData<FlagName, TestName>> {
