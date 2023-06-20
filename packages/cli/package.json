@@ -7,7 +7,7 @@
     "abby": "./lib/index.js"
   },
   "scripts": {
-    "start": "nodemon --watch 'src/**/*.ts' --exec 'ts-node' src/index.ts",
+    "start": "ts-node src/index.ts",
     "start:windows": "nodemon --watch 'src/**/*.ts' --exec \"npx ts-node\" src/index.ts",
     "create": "npm run build && npm run test",
     "build": "tsc -p .",
@@ -19,13 +19,16 @@
     "clear": "^0.1.0",
     "commander": "^10.0.1",
     "figlet": "^1.6.0",
+    "node-fetch": "^3.3.1",
     "path": "^0.12.7",
+    "stringify-object": "^5.0.0",
     "tsup": "^6.5.0"
   },
   "devDependencies": {
     "@tryabby/core": "workspace:^",
     "@types/figlet": "^1.5.6",
     "@types/node": "^20.3.1",
+    "@types/stringify-object": "^4.0.2",
     "nodemon": "^2.0.22",
     "ts-node": "^10.9.1",
     "tsconfig": "workspace:*",

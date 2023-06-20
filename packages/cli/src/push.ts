@@ -28,10 +28,10 @@ function loadAbbyConfig(): Promise<string> {
   });
 }
 
+
 function getConfig(configFileString: string): AbbyConfig {
   const regex = /export const abby = ({[\s\S]*?});/;
-
-  const match = configFileString.match(regex);
+  const match = configFileString.match(regex);;
   const objectString = match ? match[1] : "";
   const object = eval("(" + objectString + ")");
   return object as AbbyConfig;
@@ -52,9 +52,11 @@ async function getConfigFromAbby(projectId: string): Promise<ConfigData> {
 
   const responseJson = await response.json();
 
+  // @ts-ignore
   for (const test of responseJson.tests) {
     tests[test.name] = { variants: ["A", "B", "C"] };
   }
+  // @ts-ignore
   for (const flag of responseJson.flags) {
     flags.push(flag.name);
   }
@@ -67,9 +69,7 @@ async function getConfigFromAbby(projectId: string): Promise<ConfigData> {
 async function updateConfig(
   configFromFile: AbbyConfig,
   configFromAbby: ConfigData
-): Promise<Object> {
-  console.log(configFromFile.projectId);
-  //console.log(configFromAbby);
+): Promise<string> {
 
   const newConfig: Omit<AbbyConfig, "flags"> & { flags: string[] } = {
     projectId: configFromFile.projectId,
@@ -78,21 +78,34 @@ async function updateConfig(
     flags: configFromAbby.flags ?? configFromFile.flags,
   };
 
-  console.log(newConfig);
 
-  const updatedConfigString = JSON.stringify(newConfig, null, 2);
+  let updatedConfigString = JSON.stringify(newConfig, null, 2);
 
-  const fileName = "src/abby.ts";
+   updatedConfigString = updatedConfigString.replace(/"([^"]+)":/g, '$1:');
 
-  //   fs.writeFile(fileName, updatedConfigString, (error) => {
-  //     if (error) {
-  //       console.error(error);
-  //       return;
-  //     }
-  //     console.log("Config updated");
-  //   });
 
-  return newConfig;
+  return updatedConfigString;
+}
+
+function updateConfigFile(updatedConfig: string, configFileString: string) {
+  // const regex = /export const abby = ({[\s\S]*?});/;
+  // const updatedContent = configFileString.replace(regex, updatedConfig)
+  // console.log(updatedContent);
+
+  // Extract the existing line that starts with "export const abby ="
+  const existingObjectRegex = /(export\s+const\s+abby\s+=\s+\{[^}]*\};)/;
+
+  const updatedContent = configFileString.replace(existingObjectRegex, updatedConfig);
+
+
+  const fileName = "src/abby2.ts";
+  fs.writeFile(fileName, updatedContent, (error) => {
+    if (error) {
+      console.error(error);
+      return;
+    }
+    console.log("Config updated");
+  });
 }
 
 export async function main(): Promise<void> {
@@ -101,7 +114,9 @@ export async function main(): Promise<void> {
 
   const configFromAbby = await getConfigFromAbby("clftg3tzd0004l7085yktpsov");
 
-  const updatedConfig = updateConfig(configFromFile, configFromAbby);
+  const updatedConfig = await updateConfig(configFromFile, configFromAbby);
+
+  updateConfigFile(updatedConfig, configFileString);
 
   // const updatedConfig = getConfigFromAbby(projectId);
 }
