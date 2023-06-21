@@ -30,15 +30,10 @@ export function createAbby<
   } = baseCreateAbby<FlagName, TestName, Tests>(config);
 
   const abbyApiHandler =
-    <HandlerType extends NextApiHandler | NextMiddleware>(
-      handler: HandlerType
-    ) =>
+    <HandlerType extends NextApiHandler | NextMiddleware>(handler: HandlerType) =>
     async (...args: Parameters<HandlerType>) => {
-      const data = await HttpService.getProjectData({
-        projectId: config.projectId,
-        environment: config.currentEnvironment,
-        url: config.apiUrl,
-      });
+      const data = await __abby__.loadProjectData();
+
       if (data) {
         __abby__.init(data);
       }
@@ -67,9 +62,7 @@ export function createAbby<
     getABTestValue<
       T extends keyof Tests,
       RequestType extends NextRequest | NextApiRequest | undefined = undefined,
-      ResponseType extends
-        | NextResponse
-        | NextApiResponse = RequestType extends NextRequest
+      ResponseType extends NextResponse | NextApiResponse = RequestType extends NextRequest
         ? NextResponse
         : RequestType extends NextApiRequest
         ? NextApiResponse
@@ -79,32 +72,23 @@ export function createAbby<
       req?: RequestType
     ): [
       Tests[T]["variants"][number],
-      RequestType extends NextRequest | NextApiRequest
-        ? (res: ResponseType) => void
-        : () => void
+      RequestType extends NextRequest | NextApiRequest ? (res: ResponseType) => void : () => void
     ] {
       const cookies = getIsomorphicCookies(req);
 
-      const storedValue = cookies.get(
-        getABStorageKey(config.projectId, name as string)
-      );
+      const storedValue = cookies.get(getABStorageKey(config.projectId, name as string));
 
       const cookieKey = getABStorageKey(config.projectId, name as string);
 
       if (storedValue) {
-        return [
-          typeof storedValue === "string" ? storedValue : storedValue.value,
-          () => {},
-        ];
+        return [typeof storedValue === "string" ? storedValue : storedValue.value, () => {}];
       }
 
       const newValue = __abby__.getTestVariant(name);
 
       const setCookieFunc = (res?: ResponseType) => {
         if (!res && typeof window === "undefined")
-          throw new Error(
-            "You must pass a response object to setABTestValue on the server"
-          );
+          throw new Error("You must pass a response object to setABTestValue on the server");
 
         if (isBrowser(res)) {
           Cookie.set(cookieKey, newValue, {
@@ -134,9 +118,7 @@ export function createAbby<
     getABResetFunction: <
       T extends keyof Tests,
       RequestType extends NextRequest | NextApiRequest | undefined = undefined,
-      ResponseType extends
-        | NextResponse
-        | NextApiResponse = RequestType extends NextRequest
+      ResponseType extends NextResponse | NextApiResponse = RequestType extends NextRequest
         ? NextResponse
         : RequestType extends NextApiRequest
         ? NextApiResponse
@@ -153,9 +135,7 @@ export function createAbby<
 
       return (res?: ResponseType) => {
         if (!res && typeof window === "undefined")
-          throw new Error(
-            "You must pass a response object to setABTestValue on the server"
-          );
+          throw new Error("You must pass a response object to setABTestValue on the server");
 
         if (isBrowser(res)) {
           cookies.delete(cookieKey);
