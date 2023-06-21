@@ -57,8 +57,8 @@ export class Abby<
 > {
   constructor(
     private config: F.Narrow<AbbyConfig<FlagName, Tests>>,
-    private persistantFlagStorage?: PersistentStorage,
     private persistantTestStorage?: PersistentStorage,
+    private persistantFlagStorage?: PersistentStorage,
     nodeFetch?: typeof fetch | typeof globalThis.fetch
   ) {
     this.#data.flags = (config.flags ?? []).reduce((acc, flag) => {

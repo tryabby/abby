@@ -25,7 +25,7 @@ export class HttpService {
       );
 
       if (!res.ok) return null;
-      console.log(res);
+
       const data = (await res.json()) as AbbyDataResponse;
       return data;
     } catch (err) {
