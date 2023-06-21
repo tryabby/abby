@@ -6,6 +6,7 @@ import { ProjectService } from "server/services/ProjectService";
 import { z } from "zod";
 import { protectedProcedure, router } from "../trpc";
 import { Prisma } from "@prisma/client";
+import { FlagService } from "server/services/FlagService";
 
 export const flagRouter = router({
   getFlags: protectedProcedure
@@ -54,64 +55,10 @@ export const flagRouter = router({
       })
     )
     .mutation(async ({ ctx, input }) => {
-      const project = await ctx.prisma.project.findFirst({
-        where: {
-          id: input.projectId,
-          users: {
-            some: {
-              userId: ctx.session.user.id,
-            },
-          },
-        },
-        include: {
-          // to get the correct amount for the limit
-          featureFlags: { distinct: ["name"] },
-        },
-      });
-
-      if (!project) throw new TRPCError({ code: "UNAUTHORIZED" });
-
-      const limits = getLimitByPlan(getProjectPaidPlan(project));
-
-      if (getFlagCount(project.featureFlags) >= limits.flags) {
-        throw new TRPCError({
-          code: "FORBIDDEN",
-          message: `You have reached the limit of ${limits.flags} flags for your plan.`,
-        });
-      }
-      const projectEnvs = await ctx.prisma.environment.findMany({
-        where: {
-          projectId: input.projectId,
-        },
-      });
-
-      await ctx.prisma.$transaction(async (tx) => {
-        const newFlag = await tx.featureFlag.create({
-          data: {
-            name: input.name,
-            projectId: input.projectId,
-          },
-        });
-
-        const featureFlagValues = await Promise.all(
-          projectEnvs.map((env) =>
-            tx.featureFlagValue.create({
-              data: {
-                environmentId: env.id,
-                flagId: newFlag.id,
-              },
-            })
-          )
-        );
-
-        return tx.featureFlagHistory.createMany({
-          data: featureFlagValues.map((featureFlag) => ({
-            userId: ctx.session.user.id,
-            flagValueId: featureFlag.id,
-            newValue: false,
-          })) satisfies Prisma.FeatureFlagHistoryCreateManyInput[],
-        });
-      });
+      const projectId = input.projectId;
+      const flagName = input.name;
+      const userId = ctx.session.user.id;
+      await FlagService.createFlag(projectId, flagName, userId);
     }),
   toggleFlag: protectedProcedure
     .input(

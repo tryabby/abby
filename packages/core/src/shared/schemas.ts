@@ -9,3 +9,13 @@ export const abbyEventSchema = z.object({
 });
 
 export type AbbyEvent = z.infer<typeof abbyEventSchema>;
+
+export const abbyConfigSchema = z.object({
+  projectId: z.string(),
+  tests: z.record(
+    z.object({
+      variants: z.array(z.string()),
+    })
+  ),
+  flags: z.array(z.string()),
+});

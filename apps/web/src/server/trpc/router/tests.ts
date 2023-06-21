@@ -6,6 +6,7 @@ import { prisma } from "server/db/client";
 import { getLimitByPlan } from "server/common/plans";
 import { getProjectPaidPlan } from "lib/stripe";
 import { EventService } from "server/services/EventService";
+import { TestService } from "server/services/TestService";
 
 export const testRouter = router({
   createTest: protectedProcedure
@@ -22,45 +23,12 @@ export const testRouter = router({
       })
     )
     .mutation(async ({ input, ctx }) => {
-      const project = await ctx.prisma.project.findFirst({
-        where: {
-          id: input.projectId,
-          users: {
-            some: {
-              userId: ctx.session.user.id,
-            },
-          },
-        },
-        include: {
-          tests: true,
-        },
-      });
-
-      if (!project) throw new TRPCError({ code: "UNAUTHORIZED" });
-
-      const limits = getLimitByPlan(getProjectPaidPlan(project));
-
-      if (project.tests.length >= limits.tests) {
-        throw new TRPCError({
-          code: "FORBIDDEN",
-          message: `You have reached the limit of ${limits.tests} tests for your plan.`,
-        });
-      }
-
-      await prisma.test.create({
-        data: {
-          name: input.name,
-          projectId: input.projectId,
-          options: {
-            createMany: {
-              data: input.variants.map((variant) => ({
-                identifier: variant.name,
-                chance: variant.weight,
-              })),
-            },
-          },
-        },
-      });
+      await TestService.createTest(
+        input.projectId,
+        input.variants,
+        input.name,
+        ctx.session.user.id
+      );
     }),
   updateName: protectedProcedure
     .input(
