@@ -1,7 +1,5 @@
 import { Abby, AbbyConfig, ABConfig } from "@tryabby/core";
 import React, { useCallback, useEffect, useRef, useState, type PropsWithChildren } from "react";
-import { HttpService } from "@tryabby/core";
-import { ABBY_INSTANCE_KEY } from "@tryabby/core";
 import { AbbyDataResponse, AbbyEventType } from "@tryabby/core";
 import { F } from "ts-toolbelt";
 import { FlagStorageService, TestStorageService } from "./StorageService";

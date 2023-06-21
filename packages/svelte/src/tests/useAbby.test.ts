@@ -1,5 +1,5 @@
 import { TestStorageService } from "../lib/StorageService";
-import { HttpService, AbbyEventType } from "@tryabby/core";
+import { AbbyEventType } from "@tryabby/core";
 import { createAbby } from "../lib/createAbby";
 import { it, describe, expect, vi, afterAll } from "vitest";
 /// @ts-ignore it doesn't have types

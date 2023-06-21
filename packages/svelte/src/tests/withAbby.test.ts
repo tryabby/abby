@@ -3,8 +3,6 @@ import { findByText, render, waitFor } from "@testing-library/svelte";
 import testPage from "./pages/+test.svelte";
 import { abby } from "./abby";
 
-import { HttpService } from "@tryabby/core";
-
 describe("withabby working", () => {
   it("works properly", async () => {
     const data = await abby.__abby__.loadProjectData();

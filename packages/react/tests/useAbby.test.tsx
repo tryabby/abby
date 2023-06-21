@@ -2,7 +2,6 @@ import { renderHook, act, waitFor } from "@testing-library/react";
 import { PropsWithChildren } from "react";
 import { AbbyEventType } from "@tryabby/core";
 import { createAbby } from "../src";
-import { HttpService } from "@tryabby/core";
 import { TestStorageService } from "../src/StorageService";
 
 const OLD_ENV = process.env;
