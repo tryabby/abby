@@ -3,10 +3,9 @@ import { Request } from "express";
 let req: Request | null = null;
 
 export function setRequest(request: Request) {
-    req = request;
+  req = request;
 }
 
-export function getRequest() {
-    return req;
+export function getRequest(): Request | null {
+  return req;
 }
-
