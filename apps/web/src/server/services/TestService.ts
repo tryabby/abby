@@ -4,8 +4,8 @@ import { getLimitByPlan } from "server/common/plans";
 import { prisma } from "server/db/client";
 
 type Variant = {
-  identifier: string;
-  chance: number;
+  name: string;
+  weight: number;
 };
 
 export abstract class TestService {
@@ -47,8 +47,8 @@ export abstract class TestService {
         options: {
           createMany: {
             data: variants.map((variant) => ({
-              identifier: variant.identifier,
-              chance: variant.chance,
+              identifier: variant.name,
+              chance: variant.weight,
             })),
           },
         },

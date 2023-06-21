@@ -117,8 +117,8 @@ export default async function handler(
 
           const variants: Array<string> = test["variants"];
           const weightedVariants = variants.map((variant) => ({
-            identifier: variant,
-            chance: 1 / variants.length,
+            name: variant,
+            weight: 1 / variants.length,
           }));
           if (!testData) {
             await TestService.createTest(
