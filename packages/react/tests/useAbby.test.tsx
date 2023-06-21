@@ -2,7 +2,6 @@ import { renderHook, act, waitFor } from "@testing-library/react";
 import { PropsWithChildren } from "react";
 import { AbbyEventType } from "@tryabby/core";
 import { createAbby } from "../src";
-import { HttpService } from "@tryabby/core";
 import { TestStorageService } from "../src/StorageService";
 
 const OLD_ENV = process.env;
@@ -31,9 +30,7 @@ describe("useAbby", () => {
       },
     });
 
-    const wrapper = ({ children }: PropsWithChildren) => (
-      <AbbyProvider>{children}</AbbyProvider>
-    );
+    const wrapper = ({ children }: PropsWithChildren) => <AbbyProvider>{children}</AbbyProvider>;
 
     const { result } = renderHook(() => useAbby("test"), {
       wrapper,
@@ -59,9 +56,7 @@ describe("useAbby", () => {
       },
     });
 
-    const wrapper = ({ children }: PropsWithChildren) => (
-      <AbbyProvider>{children}</AbbyProvider>
-    );
+    const wrapper = ({ children }: PropsWithChildren) => <AbbyProvider>{children}</AbbyProvider>;
 
     const { result } = renderHook(() => useAbby("test"), {
       wrapper,
@@ -75,41 +70,36 @@ describe("useAbby", () => {
   });
 
   it("should ping the current info on mount", () => {
-    const spy = vi.spyOn(HttpService, "sendData");
-    const { AbbyProvider, useAbby } = createAbby({
+    const { AbbyProvider, useAbby, __abby__ } = createAbby({
       projectId: "123",
       tests: {
         test: { variants: ["A", "B", "C"] },
       },
     });
+    const spy = vi.spyOn(__abby__, "sendData");
 
-    const wrapper = ({ children }: PropsWithChildren) => (
-      <AbbyProvider>{children}</AbbyProvider>
-    );
+    const wrapper = ({ children }: PropsWithChildren) => <AbbyProvider>{children}</AbbyProvider>;
 
     renderHook(() => useAbby("test"), {
       wrapper,
     });
 
     act(() => {
-      expect(spy).toHaveBeenCalledWith(
-        expect.objectContaining({ type: AbbyEventType.PING })
-      );
+      expect(spy).toHaveBeenCalledWith(expect.objectContaining({ type: AbbyEventType.PING }));
     });
   });
 
   it("should notify the server with onAct", () => {
-    const spy = vi.spyOn(HttpService, "sendData");
-    const { AbbyProvider, useAbby } = createAbby({
+    const { AbbyProvider, useAbby, __abby__ } = createAbby({
       projectId: "123",
       tests: {
         test: { variants: ["A", "B", "C"] },
       },
     });
 
-    const wrapper = ({ children }: PropsWithChildren) => (
-      <AbbyProvider>{children}</AbbyProvider>
-    );
+    const spy = vi.spyOn(__abby__, "sendData");
+
+    const wrapper = ({ children }: PropsWithChildren) => <AbbyProvider>{children}</AbbyProvider>;
 
     const { result } = renderHook(() => useAbby("test"), {
       wrapper,
@@ -120,10 +110,7 @@ describe("useAbby", () => {
     });
 
     // first call is tested above
-    expect(spy).toHaveBeenNthCalledWith(
-      2,
-      expect.objectContaining({ type: AbbyEventType.ACT })
-    );
+    expect(spy).toHaveBeenNthCalledWith(2, expect.objectContaining({ type: AbbyEventType.ACT }));
   });
 
   it("should return the correct feature flags", () => {
@@ -132,9 +119,7 @@ describe("useAbby", () => {
       flags: ["flag1", "flag2"],
     });
 
-    const wrapper = ({ children }: PropsWithChildren) => (
-      <AbbyProvider>{children}</AbbyProvider>
-    );
+    const wrapper = ({ children }: PropsWithChildren) => <AbbyProvider>{children}</AbbyProvider>;
 
     const { result: flag1 } = renderHook(() => useFeatureFlag("flag1"), {
       wrapper,
@@ -162,9 +147,7 @@ describe("useAbby", () => {
       },
     });
 
-    const wrapper = ({ children }: PropsWithChildren) => (
-      <AbbyProvider>{children}</AbbyProvider>
-    );
+    const wrapper = ({ children }: PropsWithChildren) => <AbbyProvider>{children}</AbbyProvider>;
 
     const { result: flag2 } = renderHook(() => useFeatureFlag("flag2"), {
       wrapper,
@@ -192,9 +175,7 @@ describe("useAbby", () => {
       },
     });
 
-    const wrapper = ({ children }: PropsWithChildren) => (
-      <AbbyProvider>{children}</AbbyProvider>
-    );
+    const wrapper = ({ children }: PropsWithChildren) => <AbbyProvider>{children}</AbbyProvider>;
 
     const { result: flag1 } = renderHook(() => useFeatureFlag("flag1"), {
       wrapper,

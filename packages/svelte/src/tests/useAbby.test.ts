@@ -1,19 +1,21 @@
 import { TestStorageService } from "../lib/StorageService";
-import { HttpService, AbbyEventType } from "@tryabby/core";
+import { AbbyEventType } from "@tryabby/core";
 import { createAbby } from "../lib/createAbby";
-import {
-  it,
-  describe,
-  expect,
-  afterEach,
-  vi,
-  beforeAll,
-  afterAll,
-} from "vitest";
+import { it, describe, expect, vi, afterAll } from "vitest";
 /// @ts-ignore it doesn't have types
 import { get } from "svelte/store";
 
 const OLD_ENV = process.env;
+
+beforeEach(() => {
+  document.cookie = "";
+  vi.resetModules(); // Most important - it clears the cache
+  process.env = { ...OLD_ENV }; // Make a copy
+});
+
+afterAll(() => {
+  process.env = OLD_ENV; // Restore old environment
+});
 
 describe("useAbby working", () => {
   it("returns a valid variant", () => {
@@ -32,6 +34,7 @@ describe("useAbby working", () => {
   });
 
   it("should use the persistedValue", () => {
+    console.log("das");
     const persistedValue = "SimonsText";
     const variants = ["SimonsText", "MatthiasText", "TomsText", "TimsText"];
 
@@ -39,7 +42,8 @@ describe("useAbby working", () => {
     const setSpy = vi.spyOn(TestStorageService, "set");
 
     getSpy.mockReturnValue(persistedValue);
-    const { useAbby } = createAbby({
+
+    const { useAbby, __abby__ } = createAbby({
       projectId: "123",
       tests: {
         test: { variants },
@@ -57,37 +61,33 @@ describe("useAbby working", () => {
   });
 
   it("should ping the current info on mount", () => {
-    const spy = vi.spyOn(HttpService, "sendData");
-    const { useAbby } = createAbby({
+    const { useAbby, __abby__ } = createAbby({
       projectId: "123",
       tests: {
         test: { variants: ["A", "B", "C"] },
       },
     });
+
+    const spy = vi.spyOn(__abby__, "sendData");
 
     const { variant, onAct } = useAbby("test");
 
-    //onAct();
-    expect(spy).toHaveBeenCalledWith(
-      expect.objectContaining({ type: AbbyEventType.PING })
-    );
+    expect(spy).toHaveBeenCalledWith(expect.objectContaining({ type: AbbyEventType.PING }));
   });
 
   it("should notify the server with onAct", () => {
-    const spy = vi.spyOn(HttpService, "sendData");
-    const { useAbby } = createAbby({
+    const { useAbby, __abby__ } = createAbby({
       projectId: "123",
       tests: {
         test: { variants: ["A", "B", "C"] },
       },
     });
+    const spy = vi.spyOn(__abby__, "sendData");
 
     const { variant, onAct } = useAbby("test");
 
     onAct();
-    expect(spy).toHaveBeenCalledWith(
-      expect.objectContaining({ type: AbbyEventType.PING })
-    );
+    expect(spy).toHaveBeenCalledWith(expect.objectContaining({ type: AbbyEventType.PING }));
   });
 
   it("returns the correct possible variant values", () => {

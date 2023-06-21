@@ -1,12 +1,9 @@
-import {
-  ABBY_AB_STORAGE_PREFIX,
-  ABBY_FF_STORAGE_PREFIX,
-  AbbyDataResponse,
-} from "./shared/";
-import { HttpService } from "./shared";
+import { ABBY_AB_STORAGE_PREFIX, ABBY_FF_STORAGE_PREFIX, AbbyDataResponse } from "./shared/";
+import { HttpService, AbbyEvent, AbbyEventType } from "./shared";
 import { F } from "ts-toolbelt";
 import { getWeightedRandomVariant } from "./mathHelpers";
 import { parseCookies } from "./helpers";
+import type fetch from "node-fetch";
 
 export * from "./shared/index";
 
@@ -24,10 +21,7 @@ type Settings<FlagName extends string = string> = {
   };
 };
 
-type LocalData<
-  FlagName extends string = string,
-  TestName extends string = string
-> = {
+type LocalData<FlagName extends string = string, TestName extends string = string> = {
   tests: Record<
     TestName,
     ABConfig & {
@@ -61,13 +55,27 @@ export class Abby<
   TestName extends string,
   Tests extends Record<string, ABConfig>
 > {
+  constructor(
+    private config: F.Narrow<AbbyConfig<FlagName, Tests>>,
+    private persistantTestStorage?: PersistentStorage,
+    private persistantFlagStorage?: PersistentStorage,
+    nodeFetch?: typeof fetch | typeof globalThis.fetch
+  ) {
+    this.#data.flags = (config.flags ?? []).reduce((acc, flag) => {
+      acc[flag] = null;
+      return acc;
+    }, {} as any);
+    this.#data.tests = config.tests ?? ({} as any);
+    this.httpService = new HttpService({ fetch2: nodeFetch });
+  }
+
+  private httpService;
+
   private log = (...args: any[]) =>
     this.config.debug ? console.log(`core.Abby`, ...args) : () => {};
 
-  private testDevtoolOverrides: Map<
-    keyof Tests,
-    Tests[keyof Tests]["variants"][number]
-  > = new Map();
+  private testDevtoolOverrides: Map<keyof Tests, Tests[keyof Tests]["variants"][number]> =
+    new Map();
 
   private flagDevtoolOverrides: Map<FlagName, boolean> = new Map();
 
@@ -76,30 +84,13 @@ export class Abby<
     flags: {} as any,
   };
 
-  private listeners = new Set<
-    (newData: LocalData<FlagName, TestName>) => void
-  >();
+  private listeners = new Set<(newData: LocalData<FlagName, TestName>) => void>();
 
   private dataInitialized: Boolean = false;
 
   private flagOverrides = new Map<string, boolean>();
 
-  private testOverrides: Map<
-    keyof Tests,
-    Tests[keyof Tests]["variants"][number]
-  > = new Map();
-
-  constructor(
-    private config: F.Narrow<AbbyConfig<FlagName, Tests>>,
-    private persistantTestStorage?: PersistentStorage,
-    private persistantFlagStorage?: PersistentStorage
-  ) {
-    this.#data.flags = (config.flags ?? []).reduce((acc, flag) => {
-      acc[flag] = null;
-      return acc;
-    }, {} as any);
-    this.#data.tests = config.tests ?? ({} as any);
-  }
+  private testOverrides: Map<keyof Tests, Tests[keyof Tests]["variants"][number]> = new Map();
 
   /**
    * Helper function to load the projects data from the A/BBY API
@@ -108,16 +99,17 @@ export class Abby<
   async loadProjectData() {
     this.log(`loadProjectData()`);
 
-    const data = await HttpService.getProjectData({
+    const data = await this.httpService.getProjectData({
       projectId: this.config.projectId,
       environment: this.config.currentEnvironment as string,
       url: this.config.apiUrl,
     });
     if (!data) {
       this.log(`loadProjectData() => no data`);
-      return;
+      return null;
     }
     this.init(data);
+    return data;
   }
 
   async getProjectDataAsync(): Promise<LocalData<FlagName, TestName>> {
@@ -166,16 +158,13 @@ export class Abby<
     this.log(`getProjectData()`);
 
     return {
-      tests: Object.entries(this.#data.tests).reduce(
-        (acc, [testName, test]) => {
-          acc[testName as TestName] = {
-            ...(test as Tests[TestName]),
-            selectedVariant: this.getTestVariant(testName as TestName),
-          };
-          return acc;
-        },
-        this.#data.tests
-      ),
+      tests: Object.entries(this.#data.tests).reduce((acc, [testName, test]) => {
+        acc[testName as TestName] = {
+          ...(test as Tests[TestName]),
+          selectedVariant: this.getTestVariant(testName as TestName),
+        };
+        return acc;
+      }, this.#data.tests),
       flags: Object.keys(this.#data.flags).reduce((acc, flagName) => {
         acc[flagName as FlagName] = this.getFeatureFlag(flagName as FlagName);
         return acc;
@@ -229,9 +218,7 @@ export class Abby<
      * 3. DevDefault from config
      */
     if (process.env.NODE_ENV === "development") {
-      const devOverride = (this.config.settings?.flags?.devOverrides as any)?.[
-        key
-      ];
+      const devOverride = (this.config.settings?.flags?.devOverrides as any)?.[key];
       if (devOverride != null) {
         return devOverride;
       }
@@ -293,10 +280,7 @@ export class Abby<
    * @param key the name of the test
    * @param override the value to override the test variant with
    */
-  updateLocalVariant<T extends keyof Tests>(
-    key: T,
-    override: Tests[T]["variants"][number]
-  ) {
+  updateLocalVariant<T extends keyof Tests>(key: T, override: Tests[T]["variants"][number]) {
     this.testOverrides.set(key, override);
     this.persistantTestStorage?.set(key as string, override);
 
@@ -379,5 +363,17 @@ export class Abby<
         this.flagOverrides.set(flagName, cookieValue === "true");
       }
     });
+  }
+
+  sendData({
+    url,
+    type,
+    data,
+  }: {
+    url?: string;
+    type: AbbyEventType;
+    data: Omit<AbbyEvent, "type">;
+  }) {
+    this.httpService.sendData({ url, type, data });
   }
 }

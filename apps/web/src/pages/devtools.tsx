@@ -1,6 +1,5 @@
 import { MarketingLayout } from "components/MarketingLayout";
 import { NextPageWithLayout } from "./_app";
-import { HttpService } from "@tryabby/core";
 
 import { createAbby } from "@tryabby/next";
 import abbyDevtools from "@tryabby/devtools";
@@ -23,7 +22,7 @@ const config = {
   flags: ["ToggleMeIfYoureExcited", "showEasterEgg", "showHeading"],
 };
 
-const { useAbby, AbbyProvider, useFeatureFlag, withDevtools } =
+const { useAbby, AbbyProvider, useFeatureFlag, withDevtools, __abby__ } =
   createAbby(config);
 
 export const AbbyProdDevtools = withDevtools(abbyDevtools, {
@@ -253,10 +252,7 @@ OuterPage.getLayout = (page) => (
 );
 
 export const getStaticProps = async () => {
-  const data = await HttpService.getProjectData({
-    projectId: config.projectId,
-    environment: config.currentEnvironment,
-  });
+  const data = await __abby__.loadProjectData();
   return {
     props: { abbyData: data },
   };

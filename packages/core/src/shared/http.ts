@@ -1,7 +1,14 @@
+import { TypeOf } from "zod";
 import { ABBY_BASE_URL } from "./constants";
 import type { AbbyEventType, AbbyEvent, AbbyDataResponse } from "./index";
-export abstract class HttpService {
-  static async getProjectData({
+import fetch from "node-fetch";
+export class HttpService {
+  constructor({ fetch2 }: { fetch2?: typeof globalThis.fetch | typeof fetch } = {}) {
+    this.#fetchFunction = fetch2 ?? globalThis.fetch;
+  }
+  #fetchFunction: typeof globalThis.fetch | typeof fetch;
+
+  async getProjectData({
     projectId,
     environment,
     url,
@@ -11,24 +18,23 @@ export abstract class HttpService {
     url?: string;
   }) {
     try {
-      const res = await fetch(
+      const res = await this.#fetchFunction(
         `${url ?? ABBY_BASE_URL}api/dashboard/${projectId}/data${
           environment ? `?environment=${environment}` : ""
         }`
       );
 
       if (!res.ok) return null;
+
       const data = (await res.json()) as AbbyDataResponse;
       return data;
     } catch (err) {
-      console.error(
-        "[ABBY]: failed to load project data, falling back to defaults"
-      );
+      console.error("[ABBY]: failed to load project data, falling back to defaults");
       return null;
     }
   }
 
-  static sendData({
+  sendData({
     url,
     type,
     data,
@@ -37,14 +43,11 @@ export abstract class HttpService {
     type: AbbyEventType;
     data: Omit<AbbyEvent, "type">;
   }) {
-    if (
-      typeof window === "undefined" ||
-      window.location.hostname === "localhost"
-    ) {
+    if (typeof window === "undefined" || window.location.hostname === "localhost") {
       // don't send data in development
       return;
     }
-    return fetch(`${url ?? ABBY_BASE_URL}api/data`, {
+    return this.#fetchFunction(`${url ?? ABBY_BASE_URL}api/data`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

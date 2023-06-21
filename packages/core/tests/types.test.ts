@@ -1,31 +1,33 @@
 import { AbbyConfig } from "../dist";
 import { Abby } from "../src/index";
+import fetch from "node-fetch";
 
 describe("types", () => {
   it("produces proper types", () => {
-    const abby = new Abby({
-      projectId: "",
-      flags: ["flag1", "flag2"],
-      tests: {
-        test1: {
-          variants: ["firstVariant", "secondVariant"],
-        },
-        test2: {
-          variants: ["some-random-string", "abc"],
+    const abby = new Abby(
+      {
+        projectId: "",
+        flags: ["flag1", "flag2"],
+        tests: {
+          test1: {
+            variants: ["firstVariant", "secondVariant"],
+          },
+          test2: {
+            variants: ["some-random-string", "abc"],
+          },
         },
       },
-    });
+      undefined,
+      undefined,
+      fetch
+    );
 
     assertType<boolean>(abby.getFeatureFlag("flag1"));
-    expectTypeOf(abby.getFeatureFlag)
-      .parameter(0)
-      .toEqualTypeOf<"flag1" | "flag2">();
+    expectTypeOf(abby.getFeatureFlag).parameter(0).toEqualTypeOf<"flag1" | "flag2">();
 
     assertType<"firstVariant" | "secondVariant">(abby.getTestVariant("test1"));
 
-    expectTypeOf(abby.getTestVariant)
-      .parameter(0)
-      .toEqualTypeOf<"test1" | "test2">();
+    expectTypeOf(abby.getTestVariant).parameter(0).toEqualTypeOf<"test1" | "test2">();
 
     // This is the potential type of the devOverrides
     type DevOverrides = NonNullable<

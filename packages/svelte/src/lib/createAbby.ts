@@ -1,5 +1,5 @@
 import { Abby, type AbbyConfig, type ABConfig } from "@tryabby/core";
-import { HttpService, AbbyEventType } from "@tryabby/core";
+import { AbbyEventType } from "@tryabby/core";
 import { derived } from "svelte/store";
 import type { F } from "ts-toolbelt";
 // import type { LayoutServerLoad, LayoutServerLoadEvent } from "../routes/$types"; TODO fix import
@@ -45,7 +45,7 @@ export function createAbby<
 
   const notify = <N extends keyof Tests>(name: N, selectedVariant: string) => {
     if (!name || !selectedVariant) return;
-    HttpService.sendData({
+    abby.sendData({
       url: config.apiUrl,
       type: AbbyEventType.PING,
       data: {
@@ -65,7 +65,7 @@ export function createAbby<
       selectedVariant = data;
     });
     const onAct = () => {
-      HttpService.sendData({
+      abby.sendData({
         url: config.apiUrl,
         type: AbbyEventType.ACT,
         data: {
@@ -98,17 +98,13 @@ export function createAbby<
     return abby.getTestVariant(testName);
   };
 
-  const getFeatureFlagValue = <
-    F extends NonNullable<ConfigType["flags"]>[number]
-  >(
+  const getFeatureFlagValue = <F extends NonNullable<ConfigType["flags"]>[number]>(
     featureFlagName: F
   ) => {
     return abby.getFeatureFlag(featureFlagName);
   };
 
-  const useFeatureFlag = <F extends NonNullable<ConfigType["flags"]>[number]>(
-    flagName: F
-  ) => {
+  const useFeatureFlag = <F extends NonNullable<ConfigType["flags"]>[number]>(flagName: F) => {
     return derived<any, boolean>(abby, ($v) => {
       return abby.getFeatureFlag(flagName);
     });
@@ -118,11 +114,7 @@ export function createAbby<
     //TODO fix type import
     return async (evt: any) => {
       const data = await handler?.(evt);
-      const __abby__data = await HttpService.getProjectData({
-        url: config.apiUrl,
-        projectId: config.projectId,
-        environment: config.currentEnvironment,
-      });
+      const __abby__data = await abby.loadProjectData();
 
       return {
         ...data,

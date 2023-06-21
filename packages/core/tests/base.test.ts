@@ -1,5 +1,6 @@
 import { Abby } from "../src/index";
 import { validateWeights } from "../src/mathHelpers";
+import fetch from "node-fetch";
 
 const OLD_ENV = process.env;
 
@@ -16,15 +17,20 @@ describe("Abby", () => {
   it("gets a variant", () => {
     const variants = ["variant1", "variant2"];
 
-    const abby = new Abby({
-      projectId: "",
-      tests: {
-        a: { variants },
-        b: {
-          variants: ["test"],
+    const abby = new Abby(
+      {
+        projectId: "",
+        tests: {
+          a: { variants },
+          b: {
+            variants: ["test"],
+          },
         },
       },
-    });
+      undefined,
+      undefined,
+      fetch
+    );
     const variant = abby.getTestVariant("a");
     expect(variant.includes(variant)).toBe(true);
   });
@@ -32,12 +38,17 @@ describe("Abby", () => {
   it("gets correct weigthed variant", () => {
     const variants = ["variant1", "variant2"];
 
-    const abby = new Abby({
-      projectId: "",
-      tests: {
-        a: { variants },
+    const abby = new Abby(
+      {
+        projectId: "",
+        tests: {
+          a: { variants },
+        },
       },
-    });
+      undefined,
+      undefined,
+      fetch
+    );
 
     abby.init({ flags: [], tests: [{ name: "a", weights: [0, 1] }] });
     // const variant = abby.getTestVariant("a");
@@ -45,27 +56,37 @@ describe("Abby", () => {
   });
 
   it("gets a feature flag", () => {
-    const abby = new Abby({
-      projectId: "",
-      flags: ["flag1", "flag2"],
-    });
+    const abby = new Abby(
+      {
+        projectId: "",
+        flags: ["flag1", "flag2"],
+      },
+      undefined,
+      undefined,
+      fetch
+    );
 
     expect(abby.getFeatureFlag("flag1")).toBeDefined();
     expect(abby.getFeatureFlag("flag2")).toBeDefined();
   });
 
   it("uses the devOverrides", () => {
-    const abby = new Abby({
-      projectId: "",
-      flags: ["flag1", "flag2"],
-      settings: {
-        flags: {
-          devOverrides: {
-            flag1: false,
+    const abby = new Abby(
+      {
+        projectId: "",
+        flags: ["flag1", "flag2"],
+        settings: {
+          flags: {
+            devOverrides: {
+              flag1: false,
+            },
           },
         },
       },
-    });
+      undefined,
+      undefined,
+      fetch
+    );
 
     abby.init({ flags: [{ name: "flag1", isEnabled: true }], tests: [] });
 
@@ -79,15 +100,20 @@ describe("Abby", () => {
   it("updates a local variant in dev mode", () => {
     process.env.NODE_ENV = "development";
 
-    const abby = new Abby({
-      projectId: "",
-      tests: {
-        a: { variants: ["variant1", "variant2"] },
-        b: {
-          variants: ["test"],
+    const abby = new Abby(
+      {
+        projectId: "",
+        tests: {
+          a: { variants: ["variant1", "variant2"] },
+          b: {
+            variants: ["test"],
+          },
         },
       },
-    });
+      undefined,
+      undefined,
+      fetch
+    );
 
     abby.updateLocalVariant("a", "variant2");
     expect(abby.getTestVariant("a")).toBe("variant2");
@@ -97,10 +123,15 @@ describe("Abby", () => {
   });
 
   it("updates local feature flag", () => {
-    const abby = new Abby({
-      projectId: "",
-      flags: ["flag1", "flag2"],
-    });
+    const abby = new Abby(
+      {
+        projectId: "",
+        flags: ["flag1", "flag2"],
+      },
+      undefined,
+      undefined,
+      fetch
+    );
 
     abby.init({ flags: [{ name: "flag1", isEnabled: true }], tests: [] });
 
