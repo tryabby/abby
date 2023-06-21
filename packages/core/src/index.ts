@@ -106,7 +106,7 @@ export class Abby<
     });
     if (!data) {
       this.log(`loadProjectData() => no data`);
-      return;
+      return null;
     }
     this.init(data);
     return data;
