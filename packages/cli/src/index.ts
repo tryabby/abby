@@ -30,10 +30,16 @@ program
 program
   .command("push")
   .description("push local config to server")
-  .action(function () {
+  .argument("<filepath>", "filepath")
+  .action((filepath) => {
+    if (!filepath) {
+      console.log(chalk.red("Filename is required"));
+      return;
+    }
     try {
       const token = getToken();
-      push(token);
+      console.log(filepath);
+      push(filepath, token);
     } catch (e) {
       console.log(chalk.red("Please login first"));
       return;

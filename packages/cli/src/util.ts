@@ -1,12 +1,10 @@
 import { AbbyConfig } from "@tryabby/core";
 import * as fs from "fs";
 
-export function loadLocalConfig(): Promise<string> {
+export function loadLocalConfig(filePath: string): Promise<string> {
   // TODO search for file. it just works, when the file is in root
   return new Promise<string>((resolve, reject) => {
-    const fileName = "src/abby.ts";
-
-    fs.readFile(fileName, "utf8", (error, data) => {
+    fs.readFile(filePath, "utf8", (error, data) => {
       if (error) {
         reject(error);
         return;
