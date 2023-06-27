@@ -8,6 +8,7 @@ export type Tests<TestName extends string = string> = Record<
 >;
 
 export type ConfigData<FlagName extends string = string> = {
-  tests: Tests;
-  flags: FlagName[];
+  projectId: string,
+  tests: Tests,
+  flags: FlagName[]
 };

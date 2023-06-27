@@ -5,7 +5,7 @@ import { loadLocalConfig, updateConfigFile } from "./util";
 
 import { getConfigFromFileString } from "./util";
 import { ConfigData } from "./types";
-import { getConfig } from "./http";
+import {getConfigFromServer} from "./http";
 
 async function updateConfig(
   configFromFile: AbbyConfig,
@@ -29,7 +29,7 @@ export async function pull(): Promise<void> {
   const configFileString: string = await loadLocalConfig();
   const configFromFile: AbbyConfig = getConfigFromFileString(configFileString);
 
-  const configFromAbby = await getConfig("clftg3tzd0004l7085yktpsov");
+  const configFromAbby = await getConfigFromServer("clftg3tzd0004l7085yktpsov", true); // TODO set debug to false
 
   const updatedConfig = await updateConfig(configFromFile, configFromAbby);
 

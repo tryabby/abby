@@ -1,28 +1,37 @@
-import { createFlag, createTest, getConfig } from "./http";
+import {createFlag, createTest, getConfigFromServer} from "./http";
 import { getConfigFromFileString, loadLocalConfig } from "./util";
 
-export async function push() {
+export async function push(apiKey: string): Promise<void> {
   const localConfigString = await loadLocalConfig();
   const localAbbyConfig = getConfigFromFileString(localConfigString);
   const projectId = localAbbyConfig.projectId;
 
-  const serverConfigData = await getConfig(projectId);
+  // const serverConfigData = await getConfigFromServer(projectId, true); // TODO set debug to false
 
-  for (const test in localAbbyConfig.tests) {
-    if (!serverConfigData.tests[test]) {
-      createTest(projectId);
-      console.log(test + " test added");
-      // update test
+  try {
+    const response = await fetch(`http://localhost:3000/api/config/${projectId}?apiKey=${apiKey}`,
+        {
+          method: 'PUT',
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(localAbbyConfig)
+        }
+    );
+      // const res = await response;
+      const data = await response.json();
+      const status = response.status;
+
+    if (status == 200) {
+      console.log("pushed successfully");
+    } else
+    {
+        console.log("pushed failed: \n" + status + ": " + data)
     }
-  }
-  if (localAbbyConfig.flags) {
-    for (const flag of localAbbyConfig.flags) {
-      if (!serverConfigData.flags.includes(flag)) {
-        createFlag(projectId, flag);
-        console.log(flag + " flag added");
-      }
-    }
+  } catch (e) {
+    console.log("Error: " + e)
   }
 
-  console.log("pushed successfully");
+
+
 }

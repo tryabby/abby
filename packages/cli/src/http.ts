@@ -1,33 +1,33 @@
 import { AbbyConfig } from "@tryabby/core";
 import { ConfigData, Tests } from "./types";
 
-export async function getConfig(projectId: string): Promise<ConfigData> {
-  let tests: Tests = {};
-  let flags = [];
-  const response = await fetch(
-    `http://www.tryabby.com/api/dashboard/${projectId}/data`,
-    {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-      },
-    }
-  );
+export async function getConfigFromServer(projectId: string, debug?: boolean): Promise<ConfigData> {
+  let responseJson: any;
 
-  const responseJson = await response.json();
-
-  // TODO add dynamic variants
-  for (const test of responseJson.tests) {
-    tests[test.name] = { variants: ["A", "B", "C"] };
+  if (debug) {
+    const response = await fetch(
+        `http://localhost:3000/api/config/${projectId}`,
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+    );
+    responseJson = await response.json();
+  } else {
+    const response = await fetch(
+        `http://www.tryabby.com/api/dashboard/${projectId}/data`,
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+    );
+    responseJson = await response.json();
   }
-
-  for (const flag of responseJson.flags) {
-    flags.push(flag.name);
-  }
-
-  const config: ConfigData = { tests, flags };
-
-  return config;
+  return responseJson;
 }
 
 export async function createTest(projectId: string) {
