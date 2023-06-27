@@ -85,27 +85,9 @@ export default async function handler(
       }
 
       const newConfig = configSchemaResult.data;
-      console.log(newConfig);
-
-      const projectData = await prisma.project.findUnique({
-        where: {
-          id: projectId,
-        },
-        include: {
-          tests: {
-            include: {
-              options: true,
-            },
-          },
-          featureFlags: true,
-        },
-      });
-
-      if (!projectData) throw new Error();
 
       if (newConfig.tests) {
         Object.entries(newConfig.tests).forEach(async ([testName, test]) => {
-          console.log(testName, test);
           const testData = await prisma.test.findUnique({
             where: {
               projectId_name: {
@@ -127,21 +109,6 @@ export default async function handler(
               testName,
               apiKey
             );
-
-            await prisma.test.create({
-              data: {
-                name: testName,
-                projectId,
-                options: {
-                  createMany: {
-                    data: variants.map((variant) => ({
-                      identifier: variant,
-                      chance: 1 / variants.length,
-                    })),
-                  },
-                },
-              },
-            });
           }
         });
       }

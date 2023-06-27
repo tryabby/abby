@@ -7,10 +7,13 @@
     "abby": "./lib/index.js"
   },
   "scripts": {
-    "start": "ts-node src/index.ts",
+    "start": "pnpm run build && ./dist/index.js",
+    "start2": "ts-node src/index.ts",
     "start:windows": "nodemon --watch 'src/**/*.ts' --exec \"npx ts-node\" src/index.ts",
     "create": "npm run build && npm run test",
-    "build": "tsc -p .",
+    "build": "esbuild src/index.ts --bundle --target=node10.4 --bundle --platform=node --format=cjs --outfile=dist/index.js --external:figlet",
+    "build:prod": "tsc --noEmit && pnpm run build",
+    "buildv2": "npx tsc",
     "local": "sudo npm i -g && pizza",
     "refresh": "rm -rf ./node_modules ./package-lock.json && npm install"
   },

@@ -2,25 +2,42 @@
 
 import * as Chalk from "chalk";
 import * as figlet from "figlet";
-import { program } from "commander";
+import { Command } from "commander";
 import { pull } from "./pull";
-import {push} from "./push";
-// import {clear} from "clear";
+import { push } from "./push";
+import { clear } from "clear";
+import { getToken, writeTokenFile } from "./auth";
+import chalk from "chalk";
+
+const program = new Command();
 
 // clear();
 console.log(figlet.textSync("abby-cli", { horizontalLayout: "full" }));
 
-// push("cljcmkhsv0000adwah7sslnqh");
+program.name("abby-cli").description("CLI Tool for Abby").version("0.0.1");
 
 program
-  .version("0.0.1")
-  .description("CLI Tool for Abby")
-  .command("login", "Login")
-    .option("-t", "token")
-  .command("push", "create tests & flags")
-  .parse(process.argv);
+  .command("login")
+  .argument("<token>", "token")
+  .action((token) => {
+    if (token) {
+      writeTokenFile(token);
+    } else {
+      console.log(chalk.red("Token is required"));
+    }
+  });
 
+program
+  .command("push")
+  .description("push local config to server")
+  .action(function () {
+    try {
+      const token = getToken();
+      push(token);
+    } catch (e) {
+      console.log(chalk.red("Please login first"));
+      return;
+    }
+  });
 
-const options = program.opts();
-
-
+program.parse(process.argv);
