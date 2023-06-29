@@ -11,6 +11,7 @@ import { testRouter } from "./tests";
 import { userRouter } from "./user";
 import { couponRouter } from "./coupons";
 import { miscRouter } from "./misc";
+import { apiKeyRouter } from "./apikey";
 
 export const appRouter = router({
   example: exampleRouter,
@@ -25,6 +26,7 @@ export const appRouter = router({
   environments: environmentRouter,
   coupons: couponRouter,
   misc: miscRouter,
+  apikey: apiKeyRouter,
 });
 
 // export type definition of API

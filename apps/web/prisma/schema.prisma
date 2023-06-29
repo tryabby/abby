@@ -67,7 +67,6 @@ model User {
   featureFlagHistory FeatureFlagHistory[]
   CouponCodes        CouponCodes[]
   apiKeys            APIKey[]
-
 }
 
 model VerificationToken {
@@ -253,7 +252,10 @@ model CouponCodes {
 
 model APIKey {
   id        String   @id @default(cuid())
-  key       String   @unique
+  name      String
+  hashedKey String   @unique
+  validDays Int
+  isRevoked Boolean  @default(false)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   userId    String
@@ -261,4 +263,3 @@ model APIKey {
 
   @@index([userId])
 }
-

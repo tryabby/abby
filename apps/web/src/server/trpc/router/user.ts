@@ -38,4 +38,14 @@ export const userRouter = router({
       }),
     };
   }),
+  getApiKeyData: protectedProcedure.query(async ({ ctx }) => {
+    return {
+      user: ctx.session.user.id,
+      apiKeys: await ctx.prisma.aPIKey.findMany({
+        where: {
+          userId: ctx.session.user.id,
+        },
+      }),
+    };
+  }
 });

@@ -1,11 +1,14 @@
 import { ROLE, User } from "@prisma/client";
 import clsx from "clsx";
+import { Editor } from "components/Editor";
 import { IconButton } from "components/IconButton";
+import { Input } from "components/Input";
 import { Layout } from "components/Layout";
 import {
   FullPageLoadingSpinner,
   LoadingSpinner,
 } from "components/LoadingSpinner";
+import { Modal } from "components/Modal";
 import { Progress } from "components/Progress";
 import { RemoveUserModal } from "components/RemoveUserModal";
 import dayjs from "dayjs";
@@ -18,19 +21,56 @@ import { FormEvent, useRef, useState } from "react";
 import { toast } from "react-hot-toast";
 import { BsX } from "react-icons/bs";
 import { getLimitByPlan } from "server/common/plans";
+import { generateRandomString, hashApiKey } from "utils/apiKey";
 import { trpc } from "utils/trpc";
+import { AiOutlinePlus } from "react-icons/ai";
+import { trimStart } from "lodash-es";
+
+const CreateApiKeyModal = ({
+  isOpen,
+  onClose,
+  name,
+  apiKey,
+}: {
+  isOpen: boolean;
+  onClose: () => void;
+  name: string;
+  apiKey: string;
+}) => {
+  return (
+    <Modal
+      title={name + "// Your API Key"}
+      confirmText="Confirm"
+      onConfirm={() => {}}
+      size="full"
+      isOpen={isOpen}
+      onClose={onClose}
+    >
+      <div>Please copy this API Code and so on</div>
+      <Input value={apiKey} />
+    </Modal>
+  );
+};
 
 const SettingsPage: NextPageWithLayout = () => {
+  const [isCreateApiKeyModalOpen, setIsCreateApiKeyModalOpen] = useState(false);
+  const [newApiKeyInfo, setNewApiKeyInfo] = useState<{
+    name: string;
+    apiKey: string;
+  } | null>(null);
   const [userToRemove, setUserToRemove] = useState<User | null>(null);
   const inviteEmailRef = useRef<HTMLInputElement>(null);
   const router = useRouter();
 
   const projectId = router.query.projectId as string;
   const projectNameRef = useRef<HTMLInputElement>(null);
+  const apiKeyNameRef = useRef<HTMLInputElement>(null);
   const trpcContext = trpc.useContext();
   const { data, isLoading, isError } = trpc.project.getProjectData.useQuery({
     projectId,
   });
+  // const { apiKeyData, apiKeyisLoading, isErrore } =
+  //   trpc.user.getApiKeyData.useQuery();
 
   const limits = data
     ? getLimitByPlan(getProjectPaidPlan(data?.project))
@@ -41,6 +81,12 @@ const SettingsPage: NextPageWithLayout = () => {
       toast.success("Project name updated");
       trpcContext.project.getProjectData.invalidate();
       trpcContext.user.getProjects.invalidate();
+    },
+  });
+
+  const { mutate: createApiKey } = trpc.apikey.createApiKey.useMutation({
+    onSuccess() {
+      setIsCreateApiKeyModalOpen(true);
     },
   });
 
@@ -261,12 +307,82 @@ const SettingsPage: NextPageWithLayout = () => {
               </button>
             </div>
           </section>
+          <section className="rounded-xl bg-gray-800 px-6 py-3">
+            <h2 className="text-xl font-semibold">API Keys</h2>
+            <h3 className="text-sm text-pink-50/80">
+              API Keys are used to authenticate with the API.
+            </h3>
+
+            <form className="pt-4" onSubmit={onInvite}>
+              <label htmlFor="newUserEmail" className=" font-semibold">
+                Create a new API Key:
+              </label>
+              <div className="mt-2">
+                <input
+                  ref={apiKeyNameRef}
+                  id="newApiKeyName"
+                  className="w-80 max-w-full rounded-l-md bg-gray-700 px-3 py-2 pr-2 focus:outline-none"
+                  placeholder="Application name"
+                />{" "}
+                <button
+                  onClick={() => {
+                    const apiKey = generateRandomString(32);
+                    const hashedApiKey = hashApiKey(apiKey);
+                    const name = apiKeyNameRef.current?.value ?? "New Api Key";
+                    setNewApiKeyInfo({
+                      apiKey: apiKey,
+                      name: name,
+                    });
+
+                    createApiKey({
+                      name: name,
+                      apiKey: hashedApiKey,
+                    });
+                    // setIsCreateApiKeyModalOpen(true);
+                  }}
+                  className="-ml-1 mt-2 rounded-l-md rounded-r-md bg-gray-900 px-3 py-2 md:mt-0 md:rounded-l-none"
+                >
+                  Create
+                </button>
+              </div>
+            </form>
+
+            {/* <div className="flex space-x-3">
+              <button
+                className="mr-auto mt-4 rounded-sm bg-blue-300 px-3 py-0.5 text-gray-800 transition-colors duration-200 ease-in-out hover:bg-blue-400"
+                onClick={() => {
+                  if (apiKeyRef.current) {
+                    const apiKey = generateRandomString(32);
+                    apiKeyRef.current.textContent =
+                      apiKey +
+                      "\n Please copy and save the API Key. The API Key cant be displayed again. So please save it. It is better for you.";
+                    apiKeyRef.current.classList.toggle("invisible");
+                    const hashedApiKey = hashApiKey(apiKey);
+                    // createApiKey({
+                    //   apiKey: hashedApiKey,
+                    // });
+                  }
+                }}
+              >
+                Generate
+              </button>
+            </div> */}
+          </section>
         </>
       )}
       <RemoveUserModal
         isOpen={userToRemove != null}
         onClose={() => setUserToRemove(null)}
         user={userToRemove ?? undefined}
+      />
+      <CreateApiKeyModal
+        isOpen={isCreateApiKeyModalOpen}
+        apiKey={newApiKeyInfo?.apiKey ?? ""}
+        name={newApiKeyInfo?.name ?? ""}
+        onClose={() => {
+          setIsCreateApiKeyModalOpen(false);
+          setNewApiKeyInfo(null);
+        }}
       />
     </main>
   );

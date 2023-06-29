@@ -6,6 +6,7 @@ import NextCors from "nextjs-cors";
 import { z } from "zod";
 import { FlagService } from "server/services/FlagService";
 import { TestService } from "server/services/TestService";
+import { hashApiKey } from "utils/apiKey";
 
 const incomingQuerySchema = z.object({
   projectId: z.string(),
@@ -84,6 +85,20 @@ export default async function handler(
         return;
       }
 
+      const hashedApiKey = hashApiKey(apiKey);
+      const apiKeyEntry = await prisma.aPIKey.findUnique({
+        where: {
+          hashedKey: hashedApiKey,
+        },
+      });
+
+      if (!apiKeyEntry) {
+        res.status(401).json(hashedApiKey);
+        return;
+      }
+
+      const userId = apiKeyEntry.userId;
+
       const newConfig = configSchemaResult.data;
 
       if (newConfig.tests) {
@@ -107,7 +122,7 @@ export default async function handler(
               projectId,
               weightedVariants,
               testName,
-              apiKey
+              userId
             );
           }
         });
