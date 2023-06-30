@@ -23,4 +23,20 @@ export const apiKeyRouter = router({
         },
       });
     }),
+  revokeApiKey: protectedProcedure
+    .input(
+      z.object({
+        id: z.string(),
+      })
+    )
+    .mutation(async ({ ctx, input }) => {
+      const apiKeyEntry = await ctx.prisma.aPIKey.update({
+        where: {
+          id: input.id,
+        },
+        data: {
+          isRevoked: true,
+        },
+      });
+    }),
 });

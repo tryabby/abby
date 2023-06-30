@@ -1,4 +1,4 @@
-import { ROLE, User } from "@prisma/client";
+import { APIKey, ROLE, User } from "@prisma/client";
 import clsx from "clsx";
 import { Editor } from "components/Editor";
 import { IconButton } from "components/IconButton";
@@ -40,8 +40,12 @@ const CreateApiKeyModal = ({
   return (
     <Modal
       title={name + "// Your API Key"}
-      confirmText="Confirm"
-      onConfirm={() => {}}
+      confirmText="Copy"
+      onConfirm={() => {
+        navigator.clipboard.writeText(apiKey);
+        onClose();
+        toast.success("API Key copied");
+      }}
       size="full"
       isOpen={isOpen}
       onClose={onClose}
@@ -52,13 +56,52 @@ const CreateApiKeyModal = ({
   );
 };
 
+const RevokeApiKeyModal = ({
+  isOpen,
+  onClose,
+  apiKey,
+}: {
+  isOpen: boolean;
+  onClose: () => void;
+  apiKey?: string;
+}) => {
+  const trpcContext = trpc.useContext();
+
+  const { mutate: revokeApiKey } = trpc.apikey.revokeApiKey.useMutation({
+    onSuccess() {
+      toast.success("API Key revoked");
+
+      onClose();
+      trpcContext.user.getApiKeyData.invalidate();
+    },
+  });
+
+  return (
+    <Modal
+      title={"Revoke API Key"}
+      confirmText="Confirm"
+      onConfirm={() => {
+        if (!apiKey) return;
+        revokeApiKey({ id: apiKey });
+      }}
+      size="full"
+      isOpen={isOpen}
+      onClose={onClose}
+    >
+      <div>Wanna really revoke this API Key?</div>
+    </Modal>
+  );
+};
+
 const SettingsPage: NextPageWithLayout = () => {
   const [isCreateApiKeyModalOpen, setIsCreateApiKeyModalOpen] = useState(false);
+  const [isRevokeApiKeyModalOpen, setIsRevokeApiKeyModalOpen] = useState(false);
   const [newApiKeyInfo, setNewApiKeyInfo] = useState<{
     name: string;
     apiKey: string;
   } | null>(null);
   const [userToRemove, setUserToRemove] = useState<User | null>(null);
+  const [apiKeyToRevoke, setApiKeyToRevoke] = useState<string | null>(null);
   const inviteEmailRef = useRef<HTMLInputElement>(null);
   const router = useRouter();
 
@@ -92,6 +135,7 @@ const SettingsPage: NextPageWithLayout = () => {
   const { mutate: createApiKey } = trpc.apikey.createApiKey.useMutation({
     onSuccess() {
       setIsCreateApiKeyModalOpen(true);
+      trpcContext.user.getApiKeyData.invalidate();
     },
   });
 
@@ -317,67 +361,65 @@ const SettingsPage: NextPageWithLayout = () => {
             <h3 className="text-sm text-pink-50/80">
               API Keys are used to authenticate with the API.
             </h3>
-            {isAPIKeyDataLoading || isAPIKeyDataError ? (
-              <FullPageLoadingSpinner />
-            ) : (
-              <>
-                {apiKeyData.apiKeys.map(({ name: apiKeyName }) => (
-                  <div>{apiKeyName}</div>
-                ))}
-              </>
-            )}
+            <div className="mt-8 divide-y divide-pink-50/20">
+              {isAPIKeyDataLoading || isAPIKeyDataError ? (
+                <FullPageLoadingSpinner />
+              ) : (
+                <>
+                  {apiKeyData.apiKeys.map(
+                    ({ name: apiKeyName, id: apiKeyId }) => (
+                      <div
+                        key={apiKeyName}
+                        className="col flex justify-between py-3"
+                      >
+                        <div className="flex items-center">{apiKeyName}</div>
+                        <IconButton
+                          icon={<BsX />}
+                          title="Revoke API Key"
+                          onClick={() => {
+                            setIsRevokeApiKeyModalOpen(true);
+                            setApiKeyToRevoke(apiKeyId);
+                          }}
+                          className="bg-transparent text-2xl hover:bg-red-800/80"
+                        />
+                      </div>
+                    )
+                  )}
+                </>
+              )}
 
-            <form className="pt-4" onSubmit={onInvite}>
-              <label htmlFor="newUserEmail" className=" font-semibold">
-                Create a new API Key:
-              </label>
-              <div className="mt-2">
-                <input
-                  ref={apiKeyNameRef}
-                  id="newApiKeyName"
-                  className="w-80 max-w-full rounded-l-md bg-gray-700 px-3 py-2 pr-2 focus:outline-none"
-                  placeholder="Application name"
-                />{" "}
-                <button
-                  onClick={() => {
-                    const apiKey = generateRandomString(32);
-                    const name = apiKeyNameRef.current?.value ?? "New Api Key";
-                    setNewApiKeyInfo({
-                      name: name,
-                      apiKey: apiKey,
-                    });
-                    createApiKey({
-                      name: name,
-                      apiKey: apiKey,
-                    });
-                  }}
-                  className="-ml-1 mt-2 rounded-l-md rounded-r-md bg-gray-900 px-3 py-2 md:mt-0 md:rounded-l-none"
-                >
-                  Create
-                </button>
-              </div>
-            </form>
-
-            {/* <div className="flex space-x-3">
-              <button
-                className="mr-auto mt-4 rounded-sm bg-blue-300 px-3 py-0.5 text-gray-800 transition-colors duration-200 ease-in-out hover:bg-blue-400"
-                onClick={() => {
-                  if (apiKeyRef.current) {
-                    const apiKey = generateRandomString(32);
-                    apiKeyRef.current.textContent =
-                      apiKey +
-                      "\n Please copy and save the API Key. The API Key cant be displayed again. So please save it. It is better for you.";
-                    apiKeyRef.current.classList.toggle("invisible");
-                    const hashedApiKey = hashApiKey(apiKey);
-                    // createApiKey({
-                    //   apiKey: hashedApiKey,
-                    // });
-                  }
-                }}
-              >
-                Generate
-              </button>
-            </div> */}
+              <form className="pt-4" onSubmit={onInvite}>
+                <label htmlFor="newUserEmail" className=" font-semibold">
+                  Create a new API Key:
+                </label>
+                <div className="mt-2">
+                  <input
+                    ref={apiKeyNameRef}
+                    id="newApiKeyName"
+                    className="w-80 max-w-full rounded-l-md bg-gray-700 px-3 py-2 pr-2 focus:outline-none"
+                    placeholder="Application name"
+                  />{" "}
+                  <button
+                    onClick={() => {
+                      const apiKey = generateRandomString(32);
+                      const name =
+                        apiKeyNameRef.current?.value ?? "New Api Key";
+                      setNewApiKeyInfo({
+                        name: name,
+                        apiKey: apiKey,
+                      });
+                      createApiKey({
+                        name: name,
+                        apiKey: apiKey,
+                      });
+                    }}
+                    className="-ml-1 mt-2 rounded-l-md rounded-r-md bg-gray-900 px-3 py-2 md:mt-0 md:rounded-l-none"
+                  >
+                    Create
+                  </button>
+                </div>
+              </form>
+            </div>
           </section>
         </>
       )}
@@ -393,6 +435,14 @@ const SettingsPage: NextPageWithLayout = () => {
         onClose={() => {
           setIsCreateApiKeyModalOpen(false);
           setNewApiKeyInfo(null);
+        }}
+      />
+      <RevokeApiKeyModal
+        isOpen={isRevokeApiKeyModalOpen}
+        apiKey={apiKeyToRevoke ?? undefined}
+        onClose={() => {
+          setIsRevokeApiKeyModalOpen(false);
+          setApiKeyToRevoke(null);
         }}
       />
     </main>

@@ -40,6 +40,24 @@ export default async function handler(
 
   const { projectId, apiKey } = querySchemaResult.data;
 
+  const hashedApiKey = hashApiKey(apiKey);
+  const apiKeyEntry = await prisma.aPIKey.findUnique({
+    where: {
+      hashedKey: hashedApiKey,
+    },
+  });
+
+  // TODO remove this check
+  if (!apiKeyEntry) {
+    res.status(401).json(hashedApiKey);
+    return;
+  } else {
+    if (apiKeyEntry.isRevoked) {
+      res.status(401).json({ error: "API key revoked" });
+      return;
+    }
+  }
+
   if (req.method === "GET") {
     // TODO add event service ?
     try {
@@ -82,19 +100,6 @@ export default async function handler(
       const configSchemaResult = abbyConfigSchema.safeParse(req.body);
       if (!configSchemaResult.success) {
         res.status(400).end();
-        return;
-      }
-
-      const hashedApiKey = hashApiKey(apiKey);
-      const apiKeyEntry = await prisma.aPIKey.findUnique({
-        where: {
-          hashedKey: hashedApiKey,
-        },
-      });
-
-      // TODO remove this check
-      if (!apiKeyEntry) {
-        res.status(401).json(hashedApiKey);
         return;
       }
 
