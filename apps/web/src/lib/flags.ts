@@ -1,4 +1,5 @@
 import { FeatureFlag, FeatureFlagType } from "@prisma/client";
+import { FlagValueString } from "@tryabby/core";
 import { groupBy } from "lodash-es";
 
 export function getFlagCount(flags: Array<FeatureFlag>) {
@@ -27,6 +28,21 @@ export function getFlagTypeClassName(type: FeatureFlagType) {
       return "text-blue-400 border-blue-400";
     case FeatureFlagType.STRING:
       return "text-green-400 border-green-400";
+    default:
+      throw new Error(`Unknown flag type: ${type}`);
+  }
+}
+
+export function transformDBFlagTypeToclient(
+  type: FeatureFlagType
+): FlagValueString {
+  switch (type) {
+    case FeatureFlagType.BOOLEAN:
+      return "Boolean";
+    case FeatureFlagType.NUMBER:
+      return "Number";
+    case FeatureFlagType.STRING:
+      return "String";
     default:
       throw new Error(`Unknown flag type: ${type}`);
   }
