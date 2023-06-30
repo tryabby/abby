@@ -26,6 +26,7 @@ export const {
     AdvancedTestStats: "Boolean",
     showFooter: "Boolean",
     test: "Boolean",
+    abc: "JSON",
   },
 });
 

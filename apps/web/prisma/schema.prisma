@@ -27,6 +27,7 @@ enum FeatureFlagType {
   BOOLEAN
   STRING
   NUMBER
+  JSON
 }
 
 // Necessary for Next auth

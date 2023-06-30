@@ -5,6 +5,7 @@ import {
   FlagValue,
   FlagValueString,
   FlagValueStringToType,
+  assertUnreachable,
 } from "./shared/";
 import { HttpService } from "./shared";
 import { F } from "ts-toolbelt";
@@ -388,8 +389,10 @@ export class Abby<
         return "";
       case "Number":
         return 0;
+      case "JSON":
+        return {};
       default:
-        throw new Error(`Unknown flag type: ${flagType}`);
+        assertUnreachable(flagType);
     }
   }
 
@@ -403,8 +406,10 @@ export class Abby<
         return stringifiedValue;
       case "Number":
         return parseInt(stringifiedValue, 10);
+      case "JSON":
+        return JSON.parse(stringifiedValue);
       default:
-        throw new Error(`Unknown flag type: ${flagType}`);
+        assertUnreachable(flagType);
     }
   }
 }

@@ -1,4 +1,5 @@
 import { FeatureFlag, FeatureFlagType } from "@prisma/client";
+import { assertUnreachable } from "@tryabby/core";
 import { FlagValueString } from "@tryabby/core";
 import { groupBy } from "lodash-es";
 
@@ -15,8 +16,12 @@ export function transformFlagValue(value: string, type: FeatureFlagType) {
       return value === "true";
     case FeatureFlagType.NUMBER:
       return parseInt(value);
-    default:
+    case FeatureFlagType.JSON:
+      return JSON.parse(value);
+    case FeatureFlagType.STRING:
       return value;
+    default:
+      assertUnreachable(type);
   }
 }
 
@@ -28,8 +33,11 @@ export function getFlagTypeClassName(type: FeatureFlagType) {
       return "text-blue-400 border-blue-400";
     case FeatureFlagType.STRING:
       return "text-green-400 border-green-400";
-    default:
-      throw new Error(`Unknown flag type: ${type}`);
+    case FeatureFlagType.JSON:
+      return "text-purple-400 border-purple-400";
+    default: {
+      assertUnreachable(type);
+    }
   }
 }
 
@@ -43,7 +51,9 @@ export function transformDBFlagTypeToclient(
       return "Number";
     case FeatureFlagType.STRING:
       return "String";
+    case FeatureFlagType.JSON:
+      return "JSON";
     default:
-      throw new Error(`Unknown flag type: ${type}`);
+      assertUnreachable(type);
   }
 }

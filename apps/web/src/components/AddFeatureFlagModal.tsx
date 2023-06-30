@@ -9,7 +9,8 @@ import { RadioSelect } from "./RadioSelect";
 import { Input } from "./ui/input";
 import { FlagIcon } from "./FlagIcon";
 import { cn } from "lib/utils";
-import { getFlagTypeClassName } from "lib/flags";
+import { getFlagTypeClassName, transformDBFlagTypeToclient } from "lib/flags";
+import { JSONEditor } from "./JSONEditor";
 
 type Props = {
   onClose: () => void;
@@ -38,8 +39,22 @@ export function ChangeFlagForm({
 
   const [state, setState] = useState<FlagFormValues>(initialValues);
 
+  const valueRef = useRef<Record<FeatureFlagType, string>>({
+    [FeatureFlagType.BOOLEAN]: "false",
+    [FeatureFlagType.STRING]: "",
+    [FeatureFlagType.NUMBER]: "",
+    [FeatureFlagType.JSON]: "",
+  });
+
   const onChange = (values: Partial<FlagFormValues>) => {
     const newState = { ...state, ...values };
+
+    // if type changed, save the value
+    if (values.type != null && values.type !== state.type) {
+      valueRef.current[state.type] = state.value;
+      newState.value = valueRef.current[newState.type] ?? "";
+    }
+
     setState(newState);
     onChangeHandler(newState);
   };
@@ -72,7 +87,7 @@ export function ChangeFlagForm({
                 )}
               >
                 <FlagIcon type={flagType} className="mr-2 inline-block" />
-                <span className="capitalize">{key.toLowerCase()}</span>
+                <span>{transformDBFlagTypeToclient(flagType)}</span>
               </div>
             ),
             value: flagType,
@@ -118,6 +133,12 @@ export function ChangeFlagForm({
             }}
             placeholder="123"
             className="form-input w-full rounded-md border border-gray-500 bg-gray-600 px-4 py-2 text-white placeholder-gray-400 shadow-sm focus:outline-none focus:ring-2 focus:ring-gray-400 focus:ring-offset-2"
+          />
+        )}
+        {state.type === "JSON" && (
+          <JSONEditor
+            value={state.value}
+            onChange={(e) => onChange({ value: e })}
           />
         )}
         {errors.value && (

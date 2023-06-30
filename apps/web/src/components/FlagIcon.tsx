@@ -1,5 +1,12 @@
 import { FeatureFlagType } from "@prisma/client";
-import { Baseline, Binary, Hash, LucideProps, ToggleLeft } from "lucide-react";
+import {
+  Baseline,
+  Binary,
+  Hash,
+  LucideProps,
+  ToggleLeft,
+  CurlyBraces,
+} from "lucide-react";
 import { match } from "ts-pattern";
 import { Tooltip, TooltipContent, TooltipTrigger } from "./Tooltip";
 
@@ -21,6 +28,7 @@ export function FlagIcon({ type, ...iconProps }: Props) {
             .with("BOOLEAN", () => <ToggleLeft {...iconProps} />)
             .with("NUMBER", () => <Hash {...iconProps} />)
             .with("STRING", () => <Baseline {...iconProps} />)
+            .with("JSON", () => <CurlyBraces {...iconProps} />)
             .exhaustive()}
         </TooltipTrigger>
       </Tooltip>
