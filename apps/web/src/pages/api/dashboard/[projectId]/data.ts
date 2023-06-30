@@ -69,7 +69,8 @@ export default async function getWeightsHandler(
         const value = transformFlagValue(flagValue.value, flagValue.flag.type);
         return {
           name: flagValue.flag.name,
-          value: flagValue.flag.type === "BOOLEAN" ? value : value != null,
+          isEnabled:
+            flagValue.flag.type === "BOOLEAN" ? value === true : value != null,
         };
       }),
     } satisfies LegacyAbbyDataResponse;
