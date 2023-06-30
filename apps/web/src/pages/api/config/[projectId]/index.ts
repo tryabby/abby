@@ -92,6 +92,7 @@ export default async function handler(
         },
       });
 
+      // TODO remove this check
       if (!apiKeyEntry) {
         res.status(401).json(hashedApiKey);
         return;
@@ -139,7 +140,7 @@ export default async function handler(
             },
           });
           if (!flagData) {
-            await FlagService.createFlag(projectId, flag, apiKey);
+            await FlagService.createFlag(projectId, flag, userId);
           }
           return flagData;
         });

@@ -6,17 +6,17 @@ export const apiKeyRouter = router({
   createApiKey: protectedProcedure
     .input(
       z.object({
-        apiKey: z.string(),
         name: z.string(),
+        apiKey: z.string(),
       })
     )
     .mutation(async ({ ctx, input }) => {
       const apiKey = input.apiKey;
-      // const hashedApiKey = hashApiKey(apiKey); // TODO use package for hashing
+      const hashedApiKey = hashApiKey(apiKey);
 
       const apiKeyEntry = await ctx.prisma.aPIKey.create({
         data: {
-          hashedKey: apiKey,
+          hashedKey: hashedApiKey,
           name: input.name,
           validDays: 365,
           userId: ctx.session.user.id,

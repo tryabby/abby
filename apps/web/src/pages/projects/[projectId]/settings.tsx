@@ -21,7 +21,7 @@ import { FormEvent, useRef, useState } from "react";
 import { toast } from "react-hot-toast";
 import { BsX } from "react-icons/bs";
 import { getLimitByPlan } from "server/common/plans";
-import { generateRandomString, hashApiKey } from "utils/apiKey";
+import { generateRandomString } from "utils/apiKey";
 import { trpc } from "utils/trpc";
 import { AiOutlinePlus } from "react-icons/ai";
 import { trimStart } from "lodash-es";
@@ -69,8 +69,13 @@ const SettingsPage: NextPageWithLayout = () => {
   const { data, isLoading, isError } = trpc.project.getProjectData.useQuery({
     projectId,
   });
-  // const { apiKeyData, apiKeyisLoading, isErrore } =
-  //   trpc.user.getApiKeyData.useQuery();
+  const {
+    data: apiKeyData,
+    isLoading: isAPIKeyDataLoading,
+    isError: isAPIKeyDataError,
+  } = trpc.user.getApiKeyData.useQuery();
+
+  // const { data, isLoading, isError } = trpc.user.getApiKeyData.useQuery({});
 
   const limits = data
     ? getLimitByPlan(getProjectPaidPlan(data?.project))
@@ -312,6 +317,15 @@ const SettingsPage: NextPageWithLayout = () => {
             <h3 className="text-sm text-pink-50/80">
               API Keys are used to authenticate with the API.
             </h3>
+            {isAPIKeyDataLoading || isAPIKeyDataError ? (
+              <FullPageLoadingSpinner />
+            ) : (
+              <>
+                {apiKeyData.apiKeys.map(({ name: apiKeyName }) => (
+                  <div>{apiKeyName}</div>
+                ))}
+              </>
+            )}
 
             <form className="pt-4" onSubmit={onInvite}>
               <label htmlFor="newUserEmail" className=" font-semibold">
@@ -327,18 +341,15 @@ const SettingsPage: NextPageWithLayout = () => {
                 <button
                   onClick={() => {
                     const apiKey = generateRandomString(32);
-                    const hashedApiKey = hashApiKey(apiKey);
                     const name = apiKeyNameRef.current?.value ?? "New Api Key";
                     setNewApiKeyInfo({
-                      apiKey: apiKey,
                       name: name,
+                      apiKey: apiKey,
                     });
-
                     createApiKey({
                       name: name,
-                      apiKey: hashedApiKey,
+                      apiKey: apiKey,
                     });
-                    // setIsCreateApiKeyModalOpen(true);
                   }}
                   className="-ml-1 mt-2 rounded-l-md rounded-r-md bg-gray-900 px-3 py-2 md:mt-0 md:rounded-l-none"
                 >
