@@ -26,10 +26,7 @@ import { F } from "ts-toolbelt";
 import { Route } from "@angular/router";
 import { ABBY_CONFIG_TOKEN } from "./abby.module";
 
-type LocalData<
-  FlagName extends string = string,
-  TestName extends string = string
-> = {
+type LocalData<FlagName extends string = string, TestName extends string = string> = {
   tests: Record<
     TestName,
     ABConfig & {
@@ -45,11 +42,7 @@ export class AbbyService<
   FlagName extends string = string,
   TestName extends string = string,
   Tests extends Record<TestName, ABConfig> = Record<TestName, ABConfig>,
-  Flags extends Record<FlagName, FlagValueString> = Record<
-    FlagName,
-    FlagValueString
-  >,
-  ConfigType extends AbbyConfig<FlagName, Tests> = AbbyConfig<FlagName, Tests>
+  Flags extends Record<FlagName, FlagValueString> = Record<FlagName, FlagValueString>
 > {
   private abby: Abby<FlagName, TestName, Tests, Flags>;
 
@@ -63,9 +56,7 @@ export class AbbyService<
     this.config.debug ? console.log(`ng.AbbyService`, ...args) : () => {};
   private cookieChanged$ = new Subject<void>();
 
-  constructor(
-    @Inject(AbbyService) config: F.Narrow<AbbyConfig<FlagName, Tests, Flags>>
-  ) {
+  constructor(@Inject(AbbyService) config: F.Narrow<AbbyConfig<FlagName, Tests, Flags>>) {
     this.abby = new Abby<FlagName, TestName, Tests, Flags>(
       config,
       {
@@ -108,9 +99,7 @@ export class AbbyService<
     return this.resolveData().pipe(
       map((data) => this.abby.getTestVariant(testName)),
       tap((variant) => (this.selectedVariants[testName as string] = variant)),
-      tap((variant) =>
-        this.log(`getVariant(${testName as string}) =>`, variant)
-      )
+      tap((variant) => this.log(`getVariant(${testName as string}) =>`, variant))
     );
   }
 
@@ -141,6 +130,7 @@ export class AbbyService<
   }
 
   public getFeatureFlagValue<F extends FlagName>(name: F) {
+    console.log("getFeatureFlagValue", name, this.abby.getFeatureFlag(name));
     this.log(`getFeatureFlagValue(${name})`);
 
     return this.resolveData().pipe(

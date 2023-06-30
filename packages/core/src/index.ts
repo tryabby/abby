@@ -23,7 +23,7 @@ type Settings<
 > = {
   flags?: {
     defaultValues?: {
-      [K in keyof Flags]?: FlagValueStringToType<Flags[K]>;
+      [K in FlagValueString]?: FlagValueStringToType<K>;
     };
     devOverrides?: {
       [K in keyof Flags]?: FlagValueStringToType<Flags[K]>;
@@ -77,6 +77,8 @@ export class Abby<
 
   private listeners = new Set<(newData: LocalData<FlagName, TestName>) => void>();
 
+  private _cfg: AbbyConfig<FlagName, Tests, Flags>;
+
   private dataInitialized: Boolean = false;
 
   private flagOverrides = new Map<string, FlagValueStringToType<Flags[keyof Flags]>>();
@@ -88,6 +90,7 @@ export class Abby<
     private persistantTestStorage?: PersistentStorage,
     private persistantFlagStorage?: PersistentStorage
   ) {
+    this._cfg = config as AbbyConfig<FlagName, Tests, Flags>;
     this.#data.flags = Object.keys(config.flags ?? {}).reduce((acc, flagName) => {
       acc[flagName as FlagName] = this.getDefaultFlagValue(
         flagName as FlagName,
@@ -231,6 +234,14 @@ export class Abby<
       }
     }
 
+    const flagType = this._cfg.flags?.[key];
+    const defaultValue = this._cfg.settings?.flags?.defaultValues?.[flagType!];
+
+    // return the defaultValue if exists
+    if (!storedValue && defaultValue != null) {
+      return defaultValue;
+    }
+
     this.log(`getFeatureFlag() => storedValue:`, storedValue);
     return storedValue as FlagValueStringToType<CurrentFlag>;
   }
@@ -356,7 +367,7 @@ export class Abby<
           ""
         );
 
-        this.flagOverrides.set(flagName, (cookieValue === "true") as any);
+        this.flagOverrides.set(flagName, this.flagStringToType(flagName, cookieValue) as any);
       }
     });
   }
@@ -377,6 +388,21 @@ export class Abby<
         return "";
       case "Number":
         return 0;
+      default:
+        throw new Error(`Unknown flag type: ${flagType}`);
+    }
+  }
+
+  private flagStringToType(flagName: string, stringifiedValue: string): FlagValue {
+    const flagType = (this.config.flags as any)[flagName as keyof Flags] as FlagValueString;
+
+    switch (flagType) {
+      case "Boolean":
+        return stringifiedValue === "true";
+      case "String":
+        return stringifiedValue;
+      case "Number":
+        return parseInt(stringifiedValue, 10);
       default:
         throw new Error(`Unknown flag type: ${flagType}`);
     }

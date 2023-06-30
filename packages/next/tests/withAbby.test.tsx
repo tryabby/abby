@@ -34,16 +34,16 @@ describe("withAbby", () => {
 
     render(<Component {...props} />);
     expect(getFeatureFlagValue("flag1")).toBe(true);
-    expect(getFeatureFlagValue("flag2")).toBe(false);
+    expect(getFeatureFlagValue("flag2")).toBe("test");
   });
 
   it("seeds the flags in development with the cookies", async () => {
     /// @ts-ignore
     process.env.NODE_ENV = "development";
-    const { getFeatureFlagValue, withAbby, __abby__ } = createAbby({
+    const { getFeatureFlagValue, withAbby } = createAbby({
       projectId: "123",
       tests: {},
-      flags: { flag1: "Boolean", flag2: "Boolean" },
+      flags: { flag1: "Boolean", flag2: "String" },
     });
 
     const Component = withAbby(() => <></>);
@@ -54,7 +54,7 @@ describe("withAbby", () => {
       ctx: {
         req: {
           headers: {
-            cookie: `${ABBY_FF_STORAGE_PREFIX}123_flag1=false; ${ABBY_FF_STORAGE_PREFIX}123_flag2=true`,
+            cookie: `${ABBY_FF_STORAGE_PREFIX}123_flag1=false; ${ABBY_FF_STORAGE_PREFIX}123_flag2=test`,
           },
         },
       },
@@ -62,6 +62,6 @@ describe("withAbby", () => {
 
     render(<Component {...props} />);
     expect(getFeatureFlagValue("flag1")).toBe(false);
-    expect(getFeatureFlagValue("flag2")).toBe(true);
+    expect(getFeatureFlagValue("flag2")).toBe("test");
   });
 });

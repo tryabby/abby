@@ -18,11 +18,11 @@ export const handlers = [
         flags: [
           {
             name: "flag1",
-            isEnabled: true,
+            value: true,
           },
           {
             name: "flag2",
-            isEnabled: false,
+            value: "someValue",
           },
         ],
       } as AbbyDataResponse)
