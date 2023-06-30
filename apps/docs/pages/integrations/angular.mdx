@@ -31,9 +31,8 @@ To get started make sure to install the packages using your favorite package man
 </Tabs>
 
 ### Usage
-<Callout>
-Make sure, that you have set skipLibCheck to true in your tsconfig
-</Callout>
+
+<Callout>Make sure, that you have set skipLibCheck to true in your tsconfig</Callout>
 
 #### Create your Module
 
@@ -54,7 +53,7 @@ import { AbbyModule } from "@tryabby/angular";
         footer: { variants: ["dark", "orange", "green"] },
         // ... your tests
       },
-      flags: ["darkMode", "newFeature"],
+      flags: { darkMode: "Boolean", newFeature: "Boolean" },
     }),
   ],
   providers: [],
@@ -85,8 +84,10 @@ export class MyComponent {
   }
 }
 ```
+
 <Callout>
-For this Example "strictPropertyInitialization" has to be set to false in your tsconfig. Otherwise you have to initialize "footerVariant" with an default value.
+  For this Example "strictPropertyInitialization" has to be set to false in your tsconfig. Otherwise
+  you have to initialize "footerVariant" with an default value.
 </Callout>
 
 #### Using Abby Directives

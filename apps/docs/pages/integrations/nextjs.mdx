@@ -43,7 +43,7 @@ const { AbbyProvider, useAbby, withAbby } = createAbby({
     footer: { variants: ["dark", "orange", "green"] },
     // ... your tests
   },
-  flags: ["darkMode", "newFeature"],
+  flags: { darkMode: "Boolean", newFeature: "Boolean" },
 });
 ```
 
@@ -76,10 +76,7 @@ This works really well with Static Site Generation (SSG) and Server Side Renderi
 ```tsx /withAbby(MyApp)/
 import { AbbyProvider, withAbby } from "../lib/abby";
 
-function MyApp({
-  Component,
-  pageProps: { __ABBY_PROJECT_DATA__, ...pageProps },
-}) {
+function MyApp({ Component, pageProps: { __ABBY_PROJECT_DATA__, ...pageProps } }) {
   return (
     <AbbyProvider initialData={__ABBY_PROJECT_DATA__}>
       <Component {...pageProps} />
