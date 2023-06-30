@@ -16,6 +16,7 @@ export const {
 } = createAbby({
   projectId: process.env.NEXT_PUBLIC_ABBY_PROJECT_ID!,
   currentEnvironment: process.env.VERCEL_ENV ?? process.env.NODE_ENV,
+  apiUrl: process.env.NEXT_PUBLIC_ABBY_API_URL,
   tests: {
     SignupButton: {
       variants: ["A", "B"],

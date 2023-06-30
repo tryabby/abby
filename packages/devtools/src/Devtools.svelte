@@ -2,7 +2,7 @@
   import Switch from "./components/Switch.svelte";
   import CloseIcon from "./components/CloseIcon.svelte";
   import Select from "./components/Select.svelte";
-  import type { Abby } from "@tryabby/core";
+  import type { Abby, flagValue } from "@tryabby/core";
   import type { Shortcut } from "./lib/types";
   import { onDestroy, onMount, tick } from "svelte";
   import Mousetrap from "mousetrap";
@@ -10,18 +10,15 @@
   import { crossfade } from "svelte/transition";
   import { quintInOut } from "svelte/easing";
   import { getShowDevtools, setShowDevtools } from "./lib/storage";
+  import Input from "./components/Input.svelte";
 
-  export let position:
-    | "top-left"
-    | "top-right"
-    | "bottom-left"
-    | "bottom-right" = "bottom-right";
+  export let position: "top-left" | "top-right" | "bottom-left" | "bottom-right" = "bottom-right";
 
   export let defaultShow: boolean = false;
 
   export let shortcut: Shortcut | Array<Shortcut> = ["command+.", "ctrl+."];
 
-  export let abby: Abby<any, any, any>;
+  export let abby: Abby<any, any, any, any>;
 
   let show = false;
 
@@ -65,6 +62,8 @@
 
   const { flags, tests } = abby?.getProjectData() ?? {};
 
+  console.log({ flags });
+
   const [send, receive] = crossfade({
     duration: 200,
     easing: quintInOut,
@@ -78,18 +77,10 @@
     in:send={{ key }}
     out:receive={{ key }}
     id="devtools"
-    style:--right={position === "top-right" || position === "bottom-right"
-      ? "1rem"
-      : "auto"}
-    style:--bottom={position === "bottom-left" || position === "bottom-right"
-      ? "1rem"
-      : "auto"}
-    style:--left={position === "top-left" || position === "bottom-left"
-      ? "1rem"
-      : "auto"}
-    style:--top={position === "top-left" || position === "top-right"
-      ? "1rem"
-      : "auto"}
+    style:--right={position === "top-right" || position === "bottom-right" ? "1rem" : "auto"}
+    style:--bottom={position === "bottom-left" || position === "bottom-right" ? "1rem" : "auto"}
+    style:--left={position === "top-left" || position === "bottom-left" ? "1rem" : "auto"}
+    style:--top={position === "top-left" || position === "top-right" ? "1rem" : "auto"}
   >
     <div class="header">
       <h1>Abby Devtools</h1>
@@ -106,12 +97,22 @@
     <h2>Flags:</h2>
 
     {#each Object.entries(flags) as [flagName, flagValue]}
-      <Switch
-        id={flagName}
-        label={flagName}
-        checked={flagValue}
-        onChange={(newValue) => abby.updateFlag(flagName, newValue)}
-      />
+      {#if typeof flagValue === "boolean"}
+        <Switch
+          id={flagName}
+          label={flagName}
+          checked={flagValue}
+          onChange={(newValue) => abby.updateFlag(flagName, newValue)}
+        />
+      {:else if typeof flagValue === "string" || typeof flagValue === "number"}
+        <Input
+          id={flagName}
+          label={flagName}
+          type={typeof flagValue === "string" ? "text" : "number"}
+          value={flagValue}
+          onChange={(newValue) => abby.updateFlag(flagName, newValue)}
+        />
+      {/if}
     {/each}
 
     <hr />
@@ -134,18 +135,10 @@
     out:receive={{ key }}
     on:click={onToggleVisibility}
     id="devtools-collapsed"
-    style:--right={position === "top-right" || position === "bottom-right"
-      ? "1rem"
-      : "auto"}
-    style:--bottom={position === "bottom-left" || position === "bottom-right"
-      ? "1rem"
-      : "auto"}
-    style:--left={position === "top-left" || position === "bottom-left"
-      ? "1rem"
-      : "auto"}
-    style:--top={position === "top-left" || position === "top-right"
-      ? "1rem"
-      : "auto"}
+    style:--right={position === "top-right" || position === "bottom-right" ? "1rem" : "auto"}
+    style:--bottom={position === "bottom-left" || position === "bottom-right" ? "1rem" : "auto"}
+    style:--left={position === "top-left" || position === "bottom-left" ? "1rem" : "auto"}
+    style:--top={position === "top-left" || position === "top-right" ? "1rem" : "auto"}
   >
     A/B
   </button>
@@ -163,8 +156,8 @@
     color: var(--pink);
     font-weight: bold;
     background: hsl(224 71% 4%);
-    font-family: ui-monospace, "Cascadia Code", "Source Code Pro", Menlo,
-      Consolas, "DejaVu Sans Mono", monospace;
+    font-family: ui-monospace, "Cascadia Code", "Source Code Pro", Menlo, Consolas,
+      "DejaVu Sans Mono", monospace;
 
     width: 50px;
     height: 50px;
@@ -172,14 +165,13 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1),
-      0 4px 6px -4px rgb(0 0 0 / 0.1);
+    box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
   }
 
   #devtools {
     --pink: hsl(323 72.8% 59.2%);
-    font-family: ui-monospace, "Cascadia Code", "Source Code Pro", Menlo,
-      Consolas, "DejaVu Sans Mono", monospace;
+    font-family: ui-monospace, "Cascadia Code", "Source Code Pro", Menlo, Consolas,
+      "DejaVu Sans Mono", monospace;
     position: fixed;
     bottom: var(--bottom);
     right: var(--right);

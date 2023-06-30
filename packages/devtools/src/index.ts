@@ -9,7 +9,7 @@ export class DevtoolsFactory {
     });
 
     return () => {
-      component.$destroy();
+      component?.$destroy();
     };
   }
 }

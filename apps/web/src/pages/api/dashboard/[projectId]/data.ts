@@ -2,11 +2,11 @@ import { NextApiRequest, NextApiResponse } from "next";
 import { z } from "zod";
 import { prisma } from "server/db/client";
 import NextCors from "nextjs-cors";
-import { AbbyDataResponse } from "@tryabby/core";
 import { EventService } from "server/services/EventService";
 import { trackPlanOverage } from "lib/logsnag";
 import { RequestCache } from "server/services/RequestCache";
 import { transformFlagValue } from "lib/flags";
+import { LegacyAbbyDataResponse } from "@tryabby/core";
 
 const incomingQuerySchema = z.object({
   projectId: z.string(),
@@ -66,12 +66,13 @@ export default async function getWeightsHandler(
         weights: test.options.map((o) => o.chance.toNumber()),
       })),
       flags: flags.map((flagValue) => {
+        const value = transformFlagValue(flagValue.value, flagValue.flag.type);
         return {
           name: flagValue.flag.name,
-          value: transformFlagValue(flagValue.value, flagValue.flag.type),
+          value: flagValue.flag.type === "BOOLEAN" ? value : value != null,
         };
       }),
-    } satisfies AbbyDataResponse;
+    } satisfies LegacyAbbyDataResponse;
 
     res.json(response);
 

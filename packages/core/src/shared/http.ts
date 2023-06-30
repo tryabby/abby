@@ -12,7 +12,7 @@ export abstract class HttpService {
   }) {
     try {
       const res = await fetch(
-        `${url ?? ABBY_BASE_URL}api/dashboard/${projectId}/data${
+        `${url ?? ABBY_BASE_URL}api/v1/data/${projectId}${
           environment ? `?environment=${environment}` : ""
         }`
       );

@@ -15,3 +15,11 @@ export type AbbyDataResponse = {
     value: FlagValue;
   }>;
 };
+
+export type LegacyAbbyDataResponse = {
+  tests: Array<{
+    name: string;
+    weights: number[];
+  }>;
+  flags: Array<{ name: string; isEnabled: boolean }>;
+};
