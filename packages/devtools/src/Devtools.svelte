@@ -1,16 +1,17 @@
 <script lang="ts">
-  import Switch from "./components/Switch.svelte";
+  import type { Abby } from "@tryabby/core";
+  import Mousetrap from "mousetrap";
+  import { onDestroy, onMount } from "svelte";
   import CloseIcon from "./components/CloseIcon.svelte";
   import Select from "./components/Select.svelte";
-  import type { Abby, flagValue } from "@tryabby/core";
+  import Switch from "./components/Switch.svelte";
   import type { Shortcut } from "./lib/types";
-  import { onDestroy, onMount, tick } from "svelte";
-  import Mousetrap from "mousetrap";
 
-  import { crossfade } from "svelte/transition";
   import { quintInOut } from "svelte/easing";
-  import { getShowDevtools, setShowDevtools } from "./lib/storage";
+  import { crossfade } from "svelte/transition";
   import Input from "./components/Input.svelte";
+  import Modal from "./components/Modal.svelte";
+  import { getShowDevtools, setShowDevtools } from "./lib/storage";
 
   export let position: "top-left" | "top-right" | "bottom-left" | "bottom-right" = "bottom-right";
 
@@ -112,6 +113,11 @@
           value={flagValue}
           onChange={(newValue) => abby.updateFlag(flagName, newValue)}
         />
+      {:else if typeof flagValue === "object"}
+        <div style="display: flex; flex-direction: column; margin: 10px 0;">
+          <p style="margin-bottom: 5px;">{flagName}</p>
+          <Modal value={flagValue} onChange={(newValue) => abby.updateFlag(flagName, newValue)} />
+        </div>
       {/if}
     {/each}
 

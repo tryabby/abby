@@ -303,7 +303,7 @@ export class Abby<
   updateFlag<F extends FlagName>(name: F, value: FlagValueStringToType<Flags[F]>) {
     this.flagOverrides.set(name, value);
     if (process.env.NODE_ENV === "development") {
-      this.persistantFlagStorage?.set(name, value.toString());
+      this.persistantFlagStorage?.set(name, this.stringifiedFlagValue(value));
     }
     this.notifyListeners();
   }
@@ -410,6 +410,20 @@ export class Abby<
         return JSON.parse(stringifiedValue);
       default:
         assertUnreachable(flagType);
+    }
+  }
+
+  private stringifiedFlagValue(value: FlagValue): string {
+    switch (typeof value) {
+      case "boolean":
+      case "number":
+        return value.toString();
+      case "string":
+        return value;
+      case "object":
+        return JSON.stringify(value);
+      default:
+        assertUnreachable(value);
     }
   }
 }
