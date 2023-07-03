@@ -22,10 +22,20 @@
       >
         <JsonEditor
           on:change={(e) => {
-            onChange(e.detail);
+            value = e.detail;
           }}
           {value}
         />
+        <div class="buttons">
+          <button use:close.action class="cancel">Cancel</button>
+          <button
+            class="save"
+            use:close.action
+            on:click={() => {
+              onChange(value);
+            }}>Save</button
+          >
+        </div>
       </div>
     {/if}
   </div>
@@ -62,5 +72,32 @@
     height: 100%;
     min-height: 0;
     overflow: auto;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .buttons {
+    display: flex;
+    justify-content: flex-end;
+    gap: 1rem 0.5rem;
+    padding: 1rem;
+    background-color: #1e1e1e;
+
+    button {
+      border-radius: 6px;
+      padding: 0.5rem 1rem;
+      border: none;
+      font-size: 1rem;
+      font-weight: 500;
+      cursor: pointer;
+    }
+    .cancel {
+      background-color: hsl(210 40% 96.1%);
+      color: hsl(222.2 47.4% 11.2%);
+    }
+    .save {
+      background-color: hsl(323 72.8% 59.2%);
+      color: white;
+    }
   }
 </style>
