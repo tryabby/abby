@@ -12,6 +12,8 @@
   let monaco: typeof Monaco;
   let editorContainer: HTMLElement;
 
+  let isMounted = false;
+
   export let value: Record<string, unknown> = {};
 
   onMount(async () => {
@@ -21,6 +23,7 @@
     loader.config({ monaco: monacoEditor.default });
 
     monaco = await loader.init();
+    isMounted = true;
 
     // Your monaco instance is ready, let's display some code!
     const editor = monaco.editor.create(editorContainer, {
@@ -43,11 +46,22 @@
   });
 </script>
 
-<div class="container" bind:this={editorContainer} />
+<div class="container" bind:this={editorContainer}>
+  {#if !isMounted}
+    <p class="loading-text">Loading...</p>
+  {/if}
+</div>
 
 <style>
+  .loading-text {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+  }
   .container {
     height: 100%;
     width: 100%;
+    position: relative;
   }
 </style>

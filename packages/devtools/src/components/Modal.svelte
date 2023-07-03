@@ -64,7 +64,7 @@
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    background: white;
+    background-color: #1e1e1e;
     border-radius: 6px;
     width: 80vw;
     max-width: 800px;
