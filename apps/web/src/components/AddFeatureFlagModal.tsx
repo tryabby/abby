@@ -11,6 +11,8 @@ import { FlagIcon } from "./FlagIcon";
 import { cn } from "lib/utils";
 import { getFlagTypeClassName, transformDBFlagTypeToclient } from "lib/flags";
 import { JSONEditor } from "./JSONEditor";
+import { Switch } from "./ui/switch";
+import { Toggle } from "./Toggle";
 
 type Props = {
   onClose: () => void;
@@ -104,14 +106,11 @@ export function ChangeFlagForm({
       <div>
         <label className="mb-1 block text-pink-50">Value</label>
         {state.type === "BOOLEAN" && (
-          <select
-            value={state.value}
-            onChange={(e) => onChange({ value: e.target.value })}
-            className={inputClassName}
-          >
-            <option value="true">true</option>
-            <option value="false">false</option>
-          </select>
+          <Toggle
+            isChecked={state.value === "true"}
+            onChange={(newState) => onChange({ value: String(newState) })}
+            label={state.value === "true" ? "Enabled" : "Disabled"}
+          />
         )}
         {state.type === "STRING" && (
           <input
