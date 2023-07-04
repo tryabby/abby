@@ -1,7 +1,9 @@
 import { AbbyConfig } from "@tryabby/core";
-import { ConfigData, Tests } from "./types";
+import { ConfigData } from "./types";
+import {ABBY_BASE_URL, LOCAL_BASE_URL} from "./consts";
+import fetch from "node-fetch"
 
-export async function getConfigFromServer(
+/*export async function getConfigFromServer(
   projectId: string,
   debug?: boolean
 ): Promise<ConfigData> {
@@ -31,28 +33,43 @@ export async function getConfigFromServer(
     responseJson = await response.json();
   }
   return responseJson;
+}*/
+
+export async function getConfigFromServer(projectId: string, apiKey: string, localhost?: boolean): Promise<string> {
+
 }
 
-export async function createTest(projectId: string) {
-  console.log("createTest");
-}
+export async function updateConfigOnServer(projectId: string, apiKey: string, localAbbyConfig: AbbyConfig, localhost?: boolean) {
+    let url: string;
 
-export async function createFlag(projectId: string, flagName: string) {
-  console.log("createFlag");
-}
-
-export async function updateConfigOnServer(config: any) {
-  const response = await fetch(
-    `http://www.tryabby.com/api/dashboard/${config.projectId}/data`,
-    {
-      method: "PUT",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(config),
+    if (localhost) {
+        console.log("LOCAL")
+        url = LOCAL_BASE_URL;
+    } else {
+        url = ABBY_BASE_URL;
     }
-  );
-  const responseJson = await response.json();
 
-  console.log(responseJson);
+    try {
+        const response = await fetch(
+            `${url}/api/config/${projectId}?apiKey=${apiKey}`,
+            {
+                method: "PUT",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify(localAbbyConfig),
+            }
+        );
+        // const res = await response;
+        const data = await response.json();
+        const status: number = response.status;
+
+        if (status == 200) {
+            console.log("pushed successfully");
+        } else {
+            console.log("pushed failed: \n" + status + ": " + data);
+        }
+    } catch (e) {
+        console.log("Error: " + e);
+    }
 }

@@ -36,10 +36,30 @@ export function updateConfigFile(
 }
 
 export function getConfigFromFileString(configFileString: string): AbbyConfig {
-  const regex = /export const abby = ({[\s\S]*?});/;
+  const regexAngular = /export const abby = ({[\s\S]*?});/;
+  const regexNext = /createAbby\(({[\s\S]+?})\);/;
+  const regexReact = /createAbby\(({[\s\S]+?})\);/;
+  const regexSvelte = /createAbby\(({[\s\S]+?})\);/;
 
-  const match = configFileString.match(regex);
-  const objectString = match ? match[1] : "";
-  const object = eval("(" + objectString + ")");
-  return object as AbbyConfig;
+  const regexes: RegExp[] = [
+      regexAngular, regexReact, regexNext, regexSvelte
+  ]
+
+  let matchedRegex: RegExp | null = null;
+
+  for (const regex of regexes) {
+    if (regex.test(configFileString)) {
+      matchedRegex = regex;
+    }
+  }
+
+  if (matchedRegex) {
+    console.log("Regex found successfully");
+    const match = configFileString.match(matchedRegex);
+    const objectString = match ? match[1] : "";
+    const object = eval("(" + objectString + ")");
+    return object as AbbyConfig;
+  } else {
+    return {} as AbbyConfig
+  }
 }
