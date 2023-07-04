@@ -120,13 +120,13 @@ export const flagRouter = router({
     .input(
       z.object({
         flagValueId: z.string(),
-        value: z.string(),
+        isEnabled: z.boolean(),
         type: z.nativeEnum(FeatureFlagType),
         name: z.string(),
       })
     )
     .mutation(async ({ ctx, input }) => {
-      const currentFlag = await ctx.prisma.featureFlagValue.findFirst({
+      const currentFlag = await ctx.prisma.environmentFlag.findFirst({
         where: {
           id: input.flagValueId,
           flag: {
@@ -144,12 +144,12 @@ export const flagRouter = router({
       if (!currentFlag) throw new TRPCError({ code: "UNAUTHORIZED" });
 
       await ctx.prisma.$transaction([
-        ctx.prisma.featureFlagValue.update({
+        ctx.prisma.environmentFlag.update({
           where: {
             id: input.flagValueId,
           },
           data: {
-            value: input.value,
+            isEnabled: input.isEnabled,
           },
         }),
         ctx.prisma.featureFlag.update({

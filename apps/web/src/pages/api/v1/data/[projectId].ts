@@ -49,14 +49,17 @@ export default async function getWeightsHandler(
         },
         include: { options: true },
       }),
-      prisma.featureFlagValue.findMany({
+      prisma.environmentFlag.findMany({
         where: {
           environment: {
             name: environment,
             projectId,
           },
         },
-        include: { flag: { select: { name: true, type: true } } },
+        include: {
+          variants: true,
+          flag: { select: { name: true, type: true } },
+        },
       }),
     ]);
 
@@ -65,10 +68,19 @@ export default async function getWeightsHandler(
         name: test.name,
         weights: test.options.map((o) => o.chance.toNumber()),
       })),
-      flags: flags.map((flagValue) => {
+      flags: flags.flatMap((flagValue) => {
+        const flagVariant = flagValue.variants.find((v) =>
+          flagValue.isEnabled
+            ? v.id === flagValue.onVariantId
+            : v.id === flagValue.offVariantId
+        );
+        if (!flagVariant) {
+          return [];
+        }
+
         return {
           name: flagValue.flag.name,
-          value: transformFlagValue(flagValue.value, flagValue.flag.type),
+          value: transformFlagValue(flagVariant.value, flagValue.flag.type),
         };
       }),
     } satisfies AbbyDataResponse;
