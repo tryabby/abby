@@ -3,6 +3,7 @@ import { getProjectPaidPlan } from "lib/stripe";
 import { getLimitByPlan } from "server/common/plans";
 import { z } from "zod";
 import { protectedProcedure, router } from "../trpc";
+import { FeatureFlagType } from "@prisma/client";
 
 export const environmentRouter = router({
   addEnvironment: protectedProcedure
@@ -38,19 +39,20 @@ export const environmentRouter = router({
         });
       }
 
-      const newEnv = await ctx.prisma.environment.create({
-        data: {
-          name: input.name,
-          projectId: input.projectId,
-          sortIndex: project.environments.length,
-        },
-      });
-
-      const featureFlags = await ctx.prisma.featureFlag.findMany({
-        where: {
-          projectId: input.projectId,
-        },
-      });
+      const [newEnv, featureFlags] = await Promise.all([
+        ctx.prisma.environment.create({
+          data: {
+            name: input.name,
+            projectId: input.projectId,
+            sortIndex: project.environments.length,
+          },
+        }),
+        ctx.prisma.featureFlag.findMany({
+          where: {
+            projectId: input.projectId,
+          },
+        }),
+      ]);
 
       await ctx.prisma.$transaction(async (tx) => {
         const newFlagValues = await Promise.all(
@@ -59,6 +61,12 @@ export const environmentRouter = router({
               data: {
                 flagId: flag.id,
                 environmentId: newEnv.id,
+                value:
+                  flag.type === FeatureFlagType.BOOLEAN
+                    ? "false"
+                    : flag.type === FeatureFlagType.STRING
+                    ? "new value"
+                    : "0",
               },
             })
           )
@@ -66,8 +74,9 @@ export const environmentRouter = router({
         return tx.featureFlagHistory.createMany({
           data: newFlagValues.map((flag) => ({
             userId: ctx.session.user.id,
-            newValue: false,
+            newValue: "false",
             flagValueId: flag.id,
+            oldValue: null,
           })),
         });
       });

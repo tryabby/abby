@@ -17,12 +17,7 @@ afterAll(() => {
 
 describe("useAbby", () => {
   it("returns the correct types", () => {
-    const test2Variants = [
-      "SimonsText",
-      "MatthiasText",
-      "TomsText",
-      "TimsText",
-    ] as const;
+    const test2Variants = ["SimonsText", "MatthiasText", "TomsText", "TimsText"] as const;
 
     const { AbbyProvider, useAbby } = createAbby({
       projectId: "123",
@@ -34,9 +29,7 @@ describe("useAbby", () => {
       },
     });
 
-    const wrapper = ({ children }: PropsWithChildren) => (
-      <AbbyProvider>{children}</AbbyProvider>
-    );
+    const wrapper = ({ children }: PropsWithChildren) => <AbbyProvider>{children}</AbbyProvider>;
 
     const { result: test1Result } = renderHook(() => useAbby("test"), {
       wrapper,
@@ -60,12 +53,13 @@ describe("useFeatureFlag", () => {
   it("returns the correct types", () => {
     const { AbbyProvider, useFeatureFlag } = createAbby({
       projectId: "123",
-      flags: ["test", "test2"],
+      flags: {
+        test: "Boolean",
+        test1: "String",
+      },
     });
 
-    const wrapper = ({ children }: PropsWithChildren) => (
-      <AbbyProvider>{children}</AbbyProvider>
-    );
+    const wrapper = ({ children }: PropsWithChildren) => <AbbyProvider>{children}</AbbyProvider>;
 
     renderHook(() => useFeatureFlag("test"), {
       wrapper,
@@ -77,7 +71,10 @@ describe("useFeatureFlag", () => {
     const { useAbby } = createAbby({
       projectId: "123",
       currentEnvironment: "test",
-      flags: ["test", "test2"],
+      flags: {
+        test: "Boolean",
+        test1: "String",
+      },
       tests: {
         a: {
           variants: ["a1", "a2"],
@@ -98,7 +95,10 @@ describe("useFeatureFlag", () => {
     const { getABTestValue } = createAbby({
       projectId: "123",
       currentEnvironment: "test",
-      flags: ["test", "test2"],
+      flags: {
+        test: "Boolean",
+        test1: "String",
+      },
       tests: {
         a: {
           variants: ["a1", "a2"],
@@ -125,9 +125,7 @@ describe("useFeatureFlag", () => {
     // on server -> res is NextApiResponse
     const [, setCookieOnServer] = getABTestValue("a", {} as NextApiRequest);
 
-    expectTypeOf(setCookieOnServer).toEqualTypeOf<
-      (res: NextApiResponse) => void
-    >();
+    expectTypeOf(setCookieOnServer).toEqualTypeOf<(res: NextApiResponse) => void>();
   });
 
   // we only need typesafety here
@@ -139,14 +137,10 @@ describe("useFeatureFlag", () => {
 
     const edgeHandler = withAbbyEdge((req) => {});
 
-    expectTypeOf(edgeHandler).parameters.toEqualTypeOf<
-      [NextRequest, NextFetchEvent]
-    >();
+    expectTypeOf(edgeHandler).parameters.toEqualTypeOf<[NextRequest, NextFetchEvent]>();
 
     const apiHandler = withAbbyApiHandler((req, res) => {});
 
-    expectTypeOf(apiHandler).parameters.toEqualTypeOf<
-      [NextApiRequest, NextApiResponse]
-    >();
+    expectTypeOf(apiHandler).parameters.toEqualTypeOf<[NextApiRequest, NextApiResponse]>();
   });
 });

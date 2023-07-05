@@ -5,6 +5,8 @@ import {
   Abby,
   AbbyEventType,
   HttpService,
+  FlagValueString,
+  FlagValue,
 } from "@tryabby/core";
 import { FlagStorageService, TestStorageService } from "./StorageService";
 import {
@@ -24,10 +26,7 @@ import { F } from "ts-toolbelt";
 import { Route } from "@angular/router";
 import { ABBY_CONFIG_TOKEN } from "./abby.module";
 
-type LocalData<
-  FlagName extends string = string,
-  TestName extends string = string
-> = {
+type LocalData<FlagName extends string = string, TestName extends string = string> = {
   tests: Record<
     TestName,
     ABConfig & {
@@ -35,7 +34,7 @@ type LocalData<
       selectedVariant?: string;
     }
   >;
-  flags: Record<FlagName, boolean>;
+  flags: Record<FlagName, FlagValue>;
 };
 
 @Injectable({ providedIn: "root" })
@@ -43,13 +42,13 @@ export class AbbyService<
   FlagName extends string = string,
   TestName extends string = string,
   Tests extends Record<TestName, ABConfig> = Record<TestName, ABConfig>,
-  ConfigType extends AbbyConfig<FlagName, Tests> = AbbyConfig<FlagName, Tests>
+  Flags extends Record<FlagName, FlagValueString> = Record<FlagName, FlagValueString>
 > {
-  private abby: Abby<FlagName, TestName, Tests>;
+  private abby: Abby<FlagName, TestName, Tests, Flags>;
 
   private selectedVariants: { [key: string]: string } = {};
 
-  private config: F.Narrow<AbbyConfig<FlagName, Tests>>;
+  private config: F.Narrow<AbbyConfig<FlagName, Tests, Flags>>;
 
   private projectData$?: Observable<LocalData<FlagName, TestName>>;
 
@@ -57,10 +56,8 @@ export class AbbyService<
     this.config.debug ? console.log(`ng.AbbyService`, ...args) : () => {};
   private cookieChanged$ = new Subject<void>();
 
-  constructor(
-    @Inject(ABBY_CONFIG_TOKEN) config: F.Narrow<AbbyConfig<FlagName, Tests>>
-  ) {
-    this.abby = new Abby<FlagName, TestName, Tests>(
+  constructor(@Inject(AbbyService) config: F.Narrow<AbbyConfig<FlagName, Tests, Flags>>) {
+    this.abby = new Abby<FlagName, TestName, Tests, Flags>(
       config,
       {
         get: (key: string) => {
@@ -102,9 +99,7 @@ export class AbbyService<
     return this.resolveData().pipe(
       map((data) => this.abby.getTestVariant(testName)),
       tap((variant) => (this.selectedVariants[testName as string] = variant)),
-      tap((variant) =>
-        this.log(`getVariant(${testName as string}) =>`, variant)
-      )
+      tap((variant) => this.log(`getVariant(${testName as string}) =>`, variant))
     );
   }
 
@@ -134,9 +129,8 @@ export class AbbyService<
     });
   }
 
-  public getFeatureFlagValue<
-    F extends NonNullable<ConfigType["flags"]>[number]
-  >(name: F): Observable<boolean> {
+  public getFeatureFlagValue<F extends FlagName>(name: F) {
+    console.log("getFeatureFlagValue", name, this.abby.getFeatureFlag(name));
     this.log(`getFeatureFlagValue(${name})`);
 
     return this.resolveData().pipe(
@@ -160,7 +154,7 @@ export class AbbyService<
     return this.projectData$;
   }
 
-  public getAbbyInstance(): Abby<FlagName, TestName, Tests> {
+  public getAbbyInstance(): Abby<FlagName, TestName, Tests, Flags> {
     return this.abby;
   }
 

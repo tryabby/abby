@@ -46,7 +46,7 @@ The flags property is an array containing your defined Feature Flags. You probab
 ```ts
 const abby = createAbby({
   // ... your config
-  flags: ["test-flag"],
+  flags: { "test-flag": "Boolean" },
 });
 ```
 

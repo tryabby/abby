@@ -1,4 +1,4 @@
-import { Abby, type AbbyConfig, type ABConfig } from "@tryabby/core";
+import { Abby, type AbbyConfig, type ABConfig, type FlagValueString } from "@tryabby/core";
 import { HttpService, AbbyEventType } from "@tryabby/core";
 import { derived } from "svelte/store";
 import type { F } from "ts-toolbelt";
@@ -11,9 +11,10 @@ export function createAbby<
   FlagName extends string,
   TestName extends string,
   Tests extends Record<TestName, ABConfig>,
+  Flags extends Record<FlagName, FlagValueString> = Record<FlagName, FlagValueString>,
   ConfigType extends AbbyConfig<FlagName, Tests> = AbbyConfig<FlagName, Tests>
->(config: F.Narrow<AbbyConfig<FlagName, Tests>>) {
-  const abby = new Abby<FlagName, TestName, Tests>(
+>(config: F.Narrow<AbbyConfig<FlagName, Tests, Flags>>) {
+  const abby = new Abby<FlagName, TestName, Tests, Flags>(
     config,
     {
       get: (key: string) => {
@@ -98,18 +99,12 @@ export function createAbby<
     return abby.getTestVariant(testName);
   };
 
-  const getFeatureFlagValue = <
-    F extends NonNullable<ConfigType["flags"]>[number]
-  >(
-    featureFlagName: F
-  ) => {
+  const getFeatureFlagValue = <F extends keyof Flags>(featureFlagName: F) => {
     return abby.getFeatureFlag(featureFlagName);
   };
 
-  const useFeatureFlag = <F extends NonNullable<ConfigType["flags"]>[number]>(
-    flagName: F
-  ) => {
-    return derived<any, boolean>(abby, ($v) => {
+  const useFeatureFlag = <F extends keyof Flags>(flagName: F) => {
+    return derived(abby, ($v) => {
       return abby.getFeatureFlag(flagName);
     });
   };

@@ -44,7 +44,7 @@ export const abby = {
     test: {
       variants: ["control", "variant-a", "variant-b"],
     },
-    flags: ["test-flag"],
+    flags: { "test-flag": "Boolean" },
   },
 };
 
@@ -139,12 +139,8 @@ The `AbbyTest` is an Angular directive provided by @tryabby/angular package that
 #### Example
 
 ```html
-<ng-container *abbyTest="{ testName: 'test-abtest', variant: 'variant-a' }"
-  >AAAAAA</ng-container
->
-<ng-container *abbyTest="{ testName: 'test-abtest', variant: 'variant-b' }"
-  >BBBBBB</ng-container
->
+<ng-container *abbyTest="{ testName: 'test-abtest', variant: 'variant-a' }">AAAAAA</ng-container>
+<ng-container *abbyTest="{ testName: 'test-abtest', variant: 'variant-b' }">BBBBBB</ng-container>
 ```
 
 ### Flag Directive

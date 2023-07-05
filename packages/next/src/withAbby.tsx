@@ -16,7 +16,7 @@ export function withAbby<
   Config extends Pick<AbbyConfig, "apiUrl" | "projectId" | "currentEnvironment">
 >(
   { apiUrl, projectId, currentEnvironment }: Config,
-  abbyInstance: Abby<any, any, any>,
+  abbyInstance: Abby<any, any, any, any>,
   preloadAll = true
 ) {
   const promiseCache = new PromiseCache<AbbyDataResponse | null>();

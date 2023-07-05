@@ -47,9 +47,15 @@ export const exampleRouter = router({
       flags: [
         {
           name: "showPrices",
+          type: "BOOLEAN",
         },
         {
-          name: "enableDarkMode",
+          name: "userLimit",
+          type: "NUMBER",
+        },
+        {
+          name: "appMode",
+          type: "STRING",
         },
       ],
     });
