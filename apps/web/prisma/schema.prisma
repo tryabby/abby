@@ -182,15 +182,15 @@ model FeatureFlag {
   project   Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
   projectId String
 
-  description String?           @db.Text
-  values      EnvironmentFlag[]
-  type        FeatureFlagType   @default(BOOLEAN)
+  description String?            @db.Text
+  values      FeatureFlagValue[]
+  type        FeatureFlagType    @default(BOOLEAN)
 
   @@unique([projectId, name])
   @@index([projectId])
 }
 
-model EnvironmentFlag {
+model FeatureFlagValue {
   id     String      @id @unique @default(cuid())
   flagId String
   flag   FeatureFlag @relation(fields: [flagId], references: [id], onDelete: Cascade)
@@ -198,31 +198,12 @@ model EnvironmentFlag {
   environmentId String
   environment   Environment @relation(fields: [environmentId], references: [id], onDelete: Cascade)
 
+  value   String               @db.LongText
   history FeatureFlagHistory[]
-
-  isEnabled Boolean @default(false)
-
-  variants FeatureFlagVariant[] @relation("FlagValue")
-
-  onVariantId  String?
-  offVariantId String?
 
   @@index([flagId])
   @@index([environmentId])
   @@map("FlagValue")
-}
-
-model FeatureFlagVariant {
-  id String @id @unique @default(cuid())
-
-  environmentFlagId String
-  environmentFlag   EnvironmentFlag @relation(fields: [environmentFlagId], references: [id], onDelete: Cascade, name: "FlagValue")
-
-  value       String  @db.LongText
-  name        String?
-  description String? @db.Text
-
-  @@index([environmentFlagId])
 }
 
 model Environment {
@@ -234,8 +215,8 @@ model Environment {
   project   Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
   projectId String
 
-  sortIndex Int               @default(0)
-  FlagValue EnvironmentFlag[]
+  sortIndex Int                @default(0)
+  FlagValue FeatureFlagValue[]
 
   @@unique([projectId, name])
   @@index([projectId])
@@ -246,13 +227,13 @@ model FeatureFlagHistory {
   id        String   @id @default(cuid())
   createdAt DateTime @default(now())
 
-  oldValue Boolean? @default(false)
-  newValue Boolean? @default(false)
+  oldValue String? @db.LongText
+  newValue String? @db.LongText
 
   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId String
 
-  flagValue   EnvironmentFlag @relation(fields: [flagValueId], references: [id], onDelete: Cascade)
+  flagValue   FeatureFlagValue @relation(fields: [flagValueId], references: [id], onDelete: Cascade)
   flagValueId String
 
   @@index([flagValueId])
