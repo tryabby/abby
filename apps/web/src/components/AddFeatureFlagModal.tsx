@@ -30,10 +30,12 @@ export function ChangeFlagForm({
   initialValues,
   onChange: onChangeHandler,
   errors,
+  canChangeType = true,
 }: {
   initialValues: FlagFormValues;
   onChange: (values: FlagFormValues) => void;
   errors: Partial<FlagFormValues>;
+  canChangeType?: boolean;
 }) {
   const inputRef = useRef<HTMLInputElement>(null);
   const inputClassName =
@@ -80,6 +82,7 @@ export function ChangeFlagForm({
       <div>
         <label className="mb-1 block text-pink-50">Type</label>
         <RadioSelect
+          isDisabled={!canChangeType}
           options={Object.entries(FeatureFlagType).map(([key, flagType]) => ({
             label: (
               <div
@@ -95,6 +98,8 @@ export function ChangeFlagForm({
             value: flagType,
           }))}
           onChange={(value) => {
+            if (!canChangeType) return;
+
             onChange({
               type: value,
               value: value === "BOOLEAN" ? "false" : "",
@@ -212,6 +217,7 @@ export const AddFeatureFlagModal = ({ onClose, isOpen, projectId }: Props) => {
           value: "false",
         }}
         onChange={(newState) => (stateRef.current = newState)}
+        canChangeType
       />
     </Modal>
   );

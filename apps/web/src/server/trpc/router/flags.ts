@@ -121,7 +121,6 @@ export const flagRouter = router({
       z.object({
         flagValueId: z.string(),
         value: z.string(),
-        type: z.nativeEnum(FeatureFlagType),
         name: z.string(),
       })
     )
@@ -158,7 +157,6 @@ export const flagRouter = router({
           },
           data: {
             name: input.name,
-            type: input.type,
           },
         }),
         ctx.prisma.featureFlagHistory.create({
