@@ -170,6 +170,7 @@ const ConfirmUpdateModal = ({
         }}
         onChange={(newState) => setState(newState)}
         errors={{}}
+        canChangeType={false}
       />
       <h3 className="mt-8 text-sm font-semibold">Description:</h3>
       {!description ? (
@@ -186,6 +187,7 @@ type Props = {
   projectId: string;
   environmentName: string;
   flagValueId: string;
+  canChangeType: boolean;
 };
 
 export function FeatureFlag({
@@ -193,6 +195,7 @@ export function FeatureFlag({
   projectId,
   environmentName,
   flagValueId,
+  canChangeType,
 }: Props) {
   const [isUpdateConfirmationModalOpen, setIsUpdateConfirmationModalOpen] =
     useState(false);
