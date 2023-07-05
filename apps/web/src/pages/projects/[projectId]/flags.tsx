@@ -312,7 +312,7 @@ const FeatureFlagsPage: NextPageWithLayout = () => {
                     </DropdownMenuContent>
                   </DropdownMenu>
                 </div>
-                <div className="relative mt-3 grid grid-cols-[repeat(auto-fill,minmax(200px,1fr))] gap-x-8 gap-y-4 pr-2">
+                <div className="relative mt-3 grid grid-cols-[repeat(auto-fill,minmax(205px,1fr))] gap-x-8 gap-y-4 pr-2">
                   {currentFlag.values
                     .sort(
                       (a, b) =>

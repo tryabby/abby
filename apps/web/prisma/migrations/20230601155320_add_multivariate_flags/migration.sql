@@ -10,7 +10,7 @@ ALTER TABLE `FlagValue`
     ADD COLUMN `type` ENUM('BOOLEAN', 'STRING', 'NUMBER', 'JSON') NOT NULL DEFAULT 'BOOLEAN',
     ADD COLUMN `value` LONGTEXT NOT NULL;
 
-UPDATE `FlagValue` SET `value` = IF(`isEnabled`, true, false) WHERE `type` = 'BOOLEAN';
+UPDATE `FlagValue` SET `value` = IF(`isEnabled`, 'true', 'false') WHERE `type` = 'BOOLEAN';
 
 -- DropColumn
 ALTER TABLE `FlagValue`
