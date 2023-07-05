@@ -187,7 +187,6 @@ type Props = {
   projectId: string;
   environmentName: string;
   flagValueId: string;
-  canChangeType: boolean;
 };
 
 export function FeatureFlag({
@@ -195,7 +194,6 @@ export function FeatureFlag({
   projectId,
   environmentName,
   flagValueId,
-  canChangeType,
 }: Props) {
   const [isUpdateConfirmationModalOpen, setIsUpdateConfirmationModalOpen] =
     useState(false);
