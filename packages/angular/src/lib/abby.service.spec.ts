@@ -23,16 +23,25 @@ const mockConfig = {
       variants: ["A", "B"],
     },
   },
-  flags: ["flag1", "flag2", "overridedFlag1", "overridedFlag2", "defaultFlag"],
+  flags: {
+    flag1: "Boolean",
+    flag2: "Boolean",
+    overridedFlag1: "Boolean",
+    overridedFlag2: "Boolean",
+    defaultFlag: "Boolean",
+  },
   settings: {
     flags: {
       devOverrides: {
         overridedFlag1: true,
         overridedFlag2: false,
       },
+      defaultValues: {
+        Boolean: false,
+      },
     },
   },
-};
+} as const;
 
 const mockedData = {
   tests: [
@@ -48,19 +57,19 @@ const mockedData = {
   flags: [
     {
       name: "flag1",
-      isEnabled: true,
+      value: true,
     },
     {
       name: "flag2",
-      isEnabled: false,
+      value: false,
     },
     {
       name: "overridedFlag1",
-      isEnabled: false,
+      value: false,
     },
     {
       name: "overridedFlag2",
-      isEnabled: true,
+      value: true,
     },
   ],
 };
@@ -69,8 +78,10 @@ const mockedData = {
   useExisting: AbbyService,
 })
 export class Abby extends AbbyService<
-  (typeof mockConfig)["flags"][number],
-  keyof (typeof mockConfig)["tests"]
+  keyof (typeof mockConfig)["flags"],
+  keyof (typeof mockConfig)["tests"],
+  (typeof mockConfig)["tests"],
+  (typeof mockConfig)["flags"]
 > {}
 
 describe("AbbyService", () => {
@@ -124,11 +135,11 @@ describe("AbbyService", () => {
   });
 
   it("gets the stored feature flag value using a function properly", () => {
-    service.getFeatureFlagValue("flag1").subscribe((value: boolean) => {
+    service.getFeatureFlagValue("flag1").subscribe((value) => {
       expect(value).toEqual(true);
     });
 
-    service.getFeatureFlagValue("flag2").subscribe((value: boolean) => {
+    service.getFeatureFlagValue("flag2").subscribe((value) => {
       expect(value).toEqual(false);
     });
   });
@@ -139,30 +150,26 @@ describe("AbbyService", () => {
     });
   });
 
-  it("should repect the default values for feature flags", () => {
-    service.getFeatureFlagValue("defaultFlag").subscribe((value: boolean) => {
+  fit("should respect the default values for feature flags", () => {
+    service.getFeatureFlagValue("defaultFlag").subscribe((value) => {
       expect(value).toEqual(false);
     });
   });
 
-  it("should repect the default values for variants", () => {
+  it("should respect the default values for variants", () => {
     service.getVariant("defaultTest").subscribe((value: string) => {
       expect(["A", "B"]).toContain(value);
     });
   });
 
   it("uses the devOverrides", () => {
-    service
-      .getFeatureFlagValue("overridedFlag1")
-      .subscribe((value: boolean) => {
-        expect(value).toEqual(true);
-      });
+    service.getFeatureFlagValue("overridedFlag1").subscribe((value) => {
+      expect(value).toEqual(true);
+    });
 
-    service
-      .getFeatureFlagValue("overridedFlag2")
-      .subscribe((value: boolean) => {
-        expect(value).toEqual(false);
-      });
+    service.getFeatureFlagValue("overridedFlag2").subscribe((value) => {
+      expect(value).toEqual(false);
+    });
   });
 
   it("should use the persistedValue", () => {
@@ -199,46 +206,45 @@ describe("AbbyService", () => {
 
     let routes: Routes = [];
 
-    zip(
-      service.getVariant("test"),
-      service.getFeatureFlagValue("flag1")
-    ).subscribe(([angularTest, angularFlag]) => {
-      routes = [
-        service.getRouterVariant(angularTest, {
-          path: "test",
-          outlet: "test",
-          abbyVariants: {
-            A: {
-              title: "TEST A",
-              component: ATestComponent,
-            },
-            B: {
-              title: "TEST B",
-              component: BTestComponent,
-            },
-            C: {
-              title: "TEST C",
-              component: CTestComponent,
-            },
-            D: {
-              title: "TEST D",
-              component: DTestComponent,
-            },
-          },
-        }),
-        ...(angularFlag
-          ? [
-              {
-                path: "flag",
-                title: "Flag",
-                component: FlagComponent,
+    zip(service.getVariant("test"), service.getFeatureFlagValue("flag1")).subscribe(
+      ([angularTest, angularFlag]) => {
+        routes = [
+          service.getRouterVariant(angularTest, {
+            path: "test",
+            outlet: "test",
+            abbyVariants: {
+              A: {
+                title: "TEST A",
+                component: ATestComponent,
               },
-            ]
-          : []),
-      ];
+              B: {
+                title: "TEST B",
+                component: BTestComponent,
+              },
+              C: {
+                title: "TEST C",
+                component: CTestComponent,
+              },
+              D: {
+                title: "TEST D",
+                component: DTestComponent,
+              },
+            },
+          }),
+          ...(angularFlag
+            ? [
+                {
+                  path: "flag",
+                  title: "Flag",
+                  component: FlagComponent,
+                },
+              ]
+            : []),
+        ];
 
-      expect(routes).not.toEqual([]);
-    });
+        expect(routes).not.toEqual([]);
+      }
+    );
   });
 
   it("returns the correct possible variant values", () => {

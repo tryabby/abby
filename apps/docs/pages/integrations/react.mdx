@@ -5,8 +5,7 @@ import { Tab, Tabs, Callout } from "nextra-theme-docs";
 Our React integration works with React 16.8.0 or later. It works with SPAs as well as server side rendered apps.
 
 <Callout>
-  If you're using Next.js please check out our [Next
-  integration](/integrations/nextjs)
+  If you're using Next.js please check out our [Next integration](/integrations/nextjs)
 </Callout>
 
 ### Installation
@@ -50,7 +49,7 @@ const { AbbyProvider, useAbby } = createAbby({
     footer: { variants: ["dark", "orange", "green"] },
     // ... your tests
   },
-  flags: ["darkMode", "newFeature"],
+  flags: { darkMode: "Boolean", newFeature: "Boolean" },
 });
 ```
 

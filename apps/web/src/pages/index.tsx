@@ -1,21 +1,18 @@
-import { InferGetStaticPropsType, type NextPage } from "next";
-import { GiPadlock } from "react-icons/gi";
+import { DOCS_URL } from "@tryabby/core";
+import { BaseCodeSnippet } from "components/CodeSnippet";
 import { Feature } from "components/Feature";
-import { Navbar } from "components/Navbar";
+import { MarketingLayout } from "components/MarketingLayout";
+import { PricingTable } from "components/Pricing";
+import { SignupButton } from "components/SignupButton";
+import { InferGetStaticPropsType } from "next";
+import Image from "next/image";
+import Link from "next/link";
 import { BsBarChartFill, BsCodeSlash } from "react-icons/bs";
+import { GiPadlock } from "react-icons/gi";
 import { RiGameFill } from "react-icons/ri";
 import { generateCodeSnippets } from "utils/snippets";
-import { BaseCodeSnippet } from "components/CodeSnippet";
-import { PricingTable } from "components/Pricing";
-import Image from "next/image";
 import abbyScreenshot from "../../public/screenshot.png";
-import Link from "next/link";
-import { signIn } from "next-auth/react";
-import { DOCS_URL } from "@tryabby/core";
-import { Footer } from "components/Footer";
 import { NextPageWithLayout } from "./_app";
-import { MarketingLayout } from "components/MarketingLayout";
-import { SignupButton } from "components/SignupButton";
 
 const Home: NextPageWithLayout<
   InferGetStaticPropsType<typeof getStaticProps>
@@ -203,9 +200,15 @@ export const getStaticProps = async () => {
     flags: [
       {
         name: "showPrices",
+        type: "BOOLEAN",
       },
       {
-        name: "enableDarkMode",
+        name: "userLimit",
+        type: "NUMBER",
+      },
+      {
+        name: "appMode",
+        type: "STRING",
       },
     ],
   });

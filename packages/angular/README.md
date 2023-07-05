@@ -44,7 +44,7 @@ export const abby = {
     test: {
       variants: ["control", "variant-a", "variant-b"],
     },
-    flags: ["test-flag"],
+    flags: { "test-flag": "Boolean" },
   },
 };
 

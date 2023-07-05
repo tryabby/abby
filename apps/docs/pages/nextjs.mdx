@@ -51,7 +51,9 @@ export const { useAbby, AbbyProvider, useFeatureFlag, withAbby } = createAbby({
       variants: ["light", "dark"],
     },
   },
-  flags: ["useDarkmode"],
+  flags: {
+    useDarkMode: "Boolean",
+  },
 });
 ```
 
@@ -64,10 +66,7 @@ This is highly recommended so that there is no flicker on the inital load of you
 // _app.tsx
 import { AbbyProvider } from "lib/abby";
 
-function MyApp({
-  Component,
-  pageProps: { __ABBY_PROJECT_DATA__, ...pageProps },
-}) {
+function MyApp({ Component, pageProps: { __ABBY_PROJECT_DATA__, ...pageProps } }) {
   return (
     <AbbyProvider initialData={__ABBY_PROJECT_DATA__}>
       <Component {...pageProps} />
@@ -120,9 +119,7 @@ export function HomePage() {
           onAct();
           // React to the user clicking the button
         }}
-        className={`button ${variant === "dark" && "bg-dark"} ${
-          variant === "light" && "bg-light"
-        }`}
+        className={`button ${variant === "dark" && "bg-dark"} ${variant === "light" && "bg-light"}`}
       >
         BUY IT
       </button>
