@@ -1,4 +1,4 @@
-import express from "express";
+import express , {Request} from "express";
 import { abbyMiddlewareFactory } from "./express/abbyMiddlewareFactory.ts";
 import { createAbby } from "./abby/createAbby.ts";
 
@@ -13,14 +13,15 @@ const { featureFlagMiddleware, allTestsMiddleWare, getVariant } = await abbyMidd
       "New Test3": {
         variants: ["A", "B"],
       },
-      Test2: {
-        variants: ["A", "klein", "basic"],
-      },
       "New Test6": {
         variants: ["A"],
       },
     },
-    flags: ["lol", "test3", "testAbby"],
+    flags: {
+      "lol": "Boolean",
+      "test3": "Boolean",
+      "testAbby": "Boolean"
+    },
     flagCacheConfig: {
       refetchFlags: true,
       timeToLive: 1,
@@ -28,13 +29,20 @@ const { featureFlagMiddleware, allTestsMiddleWare, getVariant } = await abbyMidd
   },
 });
 
-app.use("/", (req, res, next) => allTestsMiddleWare(req, res, next));
+app.use("/", (req, res, next) => {
+  allTestsMiddleWare(req, res, next)
+});
 
-// app.use("/", (req, res, next) => featureFlagMiddleware("test3", req, res, next));
+const deciderFunc = (req: Request, flagVal: any) => {
+
+  return true;
+}
+
+app.use("/", (req, res, next) => featureFlagMiddleware("test3", req, res, next, deciderFunc));
 
 app.get("/", async (req, res) => {
   const variant = getVariant("New Test3");
-  res.send(variant === "A" ? "very nice content that needs to be protected" : "vriant B");
+  res.send(variant === "B" ? "very nice content that needs to be protected" : "vriant B");
 });
 
 app.listen(port, () => console.log(`Express app running on port ${port}!`));

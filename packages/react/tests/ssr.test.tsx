@@ -68,7 +68,10 @@ describe("useFeatureFlag", () => {
   it("renders the correct feature flag on the server", () => {
     const { AbbyProvider, useFeatureFlag } = createAbby({
       projectId: "123",
-      flags: ["test", "test2"],
+      flags: {
+        test: "Boolean",
+        test2: "Boolean",
+      },
     });
 
     const ComponentWithFF = () => {
@@ -88,11 +91,11 @@ describe("useFeatureFlag", () => {
         initialData={{
           flags: [
             {
-              isEnabled: true,
+              value: true,
               name: "test",
             },
             {
-              isEnabled: false,
+              value: false,
               name: "test2",
             },
           ],

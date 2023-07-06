@@ -14,9 +14,7 @@ describe("useAbby", () => {
       },
     });
 
-    const wrapper = ({ children }: PropsWithChildren) => (
-      <AbbyProvider>{children}</AbbyProvider>
-    );
+    const wrapper = ({ children }: PropsWithChildren) => <AbbyProvider>{children}</AbbyProvider>;
 
     const { result } = renderHook(() => useAbby("test"), {
       wrapper,
@@ -34,12 +32,13 @@ describe("useAbby", () => {
           variants: ["SimonsText", "MatthiasText", "TomsText", "TimsText"],
         },
       },
-      flags: ["flagA", "flagB"],
+      flags: {
+        flag1: "Boolean",
+        flag2: "String",
+      },
     });
 
-    const wrapper = ({ children }: PropsWithChildren) => (
-      <AbbyProvider>{children}</AbbyProvider>
-    );
+    const wrapper = ({ children }: PropsWithChildren) => <AbbyProvider>{children}</AbbyProvider>;
 
     expectTypeOf(useAbby).parameters.toEqualTypeOf<["test" | "test2"]>();
 
@@ -47,18 +46,20 @@ describe("useAbby", () => {
       wrapper,
     });
 
-    expectTypeOf(result.current.variant).toEqualTypeOf<
-      "OldFooter" | "NewFooter"
-    >();
+    expectTypeOf(result.current.variant).toEqualTypeOf<"OldFooter" | "NewFooter">();
 
-    expectTypeOf(useFeatureFlag).parameters.toEqualTypeOf<
-      ["flagA" | "flagB"]
-    >();
+    expectTypeOf(useFeatureFlag).parameters.toEqualTypeOf<["flag1" | "flag2"]>();
 
-    const { result: ffResult } = renderHook(() => useFeatureFlag("flagA"), {
+    const { result: ffResult } = renderHook(() => useFeatureFlag("flag1"), {
       wrapper,
     });
 
     expectTypeOf(ffResult.current).toEqualTypeOf<boolean>();
+
+    const { result: ff2Result } = renderHook(() => useFeatureFlag("flag2"), {
+      wrapper,
+    });
+
+    expectTypeOf(ff2Result.current).toEqualTypeOf<string>();
   });
 });

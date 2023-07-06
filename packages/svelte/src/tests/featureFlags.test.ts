@@ -11,7 +11,10 @@ describe("featureFlags working", () => {
 
     const { useFeatureFlag, __abby__ } = createAbby({
       projectId: "123",
-      flags: [FLAG1, FLAG2],
+      flags: {
+        [FLAG1]: "Boolean",
+        [FLAG2]: "String",
+      },
     });
 
     // await server fetch
@@ -20,38 +23,47 @@ describe("featureFlags working", () => {
     const recievedFlag1 = get(useFeatureFlag(FLAG1));
     const recievedFlag2 = get(useFeatureFlag(FLAG2));
     expect(recievedFlag1).toEqual(true);
-    expect(recievedFlag2).toEqual(false);
+    expect(recievedFlag2).toEqual("someValue");
   });
 
   it("should respect the default values for feature flags", async () => {
     const { useFeatureFlag, __abby__ } = createAbby({
       projectId: "123",
-      flags: ["flag1", "flag2"],
+      flags: {
+        flag1: "Boolean",
+        flag2: "String",
+      },
       currentEnvironment: "a",
       settings: {
         flags: {
-          default: true,
+          defaultValues: {
+            Boolean: false,
+            String: "default",
+          },
         },
       },
     });
     const flag2 = get(useFeatureFlag("flag2"));
-    expect(flag2).toEqual(true);
+    expect(flag2).toEqual("default");
     // wait for the flag to be fetched
     await __abby__.loadProjectData();
-    expect(get(useFeatureFlag("flag2"))).toEqual(false);
+    expect(get(useFeatureFlag("flag2"))).toEqual("someValue");
   });
 
   it("uses the devOverrides", () => {
     process.env.NODE_ENV = "development";
     const { useFeatureFlag } = createAbby({
       projectId: "123",
-      flags: ["flag1", "flag2"],
+      flags: {
+        flag1: "Boolean",
+        flag2: "String",
+      },
       currentEnvironment: "a",
       settings: {
         flags: {
           devOverrides: {
             flag1: false,
-            flag2: true,
+            flag2: "devDefault",
           },
         },
       },
@@ -65,16 +77,19 @@ describe("featureFlags working", () => {
 
     const flag2 = get(useFeatureFlag("flag2"));
 
-    expect(flag2).toEqual(true);
+    expect(flag2).toEqual("devDefault");
 
     // will stay true and won't be overwritten by a fetch
-    expect(get(useFeatureFlag("flag2"))).toEqual(true);
+    expect(get(useFeatureFlag("flag2"))).toEqual("devDefault");
   });
 
   it("gets the value for an enviroment", async () => {
     const { getFeatureFlagValue, __abby__ } = createAbby({
       projectId: "123",
-      flags: ["flag1", "flag2"],
+      flags: {
+        flag1: "Boolean",
+        flag2: "String",
+      },
       currentEnvironment: "a",
     });
 
@@ -82,6 +97,6 @@ describe("featureFlags working", () => {
     await __abby__.loadProjectData();
 
     expect(getFeatureFlagValue("flag1")).toEqual(true);
-    expect(getFeatureFlagValue("flag2")).toEqual(false);
+    expect(getFeatureFlagValue("flag2")).toEqual("someValue");
   });
 });

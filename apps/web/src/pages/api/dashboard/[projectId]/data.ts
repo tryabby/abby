@@ -2,10 +2,11 @@ import { NextApiRequest, NextApiResponse } from "next";
 import { z } from "zod";
 import { prisma } from "server/db/client";
 import NextCors from "nextjs-cors";
-import { AbbyDataResponse } from "@tryabby/core";
 import { EventService } from "server/services/EventService";
 import { trackPlanOverage } from "lib/logsnag";
 import { RequestCache } from "server/services/RequestCache";
+import { transformFlagValue } from "lib/flags";
+import { LegacyAbbyDataResponse } from "@tryabby/core";
 
 const incomingQuerySchema = z.object({
   projectId: z.string(),
@@ -55,22 +56,24 @@ export default async function getWeightsHandler(
             projectId,
           },
         },
-        include: { flag: { select: { name: true } } },
+        include: { flag: { select: { name: true, type: true } } },
       }),
     ]);
 
-    const response: AbbyDataResponse = {
+    const response = {
       tests: tests.map((test) => ({
         name: test.name,
         weights: test.options.map((o) => o.chance.toNumber()),
       })),
       flags: flags.map((flagValue) => {
+        const value = transformFlagValue(flagValue.value, flagValue.flag.type);
         return {
           name: flagValue.flag.name,
-          isEnabled: flagValue.isEnabled,
+          isEnabled:
+            flagValue.flag.type === "BOOLEAN" ? value === true : value != null,
         };
       }),
-    };
+    } satisfies LegacyAbbyDataResponse;
 
     res.json(response);
 

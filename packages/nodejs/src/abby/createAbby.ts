@@ -1,15 +1,15 @@
-import { ABConfig, Abby, AbbyConfig } from "@tryabby/core";
+import { ABConfig, Abby, AbbyConfig , FlagValueString, FlagValueStringToType } from "@tryabby/core";
 import { F } from "ts-toolbelt";
-import { Request } from "express";
 import { TestStorageService } from "./StorageService.ts";
 
-export async function createAbby<
+export async function  createAbby<
   FlagName extends string,
   TestName extends string,
   Tests extends Record<TestName, ABConfig>,
+  Flags extends Record<FlagName, FlagValueString> = Record<FlagName, FlagValueString>,
   ConfigType extends AbbyConfig<FlagName, Tests> = AbbyConfig<FlagName, Tests>
->(abbyConfig: F.Narrow<AbbyConfig<FlagName, Tests>>) {
-  const abby = new Abby<FlagName, TestName, Tests>(abbyConfig, {
+>(abbyConfig: F.Narrow<AbbyConfig<FlagName, Tests, Flags>>) {
+  const abbyCoreInstance = new Abby<FlagName, TestName, Tests, Flags>(abbyConfig, {
     get: (key: string) => {
       return TestStorageService.get(abbyConfig.projectId, key);
     },
@@ -19,16 +19,16 @@ export async function createAbby<
   });
 
   //load data and initialise the abby Object
-  await abby.loadProjectData();
+  await abbyCoreInstance.loadProjectData();
 
   const config = abbyConfig as unknown as ConfigType;
-
+  
   /**
    * @param name Name of the test that the variant should be retrieved for
    * @returns Value of the currently selected variant
    */
   const getABTestValue = <T extends keyof Tests>(name: T) => {
-    const value = abby.getTestVariant(name);
+    const value = abbyCoreInstance.getTestVariant(name);
     return value;
   };
   /**
@@ -37,11 +37,11 @@ export async function createAbby<
    * @returns Value of the feature flag
    */
   const getFeatureFlagValue = <
-    F extends NonNullable<ConfigType["flags"]>[number]
+    F extends keyof Flags
   >(
     name: F
   ) => {
-    return abby.getFeatureFlag(name);
+    return abbyCoreInstance.getFeatureFlag(name);
   };
 
   return { getFeatureFlagValue, getABTestValue };

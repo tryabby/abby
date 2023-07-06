@@ -1,5 +1,6 @@
 import { ABBY_BASE_URL } from "./constants";
 import type { AbbyEventType, AbbyEvent, AbbyDataResponse } from "./index";
+import fetch from "node-fetch"; //TODO remove later
 
 export abstract class HttpService {
   static async getProjectData({
@@ -13,7 +14,7 @@ export abstract class HttpService {
   }) {
     try {
       const res = await fetch(
-        `${url ?? ABBY_BASE_URL}api/dashboard/${projectId}/data${
+        `${url ?? ABBY_BASE_URL}api/v1/data/${projectId}${
           environment ? `?environment=${environment}` : ""
         }`
       );
@@ -22,6 +23,7 @@ export abstract class HttpService {
       const data = (await res.json()) as AbbyDataResponse;
       return data;
     } catch (err) {
+      console.log(err)
       console.error("[ABBY]: failed to load project data, falling back to defaults");
       return null;
     }
