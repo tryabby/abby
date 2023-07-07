@@ -117,9 +117,9 @@ export function PricingTable() {
         subtitle="Good for IndieHackers that want to get started with A/B Testing & Feature Flags. No Credit card required"
         features={[
           `${basePlan.eventsPerMonth.toLocaleString()} Events / month`,
-          `${basePlan.tests} Test`,
+          `${basePlan.tests} A/B Test`,
           `${basePlan.flags} Feature Flags`,
-          `${basePlan.environments} Environment`,
+          `${basePlan.environments} Environments`,
         ]}
       />
       <PricingElement
@@ -129,7 +129,7 @@ export function PricingTable() {
         subtitle="Optimal for startups & small businesses that want to dive deeper with A/B Testing & Feature Flags"
         features={[
           `${startupPlan.eventsPerMonth.toLocaleString()} Events / month`,
-          `${startupPlan.tests} Tests`,
+          `${startupPlan.tests} A/B Tests`,
           `${startupPlan.flags} Feature Flags`,
           `${startupPlan.environments} Environments`,
         ]}
@@ -143,7 +143,7 @@ export function PricingTable() {
         subtitle="Perfect for growing companies that want to scale their A/B Testing & Feature Flags and get more insights"
         features={[
           `${proPlan.eventsPerMonth.toLocaleString()} Events / month`,
-          `${proPlan.tests} Tests`,
+          `${proPlan.tests} A/B Tests`,
           `${proPlan.flags} Feature Flags`,
           `${proPlan.environments} Environments`,
         ]}
