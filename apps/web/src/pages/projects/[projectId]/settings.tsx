@@ -39,8 +39,9 @@ const CreateApiKeyModal = ({
 }) => {
   return (
     <Modal
-      title={name + "// Your API Key"}
+      title={"Your API Key"}
       confirmText="Copy"
+      cancelText="Close"
       onConfirm={() => {
         navigator.clipboard.writeText(apiKey);
         onClose();
@@ -50,8 +51,21 @@ const CreateApiKeyModal = ({
       isOpen={isOpen}
       onClose={onClose}
     >
-      <div>Please copy this API Code and so on</div>
-      <Input value={apiKey} />
+      <div className="py-2">
+        Ensure you copy your personal access token promptly as you won't have
+        another opportunity to view it.
+      </div>
+      <Input
+        value={apiKey}
+        readOnly
+        className="py-3 focus:ring-green-400 dark:focus:ring-green-500"
+        onClick={() => {
+          navigator.clipboard.writeText(apiKey).then(() => {
+            toast.success("API Key copied");
+          });
+        }}
+      />
+      <div className="pt-2 text-sm text-gray-500">Expires in 365 Days</div>
     </Modal>
   );
 };
@@ -389,7 +403,7 @@ const SettingsPage: NextPageWithLayout = () => {
               )}
 
               <form className="pt-4" onSubmit={onInvite}>
-                <label htmlFor="newUserEmail" className=" font-semibold">
+                <label htmlFor="newApiKey" className=" font-semibold">
                   Create a new API Key:
                 </label>
                 <div className="mt-2">
@@ -397,7 +411,7 @@ const SettingsPage: NextPageWithLayout = () => {
                     ref={apiKeyNameRef}
                     id="newApiKeyName"
                     className="w-80 max-w-full rounded-l-md bg-gray-700 px-3 py-2 pr-2 focus:outline-none"
-                    placeholder="Application name"
+                    placeholder="API Key name"
                   />{" "}
                   <button
                     onClick={() => {
@@ -411,6 +425,7 @@ const SettingsPage: NextPageWithLayout = () => {
                       createApiKey({
                         name: name,
                         apiKey: apiKey,
+                        validDays: 365,
                       });
                     }}
                     className="-ml-1 mt-2 rounded-l-md rounded-r-md bg-gray-900 px-3 py-2 md:mt-0 md:rounded-l-none"

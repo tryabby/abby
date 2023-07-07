@@ -47,14 +47,26 @@ export default async function handler(
     },
   });
 
-  // TODO remove this check
   if (!apiKeyEntry) {
-    res.status(401).json(hashedApiKey);
     return;
   } else {
     if (apiKeyEntry.isRevoked) {
       res.status(401).json({ error: "API key revoked" });
       return;
+    }
+    if (apiKeyEntry.validDays) {
+      if (apiKeyEntry.validDays !== -1) {
+        const now = new Date();
+        const validUntil = new Date(apiKeyEntry.createdAt);
+        validUntil.setDate(validUntil.getDate() + apiKeyEntry.validDays);
+
+        if (now > validUntil) {
+          res.status(401).json({ error: "API key expired" });
+          return;
+        }
+      }
+    } else {
+      res.status(500).json({ error: "API key has no expiration date" });
     }
   }
 
@@ -157,7 +169,6 @@ export default async function handler(
       console.error(error);
       res.status(500).json({ error: error });
     }
-    // return res.status(200).json({ message: "Hello world" });
   } else {
     res.setHeader("Allow", ["GET", "PUT"]);
     res.status(405).end(`Method ${req.method} Not Allowed`);

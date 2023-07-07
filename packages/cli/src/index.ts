@@ -17,7 +17,7 @@ program.name("abby-cli").description("CLI Tool for Abby").version("0.0.1");
 program
   .command("login")
   .argument("<token>", "token")
-    .option("-l, --localhost")
+  .option("-l, --localhost", "localhost")
   .action((token) => {
     if (token) {
       writeTokenFile(token);
@@ -30,8 +30,8 @@ program
   .command("push")
   .description("push local config to server")
   .argument("<filepath>", "filepath")
-    .option("-l, --localhost")
-    .action((filepath, options) => {
+  .option("-l, --localhost", "localhost")
+  .action((filepath, options) => {
     if (!filepath) {
       console.log(chalk.red("Filename is required"));
       return;

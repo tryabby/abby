@@ -8,6 +8,7 @@ export const apiKeyRouter = router({
       z.object({
         name: z.string(),
         apiKey: z.string(),
+        validDays: z.number(),
       })
     )
     .mutation(async ({ ctx, input }) => {
@@ -18,7 +19,7 @@ export const apiKeyRouter = router({
         data: {
           hashedKey: hashedApiKey,
           name: input.name,
-          validDays: 365,
+          validDays: input.validDays,
           userId: ctx.session.user.id,
         },
       });
