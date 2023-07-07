@@ -39,7 +39,6 @@
     "zod": "^3.19.1"
   },
   "dependencies": {
-    "node-fetch": "^3.3.0",
     "ts-toolbelt": "^9.6.0"
   }
 }

@@ -1,6 +1,6 @@
 import { ABConfig, Abby, AbbyConfig, FlagValueString, FlagValueStringToType } from "@tryabby/core";
 import { F } from "ts-toolbelt";
-import { TestStorageService } from "./StorageService.ts";
+import { TestStorageService } from "./StorageService";
 
 export function createAbby<
   FlagName extends string,
@@ -19,7 +19,6 @@ export function createAbby<
   });
 
   //load data and initialise the abby Object
-  // await
   abbyCoreInstance.loadProjectData();
 
   const config = abbyConfig as unknown as ConfigType;

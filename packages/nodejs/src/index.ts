@@ -1,6 +1,5 @@
 import express, { Request } from "express";
-import { abbyMiddlewareFactory } from "./express/abbyMiddlewareFactory.ts";
-import { createAbby } from "./abby/createAbby.ts";
+import { abbyMiddlewareFactory } from "./express/abbyMiddlewareFactory";
 
 const app = express();
 const port = 3000;

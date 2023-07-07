@@ -1,9 +1,21 @@
 import { NextFunction, Request, Response } from "express";
-import { setRequest } from "../abby/contexts/requestContext.ts";
-import { setResponse } from "../abby/contexts/responseContext.ts";
+import { setRequest } from "../abby/contexts/requestContext";
+import { setResponse } from "../abby/contexts/responseContext";
 import { AbbyConfig, ABConfig, FlagValueString } from "@tryabby/core";
-import { createAbby } from "../abby/createAbby.ts";
+import { createAbby } from "../abby/createAbby";
 import { F } from "ts-toolbelt";
+
+interface AbbyMiddlewareFactoryResult {
+  featureFlagMiddleware: <F extends string>(
+    name: F,
+    req: Request,
+    res: Response,
+    next: NextFunction,
+    deciderFunction: (req: Request, flagValue: any) => boolean
+  ) => void;
+  allTestsMiddleWare: <T extends string>(req: Request, res: Response, next: NextFunction) => void;
+  getVariant: <T extends string>(name: T) => any;
+}
 
 export const abbyMiddlewareFactory = <
   FlagName extends string,
@@ -16,10 +28,9 @@ export const abbyMiddlewareFactory = <
 }: {
   abbyConfig: F.Narrow<AbbyConfig<FlagName, Tests>>;
 }) => {
-  const configNarrowed = abbyConfig as unknown as ConfigType;
   const abbyNodeInstance = createAbby(abbyConfig);
+  const configNarrowed = abbyConfig as unknown as ConfigType;
 
-  // const featureFlagMiddleware = <F extends NonNullable<ConfigType["flags"]>[number]>(
   const featureFlagMiddleware = <F extends keyof Flags>(
     name: F,
     req: Request,
@@ -27,7 +38,7 @@ export const abbyMiddlewareFactory = <
     next: NextFunction,
     deciderFunction: (req: Request, flagValue: any) => boolean
   ) => {
-    const flagValue = abbyNodeInstance.getFeatureFlagValue(name as any); //TODO fix type
+    const flagValue = abbyNodeInstance.getFeatureFlagValue(name as unknown as FlagName); //TODO fix type
 
     console.log(flagValue);
     const decision = deciderFunction(req, flagValue);
@@ -39,12 +50,12 @@ export const abbyMiddlewareFactory = <
     next();
   };
 
-  const setRequestResponse = (req: Request, res: Response) => {
+  const setRequestResponse = (req: Request, res: Response): void => {
     setRequest(req);
     setResponse(res);
   };
 
-  const extractTest = <T extends keyof Tests>(name: T) => {
+  const extractTest = <T extends keyof Tests>(name: T): any => {
     const variant = abbyNodeInstance.getABTestValue(name);
     console.log(name, variant);
     return { name, variant };
@@ -65,11 +76,11 @@ export const abbyMiddlewareFactory = <
     next();
   };
 
-  const allFlagMiddleWare = <F extends keyof Flags>(
-    req: Request,
-    res: Response,
-    next: NextFunction
-  ) => {};
+  // const allFlagMiddleWare = <F extends keyof Flags>(
+  //   req: Request,
+  //   res: Response,
+  //   next: NextFunction
+  // ) => {};
 
   const getVariant = <T extends keyof Tests>(name: T) => {
     return abbyNodeInstance.getABTestValue(name);
