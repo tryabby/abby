@@ -20,6 +20,7 @@ import { trpc } from "../utils/trpc";
 import { Select } from "./Select";
 import { UserInfo } from "./UserInfo";
 import { CreateProjectModal } from "./CreateProjectModal";
+import { Settings2 } from "lucide-react";
 
 const navItemClass = (isActive: boolean) =>
   clsx(
@@ -117,6 +118,16 @@ const SideBar =
             >
               <RiToggleLine className="mr-2" />
               Feature Flags
+            </Link>
+            <Link
+              href={`/projects/${currentProjectId}/config`}
+              onClick={closeSidebar}
+              className={navItemClass(
+                router.pathname.endsWith("/projects/[projectId]/config")
+              )}
+            >
+              <Settings2 className="mr-2" />
+              Remote Config
             </Link>
             <Link
               href={`/projects/${currentProjectId}/environments`}

@@ -1,12 +1,14 @@
 import React from "react";
 import * as RadioGroup from "@radix-ui/react-radio-group";
 import { cn } from "lib/utils";
+import { FeatureFlagType } from "@prisma/client";
 
 type RadioSelectProps<T extends string> = {
   options: Array<{ label: string | React.ReactNode; value: T }>;
   onChange: (value: T) => void;
   initialValue?: T;
   isDisabled?: boolean;
+  disabledTypes?: FeatureFlagType[];
 };
 
 export function RadioSelect<T extends string = string>({
@@ -14,10 +16,13 @@ export function RadioSelect<T extends string = string>({
   onChange,
   initialValue,
   isDisabled,
+  disabledTypes,
 }: RadioSelectProps<T>) {
   const [selected, setSelected] = React.useState(
     initialValue ?? options[0]?.value
   );
+
+  console.log({ disabledTypes, options });
   return (
     <RadioGroup.Root
       className="flex gap-2.5"
@@ -33,7 +38,7 @@ export function RadioSelect<T extends string = string>({
         <RadioGroup.Item
           key={option.value}
           value={option.value}
-          disabled={isDisabled}
+          disabled={isDisabled || disabledTypes?.includes(option.value as any)}
           title={
             isDisabled
               ? "You can't change the type of a flag after the creation"

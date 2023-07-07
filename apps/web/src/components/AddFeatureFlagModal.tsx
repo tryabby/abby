@@ -18,6 +18,8 @@ type Props = {
   onClose: () => void;
   isOpen: boolean;
   projectId: string;
+  disabledTypes?: FeatureFlagType[];
+  title: string;
 };
 
 export type FlagFormValues = {
@@ -31,11 +33,13 @@ export function ChangeFlagForm({
   onChange: onChangeHandler,
   errors,
   canChangeType = true,
+  disabledTypes = [],
 }: {
   initialValues: FlagFormValues;
   onChange: (values: FlagFormValues) => void;
   errors: Partial<FlagFormValues>;
   canChangeType?: boolean;
+  disabledTypes?: FeatureFlagType[];
 }) {
   const inputRef = useRef<HTMLInputElement>(null);
   const inputClassName =
@@ -83,6 +87,7 @@ export function ChangeFlagForm({
         <label className="mb-1 block text-pink-50">Type</label>
         <RadioSelect
           isDisabled={!canChangeType}
+          disabledTypes={disabledTypes}
           options={Object.entries(FeatureFlagType).map(([key, flagType]) => ({
             label: (
               <div
@@ -153,7 +158,13 @@ export function ChangeFlagForm({
   );
 }
 
-export const AddFeatureFlagModal = ({ onClose, isOpen, projectId }: Props) => {
+export const AddFeatureFlagModal = ({
+  onClose,
+  isOpen,
+  projectId,
+  disabledTypes,
+  title,
+}: Props) => {
   const inputRef = useRef<HTMLInputElement>(null);
   const ctx = trpc.useContext();
   const stateRef = useRef<FlagFormValues>();
@@ -170,7 +181,7 @@ export const AddFeatureFlagModal = ({ onClose, isOpen, projectId }: Props) => {
     <Modal
       isOpen={isOpen}
       onClose={onClose}
-      title="Create new feature flag"
+      title={title}
       confirmText="Create"
       initialFocusRef={inputRef}
       size="full"
@@ -218,6 +229,7 @@ export const AddFeatureFlagModal = ({ onClose, isOpen, projectId }: Props) => {
         }}
         onChange={(newState) => (stateRef.current = newState)}
         canChangeType
+        disabledTypes={disabledTypes}
       />
     </Modal>
   );

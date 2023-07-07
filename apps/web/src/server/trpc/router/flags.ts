@@ -11,11 +11,15 @@ export const flagRouter = router({
     .input(
       z.object({
         projectId: z.string(),
+        types: z.array(z.nativeEnum(FeatureFlagType)).optional(),
       })
     )
     .query(async ({ ctx, input }) => {
       const flags = await ctx.prisma.featureFlag.findMany({
         where: {
+          type: {
+            in: input.types,
+          },
           project: {
             id: input.projectId,
             users: {

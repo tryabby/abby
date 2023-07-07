@@ -163,7 +163,7 @@ const FeatureFlagsPage: NextPageWithLayout = () => {
 
   const { data, isLoading, isError } = trpc.flags.getFlags.useQuery({
     projectId,
-    types: ["BOOLEAN"],
+    types: ["JSON", "STRING", "NUMBER"],
   });
 
   if (isLoading || isError) return <FullPageLoadingSpinner />;
@@ -207,14 +207,13 @@ const FeatureFlagsPage: NextPageWithLayout = () => {
             className="mb-4 flex items-center space-x-2 rounded-md bg-pink-600 px-4 py-2 text-white"
             onClick={() => setIsCreateFlagModalOpen(true)}
           >
-            <AiOutlinePlus /> <span>Add Flag</span>
+            <AiOutlinePlus /> <span>Add Config</span>
           </button>
           <AddFeatureFlagModal
-            title="Create new Feature Flag"
+            title="Create new Config"
             isOpen={isCreateFlagModalOpen}
             onClose={() => setIsCreateFlagModalOpen(false)}
             projectId={projectId}
-            disabledTypes={["STRING", "NUMBER", "JSON"]}
           />
           <CreateEnvironmentModal
             isOpen={isCreateEnvironmentModalOpen}
@@ -366,7 +365,7 @@ const FeatureFlagsPage: NextPageWithLayout = () => {
 
 FeatureFlagsPage.getLayout = (page) => (
   <Layout>
-    <DashboardHeader title="Feature Flags" />
+    <DashboardHeader title="Remote Config" />
     {page}
   </Layout>
 );

@@ -14,6 +14,7 @@ import { LoadingSpinner } from "./LoadingSpinner";
 import { Modal } from "./Modal";
 import { Edit } from "lucide-react";
 import { ChangeFlagForm, FlagFormValues } from "./AddFeatureFlagModal";
+import { Toggle } from "./Toggle";
 
 dayjs.extend(relativeTime);
 
@@ -209,17 +210,27 @@ export function FeatureFlag({
       <span className="flex w-full items-center justify-between space-x-3 rounded-xl bg-gray-100 py-3 pl-3 pr-4 text-sm font-medium text-gray-800 dark:bg-gray-700 dark:text-gray-300">
         <div className="flex items-center space-x-2">
           <p>{environmentName}</p>
-          <code
-            title={currentFlagValue}
-            className="max-w-[60px] overflow-hidden text-ellipsis whitespace-nowrap rounded-md bg-gray-600 p-1"
-          >
-            {currentFlagValue}
-          </code>
+          {flag.type !== "BOOLEAN" && (
+            <code
+              title={currentFlagValue}
+              className="max-w-[60px] overflow-hidden text-ellipsis whitespace-nowrap rounded-md bg-gray-600 p-1"
+            >
+              {currentFlagValue}
+            </code>
+          )}
         </div>
         <div className="flex space-x-2">
-          <button onClick={() => setIsUpdateConfirmationModalOpen(true)}>
-            <Edit size={18} />
-          </button>
+          {flag.type === FeatureFlagType.BOOLEAN ? (
+            <Toggle
+              label=""
+              onChange={() => {}}
+              isChecked={currentFlagValue === "true"}
+            />
+          ) : (
+            <button onClick={() => setIsUpdateConfirmationModalOpen(true)}>
+              <Edit size={18} />
+            </button>
+          )}
           <HistoryButton flagValueId={flagValueId} />
         </div>
       </span>
