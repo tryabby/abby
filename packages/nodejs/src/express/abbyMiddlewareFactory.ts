@@ -5,22 +5,22 @@ import { AbbyConfig, ABConfig, FlagValueString } from "@tryabby/core";
 import { createAbby } from "../abby/createAbby.ts";
 import { F } from "ts-toolbelt";
 
-export const abbyMiddlewareFactory = async <
+export const abbyMiddlewareFactory = <
   FlagName extends string,
   TestName extends string,
   Tests extends Record<TestName, ABConfig>,
   Flags extends Record<FlagName, FlagValueString> = Record<FlagName, FlagValueString>,
-  ConfigType extends AbbyConfig<FlagName, Tests> = AbbyConfig<FlagName, Tests>
+  ConfigType extends AbbyConfig<FlagName, Tests> = AbbyConfig<FlagName, Tests>,
 >({
   abbyConfig,
 }: {
   abbyConfig: F.Narrow<AbbyConfig<FlagName, Tests>>;
 }) => {
   const configNarrowed = abbyConfig as unknown as ConfigType;
-  const abbyNodeInstance = await createAbby(abbyConfig);
+  const abbyNodeInstance = createAbby(abbyConfig);
 
   // const featureFlagMiddleware = <F extends NonNullable<ConfigType["flags"]>[number]>(
-    const featureFlagMiddleware = <F extends keyof Flags>(
+  const featureFlagMiddleware = <F extends keyof Flags>(
     name: F,
     req: Request,
     res: Response,
@@ -29,9 +29,9 @@ export const abbyMiddlewareFactory = async <
   ) => {
     const flagValue = abbyNodeInstance.getFeatureFlagValue(name as any); //TODO fix type
 
-    console.log(flagValue)
+    console.log(flagValue);
     const decision = deciderFunction(req, flagValue);
-    console.log(decision)
+    console.log(decision);
     if (!decision) {
       res.status(403).json("errorMessage");
       return;
@@ -46,7 +46,7 @@ export const abbyMiddlewareFactory = async <
 
   const extractTest = <T extends keyof Tests>(name: T) => {
     const variant = abbyNodeInstance.getABTestValue(name);
-    console.log(name, variant)
+    console.log(name, variant);
     return { name, variant };
   };
 
@@ -69,9 +69,7 @@ export const abbyMiddlewareFactory = async <
     req: Request,
     res: Response,
     next: NextFunction
-  ) => {
-
-  };
+  ) => {};
 
   const getVariant = <T extends keyof Tests>(name: T) => {
     return abbyNodeInstance.getABTestValue(name);

@@ -1,11 +1,11 @@
-import express , {Request} from "express";
+import express, { Request } from "express";
 import { abbyMiddlewareFactory } from "./express/abbyMiddlewareFactory.ts";
 import { createAbby } from "./abby/createAbby.ts";
 
 const app = express();
 const port = 3000;
 
-const { featureFlagMiddleware, allTestsMiddleWare, getVariant } = await abbyMiddlewareFactory({
+const { featureFlagMiddleware, allTestsMiddleWare, getVariant } = abbyMiddlewareFactory({
   abbyConfig: {
     projectId: "clfn3hs1t0002kx08x3kidi80",
     currentEnvironment: process.env.NODE_ENV,
@@ -18,9 +18,9 @@ const { featureFlagMiddleware, allTestsMiddleWare, getVariant } = await abbyMidd
       },
     },
     flags: {
-      "lol": "Boolean",
-      "test3": "Boolean",
-      "testAbby": "Boolean"
+      lol: "Boolean",
+      test3: "Boolean",
+      testAbby: "Boolean",
     },
     flagCacheConfig: {
       refetchFlags: true,
@@ -32,17 +32,17 @@ const { featureFlagMiddleware, allTestsMiddleWare, getVariant } = await abbyMidd
 app.use(express.json());
 
 app.use("/", (req, res, next) => {
-  console.log(req.body)
-  allTestsMiddleWare(req, res, next)
+  console.log(req.body);
+  allTestsMiddleWare(req, res, next);
 });
 
 const deciderFunc = (req: Request, flagVal: any) => {
   const countryOfOrigin = req.body.country;
-  if(!countryOfOrigin) return false;
-  const decision = flagVal.enabledCountries === countryOfOrigin
-  console.log("acces granted")
+  if (!countryOfOrigin) return false;
+  const decision = flagVal.enabledCountries === countryOfOrigin;
+  console.log("acces granted");
   return decision;
-}
+};
 
 app.use("/", (req, res, next) => featureFlagMiddleware("test3", req, res, next, deciderFunc));
 
