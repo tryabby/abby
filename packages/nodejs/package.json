@@ -48,6 +48,7 @@
     "nodemon": "^2.0.22",
     "supertest": "^6.3.3",
     "ts-node": "^10.9.1",
+    "tsconfig": "workspace:*",
     "tsup": "^6.5.0",
     "typescript": "^5.0.4",
     "vite": "^4.3.9",
