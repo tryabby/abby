@@ -86,7 +86,7 @@ const Home: NextPageWithLayout<
               subtitle="So easy that even your grandma can use it"
             >
               Start testing your components in under 5 minutes. Simply integrate
-              it in your code and you&apos; ready to go.
+              it in your code and you&apos;re ready to go.
             </Feature>
           </div>
         </div>
