@@ -11,6 +11,7 @@
 	"types": "dist/index.d.ts",
 	"exports": {
 		".": {
+			"svelte": "./dist/index,js",
 			"import": "./dist/index.js",
 			"require": "./dist/index.umd.cjs",
 			"types": "./dist/index.d.ts"
