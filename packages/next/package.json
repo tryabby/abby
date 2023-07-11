@@ -7,8 +7,7 @@
     "dist"
   ],
   "scripts": {
-    "build": "echo 0",
-    "build2": "tsup src/index.tsx",
+    "build": "tsup src/index.tsx",
     "dev": "pnpm run build --watch",
     "test": "vitest",
     "prepare": "pnpm run build"
