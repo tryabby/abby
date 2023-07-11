@@ -5,8 +5,8 @@
   "scripts": {
     "test": "vitest ",
     "build": "tsup src/index.ts",
-    "dev": "ts-node --esm ./src/index.ts",
-    "dev2": "tsnd --respawn --transpile-only ./src/index.ts",
+    "dev": "tsnd --respawn --transpile-only ./src/index.ts",
+    "dev:fastify": "tsnd --respawn --transpile-only ./src/fastify/index.ts",
     "dev:debugger": "nodemon ./src/index.ts --inspect"
   },
   "main": "dist/index.js",
