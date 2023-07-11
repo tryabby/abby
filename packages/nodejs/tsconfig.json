@@ -1,8 +1,17 @@
 {
   "extends": "tsconfig/react-library.json",
   "compilerOptions": {
-      "lib": ["ESNext", "DOM"],
-      "types": ["vitest/globals"]
+    "module": "CommonJS",
+    "lib": ["ESNext", "DOM"],
+    "types": ["vitest/globals"],
+    "esModuleInterop": true,
+    "moduleResolution": "Node",
+    "allowSyntheticDefaultImports": true,
+    "noEmit": true,
+    "allowImportingTsExtensions": true
+  },
+  "ts-node": {
+    "esm": true
   },
   "exclude": ["src/tests/**/*.ts"]
 }

@@ -5,7 +5,8 @@
   "scripts": {
     "test": "vitest ",
     "build": "tsup src/index.ts",
-    "dev": "nodemon ./src/index.ts",
+    "dev": "ts-node --esm ./src/index.ts",
+    "dev2": "tsnd --respawn --transpile-only ./src/index.ts",
     "dev:debugger": "nodemon ./src/index.ts --inspect"
   },
   "main": "dist/index.js",
@@ -48,6 +49,7 @@
     "nodemon": "^2.0.22",
     "supertest": "^6.3.3",
     "ts-node": "^10.9.1",
+    "ts-node-dev": "^2.0.0",
     "tsconfig": "workspace:*",
     "tsup": "^6.5.0",
     "typescript": "^5.0.4",
