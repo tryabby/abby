@@ -37,7 +37,7 @@ describe("fastify working", () => {
     //   ABTestHook(request, reply, done);
     // });
 
-    fastify.get("/", function (request, reply) {
+    fastify.get("/fastify", function (request, reply) {
       reply.send("Hello world!");
     });
     fastify.get("/cookie/Set", (request, reply) => {
@@ -49,7 +49,7 @@ describe("fastify working", () => {
 
   test("featureFlag middleware", async () => {
     await fastify.ready();
-    const res = await request(fastify.server).get("/");
+    const res = await request(fastify.server).get("/fastify");
     console.log(res.statusCode);
   });
 

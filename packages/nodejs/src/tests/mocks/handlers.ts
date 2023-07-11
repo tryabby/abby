@@ -3,7 +3,6 @@ import { type AbbyDataResponse, ABBY_BASE_URL } from "@tryabby/core";
 
 export const handlers = [
   rest.get(`${ABBY_BASE_URL}api/v1/data/123`, (req, res, ctx) => {
-    console.log("handler");
     return res(
       ctx.json({
         tests: [

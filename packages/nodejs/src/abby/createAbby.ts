@@ -11,11 +11,9 @@ export function createAbby<
 >(abbyConfig: F.Narrow<AbbyConfig<FlagName, Tests, Flags>>) {
   const abbyCoreInstance = new Abby<FlagName, TestName, Tests, Flags>(abbyConfig, {
     get: (key: string) => {
-      console.log("getStore");
       return TestStorageService.get(abbyConfig.projectId, key);
     },
     set: (key: string, value: any) => {
-      console.log("set");
       TestStorageService.set(abbyConfig.projectId, key, value);
     },
   });

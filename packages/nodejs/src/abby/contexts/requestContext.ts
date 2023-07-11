@@ -7,7 +7,6 @@ type RequestType = Request | FastifyRequest | null;
 let req: RequestType = null;
 
 export function setRequest(request: RequestType) {
-  console.log("setRequest");
   req = request;
 }
 

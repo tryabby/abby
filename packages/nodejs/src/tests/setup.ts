@@ -11,7 +11,7 @@ beforeAll(() =>
   server.listen({
     onUnhandledRequest(req) {
       //requests to express should not be intercepted and there should be no warning
-      const excludedRoutes = ["/cookie", "/featureFlag"];
+      const excludedRoutes = ["/cookie", "/featureFlag", "/fastify"];
       const routeIsExcluded = excludedRoutes.some((route) => req.url.pathname.includes(route));
       if (routeIsExcluded) {
         return;

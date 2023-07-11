@@ -16,11 +16,9 @@ class ABStorageService implements IStorageService {
   set(projectId: string, key: string, value: string): void {
     const response = getResponse();
     if (!response) {
-      console.log("return;");
       return;
     }
     const cookieKey = getABStorageKey(projectId, key);
-    console.log("cookie Service");
     response.cookie(cookieKey, value); //TODO find a way to handle fastify and express cookies
   }
   remove(projectId: string, key: string): void {
