@@ -35,14 +35,11 @@ export const abbyMiddlewareFactory = <
     name: F,
     req: Request,
     res: Response,
-    next: NextFunction,
-    deciderFunction: (req: Request, flagValue: any) => boolean
+    next: NextFunction
   ) => {
     const flagValue = abbyNodeInstance.getFeatureFlagValue(name as unknown as FlagName); //TODO fix type
 
-    console.log(flagValue);
-    const decision = deciderFunction(req, flagValue);
-    console.log(decision);
+    const decision = flagValue;
     if (!decision) {
       res.status(403).json("errorMessage");
       return;

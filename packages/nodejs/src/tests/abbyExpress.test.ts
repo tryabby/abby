@@ -7,7 +7,7 @@ describe("express middleware working", () => {
   let app: express.Application;
 
   beforeAll(async () => {
-    const { AbTestMiddleware, featureFlagMiddleware } = await abbyMiddlewareFactory({
+    const { allTestsMiddleWare, featureFlagMiddleware, getVariant } = await abbyMiddlewareFactory({
       abbyConfig: {
         projectId: "123",
         currentEnvironment: process.env.NODE_ENV,
@@ -19,7 +19,10 @@ describe("express middleware working", () => {
             variants: ["A", "B"],
           },
         },
-        flags: ["flag1", "flag2"],
+        flags: {
+          flag1: "String",
+          flag2: "Boolean",
+        },
       },
     });
 
@@ -34,9 +37,9 @@ describe("express middleware working", () => {
     app.get("/featureFlag/Enabled", (req, res) => res.send(""));
     app.get("/featureFlag/Disabled", (req, res) => res.send(""));
 
-    app.use("/cookie", (req, res, next) => AbTestMiddleware("test2", req, res, next));
+    app.use("/cookie", (req, res, next) => allTestsMiddleWare(req, res, next));
     app.get("/cookie/notSet", (req, res) => {
-      const variant = req.body.ABBY;
+      const variant = getVariant("test2");
       if (variant) {
         res.send(variant);
         return;
@@ -70,6 +73,6 @@ describe("express middleware working", () => {
   test("abTestMiddleware sets the right cookie", async () => {
     const res = await request(app).get("/cookie/Set");
     const cookies = res.headers["set-cookie"]; //res headers is any so need to be carefull
-    expect(cookies[0]).toBe("__abby__ab__123_test2=A; Path=/");
+    expect(cookies[1]).toBe("__abby__ab__123_test2=A; Path=/");
   });
 });

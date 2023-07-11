@@ -27,13 +27,27 @@ export const abbyFastifyFactory = <
     done: HookHandlerDoneFunction
   ) => {
     const flagValue = abbyNodeInstance.getFeatureFlagValue(key as unknown as FlagName); //TODO fix type
-    if (!flagValue) {
-      reply.status(403).send();
+    if (flagValue) {
+      reply.status(403);
+      reply.send();
       console.log("disbaled endpoint");
       return;
     }
     done();
   };
+
+  /**
+   * helper function to extract a single test
+   * @param name
+   * @returns
+   */
+
+  const extractTest = <T extends keyof Tests>(name: T): any => {
+    const variant = abbyNodeInstance.getABTestValue(name);
+    console.log(name, variant);
+    return { name, variant };
+  };
+
   /**
    * hook to parse all ab values on the request object needs to be used at the top
    */
@@ -42,7 +56,14 @@ export const abbyFastifyFactory = <
     request: FastifyRequest,
     reply: FastifyReply,
     done: HookHandlerDoneFunction
-  ) => {};
+  ) => {
+    if (configNarrowed.tests) {
+      const allTests = Object.keys(configNarrowed.tests) as T[];
+      allTests.map((test) => {
+        return extractTest(test);
+      });
+    }
+  };
 
   const getFlagValue = <F extends keyof Flags>(key: F) => {
     return abbyNodeInstance.getFeatureFlagValue(key as unknown as FlagName);
