@@ -40,8 +40,9 @@ describe("fastify working", () => {
     fastify.get("/", function (request, reply) {
       reply.send("Hello world!");
     });
-    fastify.get("/cookie/notSet", (request, reply) => {
+    fastify.get("/cookie/Set", (request, reply) => {
       const variant = getTestValue("test2");
+      console.log(variant);
       reply.send(variant);
     });
   });
@@ -56,7 +57,7 @@ describe("fastify working", () => {
   //     const cookieVariant = "D";
   //     //test cookie retrieval
   //     const response = await request(fastify.server)
-  //       .get("/cookie/notSet")
+  //       .get("/cookie/Set")
   //       .set("Cookie", [`__abby__ab__123_test2=${cookieVariant}; Path=/`]);
 
   //     expect(response.text).toBe(cookieVariant);

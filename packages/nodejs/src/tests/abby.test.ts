@@ -1,5 +1,6 @@
 import { expect, test, describe } from "vitest";
 import { createAbby } from "../abby/createAbby";
+import flushPromises from "flush-promises";
 
 describe("it works", () => {
   test("getFeatureFlagValue working", async () => {
@@ -7,10 +8,13 @@ describe("it works", () => {
       projectId: "123",
       tests: {},
       flags: {
-        flag1: "String",
+        flag1: "Boolean",
         flag2: "Boolean",
       },
     });
+
+    //await abbyInstance initialisation
+    await flushPromises();
 
     expect(await getFeatureFlagValue("flag1")).toBeTruthy();
     expect(await getFeatureFlagValue("flag2")).toBeFalsy();
@@ -42,6 +46,9 @@ describe("it works", () => {
         },
       },
     });
+
+    //await abbyInstance initialisation
+    await flushPromises();
 
     const variant = getABTestValue("test2");
 
