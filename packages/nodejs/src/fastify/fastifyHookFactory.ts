@@ -52,7 +52,6 @@ export const abbyFastifyFactory = <
    * hook to parse all ab values on the request object needs to be used at the top
    */
   const ABTestHook = <T extends keyof Tests>(
-    key: T,
     request: FastifyRequest,
     reply: FastifyReply,
     done: HookHandlerDoneFunction
@@ -63,6 +62,7 @@ export const abbyFastifyFactory = <
         return extractTest(test);
       });
     }
+    done();
   };
 
   const getFlagValue = <F extends keyof Flags>(key: F) => {

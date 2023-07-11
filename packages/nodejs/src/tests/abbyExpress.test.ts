@@ -1,7 +1,7 @@
 import { expect, test, describe, beforeAll } from "vitest";
 import express from "express";
 import request from "supertest";
-import { abbyMiddlewareFactory } from "../express/abbyMiddlewareFactory.ts";
+import { abbyMiddlewareFactory } from "../express/abbyMiddlewareFactory";
 
 describe("express middleware working", () => {
   let app: express.Application;
