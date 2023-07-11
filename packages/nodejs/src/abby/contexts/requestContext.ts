@@ -1,11 +1,16 @@
 // hacky way to get request object in storage service without passing it
 import { Request } from "express";
-let req: Request | null = null;
+import { FastifyRequest } from "fastify";
 
-export function setRequest(request: Request) {
+// type RequestType<T> = T extends Request ? Request : FastifyRequest;
+type RequestType = Request | FastifyRequest | null;
+let req: RequestType = null;
+
+export function setRequest(request: RequestType) {
+  console.log("setRequest");
   req = request;
 }
 
-export function getRequest(): Request | null {
+export function getRequest(): RequestType | null {
   return req;
 }

@@ -1,7 +1,8 @@
 import { IStorageService, getABStorageKey } from "@tryabby/core";
 import { parseCookies } from "./helpers";
-import { getRequest } from "./contexts/requestContext";
-import { getResponse } from "./contexts/responseContext";
+import { getRequest } from "../abby/contexts/requestContext";
+import { getResponse } from "../abby/contexts/responseContext";
+import { FastifyReply } from "fastify";
 
 class ABStorageService implements IStorageService {
   get(projectId: string, key: string): string | null {
@@ -14,8 +15,12 @@ class ABStorageService implements IStorageService {
   }
   set(projectId: string, key: string, value: string): void {
     const response = getResponse();
-    if (!response) return;
+    if (!response) {
+      console.log("return;");
+      return;
+    }
     const cookieKey = getABStorageKey(projectId, key);
+    console.log("cookie Service");
     response.cookie(cookieKey, value);
   }
   remove(projectId: string, key: string): void {
