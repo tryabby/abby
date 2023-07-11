@@ -43,7 +43,7 @@ const deciderFunc = (req: Request, flagVal: any) => {
   return decision;
 };
 
-app.use("/", (req, res, next) => featureFlagMiddleware("test3", req, res, next, deciderFunc));
+app.use("/", (req, res, next) => featureFlagMiddleware("test3", req, res, next));
 
 app.get("/", async (req, res) => {
   const variant = getVariant("New Test3");
