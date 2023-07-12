@@ -33,16 +33,19 @@ describe("fastify working", () => {
     //   parseOptions: {}, // options for parsing cookies
     // });
 
-    // fastify.addHook("onRequest", (request, reply, done) => {
-    //   ABTestHook(request, reply, done);
-    // });
+    fastify.addHook("onRequest", (request, reply, done) => {
+      ABTestHook(request, reply, done);
+    });
 
     fastify.get("/fastify", function (request, reply) {
       reply.send("Hello world!");
     });
     fastify.get("/cookie/Set", (request, reply) => {
+      const variant = getTestValue("test");
+      reply.send(variant);
+    });
+    fastify.get("/cookie/notSet", (request, reply) => {
       const variant = getTestValue("test2");
-      console.log(variant);
       reply.send(variant);
     });
   });
@@ -50,24 +53,21 @@ describe("fastify working", () => {
   test("featureFlag middleware", async () => {
     await fastify.ready();
     const res = await request(fastify.server).get("/fastify");
-    console.log(res.statusCode);
   });
 
-  //   test("abTestMiddleware respects the set cookie", async () => {
-  //     const cookieVariant = "D";
-  //     //test cookie retrieval
-  //     const response = await request(fastify.server)
-  //       .get("/cookie/Set")
-  //       .set("Cookie", [`__abby__ab__123_test2=${cookieVariant}; Path=/`]);
+  test("abTestMiddleware respects the set cookie", async () => {
+    const cookieVariant = "D";
+    //test cookie retrieval
+    const response = await request(fastify.server)
+      .get("/cookie/Set")
+      .set("Cookie", [`__abby__ab__123_test=${cookieVariant}`]);
 
-  //     expect(response.text).toBe(cookieVariant);
-  //   });
+    expect(response.text).toBe(cookieVariant);
+  });
 
-  //   test("abTestMiddleware sets the right cookie", async () => {
-  //     const res = await request(fastify.server).get("/cookie/notSet");
-  //     console.log("response:", res.text);
-  //     const cookies = res.headers["set-cookie"]; //res headers is any so need to be carefull
-  //     console.log(cookies);
-  //     expect(cookies[1]).toBe("__abby__ab__123_test2=A; Path=/");
-  //   });
+  test("abTestMiddleware sets the right cookie", async () => {
+    const res = await request(fastify.server).get("/cookie/notSet");
+    const cookies = res.headers["set-cookie"]; //res headers is any so need to be carefull
+    expect(cookies[1]).toBe("__abby__ab__123_test2=A");
+  });
 });

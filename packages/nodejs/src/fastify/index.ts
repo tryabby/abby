@@ -45,10 +45,8 @@ fastify.addHook("onRequest", async (request, reply, done) => {
 const port = 3000;
 console.log("start fastify");
 fastify.get("/", function (request, reply) {
-  console.log(parseCookies(request));
   setRequest(request);
   setResponse(reply);
-  console.log(abby.getABTestValue("New Test3"));
   reply.send("Hello world!");
 });
 

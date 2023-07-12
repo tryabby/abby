@@ -1,7 +1,8 @@
 import { ABConfig, FlagValueString, AbbyConfig } from "@tryabby/core";
 import { F } from "ts-toolbelt";
 import { createAbby } from "../abby/createAbby";
-import { abby } from "./createAbby";
+import { setRequest } from "../abby/contexts/requestContext";
+import { setResponse } from "../abby/contexts/responseContext";
 import { FastifyReply, FastifyRequest, HookHandlerDoneFunction } from "fastify";
 
 export const abbyFastifyFactory = <
@@ -44,8 +45,17 @@ export const abbyFastifyFactory = <
 
   const extractTest = <T extends keyof Tests>(name: T): any => {
     const variant = abbyNodeInstance.getABTestValue(name);
-    console.log(name, variant);
     return { name, variant };
+  };
+
+  /**
+   * helperfunction to setup the context
+   * @param req
+   * @param res
+   */
+  const setRequestResponse = (req: FastifyRequest, res: FastifyReply): void => {
+    setRequest(req);
+    setResponse(res);
   };
 
   /**
@@ -57,6 +67,7 @@ export const abbyFastifyFactory = <
     done: HookHandlerDoneFunction
   ) => {
     if (configNarrowed.tests) {
+      setRequestResponse(request, reply);
       const allTests = Object.keys(configNarrowed.tests) as T[];
       allTests.map((test) => {
         return extractTest(test);
