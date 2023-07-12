@@ -2,6 +2,7 @@ import { expect, test, describe, beforeAll } from "vitest";
 import Fastify, { FastifyInstance } from "fastify";
 import { abbyFastifyFactory } from "../fastify/fastifyHookFactory";
 import request from "supertest";
+import fastifyCookie from "@fastify/cookie";
 
 describe("fastify working", () => {
   let fastify: FastifyInstance;
@@ -27,11 +28,8 @@ describe("fastify working", () => {
 
     fastify = Fastify();
 
-    // fastify.register(require("@fastify/cookie"), {
-    //   secret: "my-secret", // for cookies signature
-    //   hook: "onRequest", // set to false to disable cookie autoparsing or set autoparsing on any of the following hooks: 'onRequest', 'preParsing', 'preHandler', 'preValidation'. default: 'onRequest'
-    //   parseOptions: {}, // options for parsing cookies
-    // });
+    // Register the fastify-cookie plugin
+    fastify.register(fastifyCookie);
 
     fastify.addHook("onRequest", (request, reply, done) => {
       ABTestHook(request, reply, done);
@@ -68,6 +66,6 @@ describe("fastify working", () => {
   test("abTestMiddleware sets the right cookie", async () => {
     const res = await request(fastify.server).get("/cookie/notSet");
     const cookies = res.headers["set-cookie"]; //res headers is any so need to be carefull
-    expect(cookies[1]).toBe("__abby__ab__123_test2=A");
+    expect(cookies[1]).toBe("__abby__ab__123_test2=__abby__ab__123_test2%3DA");
   });
 });

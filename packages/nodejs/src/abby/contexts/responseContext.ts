@@ -2,9 +2,9 @@
 import { Response } from "express";
 import { FastifyReply } from "fastify";
 
-type ResponseType = Response | FastifyReply | null;
+type ResponseType = Response | FastifyReply;
 
-let res: ResponseType = null;
+let res: ResponseType;
 
 export function setResponse(response: ResponseType) {
   res = response;

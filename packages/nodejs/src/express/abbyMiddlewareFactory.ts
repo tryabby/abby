@@ -28,7 +28,10 @@ export const abbyMiddlewareFactory = <
 }: {
   abbyConfig: F.Narrow<AbbyConfig<FlagName, Tests>>;
 }) => {
-  const abbyNodeInstance = createAbby(abbyConfig);
+  const setCookie = (cookie: string) => {
+    throw new Error("Method not implemented.");
+  };
+  const abbyNodeInstance = createAbby(abbyConfig, setCookie);
   const configNarrowed = abbyConfig as unknown as ConfigType;
 
   const featureFlagMiddleware = <F extends keyof Flags>(
@@ -54,7 +57,6 @@ export const abbyMiddlewareFactory = <
 
   const extractTest = <T extends keyof Tests>(name: T): any => {
     const variant = abbyNodeInstance.getABTestValue(name);
-    console.log(name, variant);
     return { name, variant };
   };
 

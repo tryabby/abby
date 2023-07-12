@@ -3,7 +3,7 @@ import { F } from "ts-toolbelt";
 import { createAbby } from "../abby/createAbby";
 import { setRequest } from "../abby/contexts/requestContext";
 import { setResponse } from "../abby/contexts/responseContext";
-import { FastifyReply, FastifyRequest, HookHandlerDoneFunction } from "fastify";
+import { FastifyInstance, FastifyReply, FastifyRequest, HookHandlerDoneFunction } from "fastify";
 
 export const abbyFastifyFactory = <
   FlagName extends string,
@@ -69,7 +69,7 @@ export const abbyFastifyFactory = <
     if (configNarrowed.tests) {
       setRequestResponse(request, reply);
       const allTests = Object.keys(configNarrowed.tests) as T[];
-      allTests.map((test) => {
+      const vals = allTests.map((test) => {
         return extractTest(test);
       });
     }

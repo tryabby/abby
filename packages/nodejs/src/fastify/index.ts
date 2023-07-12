@@ -1,19 +1,17 @@
 import Fastify from "fastify";
-import { parseCookies } from "../shared/helpers";
-import { abby } from "./createAbby";
-import { setRequest, getRequest } from "../abby/contexts/requestContext";
-import { setResponse } from "../abby/contexts/responseContext";
 import { abbyFastifyFactory } from "./fastifyHookFactory";
+import fastifyCookie, { FastifyCookieOptions } from "@fastify/cookie";
 
 const fastify = Fastify();
 
-fastify.register(require("@fastify/cookie"), {
-  secret: "my-secret", // for cookies signature
-  hook: "onRequest", // set to false to disable cookie autoparsing or set autoparsing on any of the following hooks: 'onRequest', 'preParsing', 'preHandler', 'preValidation'. default: 'onRequest'
-  parseOptions: {}, // options for parsing cookies
-});
+// Register the fastify-cookie plugin
+fastify.register(fastifyCookie);
 
-const { featureFlagHook } = abbyFastifyFactory({
+const setCookie = fastifyCookie;
+
+console.log(setCookie);
+
+const { featureFlagHook, ABTestHook, getTestValue } = abbyFastifyFactory({
   abbyConfig: {
     projectId: "clfn3hs1t0002kx08x3kidi80",
     currentEnvironment: process.env.NODE_ENV,
@@ -22,7 +20,7 @@ const { featureFlagHook } = abbyFastifyFactory({
         variants: ["A", "B"],
       },
       "New Test6": {
-        variants: ["A"],
+        variants: ["A", "GG"],
       },
     },
     flags: {
@@ -37,17 +35,19 @@ const { featureFlagHook } = abbyFastifyFactory({
   },
 });
 
-fastify.addHook("onRequest", async (request, reply, done) => {
-  console.log("hook");
-  featureFlagHook("lol", request, reply, done);
+fastify.addHook("onRequest", (request, reply, done) => {
+  ABTestHook(request, reply, done);
+  // featureFlagHook("lol", request, reply, done);
 });
 
 const port = 3000;
 console.log("start fastify");
 fastify.get("/", function (request, reply) {
-  setRequest(request);
-  setResponse(reply);
-  reply.send("Hello world!");
+  // setResponse(reply);
+  const variant = getTestValue("New Test3");
+  const variant2 = getTestValue("New Test6");
+  console.log("reply before send", reply.getHeaders());
+  reply.send("hi");
 });
 
 fastify.listen({ port }, function (err, address) {

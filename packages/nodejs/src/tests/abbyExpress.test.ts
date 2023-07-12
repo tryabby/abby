@@ -72,7 +72,8 @@ describe("express middleware working", () => {
 
   test("abTestMiddleware sets the right cookie", async () => {
     const res = await request(app).get("/cookie/Set");
-    const cookies = res.headers["set-cookie"]; //res headers is any so need to be carefull
+    const cookies = res.headers; //res.headers["set-cookie"]; //res headers is any so need to be carefull
+    console.log(cookies);
     expect(cookies[0]).toBe("__abby__ab__123_test2=A");
   });
 });

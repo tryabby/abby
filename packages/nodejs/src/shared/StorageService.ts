@@ -2,9 +2,8 @@ import { IStorageService, getABStorageKey } from "@tryabby/core";
 import { parseCookies } from "./helpers";
 import { getRequest } from "../abby/contexts/requestContext";
 import { getResponse } from "../abby/contexts/responseContext";
-import { FastifyReply } from "fastify";
 
-class ABStorageService implements IStorageService {
+export class ABStorageService implements IStorageService {
   get(projectId: string, key: string): string | null {
     const req = getRequest();
     if (!req) return null;
@@ -18,10 +17,19 @@ class ABStorageService implements IStorageService {
     if (!response) {
       return;
     }
+
     const cookieKey = getABStorageKey(projectId, key);
-    const cookie = `${cookieKey}=${value}`;
-    response.header("set-cookie", cookie);
-    // response.cookie(cookieKey, value); //TODO find a way to handle fastify and express cookies
+    const cookieValue = `${cookieKey}=${value}`;
+
+    if (response.setCookie) {
+      //TODO fix typecheck
+      //fastify
+      response.setCookie(cookieKey, cookieValue);
+    } else {
+      //express
+      response.cookie(cookieKey, cookieValue);
+      // console.log(response);
+    }
   }
   remove(projectId: string, key: string): void {
     throw new Error("Method not implemented.");
