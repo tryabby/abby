@@ -19,7 +19,9 @@ class ABStorageService implements IStorageService {
       return;
     }
     const cookieKey = getABStorageKey(projectId, key);
-    response.cookie(cookieKey, value); //TODO find a way to handle fastify and express cookies
+    const cookie = `${cookieKey}=${value}`;
+    response.header("set-cookie", cookie);
+    // response.cookie(cookieKey, value); //TODO find a way to handle fastify and express cookies
   }
   remove(projectId: string, key: string): void {
     throw new Error("Method not implemented.");
