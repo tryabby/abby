@@ -111,6 +111,10 @@ export class Abby<
           flagName as FlagName,
           config.flags as any
         );
+        const validUntil = new Date(
+          new Date().getTime() + 1000 * 60 * (this.config.flagCacheConfig?.timeToLive ?? 1)
+        ); // flagdefault timeout is 1 minute
+        this.#flagTimeoutMap.set(flagName, validUntil);
         return acc;
       },
       {} as Record<FlagName, FlagValue>
@@ -285,8 +289,9 @@ export class Abby<
         return devOverride;
       }
     }
-
-    const storedValue = this.#data.flags[key as unknown as FlagName];
+    const storedValue = this.config.flagCacheConfig?.refetchFlags
+      ? this.getValidFlag(key as unknown as FlagName)
+      : this.#data.flags[key as unknown as FlagName];
 
     const flagType = this._cfg.flags?.[key];
     const defaultValue = this._cfg.settings?.flags?.defaultValues?.[flagType!];
