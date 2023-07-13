@@ -20,7 +20,7 @@ export type ABConfig<T extends string = string> = {
 
 type Settings<
   FlagName extends string,
-  Flags extends Record<FlagName, FlagValueString> = Record<FlagName, FlagValueString>
+  Flags extends Record<FlagName, FlagValueString> = Record<FlagName, FlagValueString>,
 > = {
   flags?: {
     defaultValues?: {
@@ -48,10 +48,15 @@ interface PersistentStorage {
   set: (key: string, value: string) => void;
 }
 
+type FlagCacheConfig = {
+  refetchFlags: boolean;
+  timeToLiveInMinutes: number;
+};
+
 export type AbbyConfig<
   FlagName extends string = string,
   Tests extends Record<string, ABConfig> = Record<string, ABConfig>,
-  Flags extends Record<FlagName, FlagValueString> = Record<FlagName, FlagValueString>
+  Flags extends Record<FlagName, FlagValueString> = Record<FlagName, FlagValueString>,
 > = {
   projectId: string;
   apiUrl?: string;
@@ -60,16 +65,24 @@ export type AbbyConfig<
   flags?: Flags;
   settings?: Settings<F.NoInfer<FlagName>, Flags>;
   debug?: boolean;
+  flagCacheConfig?: FlagCacheConfig;
 };
 
 export class Abby<
   FlagName extends string,
   TestName extends string,
   Tests extends Record<string, ABConfig>,
-  Flags extends Record<FlagName, FlagValueString>
+  Flags extends Record<FlagName, FlagValueString>,
 > {
   private log = (...args: any[]) =>
     this.config.debug ? console.log(`core.Abby`, ...args) : () => {};
+
+  private testDevtoolOverrides: Map<keyof Tests, Tests[keyof Tests]["variants"][number]> =
+    new Map();
+
+  private flagDevtoolOverrides: Map<FlagName, boolean> = new Map();
+
+  #flagTimeoutMap: Map<string, Date> = new Map();
 
   #data: LocalData<FlagName, TestName> = {
     tests: {} as any,
@@ -92,13 +105,20 @@ export class Abby<
     private persistantFlagStorage?: PersistentStorage
   ) {
     this._cfg = config as AbbyConfig<FlagName, Tests, Flags>;
-    this.#data.flags = Object.keys(config.flags ?? {}).reduce((acc, flagName) => {
-      acc[flagName as FlagName] = this.getDefaultFlagValue(
-        flagName as FlagName,
-        config.flags as any
-      );
-      return acc;
-    }, {} as Record<FlagName, FlagValue>);
+    this.#data.flags = Object.keys(config.flags ?? {}).reduce(
+      (acc, flagName) => {
+        acc[flagName as FlagName] = this.getDefaultFlagValue(
+          flagName as FlagName,
+          config.flags as any
+        );
+        const validUntil = new Date(
+          new Date().getTime() + 1000 * 60 * (this.config.flagCacheConfig?.timeToLiveInMinutes ?? 1)
+        ); // flagdefault timeout is 1 minute
+        this.#flagTimeoutMap.set(flagName, validUntil);
+        return acc;
+      },
+      {} as Record<FlagName, FlagValue>
+    );
     this.#data.tests = config.tests ?? ({} as any);
   }
 
@@ -139,22 +159,28 @@ export class Abby<
     data: AbbyDataResponse
   ): LocalData<FlagName, TestName> {
     return {
-      tests: data.tests.reduce((acc, { name, weights }) => {
-        if (!acc[name as keyof Tests]) {
-          return acc;
-        }
+      tests: data.tests.reduce(
+        (acc, { name, weights }) => {
+          if (!acc[name as keyof Tests]) {
+            return acc;
+          }
 
-        // assigned the fetched weights to the initial config
-        acc[name as keyof Tests] = {
-          ...acc[name as keyof Tests],
-          weights,
-        };
-        return acc;
-      }, (this.config.tests ?? {}) as any),
-      flags: data.flags.reduce((acc, { name, value }) => {
-        acc[name] = value;
-        return acc;
-      }, {} as Record<string, FlagValue>),
+          // assigned the fetched weights to the initial config
+          acc[name as keyof Tests] = {
+            ...acc[name as keyof Tests],
+            weights,
+          };
+          return acc;
+        },
+        (this.config.tests ?? {}) as any
+      ),
+      flags: data.flags.reduce(
+        (acc, { name, value }) => {
+          acc[name] = value;
+          return acc;
+        },
+        {} as Record<string, FlagValue>
+      ),
     };
   }
 
@@ -202,6 +228,39 @@ export class Abby<
   }
 
   /**
+   * Helper function to retrieve the time a flag is valid
+   * @param key
+   * @returns
+   */
+  getFeatureFlagTimeout<F extends FlagName>(key: F) {
+    return this.#flagTimeoutMap.get(key);
+  }
+
+  /**
+   * Helper function to check if a featureflag should be refetched
+   * @param key name of the featureflag
+   * @returns value of flag
+   */
+  getValidFlag<F extends FlagName>(key: F, refetch: boolean | undefined) {
+    if (!refetch) return this.#data.flags[key];
+    const flagTime = this.#flagTimeoutMap.get(key);
+    if (!flagTime) return this.#data.flags[key];
+
+    const now = new Date();
+    if (flagTime.getTime() <= now.getTime()) {
+      this.refetchFlags();
+    }
+    return this.#data.flags[key];
+  }
+
+  /**
+   * helper function to make testing easier
+   */
+  refetchFlags() {
+    this.loadProjectData();
+  }
+
+  /**
    * Function to get the value of a feature flag. This includes
    * the overrides from the dev tools and the local overrides if in development mode
    * otherwise it will return the value retrieved from the server
@@ -212,8 +271,6 @@ export class Abby<
     key: T
   ): FlagValueStringToType<CurrentFlag> {
     this.log(`getFeatureFlag()`, key);
-
-    const storedValue = this.#data.flags[key as unknown as FlagName];
 
     const localOverride = this.flagOverrides?.get(key as unknown as FlagName);
 
@@ -234,6 +291,10 @@ export class Abby<
         return devOverride;
       }
     }
+    const storedValue = this.getValidFlag(
+      key as unknown as FlagName,
+      this.config.flagCacheConfig?.refetchFlags
+    );
 
     const flagType = this._cfg.flags?.[key];
     const defaultValue = this._cfg.settings?.flags?.defaultValues?.[flagType!];
