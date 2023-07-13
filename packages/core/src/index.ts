@@ -48,7 +48,7 @@ interface PersistentStorage {
   set: (key: string, value: string) => void;
 }
 
-type flagCacheConfig = {
+type FlagCacheConfig = {
   refetchFlags: boolean;
   timeToLive: number;
 };
