@@ -42,6 +42,7 @@
     "ts-toolbelt": "^9.6.0"
   },
   "devDependencies": {
+    "@types/cookie-parser": "^1.4.3",
     "@types/express": "^4.17.17",
     "@types/jest": "^29.5.1",
     "@types/node": "^20.2.5",
