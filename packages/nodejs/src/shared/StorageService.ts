@@ -1,23 +1,22 @@
 import { IStorageService, getABStorageKey } from "@tryabby/core";
 import { parseCookies } from "./helpers";
-import { getRequest } from "../abby/contexts/requestContext";
-import { getResponse } from "../abby/contexts/responseContext";
 
 export class ABStorageService implements IStorageService {
   get(projectId: string, key: string): string | null {
-    const req = getRequest();
+    const req = null;
     if (!req) return null;
+    console.log("req.headers", req.headers);
     const cookieMap = parseCookies(req);
+    console.log("cookieMap", cookieMap);
     const cookieKey = getABStorageKey(projectId, key);
     const cookieValue = cookieMap.get(cookieKey);
+    console.log(cookieValue);
     return cookieValue ?? null;
   }
   set(projectId: string, key: string, value: string): void {
-    const response = getResponse();
-    if (!response) {
-      return;
-    }
+    const response = null;
 
+    if (!response) return;
     const cookieKey = getABStorageKey(projectId, key);
     const cookieValue = `${cookieKey}=${value}`;
 
@@ -28,7 +27,6 @@ export class ABStorageService implements IStorageService {
     } else {
       //express
       response.cookie(cookieKey, cookieValue);
-      // console.log(response);
     }
   }
   remove(projectId: string, key: string): void {

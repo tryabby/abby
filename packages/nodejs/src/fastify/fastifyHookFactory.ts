@@ -1,9 +1,7 @@
 import { ABConfig, FlagValueString, AbbyConfig } from "@tryabby/core";
 import { F } from "ts-toolbelt";
 import { createAbby } from "../abby/createAbby";
-import { setRequest } from "../abby/contexts/requestContext";
-import { setResponse } from "../abby/contexts/responseContext";
-import { FastifyInstance, FastifyReply, FastifyRequest, HookHandlerDoneFunction } from "fastify";
+import { FastifyReply, FastifyRequest, HookHandlerDoneFunction } from "fastify";
 
 export const abbyFastifyFactory = <
   FlagName extends string,
@@ -19,7 +17,7 @@ export const abbyFastifyFactory = <
   const abbyNodeInstance = createAbby(abbyConfig);
   const configNarrowed = abbyConfig as unknown as ConfigType;
   /**
-   * hook to disbale a path via feature flag
+   * hook to disable a path via feature flag
    */
   const featureFlagHook = <F extends keyof Flags>(
     key: F,
@@ -31,7 +29,6 @@ export const abbyFastifyFactory = <
     if (flagValue) {
       reply.status(403);
       reply.send();
-      console.log("disbaled endpoint");
       return;
     }
     done();
@@ -49,16 +46,6 @@ export const abbyFastifyFactory = <
   };
 
   /**
-   * helperfunction to setup the context
-   * @param req
-   * @param res
-   */
-  const setRequestResponse = (req: FastifyRequest, res: FastifyReply): void => {
-    setRequest(req);
-    setResponse(res);
-  };
-
-  /**
    * hook to parse all ab values on the request object needs to be used at the top
    */
   const ABTestHook = <T extends keyof Tests>(
@@ -67,7 +54,6 @@ export const abbyFastifyFactory = <
     done: HookHandlerDoneFunction
   ) => {
     if (configNarrowed.tests) {
-      setRequestResponse(request, reply);
       const allTests = Object.keys(configNarrowed.tests) as T[];
       const vals = allTests.map((test) => {
         return extractTest(test);
@@ -80,8 +66,8 @@ export const abbyFastifyFactory = <
     return abbyNodeInstance.getFeatureFlagValue(key as unknown as FlagName);
   };
 
-  const getTestValue = <T extends keyof Tests>(key: T) => {
-    return abbyNodeInstance.getABTestValue(key);
+  const getTestValue = <T extends keyof Tests>(key: T, req: FastifyRequest) => {
+    return abbyNodeInstance.getABTestValue(key, req);
   };
 
   return { ABTestHook, featureFlagHook, getFlagValue, getTestValue };

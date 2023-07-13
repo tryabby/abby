@@ -1,15 +1,11 @@
 import Fastify from "fastify";
 import { abbyFastifyFactory } from "./fastifyHookFactory";
-import fastifyCookie, { FastifyCookieOptions } from "@fastify/cookie";
+import fastifyCookie from "@fastify/cookie";
 
 const fastify = Fastify();
 
 // Register the fastify-cookie plugin
 fastify.register(fastifyCookie);
-
-const setCookie = fastifyCookie;
-
-console.log(setCookie);
 
 const { featureFlagHook, ABTestHook, getTestValue } = abbyFastifyFactory({
   abbyConfig: {
