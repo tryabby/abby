@@ -1,5 +1,5 @@
-import { Abby, type AbbyConfig, type ABConfig } from "@tryabby/core";
-import { HttpService , AbbyEventType} from "@tryabby/core";
+import { Abby, type AbbyConfig, type ABConfig, type FlagValueString } from "@tryabby/core";
+import { HttpService, AbbyEventType } from "@tryabby/core";
 import { derived } from "svelte/store";
 import type { F } from "ts-toolbelt";
 // import type { LayoutServerLoad, LayoutServerLoadEvent } from "../routes/$types"; TODO fix import
@@ -11,9 +11,10 @@ export function createAbby<
   FlagName extends string,
   TestName extends string,
   Tests extends Record<TestName, ABConfig>,
+  Flags extends Record<FlagName, FlagValueString> = Record<FlagName, FlagValueString>,
   ConfigType extends AbbyConfig<FlagName, Tests> = AbbyConfig<FlagName, Tests>
->(config: F.Narrow<AbbyConfig>) {
-  const abby = new Abby(
+>(config: F.Narrow<AbbyConfig<FlagName, Tests, Flags>>) {
+  const abby = new Abby<FlagName, TestName, Tests, Flags>(
     config,
     {
       get: (key: string) => {
@@ -41,6 +42,8 @@ export function createAbby<
     return abby;
   });
 
+  const abbyConfig = config as unknown as ConfigType;
+
   const notify = <N extends keyof Tests>(name: N, selectedVariant: string) => {
     if (!name || !selectedVariant) return;
     HttpService.sendData({
@@ -56,7 +59,7 @@ export function createAbby<
 
   const useAbby = <K extends keyof Tests>(testName: K) => {
     const variant = derived<any, string>(abby, ($v) => {
-      return abby.getTestVariant(testName as string);
+      return abby.getTestVariant(testName);
     });
     let selectedVariant: string = "";
     variant.subscribe((data) => {
@@ -79,7 +82,7 @@ export function createAbby<
 
   const getVariants = <T extends keyof Tests>(testName: T) => {
     return derived<any, Readonly<string[]>>(abby, ($v) => {
-      return abby.getVariants(testName as string);
+      return abby.getVariants(testName);
     });
   };
 
@@ -93,26 +96,21 @@ export function createAbby<
   };
 
   const getABTestValue = <T extends keyof Tests>(testName: T) => {
-    return abby.getTestVariant(testName as string);
+    return abby.getTestVariant(testName);
   };
 
-  const getFeatureFlagValue = <
-    F extends NonNullable<ConfigType["flags"]>[number]
-  >(
-    featureFlagName: F
-  ) => {
+  const getFeatureFlagValue = <F extends keyof Flags>(featureFlagName: F) => {
     return abby.getFeatureFlag(featureFlagName);
   };
 
-  const useFeatureFlag = <F extends NonNullable<ConfigType["flags"]>[number]>(
-    flagName: F
-  ) => {
-    return derived<any, boolean>(abby, ($v) => {
+  const useFeatureFlag = <F extends keyof Flags>(flagName: F) => {
+    return derived(abby, ($v) => {
       return abby.getFeatureFlag(flagName);
     });
   };
 
-  const withAbby = (handler?: any) => { //TODO fix type import
+  const withAbby = (handler?: any) => {
+    //TODO fix type import
     return async (evt: any) => {
       const data = await handler?.(evt);
       const __abby__data = await HttpService.getProjectData({

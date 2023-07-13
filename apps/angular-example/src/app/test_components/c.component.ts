@@ -5,5 +5,4 @@ import { Component } from '@angular/core';
   template: '<div>TEST C</div>',
   styles: [''],
 })
-export class CTestComponent {
-}
+export class CTestComponent {}

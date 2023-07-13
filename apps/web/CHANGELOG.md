@@ -1,5 +1,20 @@
 # web
 
+## 0.2.22
+
+### Patch Changes
+
+- Updated dependencies
+  - @tryabby/devtools@4.0.0
+  - @tryabby/core@4.0.0
+  - @tryabby/next@4.0.0
+
+## 0.2.21
+
+### Patch Changes
+
+- update projectid env
+
 ## 0.2.20
 
 - added angular code snippets

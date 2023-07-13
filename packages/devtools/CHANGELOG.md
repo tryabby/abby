@@ -1,5 +1,11 @@
 # @tryabby/devtools
 
+## 4.0.0
+
+### Major Changes
+
+- change feature flag behavior for multivariate flags
+
 ## 3.3.0
 
 ### Minor Changes

@@ -111,7 +111,7 @@ export const inviteRouter = router({
       await InviteService.acceptInvite(invite.id, ctx.session.user.id);
 
       // manually add the projectId to the token
-      await updateProjectsOnSession(ctx , invite.projectId);
+      await updateProjectsOnSession(ctx, invite.projectId);
 
       return {
         projectId: invite.projectId,

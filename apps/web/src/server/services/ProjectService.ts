@@ -14,7 +14,7 @@ export abstract class ProjectService {
       })) > 0
     );
   }
-  static async createProject(input: {projectName: string, userId: string}) {
+  static async createProject(input: { projectName: string; userId: string }) {
     return prisma.project.create({
       data: {
         name: input.projectName,

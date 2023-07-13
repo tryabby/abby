@@ -7,7 +7,25 @@
       "module": "ES2022",
       "target": "ES2022", 
       "strictPropertyInitialization": false,
-      "experimentalDecorators": true
+      "experimentalDecorators": true,
+      "baseUrl": "./",
+      "outDir": "./dist/out-tsc",
+      "forceConsistentCasingInFileNames": true,
+      "strict": true,
+      "noImplicitOverride": true,
+      "noPropertyAccessFromIndexSignature": true,
+      "noImplicitReturns": true,
+      "noFallthroughCasesInSwitch": true,
+      "sourceMap": true,
+      "declaration": false,
+      "declarationMap": false,
+      "downlevelIteration": true,
+      "moduleResolution": "node",
+      "importHelpers": true,
+      "useDefineForClassFields": false,
+      "allowSyntheticDefaultImports": true,
+      "esModuleInterop": true,
+      "skipLibCheck": true
     },
     "types": [
         "node"
@@ -16,3 +34,4 @@
       "postinstall": "ngcc"
     }
   }
+  

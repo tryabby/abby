@@ -44,20 +44,28 @@ describe("Abby", () => {
     expect(abby.getTestVariant("a")).toBe(variants[1]);
   });
 
-  it("gets a feature flag", () => {
+  it("gets a feature flag", async () => {
     const abby = new Abby({
-      projectId: "",
-      flags: ["flag1", "flag2"],
+      projectId: "abc",
+      flags: {
+        flag1: "String",
+        flag2: "Boolean",
+      },
     });
 
-    expect(abby.getFeatureFlag("flag1")).toBeDefined();
-    expect(abby.getFeatureFlag("flag2")).toBeDefined();
+    await abby.loadProjectData();
+
+    expect(abby.getFeatureFlag("flag1")).toBe(true);
+
+    expect(abby.getFeatureFlag("flag2")).toEqual("test");
   });
 
   it("uses the devOverrides", () => {
     const abby = new Abby({
       projectId: "",
-      flags: ["flag1", "flag2"],
+      flags: {
+        flag1: "Boolean",
+      },
       settings: {
         flags: {
           devOverrides: {
@@ -67,7 +75,7 @@ describe("Abby", () => {
       },
     });
 
-    abby.init({ flags: [{ name: "flag1", isEnabled: true }], tests: [] });
+    abby.init({ flags: [{ name: "flag1", value: true }], tests: [] });
 
     process.env.NODE_ENV = "development";
     expect(abby.getFeatureFlag("flag1")).toBe(false);
@@ -99,10 +107,13 @@ describe("Abby", () => {
   it("updates local feature flag", () => {
     const abby = new Abby({
       projectId: "",
-      flags: ["flag1", "flag2"],
+      flags: {
+        flag1: "Boolean",
+        flag2: "String",
+      },
     });
 
-    abby.init({ flags: [{ name: "flag1", isEnabled: true }], tests: [] });
+    abby.init({ flags: [{ name: "flag1", value: true }], tests: [] });
 
     expect(abby.getFeatureFlag("flag1")).toBe(true);
 

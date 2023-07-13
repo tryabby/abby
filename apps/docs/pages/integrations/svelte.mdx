@@ -4,8 +4,6 @@ import { Tab, Tabs, Callout } from "nextra-theme-docs";
 
 Our Svelte integration works with Svelte version??? It works with SPAs as well as server side rendered apps.
 
-
-
 ### Installation
 
 To get started make sure to install the package using your favorite package manager.
@@ -47,13 +45,14 @@ const { AbbyProvider, useAbby } = createAbby({
     footer: { variants: ["dark", "orange", "green"] },
     // ... your tests
   },
-  flags: ["darkMode", "newFeature"],
+  flags: { darkMode: "Boolean", newFeature: "Boolean" },
 });
 ```
 
 #### Wrap your Application
 
 You will need to wrap your application in a layout containing the `AbbyProvider` to make sure the hook works.
+
 ```svelte
 //+layout.svelte
 <script lang="ts">
@@ -74,12 +73,12 @@ You will need to wrap your application in a layout containing the `AbbyProvider`
 ```
 
 If you want to use SSR you also need to provide a +layout.server.ts
+
 ```tsx
 import { abby } from "$lib/abby";
 
-export const load = abby.withAbby()
+export const load = abby.withAbby();
 ```
-
 
 ### Retrieving the values
 

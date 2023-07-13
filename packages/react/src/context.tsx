@@ -1,11 +1,5 @@
-import { Abby, AbbyConfig, ABConfig } from "@tryabby/core";
-import React, {
-  useCallback,
-  useEffect,
-  useRef,
-  useState,
-  type PropsWithChildren,
-} from "react";
+import { Abby, AbbyConfig, ABConfig, FlagValueString, FlagValueStringToType } from "@tryabby/core";
+import React, { useCallback, useEffect, useRef, useState, type PropsWithChildren } from "react";
 import { HttpService } from "@tryabby/core";
 import { ABBY_INSTANCE_KEY } from "@tryabby/core";
 import { AbbyDataResponse, AbbyEventType } from "@tryabby/core";
@@ -24,9 +18,10 @@ export function createAbby<
   FlagName extends string,
   TestName extends string,
   Tests extends Record<TestName, ABConfig>,
+  Flags extends Record<FlagName, FlagValueString> = Record<FlagName, FlagValueString>,
   ConfigType extends AbbyConfig<FlagName, Tests> = AbbyConfig<FlagName, Tests>
->(abbyConfig: F.Narrow<AbbyConfig<FlagName, Tests>>) {
-  const abby = new Abby<FlagName, TestName, Tests>(
+>(abbyConfig: F.Narrow<AbbyConfig<FlagName, Tests, Flags>>) {
+  const abby = new Abby<FlagName, TestName, Tests, Flags>(
     abbyConfig,
     {
       get: (key: string) => {
@@ -90,8 +85,7 @@ export function createAbby<
     // lazily get the tests
     useEffect(() => {
       setSelectedVariant(
-        abby.getProjectData().tests[name as unknown as TestName]
-          ?.selectedVariant ?? ""
+        abby.getProjectData().tests[name as unknown as TestName]?.selectedVariant ?? ""
       );
     }, [name]);
 
@@ -134,11 +128,9 @@ export function createAbby<
     };
   };
 
-  const useFeatureFlag = <F extends NonNullable<ConfigType["flags"]>[number]>(
-    name: F
-  ): boolean => {
+  const useFeatureFlag = <F extends keyof Flags>(name: F) => {
     const data = useAbbyData();
-    return data.flags[name];
+    return data.flags[name as unknown as FlagName] as FlagValueStringToType<Flags[F]>;
   };
 
   const AbbyProvider = ({
@@ -172,17 +164,11 @@ export function createAbby<
     return <AbbyContext.Provider value={data}>{children}</AbbyContext.Provider>;
   };
 
-  const getFeatureFlagValue = <
-    F extends NonNullable<ConfigType["flags"]>[number]
-  >(
-    name: F
-  ): boolean => {
+  const getFeatureFlagValue = <F extends keyof Flags>(name: F) => {
     return abby.getFeatureFlag(name);
   };
 
-  const getABTestValue = <K extends keyof Tests>(
-    name: K
-  ): Tests[K]["variants"][number] => {
+  const getABTestValue = <K extends keyof Tests>(name: K): Tests[K]["variants"][number] => {
     return abby.getTestVariant(name);
   };
 
@@ -196,10 +182,7 @@ export function createAbby<
           return;
         }
 
-        if (
-          !props?.dangerouslyForceShow &&
-          process.env.NODE_ENV !== "development"
-        ) {
+        if (!props?.dangerouslyForceShow && process.env.NODE_ENV !== "development") {
           return;
         }
 
@@ -223,7 +206,7 @@ export function createAbby<
    */
   const getABResetFunction = <T extends keyof Tests>(name: T) => {
     return () => {
-      FlagStorageService.remove(config.projectId, name as string);
+      TestStorageService.remove(config.projectId, name as string);
     };
   };
 

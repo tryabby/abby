@@ -1,4 +1,8 @@
-import { getABStorageKey, getFFStorageKey , type IStorageService} from "@tryabby/core";
+import {
+  getABStorageKey,
+  getFFStorageKey,
+  type IStorageService,
+} from "@tryabby/core";
 
 class ABStorageService implements IStorageService {
   get(projectId: string, testName: string): string | null {

@@ -15,12 +15,7 @@ afterAll(() => {
 
 describe("useAbby", () => {
   it("returns the correct types", () => {
-    const test2Variants = [
-      "SimonsText",
-      "MatthiasText",
-      "TomsText",
-      "TimsText",
-    ] as const;
+    const test2Variants = ["SimonsText", "MatthiasText", "TomsText", "TimsText"] as const;
 
     const { AbbyProvider, useAbby } = createAbby({
       projectId: "123",
@@ -32,9 +27,7 @@ describe("useAbby", () => {
       },
     });
 
-    const wrapper = ({ children }: PropsWithChildren) => (
-      <AbbyProvider>{children}</AbbyProvider>
-    );
+    const wrapper = ({ children }: PropsWithChildren) => <AbbyProvider>{children}</AbbyProvider>;
 
     const { result: test1Result } = renderHook(() => useAbby("test"), {
       wrapper,
@@ -58,16 +51,23 @@ describe("useFeatureFlag", () => {
   it("returns the correct types", () => {
     const { AbbyProvider, useFeatureFlag } = createAbby({
       projectId: "123",
-      flags: ["test", "test2"],
+      flags: {
+        test: "Boolean",
+        test2: "String",
+      },
     });
 
-    const wrapper = ({ children }: PropsWithChildren) => (
-      <AbbyProvider>{children}</AbbyProvider>
-    );
+    const wrapper = ({ children }: PropsWithChildren) => <AbbyProvider>{children}</AbbyProvider>;
 
-    renderHook(() => useFeatureFlag("test"), {
+    const { result: testFlagResult } = renderHook(() => useFeatureFlag("test"), {
       wrapper,
     });
+    const { result: test2FlagResult } = renderHook(() => useFeatureFlag("test2"), {
+      wrapper,
+    });
+
+    expectTypeOf(testFlagResult.current).toEqualTypeOf<boolean>();
+    expectTypeOf(test2FlagResult.current).toEqualTypeOf<string>();
   });
 
   // TODO: the types don't work for this yet
@@ -75,11 +75,15 @@ describe("useFeatureFlag", () => {
     const {} = createAbby({
       projectId: "123",
       currentEnvironment: "test",
-      flags: ["test", "test2"],
+      flags: {
+        test: "Boolean",
+        test2: "String",
+      },
       settings: {
         flags: {
           devOverrides: {
             test: true,
+            test2: "test",
           },
         },
       },
@@ -96,7 +100,9 @@ describe("useFeatureFlag", () => {
             variants: ["ONLY_ONE_VARIANT"],
           },
         },
-        flags: ["test", "test2"],
+        flags: {
+          test: "Boolean",
+        },
         settings: {
           flags: {
             devOverrides: {

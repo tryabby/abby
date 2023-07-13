@@ -44,7 +44,7 @@ export const abby = {
     test: {
       variants: ["control", "variant-a", "variant-b"],
     },
-    flags: ["test-flag"],
+    flags: { "test-flag": "Boolean" },
   },
 };
 
@@ -139,12 +139,8 @@ The `AbbyTest` is an Angular directive provided by @tryabby/angular package that
 #### Example
 
 ```html
-<ng-container *abbyTest="{ testName: 'test-abtest', variant: 'variant-a' }"
-  >AAAAAA</ng-container
->
-<ng-container *abbyTest="{ testName: 'test-abtest', variant: 'variant-b' }"
-  >BBBBBB</ng-container
->
+<ng-container *abbyTest="{ testName: 'test-abtest', variant: 'variant-a' }">AAAAAA</ng-container>
+<ng-container *abbyTest="{ testName: 'test-abtest', variant: 'variant-b' }">BBBBBB</ng-container>
 ```
 
 ### Flag Directive
@@ -164,6 +160,8 @@ The name of the feature flag. The name can be prefixed with ! to invert the flag
 ## Devtool Component
 
 The DevtoolsComponent is an Angular component provided by @tryabby/angular package that renders the Abby Devtools in your application. The component is used to wrap the HTML code that renders the Abby Devtools.
+
+The DevtoolsComponent won't work with Server Side Rendering using Angular Universal.
 
 ### Example
 

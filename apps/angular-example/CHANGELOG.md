@@ -1,5 +1,13 @@
 # angular-example
 
+## 0.0.4
+
+### Patch Changes
+
+- Updated dependencies
+  - @tryabby/devtools@4.0.0
+  - @tryabby/angular@1.0.0
+
 ## 0.0.3
 
 ### Patch Changes
