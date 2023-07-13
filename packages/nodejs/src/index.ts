@@ -41,8 +41,6 @@ app.use(express.json());
 
 app.get("/", async (req, res) => {
   const variant = getVariant("New Test3", { req, res });
-  res.cookie("yo", 222);
-  console.log(variant);
   res.send(variant === "B" ? "very nice content that needs to be protected" : "vriant B");
 });
 

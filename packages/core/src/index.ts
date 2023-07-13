@@ -338,7 +338,6 @@ export class Abby<
     }
 
     const weightedVariant = getWeightedRandomVariant(variants, weights);
-    console.log("args", args !== undefined);
     this.persistantTestStorage?.set(key as string, weightedVariant, args);
 
     this.log(`getTestVariant() => weightedVariant:`, weightedVariant);

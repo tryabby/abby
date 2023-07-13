@@ -39,7 +39,7 @@ describe("express middleware working", () => {
 
     app.use("/cookie", (req, res, next) => allTestsMiddleWare(req, res, next));
     app.get("/cookie/notSet", (req, res) => {
-      const variant = getVariant("test2");
+      const variant = getVariant("test2", { req, res });
       if (variant) {
         res.send(variant);
         return;
@@ -47,13 +47,13 @@ describe("express middleware working", () => {
       res.sendStatus(404);
     });
     app.get("/cookie/Set", (req, res) => {
-      const variant = getVariant("test");
+      const variant = getVariant("test", { req, res });
       res.send(variant);
     });
   });
 
   // TODO for whatever reason middleware tests need to be executed first, else it does not work
-  test.skip("featureFlag Middleware working", async () => {
+  test("featureFlag Middleware working", async () => {
     //check if feature flag value is respected
 
     const succesFullResponse = await request(app).get("/featureFlag/Enabled");
@@ -61,7 +61,7 @@ describe("express middleware working", () => {
     expect(succesFullResponse.statusCode).toBe(200);
     expect(forbiddenResponse.statusCode).toBe(403);
   });
-  test.skip("abTestMiddleware respects the set cookie", async () => {
+  test("abTestMiddleware respects the set cookie", async () => {
     const cookieVariant = "D";
     //test cookie retrieval
     const response = await request(app)
@@ -74,7 +74,6 @@ describe("express middleware working", () => {
   test("abTestMiddleware sets the right cookie", async () => {
     const res = await request(app).get("/cookie/notSet");
     const cookies = res.headers["set-cookie"]; //res headers is any so need to be carefull
-    console.log(cookies);
-    expect(cookies[0]).toBe("__abby__ab__123_test=__abby__ab__123_test%3DA; Path=/");
+    expect(cookies[0]).toBe("__abby__ab__123_test2=A; Path=/");
   });
 });

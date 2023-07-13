@@ -70,7 +70,6 @@ export const abbyFastifyFactory = <
     key: T,
     reqRes: { req: FastifyRequest; res: FastifyReply }
   ) => {
-    console.log("isdef reqRes", reqRes !== undefined);
     return abbyNodeInstance.getABTestValue(key, reqRes);
   };
 

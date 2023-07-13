@@ -39,11 +39,11 @@ describe("fastify working", () => {
       reply.send("Hello world!");
     });
     fastify.get("/cookie/Set", (request, reply) => {
-      const variant = getTestValue("test");
+      const variant = getTestValue("test", { req: request, res: reply });
       reply.send(variant);
     });
     fastify.get("/cookie/notSet", (request, reply) => {
-      const variant = getTestValue("test2");
+      const variant = getTestValue("test2", { req: request, res: reply });
       reply.send(variant);
     });
   });
@@ -66,6 +66,6 @@ describe("fastify working", () => {
   test("abTestMiddleware sets the right cookie", async () => {
     const res = await request(fastify.server).get("/cookie/notSet");
     const cookies = res.headers["set-cookie"]; //res headers is any so need to be carefull
-    expect(cookies[1]).toBe("__abby__ab__123_test2=__abby__ab__123_test2%3DA");
+    expect(cookies[0]).toBe("__abby__ab__123_test2=A");
   });
 });

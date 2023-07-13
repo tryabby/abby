@@ -27,17 +27,14 @@ export class ABStorageService implements IStorageService {
     }
   ): void {
     const response = args?.res;
-    console.log("set resp def", response !== undefined);
     if (!response) return;
     const cookieKey = getABStorageKey(projectId, key);
 
     if (this.isFastifyReply(response)) {
       //fastify
-      console.log("stecookie fastify");
       response.setCookie(cookieKey, value);
     } else if (this.isExpressResponse(response)) {
       //express
-      console.log("setCookie");
       response.cookie(cookieKey, value);
     }
   }
