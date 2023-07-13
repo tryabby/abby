@@ -31,18 +31,18 @@ const { featureFlagHook, ABTestHook, getTestValue } = abbyFastifyFactory({
   },
 });
 
-fastify.addHook("onRequest", (request, reply, done) => {
-  ABTestHook(request, reply, done);
-  // featureFlagHook("lol", request, reply, done);
-});
+// fastify.addHook("onRequest", (request, reply, done) => {
+//   ABTestHook(request, reply, done);
+//   // featureFlagHook("lol", request, reply, done);
+// });
 
 const port = 3000;
 console.log("start fastify");
 fastify.get("/", function (request, reply) {
   // setResponse(reply);
-  const variant = getTestValue("New Test3");
-  const variant2 = getTestValue("New Test6");
-  console.log("reply before send", reply.getHeaders());
+  const variant = getTestValue("New Test3", { req: request, res: reply });
+  // const variant2 = getTestValue("New Test6");
+  console.log("reply before send", variant);
   reply.send("hi");
 });
 

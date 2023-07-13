@@ -1,7 +1,8 @@
 import { ABConfig, Abby, AbbyConfig, FlagValueString, FlagValueStringToType } from "@tryabby/core";
 import { F } from "ts-toolbelt";
 import { TestStorageService } from "../shared/StorageService";
-import { FastifyRequest } from "fastify";
+import { FastifyReply, FastifyRequest } from "fastify";
+import { Request } from "express";
 
 export function createAbby<
   FlagName extends string,
@@ -11,11 +12,11 @@ export function createAbby<
   ConfigType extends AbbyConfig<FlagName, Tests> = AbbyConfig<FlagName, Tests>,
 >(abbyConfig: F.Narrow<AbbyConfig<FlagName, Tests, Flags>>) {
   const abbyCoreInstance = new Abby<FlagName, TestName, Tests, Flags>(abbyConfig, {
-    get: (key: keyof Tests) => {
-      return TestStorageService.get(abbyConfig.projectId, key as string);
+    get: (key: string, args?: unknown) => {
+      return TestStorageService.get(abbyConfig.projectId, key as string, args);
     },
-    set: (key: keyof Tests, value: any) => {
-      TestStorageService.set(abbyConfig.projectId, key as string, value);
+    set: (key: string, value: any, args?: unknown) => {
+      TestStorageService.set(abbyConfig.projectId, key as string, value, args);
     },
   });
 
@@ -28,9 +29,11 @@ export function createAbby<
    * @param name Name of the test that the variant should be retrieved for
    * @returns Value of the currently selected variant
    */
-  const getABTestValue = <T extends keyof Tests>(name: T, req: FastifyRequest) => {
-    const value = abbyCoreInstance.getTestVariant(name);
-    return value;
+  const getABTestValue = <T extends keyof Tests>(
+    name: T,
+    reqRes: { req: Request | FastifyRequest; res: Response | FastifyReply }
+  ) => {
+    return abbyCoreInstance.getTestVariant(name, reqRes);
   };
   /**
    *

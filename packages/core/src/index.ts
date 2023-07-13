@@ -20,7 +20,7 @@ export type ABConfig<T extends string = string> = {
 
 type Settings<
   FlagName extends string,
-  Flags extends Record<FlagName, FlagValueString> = Record<FlagName, FlagValueString>
+  Flags extends Record<FlagName, FlagValueString> = Record<FlagName, FlagValueString>,
 > = {
   flags?: {
     defaultValues?: {
@@ -44,8 +44,8 @@ type LocalData<FlagName extends string = string, TestName extends string = strin
 };
 
 interface PersistentStorage {
-  get: (key: string) => string | null;
-  set: (key: string, value: string) => void;
+  get: (key: string, args?: unknown) => string | null;
+  set: (key: string, value: string, args?: unknown) => void;
 }
 
 type flagCacheConfig = {
@@ -56,7 +56,7 @@ type flagCacheConfig = {
 export type AbbyConfig<
   FlagName extends string = string,
   Tests extends Record<string, ABConfig> = Record<string, ABConfig>,
-  Flags extends Record<FlagName, FlagValueString> = Record<FlagName, FlagValueString>
+  Flags extends Record<FlagName, FlagValueString> = Record<FlagName, FlagValueString>,
 > = {
   projectId: string;
   apiUrl?: string;
@@ -72,7 +72,7 @@ export class Abby<
   FlagName extends string,
   TestName extends string,
   Tests extends Record<string, ABConfig>,
-  Flags extends Record<FlagName, FlagValueString>
+  Flags extends Record<FlagName, FlagValueString>,
 > {
   private log = (...args: any[]) =>
     this.config.debug ? console.log(`core.Abby`, ...args) : () => {};
@@ -105,13 +105,16 @@ export class Abby<
     private persistantFlagStorage?: PersistentStorage
   ) {
     this._cfg = config as AbbyConfig<FlagName, Tests, Flags>;
-    this.#data.flags = Object.keys(config.flags ?? {}).reduce((acc, flagName) => {
-      acc[flagName as FlagName] = this.getDefaultFlagValue(
-        flagName as FlagName,
-        config.flags as any
-      );
-      return acc;
-    }, {} as Record<FlagName, FlagValue>);
+    this.#data.flags = Object.keys(config.flags ?? {}).reduce(
+      (acc, flagName) => {
+        acc[flagName as FlagName] = this.getDefaultFlagValue(
+          flagName as FlagName,
+          config.flags as any
+        );
+        return acc;
+      },
+      {} as Record<FlagName, FlagValue>
+    );
     this.#data.tests = config.tests ?? ({} as any);
   }
 
@@ -152,26 +155,32 @@ export class Abby<
     data: AbbyDataResponse
   ): LocalData<FlagName, TestName> {
     return {
-      tests: data.tests.reduce((acc, { name, weights }) => {
-        if (!acc[name as keyof Tests]) {
-          return acc;
-        }
+      tests: data.tests.reduce(
+        (acc, { name, weights }) => {
+          if (!acc[name as keyof Tests]) {
+            return acc;
+          }
 
-        // assigned the fetched weights to the initial config
-        acc[name as keyof Tests] = {
-          ...acc[name as keyof Tests],
-          weights,
-        };
-        return acc;
-      }, (this.config.tests ?? {}) as any),
-      flags: data.flags.reduce((acc, { name, value }) => {
-        const validUntil = new Date(
-          new Date().getTime() + 1000 * 60 * (this.config.flagCacheConfig?.timeToLive ?? 1)
-        ); // flagdefault timeout is 1 minute
-        this.#flagTimeoutMap.set(name, validUntil);
-        acc[name] = value;
-        return acc;
-      }, {} as Record<string, FlagValue>),
+          // assigned the fetched weights to the initial config
+          acc[name as keyof Tests] = {
+            ...acc[name as keyof Tests],
+            weights,
+          };
+          return acc;
+        },
+        (this.config.tests ?? {}) as any
+      ),
+      flags: data.flags.reduce(
+        (acc, { name, value }) => {
+          const validUntil = new Date(
+            new Date().getTime() + 1000 * 60 * (this.config.flagCacheConfig?.timeToLive ?? 1)
+          ); // flagdefault timeout is 1 minute
+          this.#flagTimeoutMap.set(name, validUntil);
+          acc[name] = value;
+          return acc;
+        },
+        {} as Record<string, FlagValue>
+      ),
     };
   }
 
@@ -304,7 +313,10 @@ export class Abby<
    * @param key The name of the test
    * @returns the value of the test variant
    */
-  getTestVariant<T extends keyof Tests>(key: T): Tests[T]["variants"][number] {
+  getTestVariant<T extends keyof Tests, T_ARGS = unknown>(
+    key: T,
+    args?: T_ARGS
+  ): Tests[T]["variants"][number] {
     this.log(`getTestVariant()`, key);
 
     const { variants, weights } = (this.#data.tests as LocalData["tests"])[
@@ -317,7 +329,7 @@ export class Abby<
       return override;
     }
 
-    const persistedValue = this.persistantTestStorage?.get(key as string);
+    const persistedValue = this.persistantTestStorage?.get(key as string, args);
 
     if (persistedValue != null) {
       this.log(`getTestVariant() => persistedValue:`, persistedValue);
@@ -326,7 +338,8 @@ export class Abby<
     }
 
     const weightedVariant = getWeightedRandomVariant(variants, weights);
-    this.persistantTestStorage?.set(key as string, weightedVariant);
+    console.log("args", args !== undefined);
+    this.persistantTestStorage?.set(key as string, weightedVariant, args);
 
     this.log(`getTestVariant() => weightedVariant:`, weightedVariant);
 

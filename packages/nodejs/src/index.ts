@@ -1,8 +1,11 @@
 import express, { Request } from "express";
 import { abbyMiddlewareFactory } from "./express/abbyMiddlewareFactory";
+import cookieParser from "cookie-parser";
 
 const app = express();
 const port = 3000;
+
+app.use(cookieParser());
 
 const { featureFlagMiddleware, allTestsMiddleWare, getVariant } = abbyMiddlewareFactory({
   abbyConfig: {
@@ -30,14 +33,16 @@ const { featureFlagMiddleware, allTestsMiddleWare, getVariant } = abbyMiddleware
 
 app.use(express.json());
 
-app.use("/", (req, res, next) => {
-  allTestsMiddleWare(req, res, next);
-});
+// app.use("/", (req, res, next) => {
+//   allTestsMiddleWare(req, res, next);
+// });
 
-app.use("/", (req, res, next) => featureFlagMiddleware("test3", req, res, next));
+// app.use("/", (req, res, next) => featureFlagMiddleware("test3", req, res, next));
 
 app.get("/", async (req, res) => {
-  const variant = getVariant("New Test3");
+  const variant = getVariant("New Test3", { req, res });
+  res.cookie("yo", 222);
+  console.log(variant);
   res.send(variant === "B" ? "very nice content that needs to be protected" : "vriant B");
 });
 

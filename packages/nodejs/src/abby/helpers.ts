@@ -5,7 +5,6 @@ import { Request } from "express";
  * @param req express Request
  */
 export function parseCookies(req: Request) {
-  console.log(req.headers);
   const cookies = req.headers.cookie;
   const cookieMap = new Map<string, string>();
   cookies?.split(";").map((res, index) => {

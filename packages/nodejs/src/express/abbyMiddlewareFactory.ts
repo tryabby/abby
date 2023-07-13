@@ -46,7 +46,7 @@ export const abbyMiddlewareFactory = <
   };
 
   const extractTest = <T extends keyof Tests>(name: T): any => {
-    const variant = abbyNodeInstance.getABTestValue(name);
+    const variant = abbyNodeInstance.getABTestValue(name as string, null);
     return { name, variant };
   };
 
@@ -70,8 +70,8 @@ export const abbyMiddlewareFactory = <
   //   next: NextFunction
   // ) => {};
 
-  const getVariant = <T extends keyof Tests>(name: T) => {
-    return abbyNodeInstance.getABTestValue(name);
+  const getVariant = <T extends keyof Tests>(name: T, reqRes: { req: Request; res: Response }) => {
+    return abbyNodeInstance.getABTestValue(name as string, reqRes);
   };
 
   return { featureFlagMiddleware, allTestsMiddleWare, getVariant };

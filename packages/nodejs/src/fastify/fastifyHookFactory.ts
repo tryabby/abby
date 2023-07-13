@@ -66,8 +66,12 @@ export const abbyFastifyFactory = <
     return abbyNodeInstance.getFeatureFlagValue(key as unknown as FlagName);
   };
 
-  const getTestValue = <T extends keyof Tests>(key: T, req: FastifyRequest) => {
-    return abbyNodeInstance.getABTestValue(key, req);
+  const getTestValue = <T extends keyof Tests>(
+    key: T,
+    reqRes: { req: FastifyRequest; res: FastifyReply }
+  ) => {
+    console.log("isdef reqRes", reqRes !== undefined);
+    return abbyNodeInstance.getABTestValue(key, reqRes);
   };
 
   return { ABTestHook, featureFlagHook, getFlagValue, getTestValue };
