@@ -1,4 +1,4 @@
-import { Abby, type AbbyConfig, type ABConfig } from "@tryabby/core";
+import { Abby, type AbbyConfig, type ABConfig, type FlagValueString } from "@tryabby/core";
 import { HttpService, AbbyEventType } from "@tryabby/core";
 import { derived } from "svelte/store";
 import type { F } from "ts-toolbelt";
