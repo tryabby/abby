@@ -7,6 +7,7 @@ export class HttpService {
   constructor({ fetch2 }: { fetch2?: typeof globalThis.fetch | typeof fetch } = {}) {
     this.#fetchFunction = fetch2 ?? globalThis.fetch;
   }
+
   #fetchFunction: typeof globalThis.fetch | typeof fetch;
 
   async getProjectData({
