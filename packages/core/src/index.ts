@@ -48,9 +48,9 @@ interface PersistentStorage {
   set: (key: string, value: string) => void;
 }
 
-type flagCacheConfig = {
+type FlagCacheConfig = {
   refetchFlags: boolean;
-  timeToLive: number;
+  timeToLiveInMinutes: number;
 };
 
 export type AbbyConfig<
@@ -65,7 +65,7 @@ export type AbbyConfig<
   flags?: Flags;
   settings?: Settings<F.NoInfer<FlagName>, Flags>;
   debug?: boolean;
-  flagCacheConfig?: flagCacheConfig;
+  flagCacheConfig?: FlagCacheConfig;
 };
 
 export class Abby<
@@ -112,7 +112,7 @@ export class Abby<
           config.flags as any
         );
         const validUntil = new Date(
-          new Date().getTime() + 1000 * 60 * (this.config.flagCacheConfig?.timeToLive ?? 1)
+          new Date().getTime() + 1000 * 60 * (this.config.flagCacheConfig?.timeToLiveInMinutes ?? 1)
         ); // flagdefault timeout is 1 minute
         this.#flagTimeoutMap.set(flagName, validUntil);
         return acc;

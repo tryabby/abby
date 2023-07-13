@@ -133,7 +133,7 @@ describe("Abby", () => {
       },
       flagCacheConfig: {
         refetchFlags: true,
-        timeToLive: 2,
+        timeToLiveInMinutes: 2,
       },
     });
     await abby.loadProjectData();
@@ -157,7 +157,7 @@ describe("Abby", () => {
       },
       flagCacheConfig: {
         refetchFlags: true,
-        timeToLive: 2,
+        timeToLiveInMinutes: 2,
       },
     });
 
@@ -181,7 +181,7 @@ describe("Abby", () => {
       },
       flagCacheConfig: {
         refetchFlags: false,
-        timeToLive: 2,
+        timeToLiveInMinutes: 2,
       },
     });
 
@@ -205,7 +205,7 @@ describe("Abby", () => {
       },
       flagCacheConfig: {
         refetchFlags: true,
-        timeToLive: 2,
+        timeToLiveInMinutes: 2,
       },
     });
 
@@ -233,7 +233,7 @@ describe("Abby", () => {
       },
       flagCacheConfig: {
         refetchFlags: true,
-        timeToLive: 2,
+        timeToLiveInMinutes: 2,
       },
     });
 
