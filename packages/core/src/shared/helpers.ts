@@ -9,5 +9,5 @@ export function getFFStorageKey(projectId: string, flagName: string): string {
 }
 
 export function assertUnreachable(x: never): never {
-  throw new Error("Reached unreachable code");
+  throw new Error(`Reached unreachable code: ${x}`);
 }
