@@ -241,9 +241,11 @@ export class Abby<
    * @param key name of the featureflag
    * @returns value of flag
    */
-  getValidFlag<F extends FlagName>(key: F) {
+  getValidFlag<F extends FlagName>(key: F, refetch: boolean | undefined) {
+    if (!refetch) return this.#data.flags[key];
     const flagTime = this.#flagTimeoutMap.get(key);
     if (!flagTime) return this.#data.flags[key];
+
     const now = new Date();
     if (flagTime.getTime() <= now.getTime()) {
       this.refetchFlags();
@@ -289,9 +291,10 @@ export class Abby<
         return devOverride;
       }
     }
-    const storedValue = this.config.flagCacheConfig?.refetchFlags
-      ? this.getValidFlag(key as unknown as FlagName)
-      : this.#data.flags[key as unknown as FlagName];
+    const storedValue = this.getValidFlag(
+      key as unknown as FlagName,
+      this.config.flagCacheConfig?.refetchFlags
+    );
 
     const flagType = this._cfg.flags?.[key];
     const defaultValue = this._cfg.settings?.flags?.defaultValues?.[flagType!];
