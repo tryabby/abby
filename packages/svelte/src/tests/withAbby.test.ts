@@ -8,8 +8,8 @@ describe("withabby working", () => {
     const data = await abby.__abby__.loadProjectData();
 
     if (!data) throw new Error("");
-
     abby.__abby__.init(data);
+
     const { getByText, queryByText } = render(testPage, {
       props: {
         data: {
@@ -18,7 +18,6 @@ describe("withabby working", () => {
         },
       },
     });
-
     const flag1 = await waitFor(() => getByText("my super secret feature 1"));
     expect(flag1).toBeInTheDocument();
     const flag2 = queryByText("my super secret feature 2");

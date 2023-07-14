@@ -4,7 +4,7 @@ import {
   createAbby as baseCreateAbby,
   withDevtoolsFunction,
 } from "@tryabby/react";
-import { AbbyDataResponse, getABStorageKey } from "@tryabby/core";
+import { AbbyDataResponse, FlagValueString, getABStorageKey } from "@tryabby/core";
 import type { F } from "ts-toolbelt";
 import { ABBY_DATA_KEY, withAbby } from "./withAbby";
 import { HttpService } from "@tryabby/core";
@@ -17,8 +17,9 @@ import { getIsomorphicCookies, isBrowser, isEdgeFunction } from "./helpers";
 export function createAbby<
   FlagName extends string,
   TestName extends string,
-  Tests extends Record<TestName, ABConfig>
->(config: F.Narrow<AbbyConfig<FlagName, Tests>>) {
+  Tests extends Record<TestName, ABConfig>,
+  Flags extends Record<FlagName, FlagValueString> = Record<FlagName, FlagValueString>
+>(config: F.Narrow<AbbyConfig<FlagName, Tests, Flags>>) {
   const {
     AbbyProvider,
     useAbby,
@@ -27,7 +28,7 @@ export function createAbby<
     __abby__,
     getVariants,
     withDevtools,
-  } = baseCreateAbby<FlagName, TestName, Tests>(config);
+  } = baseCreateAbby<FlagName, TestName, Tests, Flags>(config);
 
   const abbyApiHandler =
     <HandlerType extends NextApiHandler | NextMiddleware>(handler: HandlerType) =>

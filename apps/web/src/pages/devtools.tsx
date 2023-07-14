@@ -8,22 +8,23 @@ import { InferGetStaticPropsType } from "next";
 import { useEffect, useState } from "react";
 import { CornerRightDown } from "lucide-react";
 import { Transition } from "@headlessui/react";
-import { motion } from "framer-motion";
 import { SignupButton } from "components/SignupButton";
 
-const config = {
-  projectId: "clha6feng0002l709segjhb2d",
-  currentEnvironment: process.env.NODE_ENV,
-  tests: {
-    MarketingButton: {
-      variants: ["Dark", "Funky", "Light"],
-    },
-  },
-  flags: ["ToggleMeIfYoureExcited", "showEasterEgg", "showHeading"],
-};
-
 const { useAbby, AbbyProvider, useFeatureFlag, withDevtools, __abby__ } =
-  createAbby(config);
+  createAbby({
+    projectId: "clha6feng0002l709segjhb2d",
+    currentEnvironment: process.env.NODE_ENV,
+    tests: {
+      MarketingButton: {
+        variants: ["Dark", "Funky", "Light"],
+      },
+    },
+    flags: {
+      ToggleMeIfYoureExcited: "Boolean",
+      showEasterEgg: "Boolean",
+      showHeading: "Boolean",
+    },
+  });
 
 export const AbbyProdDevtools = withDevtools(abbyDevtools, {
   dangerouslyForceShow: true,
@@ -252,6 +253,7 @@ OuterPage.getLayout = (page) => (
 );
 
 export const getStaticProps = async () => {
+  const config = __abby__.getConfig();
   const data = await __abby__.loadProjectData();
   return {
     props: { abbyData: data },

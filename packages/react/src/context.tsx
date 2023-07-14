@@ -1,5 +1,7 @@
-import { Abby, AbbyConfig, ABConfig } from "@tryabby/core";
+import { Abby, AbbyConfig, ABConfig, FlagValueString, FlagValueStringToType } from "@tryabby/core";
 import React, { useCallback, useEffect, useRef, useState, type PropsWithChildren } from "react";
+import { HttpService } from "@tryabby/core";
+import { ABBY_INSTANCE_KEY } from "@tryabby/core";
 import { AbbyDataResponse, AbbyEventType } from "@tryabby/core";
 import { F } from "ts-toolbelt";
 import { FlagStorageService, TestStorageService } from "./StorageService";
@@ -16,9 +18,10 @@ export function createAbby<
   FlagName extends string,
   TestName extends string,
   Tests extends Record<TestName, ABConfig>,
-  ConfigType extends AbbyConfig<FlagName, Tests> = AbbyConfig<FlagName, Tests>
->(abbyConfig: F.Narrow<AbbyConfig<FlagName, Tests>>) {
-  const abby = new Abby<FlagName, TestName, Tests>(
+  Flags extends Record<FlagName, FlagValueString> = Record<FlagName, FlagValueString>,
+  ConfigType extends AbbyConfig<FlagName, Tests> = AbbyConfig<FlagName, Tests>,
+>(abbyConfig: F.Narrow<AbbyConfig<FlagName, Tests, Flags>>) {
+  const abby = new Abby<FlagName, TestName, Tests, Flags>(
     abbyConfig,
     {
       get: (key: string) => {
@@ -125,9 +128,9 @@ export function createAbby<
     };
   };
 
-  const useFeatureFlag = <F extends NonNullable<ConfigType["flags"]>[number]>(name: F): boolean => {
+  const useFeatureFlag = <F extends keyof Flags>(name: F) => {
     const data = useAbbyData();
-    return data.flags[name];
+    return data.flags[name as unknown as FlagName] as FlagValueStringToType<Flags[F]>;
   };
 
   const AbbyProvider = ({
@@ -161,9 +164,7 @@ export function createAbby<
     return <AbbyContext.Provider value={data}>{children}</AbbyContext.Provider>;
   };
 
-  const getFeatureFlagValue = <F extends NonNullable<ConfigType["flags"]>[number]>(
-    name: F
-  ): boolean => {
+  const getFeatureFlagValue = <F extends keyof Flags>(name: F) => {
     return abby.getFeatureFlag(name);
   };
 

@@ -55,32 +55,13 @@ describe("Abby", () => {
     expect(abby.getTestVariant("a")).toBe(variants[1]);
   });
 
-  it("gets a feature flag", () => {
+  it("gets a feature flag", async () => {
     const abby = new Abby(
       {
-        projectId: "",
-        flags: ["flag1", "flag2"],
-      },
-      undefined,
-      undefined,
-      fetch
-    );
-
-    expect(abby.getFeatureFlag("flag1")).toBeDefined();
-    expect(abby.getFeatureFlag("flag2")).toBeDefined();
-  });
-
-  it("uses the devOverrides", () => {
-    const abby = new Abby(
-      {
-        projectId: "",
-        flags: ["flag1", "flag2"],
-        settings: {
-          flags: {
-            devOverrides: {
-              flag1: false,
-            },
-          },
+        projectId: "abc",
+        flags: {
+          flag1: "String",
+          flag2: "Boolean",
         },
       },
       undefined,
@@ -88,7 +69,29 @@ describe("Abby", () => {
       fetch
     );
 
-    abby.init({ flags: [{ name: "flag1", isEnabled: true }], tests: [] });
+    await abby.loadProjectData();
+
+    expect(abby.getFeatureFlag("flag1")).toBe(true);
+
+    expect(abby.getFeatureFlag("flag2")).toEqual("test");
+  });
+
+  it("uses the devOverrides", () => {
+    const abby = new Abby({
+      projectId: "",
+      flags: {
+        flag1: "Boolean",
+      },
+      settings: {
+        flags: {
+          devOverrides: {
+            flag1: false,
+          },
+        },
+      },
+    });
+
+    abby.init({ flags: [{ name: "flag1", value: true }], tests: [] });
 
     process.env.NODE_ENV = "development";
     expect(abby.getFeatureFlag("flag1")).toBe(false);
@@ -126,14 +129,17 @@ describe("Abby", () => {
     const abby = new Abby(
       {
         projectId: "",
-        flags: ["flag1", "flag2"],
+        flags: {
+          flag1: "Boolean",
+          flag2: "String",
+        },
       },
       undefined,
       undefined,
       fetch
     );
 
-    abby.init({ flags: [{ name: "flag1", isEnabled: true }], tests: [] });
+    abby.init({ flags: [{ name: "flag1", value: true }], tests: [] });
 
     expect(abby.getFeatureFlag("flag1")).toBe(true);
 

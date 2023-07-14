@@ -19,7 +19,7 @@ export class HttpService {
   }) {
     try {
       const res = await this.#fetchFunction(
-        `${url ?? ABBY_BASE_URL}api/dashboard/${projectId}/data${
+        `${url ?? ABBY_BASE_URL}api/v1/data/${projectId}${
           environment ? `?environment=${environment}` : ""
         }`
       );
@@ -44,17 +44,19 @@ export class HttpService {
     data: Omit<AbbyEvent, "type">;
   }) {
     if (typeof window === "undefined" || window.location.hostname === "localhost") {
-      // don't send data in development
-      return;
+      if (typeof window === "undefined" || window.location.hostname === "localhost") {
+        // don't send data in development
+        return;
+      }
+      return this.#fetchFunction(`${url ?? ABBY_BASE_URL}api/data`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ type, ...data }),
+        // catch error and forget about them for now
+        // TODO: add error debugging
+      }).catch(() => {});
     }
-    return this.#fetchFunction(`${url ?? ABBY_BASE_URL}api/data`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ type, ...data }),
-      // catch error and forget about them for now
-      // TODO: add error debugging
-    }).catch(() => {});
   }
 }
