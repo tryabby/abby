@@ -13,13 +13,14 @@ import { RiGameFill } from "react-icons/ri";
 import { generateCodeSnippets } from "utils/snippets";
 import abbyScreenshot from "../../public/screenshot.png";
 import { NextPageWithLayout } from "./_app";
+import { Divider } from "components/Divider";
 
 const Home: NextPageWithLayout<
   InferGetStaticPropsType<typeof getStaticProps>
 > = ({ codeSnippet }) => {
   return (
     <>
-      <section className="min-h-screen bg-pink-100 text-gray-900">
+      <section className="min-h-screen bg-primary-background text-primary-foreground">
         <div className="flex flex-col items-center px-6 pb-12 pt-24 md:px-16">
           <h1 className="text-center text-5xl font-extrabold">
             Dead-Simple <span className="mark">A/B Testing</span> <br /> &
@@ -41,17 +42,18 @@ const Home: NextPageWithLayout<
           <Image
             src={abbyScreenshot}
             alt="Screenshot of A/BBY's Dashboard"
-            className="mt-12 hidden w-10/12 rounded-xl shadow-2xl md:block lg:max-w-5xl"
+            className="mt-12 hidden w-10/12 rounded-xl border border-accent-background shadow-2xl md:block lg:max-w-5xl"
             priority
           />
         </div>
       </section>
-      <section id="features" className="bg-white py-48">
+      <Divider />
+      <section id="features" className="py-48">
         <div className="container px-6 md:px-16">
           <h1 className="mb-6 text-center text-4xl font-bold">
-            Why choose A/BBY?
+            <span className="mark">Why</span> choose A/BBY?
           </h1>
-          <h2 className="mb-8 text-center text-lg text-gray-700">
+          <h2 className="mb-8 text-center text-lg">
             Find out why A/BBY is the easiest and nicest solution out there.
           </h2>
           <div className="grid grid-cols-1 gap-8 md:grid-cols-2">
@@ -91,13 +93,13 @@ const Home: NextPageWithLayout<
           </div>
         </div>
       </section>
-      <section className="h-3 bg-pink-100" />
-      <section className="bg-white py-48" id="devtools">
+      <Divider />
+      <section className="py-48" id="devtools">
         <div className="container px-6 md:px-16">
           <h1 className="mb-6 text-center text-4xl font-bold">
             Painless Debugging with <span className="mark">A/BBY Devtools</span>
           </h1>
-          <h2 className="mb-12 text-center text-lg text-gray-700">
+          <h2 className="mb-12 text-center text-lg ">
             Debugging your tests & Feature Flags has never been easier. Simply
             install the optional Devtools and get started.
             <br />
@@ -117,44 +119,47 @@ const Home: NextPageWithLayout<
           <div className="flex items-center">
             <Link
               href={`/devtools`}
-              className="mx-auto mt-8 rounded-lg bg-gray-900 px-4 py-2 text-white transition-transform duration-200 ease-in-out hover:scale-110"
+              className="mx-auto mt-8 rounded-lg bg-accent-background px-4 py-2 text-accent-foreground transition-transform duration-200 ease-in-out hover:scale-110"
             >
               Learn More
             </Link>
           </div>
         </div>
       </section>
-      <section className="h-3 bg-pink-100" />
-      <section className="bg-white py-48">
+      <Divider />
+      <section className="py-48">
         <div className="container px-6 md:px-16">
           <h1 className="mb-6 text-center text-4xl font-bold">
             Can&apos;t wait to try it out?
           </h1>
-          <h2 className="mb-8 text-center text-lg text-gray-700">
+          <h2 className="mb-8 text-center text-lg">
             Skip the Docs and get right into the code. Simply define your tests
             and enjoy the magic. <br />
             <b>Fully typed.</b> <b>Easy to use.</b>
           </h2>
           <div className="mx-auto max-w-4xl shadow-2xl">
-            <BaseCodeSnippet {...codeSnippet} />
+            <BaseCodeSnippet
+              className="rounded-md border border-accent-background"
+              {...codeSnippet}
+            />
           </div>
           <div className="flex items-center">
             <Link
               href={DOCS_URL}
-              className="mx-auto mt-8 rounded-lg bg-gray-900 px-4 py-2 text-white transition-transform duration-200 ease-in-out hover:scale-110"
+              className="mx-auto mt-8 rounded-lg bg-accent-background px-4 py-2 text-accent-foreground transition-transform duration-200 ease-in-out hover:scale-110"
             >
               Read the Docs
             </Link>
           </div>
         </div>
       </section>
-      <section className="h-3 bg-pink-100" />
-      <section id="pricing" className="bg-white py-48">
+      <Divider />
+      <section id="pricing" className="py-48">
         <div className="container px-6 md:px-16">
           <h1 className="mb-6 text-center text-4xl font-bold">
             Simple pricing, for everyone
           </h1>
-          <h2 className="mb-8 text-center text-lg text-gray-700">
+          <h2 className="mb-8 text-center text-lg">
             Start testing your components in under 5 minutes. Simply integrate
             it in your code and you&apos; ready to go.
           </h2>

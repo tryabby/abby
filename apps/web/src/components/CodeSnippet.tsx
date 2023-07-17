@@ -7,6 +7,7 @@ import { TbBrandNextjs } from "react-icons/tb";
 import type { CodeSnippetData, Integrations } from "utils/snippets";
 import { trpc } from "utils/trpc";
 import { LoadingSpinner } from "./LoadingSpinner";
+import { twMerge } from "tailwind-merge";
 
 const INTEGRATIONS: Record<
   Integrations,
@@ -37,7 +38,11 @@ type Props = {
   projectId: string;
 };
 
-export function BaseCodeSnippet(props: Record<Integrations, CodeSnippetData>) {
+export function BaseCodeSnippet(
+  props: Record<Integrations, CodeSnippetData> & {
+    className?: string;
+  }
+) {
   const [currentIntegration, setCurrentIntegration] = useState<Integrations>(
     Object.keys(INTEGRATIONS)[0] as Integrations
   );
@@ -48,7 +53,7 @@ export function BaseCodeSnippet(props: Record<Integrations, CodeSnippetData>) {
   };
 
   return (
-    <div className="relative">
+    <div className={twMerge("relative", props.className)}>
       <div className="absolute w-full">
         <div className="flex space-x-2 p-3">
           <div className="h-3 w-3 rounded-full bg-[#FF5F56]" />

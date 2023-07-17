@@ -39,7 +39,7 @@ const MyApp: AppType<{ session: Session | null }> = ({
     <>
       <AbbyProvider initialData={__ABBY_PROJECT_DATA__}>
         <AbbyDevtools />
-        <ThemeProvider defaultTheme="dark">
+        <ThemeProvider attribute="class">
           <TooltipProvider>
             <SessionProvider session={session}>
               <main className={`font-sans`}>

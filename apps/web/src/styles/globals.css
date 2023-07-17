@@ -2,6 +2,21 @@
 @tailwind components;
 @tailwind utilities;
 
+
+:root {
+  --color-primary-background: white;
+  --color-primary-foreground: #121929;
+  --color-accent-background: #F9A8D4;
+  --color-accent-foreground: black;
+} 
+
+.dark {
+  --color-primary-background: #121929;
+  --color-primary-foreground: white;
+  --color-accent-background: #F9A8D4;
+  --color-accent-foreground: black;
+}
+
 @font-face {
   font-family: 'Mona Sans';
   src:
@@ -60,18 +75,19 @@ html {
   position: relative;
   display: inline-block;
   z-index: 0;
+  @apply text-accent-foreground;
 }
 
 .mark::before {
   /* Highlight color */
-  @apply bg-pink-300;
+  @apply bg-accent-background;
 
   content: "";
   position: absolute;
   width: calc(100% + 12px);
-  height: 80%;
+  height: 100%;
   left: -6px;
-  bottom: 5px;
+  bottom: 0px;
   z-index: -1;
   transform: rotate(-1deg);
 }
