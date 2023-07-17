@@ -60,7 +60,7 @@ export function BaseCodeSnippet(
           <div className="h-3 w-3 rounded-full bg-[#FFBD2E]" />
           <div className="h-3 w-3 rounded-full bg-[#27C93F]" />
         </div>
-        <div className="mt-2 flex w-full bg-gray-800">
+        <div className="mt-2 flex w-full overflow-x-auto bg-gray-800">
           {Object.entries(INTEGRATIONS).map(([key, { icon: Icon, name }]) => (
             <div
               key={name}
