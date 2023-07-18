@@ -2,6 +2,8 @@ import { Octokit } from "octokit";
 
 import { router, publicProcedure } from "../trpc";
 import { env } from "env/server.mjs";
+import { z } from "zod";
+import { sendContactFormularEmail } from "../../../../emails/index";
 
 export const miscRouter = router({
   getStars: publicProcedure.query(async ({ input }) => {
@@ -23,4 +25,17 @@ export const miscRouter = router({
     );
     return stars.data.length;
   }),
+  contactPageEmail: publicProcedure
+    .input(
+      z.object({
+        surname: z.string(),
+        name: z.string(),
+        mailadress: z.string().email(),
+        message: z.string(),
+      })
+    )
+    .mutation(async ({ input }) => {
+      console.log("input", input);
+      // sendContactFormularEmail(input);
+    }),
 });
