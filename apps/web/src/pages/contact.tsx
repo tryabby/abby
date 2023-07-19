@@ -39,9 +39,9 @@ export default function ContactPage() {
   return (
     <>
       <MarketingLayout>
-        <div className="h-screen bg-primary-background text-primary-foreground">
+        <div className="bg-primary-background text-primary-foreground">
           <main className=" mx-auto mt-5 flex h-full w-full min-w-min flex-col items-center justify-center  pb-40 sm:mt-5 sm:h-4/5">
-            <div className="mb-10  flex w-full flex-col  md:w-8/12 md:pb-24">
+            <div className="mb-10  flex w-full flex-col  md:my-auto md:w-8/12">
               <div className="mx-auto mb-10 flex self-center">
                 <h2 className="mark self-center font-bold sm:text-xl md:text-4xl ">
                   Contact us
