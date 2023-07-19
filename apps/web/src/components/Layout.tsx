@@ -20,6 +20,7 @@ import { trpc } from "../utils/trpc";
 import { Select } from "./Select";
 import { UserInfo } from "./UserInfo";
 import { CreateProjectModal } from "./CreateProjectModal";
+import { useSession } from "next-auth/react";
 
 const navItemClass = (isActive: boolean) =>
   clsx(
@@ -58,6 +59,8 @@ const SideBar =
         setIsCreateProjectModal(true);
       };
 
+      const { data, status, update: updateSession } = useSession();
+
       return (
         <aside
           ref={ref}
@@ -81,6 +84,8 @@ const SideBar =
                 onChange={(projectId) => {
                   if (projectId === currentProjectId) return;
                   closeSidebar();
+                  console.log("goto project", data?.user);
+                  // updateSession({...data, user.lastOpen: projectId})
                   router.push({
                     ...router,
                     query: { ...router.query, projectId },
