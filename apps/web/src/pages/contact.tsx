@@ -153,12 +153,10 @@ export default function ContactPage() {
               type="submit"
             />
           </form>
-          <span className="max-auto max-w-sm text-xs text-primary-foreground">
-            <nobr>
-              By submitting this form you agree to our{" "}
-              <a className="text-pink-300">Terms of use</a> and{" "}
-              <a className="text-pink-300">Privacy Policy</a>
-            </nobr>
+          <span className="max-auto inline max-w-sm text-xs text-primary-foreground">
+            By submitting this form you agree to our{" "}
+            <a className="text-pink-300">Terms of use</a> and{" "}
+            <a className="text-pink-300">Privacy Policy</a>
           </span>
         </main>
       </MarketingLayout>
