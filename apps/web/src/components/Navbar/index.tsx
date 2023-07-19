@@ -158,7 +158,7 @@ export function Navbar({ isInverted }: { isInverted?: boolean }) {
           <button
             id="theme-toggle"
             type="button"
-            className="hidden rounded-lg border border-primary-foreground p-2.5 text-sm text-primary-foreground focus:outline-none focus:ring-4 focus:ring-gray-200 md:flex"
+            className="hidden rounded-lg border-2 border-primary-foreground p-2.5 text-sm text-primary-foreground transition-colors duration-200 ease-in-out hover:bg-primary-foreground hover:text-primary-background focus:outline-none focus:ring-4 focus:ring-gray-200 md:flex"
             onClick={() => {
               setTheme(theme === "dark" ? "light" : "dark");
             }}

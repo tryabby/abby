@@ -1,4 +1,4 @@
-import { DOCS_URL } from "@tryabby/core";
+import { DOCS_URL, HttpService } from "@tryabby/core";
 import { BaseCodeSnippet } from "components/CodeSnippet";
 import { Feature } from "components/Feature";
 import { MarketingLayout } from "components/MarketingLayout";
@@ -16,6 +16,29 @@ import { NextPageWithLayout } from "./_app";
 import { Divider } from "components/Divider";
 import { ExternalLink } from "lucide-react";
 import { FaQuestion } from "react-icons/fa";
+import { createAbby } from "@tryabby/next";
+import { twMerge } from "tailwind-merge";
+import DevtoolsFactory from "@tryabby/devtools";
+import { useTheme } from "next-themes";
+import { useEffect } from "react";
+
+const { useAbby, AbbyProvider, useFeatureFlag, __abby__, withDevtools } =
+  createAbby({
+    projectId: "clk8ld04v0000l0085dqsxpsr",
+    currentEnvironment: "production",
+    tests: {
+      SignupButton: {
+        variants: ["A", "B", "C"],
+      },
+    },
+    flags: {
+      ForceDarkTheme: "Boolean",
+    },
+  });
+
+const Devtools = withDevtools(DevtoolsFactory, {
+  dangerouslyForceShow: true,
+});
 
 const AmpersandIcon = ({ className }: { className?: string }) => (
   <svg
@@ -36,11 +59,30 @@ const AmpersandIcon = ({ className }: { className?: string }) => (
 );
 
 const Home: NextPageWithLayout<
-  InferGetStaticPropsType<typeof getStaticProps>
+  Omit<InferGetStaticPropsType<typeof getStaticProps>, "abbyData">
 > = ({ codeSnippet }) => {
+  const { setTheme } = useTheme();
+  const { onAct, variant } = useAbby("SignupButton");
+
+  const forceDarkTheme = useFeatureFlag("ForceDarkTheme");
+
+  useEffect(() => {
+    if (forceDarkTheme) {
+      setTheme("dark");
+    } else {
+      setTheme("light");
+    }
+  }, [forceDarkTheme, setTheme]);
+
   return (
     <>
-      <section className="min-h-screen bg-primary-background text-primary-foreground">
+      <Devtools />
+      <section
+        className={twMerge(
+          "min-h-screen bg-primary-background text-primary-foreground",
+          forceDarkTheme && "dark"
+        )}
+      >
         <div className="flex flex-col items-center px-6 pb-12 pt-24 md:px-16">
           <div className="relative">
             <AmpersandIcon className="absolute -right-48 -top-6 hidden h-48 w-48 lg:block" />
@@ -59,7 +101,21 @@ const Home: NextPageWithLayout<
             </span>
           </h2>
 
-          <SignupButton />
+          <div className="flex flex-col items-center">
+            <Link
+              href="/login"
+              onClick={() => onAct()}
+              className={twMerge(
+                "mt-12 rounded-xl bg-accent-background px-6 py-2 text-xl font-semibold text-accent-foreground no-underline transition-transform duration-150 ease-in-out hover:scale-110"
+              )}
+            >
+              {variant === "A" && "Test Now"}
+              {variant === "B" && "Sign Up for Free"}
+            </Link>
+            <span className="mt-4 text-xs">
+              Free forever. No Credit Card required
+            </span>
+          </div>
           <Image
             src={abbyScreenshot}
             alt="Screenshot of A/BBY's Dashboard"
@@ -243,9 +299,22 @@ const Home: NextPageWithLayout<
   );
 };
 
-Home.getLayout = (page) => <MarketingLayout>{page}</MarketingLayout>;
+const HomeWrapper: NextPageWithLayout<
+  InferGetStaticPropsType<typeof getStaticProps>
+> = ({ codeSnippet, abbyData }) => (
+  <AbbyProvider initialData={abbyData ?? undefined}>
+    <Home codeSnippet={codeSnippet} />
+  </AbbyProvider>
+);
+
+HomeWrapper.getLayout = (page) => <MarketingLayout>{page}</MarketingLayout>;
 
 export const getStaticProps = async () => {
+  const config = __abby__.getConfig();
+  const data = await HttpService.getProjectData({
+    projectId: config.projectId,
+    environment: config.currentEnvironment,
+  });
   const codeSnippet = await generateCodeSnippets({
     projectId: "<PROJECT_ID>",
     tests: [
@@ -293,9 +362,10 @@ export const getStaticProps = async () => {
 
   return {
     props: {
+      abbyData: data,
       codeSnippet,
     },
   };
 };
 
-export default Home;
+export default HomeWrapper;
