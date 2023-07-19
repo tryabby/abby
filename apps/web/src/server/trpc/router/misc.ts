@@ -35,7 +35,6 @@ export const miscRouter = router({
       })
     )
     .mutation(async ({ input }) => {
-      console.log("input", input);
-      // sendContactFormularEmail(input);
+      await sendContactFormularEmail(input);
     }),
 });

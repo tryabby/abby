@@ -34,14 +34,14 @@ export default function ContactPage() {
   });
 
   const inputFieldStyle =
-    "border-2 border-width border-solid border-accent-background rounded w-full pl-2 mr-5 py-1 bg-inherit";
+    "text border-2 border-width border-solid border-accent-background rounded w-full pl-2 mr-5 py-1 bg-inherit text-sm ";
 
   return (
     <>
       <div className="h-screen bg-primary-background text-primary-foreground">
         <Navbar />
-        <main className="mx-auto mt-5 flex h-full w-full min-w-min flex-col items-center justify-center  pb-40 sm:mt-5 sm:h-4/5 sm:w-3/6">
-          <div className="mb-10 flex w-8/12 flex-col  md:pb-24">
+        <main className=" mx-auto mt-5 flex h-full w-full min-w-min flex-col items-center justify-center  pb-40 sm:mt-5 sm:h-4/5">
+          <div className="mb-10  flex w-full flex-col  md:w-8/12 md:pb-24">
             <div className="mx-auto mb-10 flex self-center">
               <h2 className="mark self-center font-bold sm:text-xl md:text-4xl ">
                 Contact us
@@ -58,68 +58,62 @@ export default function ContactPage() {
                 />
               </svg>
             </div>
-            <div className="md:self:start self-center">
+            <div className="mx-auto max-w-xs text-center">
               Do you have any questions, comments or suggestions?
-              <div className="self-center">Do not hesitate to contact us.</div>
+              <div>Do not hesitate to contact us.</div>
             </div>
           </div>
           <form
-            className="justify-centerborder-2 flex w-8/12 flex-col items-center"
+            className="mx-auto flex w-full max-w-sm flex-col items-start md:w-8/12"
             onSubmit={onSubmit}
           >
-            <div className="flex w-full  flex-row flex-wrap justify-between">
-              <div className="mb-4 flex w-44 flex-col">
-                <label className="mb-1">Surname</label>
-                <input
-                  {...register("surname")}
-                  className={inputFieldStyle}
-                  placeholder="Surname"
-                ></input>
-              </div>
-              <div className=" mb-4 flex w-44 flex-col space-y-0 place-self-end ">
-                <label className="mb-1 ">Name</label>
-                <input
-                  {...register("name")}
-                  className={inputFieldStyle}
-                  placeholder="Name"
-                ></input>
-              </div>
+            <div className="mb-4 flex w-full flex-grow flex-col">
+              <label className="mb-1">Surname</label>
+              <input
+                {...register("surname")}
+                className={inputFieldStyle}
+                placeholder="Surname"
+              ></input>
             </div>
-            <div className="mb-4 flex w-full flex-col self-start">
-              <div className=" mb-4 flex w-44 flex-col">
-                <label className="mb-1" htmlFor="mail adress">
-                  Mail address
-                </label>
-                <input
-                  {...register("mailadress")}
-                  className={inputFieldStyle}
-                  placeholder="your@mailadress.com"
-                ></input>
-              </div>
-              <div className="mb-4 flex w-full flex-col">
-                <label className="mb-1" htmlFor="your message">
-                  Your message
-                </label>
-                <input
-                  type="text"
-                  {...register("message")}
-                  className="border-width roundedborder-2 h-32 min-h-max w-full border-solid border-accent-background  bg-inherit"
-                  placeholder="Your message text here"
-                ></input>
-              </div>
+            <div className=" 3 mb-4 flex w-full flex-grow flex-col ">
+              <label className="mb-1 ">Name</label>
+              <input
+                {...register("name")}
+                className={inputFieldStyle}
+                placeholder="Name"
+              ></input>
+            </div>
+            <div className=" mb-4 flex w-full flex-grow flex-col">
+              <label className="mb-1" htmlFor="mail adress">
+                Mail address
+              </label>
+              <input
+                {...register("mailadress")}
+                className={inputFieldStyle}
+                placeholder="your@mailadress.com"
+              ></input>
+            </div>
+            <div className="mb-4 flex w-full flex-grow flex-col">
+              <label className="mb-1" htmlFor="your message">
+                Your message
+              </label>
+              <textarea
+                {...register("message")}
+                className="border-width h-32 min-h-max w-full rounded border-2 border-solid border-accent-background  bg-inherit"
+                placeholder="Your message text here"
+              ></textarea>
             </div>
             <input
-              className="border-1 mb-2 w-24 rounded-md border-black bg-pink-300 "
+              className="border-1 mb-2 w-24 self-center rounded-md border-accent-foreground bg-accent-background text-accent-foreground"
               type="submit"
             />
-            <span className="text-xs text-pink-300">
+            <span className="max-auto max-w-sm text-xs text-primary-foreground">
               By submitting this form you agree to our{" "}
-              <a className="text-white">Terms of use</a> and{" "}
-              <a className="text-white">Privacy Policy</a>
+              <a className="text-pink-300">Terms of use</a> and{" "}
+              <a className="text-pink-300">Privacy Policy</a>
             </span>
           </form>
         </main>
-        {/* <Footer></Footer> */}
       </div>
     </>
   );

@@ -40,26 +40,13 @@ export default function ContactFormularEmail({
       </Preview>
       <Section style={main}>
         <Container style={container}>
-          {/* <Section style={{ marginTop: "32px" }}>
-            <h1>A/BBY</h1>
-          </Section>
-          <Text style={h1}>
-            Join <strong>{project.name}</strong> on <strong>A/BBY</strong>
-          </Text>
-          <Text style={text}>Hello {invitee.name ?? invitee.email},</Text>
-          </Section>
-          <Text style={text}>
-            <br />
-            or copy and paste this URL into your browser:{" "}
-            <Link
-              href={`${baseUrl}invites/${inviteId}`}
-              target="_blank"
-              style={link}
-              rel="noreferrer"
-            >
-              {baseUrl}invites/{inviteId}
-            </Link>
-          </Text> */}
+          Name: {name} {surname}
+          <br />
+          Email: {mailadress}
+          <br />
+          Message:
+          <br />
+          <pre>{message}</pre>
         </Container>
       </Section>
     </Html>

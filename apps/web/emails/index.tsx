@@ -26,7 +26,7 @@ export function sendInviteEmail(props: InviteEmailProps) {
 
 export function sendContactFormularEmail(props: ContactMailProps) {
   const email = render(<ContactFormularEmail {...props} />);
-  const abbyContactAdress = "";
+  const abbyContactAdress = "tim@tryabby.com";
   return transporter.sendMail({
     to: abbyContactAdress,
     from: `A/BBY <${env.ABBY_FROM_EMAIL}>`,
