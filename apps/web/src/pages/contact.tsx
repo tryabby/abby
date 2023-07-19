@@ -1,18 +1,17 @@
-import { useRouter } from "next/router";
 import { MarketingLayout } from "../components/MarketingLayout";
-import { Footer } from "../components/Footer";
 import { useForm } from "react-hook-form";
-import { FormEventHandler } from "react";
+import clsx from "clsx";
 import { trpc } from "utils/trpc";
 import { toast } from "react-hot-toast";
 
 export default function ContactPage() {
-  const {
-    register,
-    handleSubmit,
-    watch,
-    formState: { errors },
-  } = useForm();
+  const { register, handleSubmit, formState } = useForm<{
+    mailadress: string;
+    message: string;
+    name: string;
+    surname: string;
+  }>();
+
   const sendDataMutation = trpc.misc.contactPageEmail.useMutation();
   const sendData = async (values: {
     mailadress: string;
@@ -24,17 +23,15 @@ export default function ContactPage() {
   };
   const onSubmit = handleSubmit(async (values) => {
     try {
-      console.log(values);
       const { name, mailadress, surname, message } = values;
       await sendData({ name, mailadress, surname, message });
-      toast.success("Send");
+      toast.success("Send!");
     } catch (error) {
       toast.error("Please try again!");
     }
   });
-
   const inputFieldStyle =
-    "text border-2 border-width border-solid border-accent-background rounded w-full pl-2 mr-5 py-1 bg-inherit text-sm ";
+    "text border-2 border-width border-solid rounded w-full pl-2 mr-5 py-1 bg-inherit text-sm";
 
   return (
     <>
@@ -64,44 +61,93 @@ export default function ContactPage() {
               </div>
             </div>
             <form
-              className="mx-auto flex w-full max-w-sm flex-col items-start md:w-8/12"
+              className="mx-auto flex w-full max-w-sm flex-col flex-wrap items-start md:w-8/12"
               onSubmit={onSubmit}
             >
               <div className="mb-4 flex w-full flex-grow flex-col">
                 <label className="mb-1">Surname</label>
                 <input
-                  {...register("surname")}
-                  className={inputFieldStyle}
+                  {...register("surname", {
+                    required: "Please enter your Surname",
+                  })}
+                  className={clsx(
+                    inputFieldStyle,
+                    formState.errors.surname
+                      ? "border-red-500"
+                      : "border-accent-background"
+                  )}
                   placeholder="Surname"
                 ></input>
+                {formState.errors.surname && (
+                  <p className="mb-3 text-center text-xs text-red-500">
+                    {formState.errors.surname.message}
+                  </p>
+                )}
               </div>
               <div className=" 3 mb-4 flex w-full flex-grow flex-col ">
                 <label className="mb-1 ">Name</label>
                 <input
-                  {...register("name")}
-                  className={inputFieldStyle}
+                  {...register("name", {
+                    required: "Please enter your name",
+                  })}
+                  className={clsx(
+                    inputFieldStyle,
+                    formState.errors.name
+                      ? "border-red-500"
+                      : "border-accent-background"
+                  )}
                   placeholder="Name"
                 ></input>
+                {formState.errors.name && (
+                  <p className="mb-3 text-center text-xs text-red-500">
+                    {formState.errors.name.message}
+                  </p>
+                )}
               </div>
               <div className=" mb-4 flex w-full flex-grow flex-col">
                 <label className="mb-1" htmlFor="mail adress">
                   Mail address
                 </label>
                 <input
-                  {...register("mailadress")}
-                  className={inputFieldStyle}
+                  {...register("mailadress", {
+                    required: "Please enter an email",
+                  })}
+                  className={clsx(
+                    inputFieldStyle,
+                    formState.errors.mailadress
+                      ? "border-red-500"
+                      : "border-accent-background"
+                  )}
+                  autoComplete="email"
                   placeholder="your@mailadress.com"
                 ></input>
+                {formState.errors.mailadress && (
+                  <p className="mb-3 text-center text-xs text-red-500">
+                    {formState.errors.mailadress.message}
+                  </p>
+                )}
               </div>
               <div className="mb-4 flex w-full flex-grow flex-col">
                 <label className="mb-1" htmlFor="your message">
                   Your message
                 </label>
                 <textarea
-                  {...register("message")}
-                  className="h-32 min-h-max w-full rounded border-2 border-solid border-accent-background  bg-inherit"
+                  {...register("message", {
+                    required: "Please enter a message",
+                  })}
+                  className={clsx(
+                    "h-32 min-h-max w-full rounded border-2 border-solid border-accent-background bg-inherit",
+                    formState.errors.message
+                      ? "border-red-500"
+                      : "border-accent-background"
+                  )}
                   placeholder="Your message text here"
                 ></textarea>
+                {formState.errors.message && (
+                  <p className="mb-3 text-center text-xs text-red-500">
+                    {formState.errors.message.message}
+                  </p>
+                )}
               </div>
               <input
                 className="border-1 mb-4 mt-5 w-24 self-center rounded-md border-accent-foreground bg-accent-background text-accent-foreground"
