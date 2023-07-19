@@ -99,12 +99,12 @@ export default function ContactPage() {
                 </label>
                 <textarea
                   {...register("message")}
-                  className="border-width h-32 min-h-max w-full rounded border-2 border-solid border-accent-background  bg-inherit"
+                  className="h-32 min-h-max w-full rounded border-2 border-solid border-accent-background  bg-inherit"
                   placeholder="Your message text here"
                 ></textarea>
               </div>
               <input
-                className="border-1 mb-2 w-24 self-center rounded-md border-accent-foreground bg-accent-background text-accent-foreground"
+                className="border-1 mb-4 mt-5 w-24 self-center rounded-md border-accent-foreground bg-accent-background text-accent-foreground"
                 type="submit"
               />
               <span className="max-auto max-w-sm text-xs text-primary-foreground">
