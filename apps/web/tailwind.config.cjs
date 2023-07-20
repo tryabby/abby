@@ -11,12 +11,16 @@ module.exports = {
     extend: {
       colors: {
         primary: {
-          foreground: "var(--color-primary-foreground)",
-          background: "var(--color-primary-background)",
+          foreground: "rgb(var(--color-primary-foreground))",
+          background: "rgb(var(--color-primary-background))",
+          hover: "rgba(var(--color-primary-foreground), 0.1)",
+          muted: "rgba(var(--color-primary-foreground), 0.6)",
         },
         accent: {
-          foreground: "var(--color-accent-foreground)",
-          background: "var(--color-accent-background)",
+          foreground: "rgb(var(--color-accent-foreground))",
+          background: "rgb(var(--color-accent-background))",
+          hover: "rgba(var(--color-accent-background), 0.1)",
+          muted: "rgba(var(--color-accent-background), 0.6)",
         },
       },
       fontFamily: {
