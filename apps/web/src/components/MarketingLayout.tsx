@@ -19,10 +19,8 @@ export function MarketingLayout({
   seoTitle,
   isInverted,
 }: MarketingLayoutProps) {
-  console.log("seoTitle", seoTitle);
   const router = useRouter();
   const pageName = router.asPath;
-  console.log("Path:", pageName);
   const { metaTitle, metaDescription } = getSeo(pageName, "Marketing");
   return (
     <>
