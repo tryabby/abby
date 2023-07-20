@@ -16,6 +16,7 @@ import { NextPageWithLayout } from "./_app";
 import { Divider } from "components/Divider";
 import { ExternalLink } from "lucide-react";
 import { FaQuestion } from "react-icons/fa";
+import { useRouter } from "next/router";
 
 const AmpersandIcon = ({ className }: { className?: string }) => (
   <svg
@@ -244,9 +245,7 @@ const Home: NextPageWithLayout<
 };
 
 Home.getLayout = function getLayout(page) {
-  // console.log(JSON.stringify(page, null, 2));
-  const name = page.props;
-  return <MarketingLayout seoTitle="asdjlsakjdlsaj">{page}</MarketingLayout>;
+  return <MarketingLayout>{page}</MarketingLayout>;
 };
 
 export const getStaticProps = async () => {

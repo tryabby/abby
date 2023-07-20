@@ -1,7 +1,6 @@
 import clsx from "clsx";
 import Logo from "components/Logo";
 import { signIn } from "next-auth/react";
-import { NextSeo } from "next-seo";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { useForm } from "react-hook-form";
@@ -24,7 +23,6 @@ export default function LoginPage() {
   const { register, handleSubmit, formState } = useForm<{ email: string }>();
   return (
     <main className="flex min-h-screen items-center justify-center bg-primary-background text-primary-foreground">
-      <NextSeo description="test123" title="login" />
       <div className="max-w-2xl rounded-md bg-white p-8 text-gray-900 shadow-2xl">
         <Link href="/" className="mb-12 block text-center">
           <Logo as="h1" />

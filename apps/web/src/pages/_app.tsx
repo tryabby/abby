@@ -24,7 +24,7 @@ type AppPropsWithLayout = AppProps & {
   Component: NextPageWithLayout;
 };
 
-const seoDescription = `Discover the benefits of using A/BBY, the open-source feature management and A/B testing SaaS. Increase transparency, collaboration, and trust. Try it now! testts`;
+const seoDescription = `Discover the benefits of using A/BBY, the open-source feature management and A/B testing SaaS. Increase transparency, collaboration, and trust. Try it now!`;
 
 const MyApp: AppType<{ session: Session | null }> = ({
   Component,
