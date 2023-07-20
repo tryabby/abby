@@ -59,7 +59,7 @@ const SideBar =
         setIsCreateProjectModal(true);
       };
 
-      const { data, status, update: updateSession } = useSession();
+      const { data: session, update: sessionUpdate } = useSession();
 
       return (
         <aside
@@ -81,11 +81,14 @@ const SideBar =
                 items={projects.map((p) => ({ label: p.name, value: p.id }))}
                 value={currentProjectId}
                 isLoading={isLoading}
-                onChange={(projectId) => {
+                onChange={async (projectId) => {
                   if (projectId === currentProjectId) return;
                   closeSidebar();
-                  console.log("goto project", data?.user);
-                  // updateSession({...data, user.lastOpen: projectId})
+                  console.log("data");
+                  const lol = await sessionUpdate({
+                    lastOpenProject: "testID",
+                  });
+                  console.log("new Session:", lol);
                   router.push({
                     ...router,
                     query: { ...router.query, projectId },

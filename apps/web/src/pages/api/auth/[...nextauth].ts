@@ -17,13 +17,22 @@ export const authOptions: NextAuthOptions = {
   },
   callbacks: {
     // Include user.id on session
-    session({ session, token }) {
+    session({ session, trigger, token, newSession }) {
+      // console.log("token", token.user.lastOpenProject);
+      console.log("trigger", trigger);
+      // console.log("newSession", newSession);
+      if (trigger === "update") {
+        console.log("it should update the token");
+      }
       if (token.user) {
         session.user = {
           ...session.user,
           id: token.user.id,
           image: token.user.image,
           projectIds: token.user.projectIds,
+          lastOpenProject: session.user?.lastOpenProject
+            ? session.user?.lastOpenProject
+            : token.user.projectIds[0],
         };
       }
 

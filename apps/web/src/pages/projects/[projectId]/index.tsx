@@ -8,10 +8,15 @@ import { NextPageWithLayout } from "pages/_app";
 import { useState } from "react";
 import { AiOutlinePlus } from "react-icons/ai";
 import { trpc } from "utils/trpc";
+import { useSession } from "next-auth/react";
 
 const Projects: NextPageWithLayout = () => {
   const [isCreateTestModalOpen, setIsCreateTestModalOpen] = useState(false);
-  const projectId = useProjectId();
+
+  const { data: sessionData } = useSession();
+  const projectId = sessionData?.user?.lastOpenProject ?? useProjectId();
+
+  console.log("render for", projectId);
 
   const { data, isLoading, isError } = trpc.project.getProjectData.useQuery({
     projectId: projectId,
@@ -38,7 +43,6 @@ const Projects: NextPageWithLayout = () => {
         />
       </div>
     );
-
   return (
     <>
       <div className="flex justify-end space-x-2">
