@@ -243,7 +243,11 @@ const Home: NextPageWithLayout<
   );
 };
 
-Home.getLayout = (page) => <MarketingLayout>{page}</MarketingLayout>;
+Home.getLayout = function getLayout(page) {
+  // console.log(JSON.stringify(page, null, 2));
+  const name = page.props;
+  return <MarketingLayout seoTitle="asdjlsakjdlsaj">{page}</MarketingLayout>;
+};
 
 export const getStaticProps = async () => {
   const codeSnippet = await generateCodeSnippets({
