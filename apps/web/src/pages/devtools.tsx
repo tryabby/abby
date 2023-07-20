@@ -49,6 +49,8 @@ const DevtoolsPage = () => {
       if (!entries[0]) return;
 
       setDevtoolsPosition(devtools.getBoundingClientRect());
+      // we only need to set it once
+      resizeObserver.disconnect();
     });
 
     resizeObserver.observe(devtools);
@@ -65,21 +67,15 @@ const DevtoolsPage = () => {
       <section className="container relative px-6 font-mono lg:px-16">
         <div className="flex flex-col items-center">
           <div className="flex min-h-screen flex-col py-12 lg:py-24">
-            <h1 className="mb-8 text-center text-4xl font-extrabold leading-loose lg:text-5xl lg:leading-normal">
-              Quit the{" "}
-              <span className="block lg:inline">
-                <code className="rounded-md bg-zinc-700 px-2 py-1 text-lg md:text-2xl lg:text-5xl">
-                  console.<span className="text-blue-300">log</span>(
-                  <span className="text-green-300">&quot;Flag is &quot;</span>{" "}
-                  <span className="text-orange-300"> + </span>isOn)
-                </code>
-              </span>
+            <h1 className="mb-8 text-center text-4xl font-extrabold lg:text-5xl">
+              <span className="mark">Quit</span> the console.(&quot;Flag is
+              &quot; + isOn)
             </h1>
-            <div className="space-y-4 text-center text-lg font-medium text-gray-400 lg:text-2xl">
+            <div className="space-y-4 text-center text-lg font-medium lg:text-2xl">
               <h2>
                 Debugging is already hard, Debugging a Service is even harder 😮‍💨
               </h2>
-              <h2 className="font-semibold text-pink-500">
+              <h2 className="font-semibold">
                 A/BBY is here to help you with that
               </h2>
             </div>
@@ -248,9 +244,7 @@ const OuterPage: NextPageWithLayout<
 };
 
 OuterPage.getLayout = (page) => (
-  <MarketingLayout isInverted seoTitle="Devtools">
-    {page}
-  </MarketingLayout>
+  <MarketingLayout seoTitle="Devtools">{page}</MarketingLayout>
 );
 
 export const getStaticProps = async () => {

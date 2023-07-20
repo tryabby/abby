@@ -22,7 +22,7 @@ export default function LoginPage() {
 
   const { register, handleSubmit, formState } = useForm<{ email: string }>();
   return (
-    <main className="flex min-h-screen items-center justify-center bg-pink-100">
+    <main className="flex min-h-screen items-center justify-center bg-primary-background text-primary-foreground">
       <div className="max-w-2xl rounded-md bg-white p-8 text-gray-900 shadow-2xl">
         <Link href="/" className="mb-12 block text-center">
           <Logo as="h1" />

@@ -1,5 +1,12 @@
 # @tryabby/react
 
+## 4.0.1
+
+### Patch Changes
+
+- Updated dependencies
+  - @tryabby/core@4.0.1
+
 ## 4.0.0
 
 ### Major Changes

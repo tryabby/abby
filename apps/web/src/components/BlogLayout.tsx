@@ -3,6 +3,7 @@ import { MarketingLayout, MarketingLayoutProps } from "./MarketingLayout";
 import dayjs from "dayjs";
 import Image from "next/image";
 import { SignupButton } from "./SignupButton";
+import { Divider } from "./Divider";
 
 type Props = Pick<MarketingLayoutProps, "children" | "seoTitle"> & {
   meta: PostMeta;
@@ -24,11 +25,11 @@ export function BlogLayout({ children, seoTitle, meta }: Props) {
             fill
           />
         </div>
-        <section className="prose mx-auto w-full max-w-full lg:prose-lg">
+        <section className="prose mx-auto w-full max-w-full dark:prose-invert lg:prose-lg">
           {children}
         </section>
-
-        <div className="mx-auto mt-12 w-full rounded-lg bg-white p-4 text-center text-lg font-semibold leading-loose shadow-lg">
+        <Divider className="my-12" />
+        <div className="mx-auto w-full rounded-lg p-4 text-center text-lg font-semibold leading-loose">
           A/BBY is an Open Source SaaS for developers to streamline A/B testing
           and feature flagging.
           <br />
