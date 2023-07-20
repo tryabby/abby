@@ -352,8 +352,13 @@ export class Abby<
     const parsedCookies = parseCookies(cookies);
 
     Object.entries(parsedCookies).forEach(([cookieName, cookieValue]) => {
-      // A/B testing cookie
+      // this happens if there are multiple abby instances. We only want to use the cookies for this instance
+      if (!cookieName.includes(`${this.config.projectId}_`)) {
+        return;
+      }
+
       if (cookieName.startsWith(ABBY_AB_STORAGE_PREFIX)) {
+        // A/B testing cookie
         const testName = cookieName.replace(
           `${ABBY_AB_STORAGE_PREFIX}${this.config.projectId}_`,
           ""
@@ -397,7 +402,7 @@ export class Abby<
   }
 
   private flagStringToType(flagName: string, stringifiedValue: string): FlagValue {
-    const flagType = (this.config.flags as any)[flagName as keyof Flags] as FlagValueString;
+    const flagType = this._cfg.flags?.[flagName as keyof Flags]!;
 
     switch (flagType) {
       case "Boolean":

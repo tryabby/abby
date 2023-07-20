@@ -2,13 +2,32 @@ import { Menu, Transition } from "@headlessui/react";
 import { DOCS_URL } from "@tryabby/core";
 import clsx from "clsx";
 import Logo from "components/Logo";
+import {
+  NavigationMenu,
+  NavigationMenuContent,
+  NavigationMenuItem,
+  NavigationMenuLink,
+  NavigationMenuList,
+  NavigationMenuTrigger,
+  navigationMenuTriggerStyle,
+} from "components/ui/navigation-menu";
 import { cn } from "lib/utils";
 import { Star } from "lucide-react";
 import { useSession } from "next-auth/react";
+import { useTheme } from "next-themes";
 import Link from "next/link";
-import { Fragment } from "react";
+import { Fragment, useLayoutEffect, useState } from "react";
 import { GiHamburgerMenu } from "react-icons/gi";
+import { twMerge } from "tailwind-merge";
 import { trpc } from "utils/trpc";
+import * as React from "react";
+
+type NavItem = {
+  title: string;
+} & (
+  | { href: string }
+  | { subItems: { title: string; subTitle: string; href: string }[] }
+);
 
 const NAV_ITEMS = [
   {
@@ -16,23 +35,44 @@ const NAV_ITEMS = [
     href: "/#features",
   },
   {
-    title: "Devtools",
-    href: "/devtools",
-  },
-  {
     title: "Pricing",
     href: "/#pricing",
   },
   {
-    title: "Docs",
-    href: DOCS_URL,
+    title: "Developer",
+    subItems: [
+      {
+        title: "Devtools",
+        subTitle: "Painless Debugging",
+        href: "/devtools",
+      },
+      {
+        title: "Documentation",
+        subTitle: "Learn how to use Abby",
+        href: DOCS_URL,
+      },
+    ],
   },
-];
+  {
+    title: "Learn More",
+    subItems: [
+      {
+        title: "Tips & Insights",
+        subTitle: "Learn how to use Abby",
+        href: "/about",
+      },
+      {
+        title: "Contact Us",
+        subTitle: "Get in touch with us",
+        href: "/contact",
+      },
+    ],
+  },
+] satisfies Array<NavItem>;
 
 function MobileNav({ isInverted }: { isInverted?: boolean }) {
   const { data, status } = useSession();
-  const { data: starsCount, isLoading: isStarsLoading } =
-    trpc.misc.getStars.useQuery();
+
   return (
     <Menu>
       <Menu.Button
@@ -56,12 +96,16 @@ function MobileNav({ isInverted }: { isInverted?: boolean }) {
             isInverted ? "bg-zinc-800" : "bg-white"
           )}
         >
-          {NAV_ITEMS.map(({ href, title }) => (
+          {NAV_ITEMS.flatMap((i) =>
+            i.subItems
+              ? i.subItems.map((i) => ({ title: i.title, href: i.href }))
+              : i
+          ).map(({ href, title }) => (
             <Menu.Item key={href}>
               {({ active }) => (
                 <Link
                   className={clsx("rounded-lg p-2", active && "bg-pink-200")}
-                  href={href}
+                  href={href ?? ""}
                 >
                   {title}
                 </Link>
@@ -69,32 +113,16 @@ function MobileNav({ isInverted }: { isInverted?: boolean }) {
             </Menu.Item>
           ))}
           <Menu.Item>
-            <NavItem
-              href="https://github.com/tryabby/abby"
-              className="mr-0"
-              isInverted={isInverted}
-            >
-              <Star className="h-5 w-5" />
-              <span>{isStarsLoading ? "0" : `${starsCount}`}</span>
-            </NavItem>
-          </Menu.Item>
-          <Menu.Item>
             {status === "authenticated" ? (
               <NavItem
                 href={`/projects/${data.user?.projectIds[0]}`}
                 isProminent
                 className="mr-0"
-                isInverted={isInverted}
               >
                 Dashboard
               </NavItem>
             ) : (
-              <NavItem
-                isProminent
-                href="/login"
-                className="mr-0"
-                isInverted={isInverted}
-              >
+              <NavItem isProminent href="/login" className="mr-0">
                 Log In
               </NavItem>
             )}
@@ -108,7 +136,6 @@ function MobileNav({ isInverted }: { isInverted?: boolean }) {
 type NavItemProps = {
   children: React.ReactNode;
   isProminent?: boolean;
-  isInverted?: boolean;
   className?: string;
 } & (
   | {
@@ -126,7 +153,6 @@ function NavItem({
   onClick,
   isProminent,
   className,
-  isInverted,
 }: NavItemProps) {
   return (
     <Link
@@ -134,12 +160,10 @@ function NavItem({
       onClick={onClick}
       scroll={false}
       className={clsx(
-        "mr-2 flex items-center space-x-2 rounded-lg px-4 py-2 font-medium transition-colors duration-200 ease-in-out",
+        "mr-2 flex items-center space-x-2 rounded-lg px-4 py-2 font-medium transition-all duration-200 ease-in-out",
         className,
         isProminent
-          ? isInverted
-            ? "bg-pink-600 hover:bg-pink-600/70 active:bg-pink-700/70"
-            : "bg-pink-300 hover:bg-pink-400/70 active:bg-pink-500/70"
+          ? "bg-accent-background text-accent-foreground hover:opacity-90"
           : "hover:bg-pink-300/40"
       )}
     >
@@ -148,26 +172,75 @@ function NavItem({
   );
 }
 
+const ListItem = React.forwardRef<
+  React.ElementRef<typeof Link>,
+  React.ComponentPropsWithoutRef<typeof Link>
+>(({ className, title, children, ...props }, ref) => {
+  return (
+    <NavigationMenuLink asChild>
+      <Link
+        ref={ref}
+        className={cn(
+          "block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-primary-hover hover:text-primary-foreground focus:bg-primary-hover focus:text-primary-foreground",
+          className
+        )}
+        {...props}
+      >
+        <div className="text-sm font-medium leading-none">{title}</div>
+        <p className="line-clamp-2 text-sm leading-snug text-primary-muted">
+          {children}
+        </p>
+      </Link>
+    </NavigationMenuLink>
+  );
+});
+ListItem.displayName = "ListItem";
+
 export function Navbar({ isInverted }: { isInverted?: boolean }) {
   const { data, isLoading, isError } = trpc.user.getUserData.useQuery();
   const { data: starsCount, isLoading: isStarsLoading } =
     trpc.misc.getStars.useQuery();
+
   return (
-    <nav className="container relative flex items-center justify-between px-6 py-6 md:px-16">
+    <nav className="container relative flex items-center justify-between border-b border-b-accent-background px-6 py-6 md:px-16">
       <div className="flex items-center space-x-4">
-        <Link href="/" className="mr-12">
+        <Link href="/" className="mr-12 hover:bg-primary-hover">
           <Logo />
         </Link>
-        {NAV_ITEMS.map(({ href, title }) => (
-          <NavItem key={href} href={href} className="hidden lg:flex">
-            {title}
-          </NavItem>
-        ))}
+
+        <NavigationMenu>
+          <NavigationMenuList>
+            {NAV_ITEMS.map(({ href, title, subItems }) => (
+              <NavigationMenuItem>
+                {subItems == null ? (
+                  <Link href={href} legacyBehavior passHref>
+                    <NavigationMenuLink
+                      className={navigationMenuTriggerStyle()}
+                    >
+                      {title}
+                    </NavigationMenuLink>
+                  </Link>
+                ) : (
+                  <>
+                    <NavigationMenuTrigger>{title}</NavigationMenuTrigger>
+                    <NavigationMenuContent className="min-w-[400px]">
+                      {subItems.map(({ href, title, subTitle }) => (
+                        <ListItem href={href} title={title}>
+                          {subTitle}
+                        </ListItem>
+                      ))}
+                    </NavigationMenuContent>
+                  </>
+                )}
+              </NavigationMenuItem>
+            ))}
+          </NavigationMenuList>
+        </NavigationMenu>
       </div>
       <div className="flex items-center space-x-3">
         <Link
           href="https://github.com/tryabby/abby"
-          className="border- hidden h-full items-center justify-center space-x-2 rounded-lg border-2 border-black px-4 py-2 font-medium transition-colors duration-200 ease-out hover:bg-pink-300/50 lg:flex"
+          className="flex h-full items-center justify-center space-x-2 rounded-lg border-2 border-primary-foreground px-4 py-2 font-medium transition-colors duration-200 ease-out hover:bg-pink-300/50"
         >
           <Star className="h-5 w-5" />
           <span>{isStarsLoading ? "0" : `${starsCount}`}</span>
@@ -176,23 +249,17 @@ export function Navbar({ isInverted }: { isInverted?: boolean }) {
           <NavItem
             href={`/projects/${data.projects[0]?.id}`}
             isProminent
-            isInverted={isInverted}
             className="hidden lg:flex"
           >
             Dashboard
           </NavItem>
         ) : (
-          <NavItem
-            isInverted={isInverted}
-            isProminent
-            href="/login"
-            className="hidden lg:flex"
-          >
+          <NavItem isProminent href="/login" className="hidden lg:flex">
             Log In
           </NavItem>
         )}
+        <MobileNav isInverted={isInverted} />
       </div>
-      <MobileNav isInverted={isInverted} />
     </nav>
   );
 }

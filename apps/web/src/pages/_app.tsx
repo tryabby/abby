@@ -38,8 +38,9 @@ const MyApp: AppType<{ session: Session | null }> = ({
   return (
     <>
       <AbbyProvider initialData={__ABBY_PROJECT_DATA__}>
-        <AbbyDevtools />
-        <ThemeProvider defaultTheme="dark">
+        {/* we render different devtools on the landing page */}
+        {router.asPath !== "/" && <AbbyDevtools />}
+        <ThemeProvider attribute="class" defaultTheme="dark">
           <TooltipProvider>
             <SessionProvider session={session}>
               <main className={`font-sans`}>
