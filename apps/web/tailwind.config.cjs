@@ -2,13 +2,39 @@ const { fontFamily } = require("tailwindcss/defaultTheme");
 
 /** @type {import('tailwindcss').Config} */
 module.exports = {
-  darkMode: ["class", '[data-theme="dark"]'],
+  darkMode: ["class"],
   content: ["./src/**/*.{js,ts,jsx,tsx}"],
   theme: {
     container: {
       center: true,
     },
     extend: {
+      colors: {
+        primary: {
+          foreground: {
+            DEFAULT: "rgba(var(--color-primary-foreground), 1)",
+            hover: "rgba(var(--color-primary-foreground), 0.9)",
+            muted: "rgba(var(--color-primary-foreground), 0.6)",
+          },
+          background: {
+            DEFAULT: "rgba(var(--color-primary-background), 1)",
+            hover: "rgba(var(--color-primary-foreground), 0.1)",
+            muted: "rgba(var(--color-primary-background), 0.6)",
+          },
+        },
+        accent: {
+          foreground: {
+            DEFAULT:  "rgba(var(--color-accent-foreground), 1)",
+            hover: "rgba(var(--color-accent-foreground), 0.9)",
+            muted: "rgba(var(--color-accent-foreground), 0.6)",
+          },
+          background:{
+            DEFAULT: "rgba(var(--color-accent-background), 1)",
+            hover: "rgba(var(--color-accent-background), 0.9)",
+            muted: "rgba(var(--color-accent-background), 0.6)",
+          }
+        },
+      },
       fontFamily: {
         sans: ["Mona Sans", ...fontFamily.sans],
         mono: ["Fragment Mono", ...fontFamily.mono],

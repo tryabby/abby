@@ -1,5 +1,11 @@
 # @tryabby/core
 
+## 4.0.1
+
+### Patch Changes
+
+- fix multi-project cookie hydratio
+
 ## 4.0.0
 
 ### Major Changes

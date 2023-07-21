@@ -38,10 +38,11 @@
       text-indent: -9999px;
       width: 45px;
       height: 25px;
-      background: hsl(321 53.6% 24.4%);
+      background: rgba(249, 168, 212, 0.3);
       display: block;
       border-radius: 25px;
       position: relative;
+      transition: background 0.1s ease-in-out;
     }
 
     .abby-label:after {

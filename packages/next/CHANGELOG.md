@@ -1,5 +1,11 @@
 # @tryabby/next
 
+## 4.0.1
+
+### Patch Changes
+
+- @tryabby/react@4.0.1
+
 ## 4.0.0
 
 ### Major Changes

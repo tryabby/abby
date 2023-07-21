@@ -10,14 +10,14 @@ export function SignupButton({ className }: { className?: string }) {
         href="/login"
         onClick={() => onAct()}
         className={twMerge(
-          "mt-12 rounded-xl bg-gray-900 px-6 py-4 text-2xl font-semibold text-white no-underline transition-transform duration-150 ease-in-out hover:scale-110",
+          "mt-12 rounded-xl bg-accent-background px-6 py-2 text-xl font-semibold text-accent-foreground no-underline transition-transform duration-150 ease-in-out hover:scale-110",
           className
         )}
       >
         {variant === "A" && "Test Now"}
         {variant === "B" && "Sign Up for Free"}
       </Link>
-      <span className="mt-4 text-xs text-gray-600">
+      <span className="mt-4 text-xs">
         Free forever. No Credit Card required
       </span>
     </div>
