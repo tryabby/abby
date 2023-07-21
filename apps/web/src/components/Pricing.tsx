@@ -1,10 +1,12 @@
 import clsx from "clsx";
+import { cn } from "lib/utils";
 import { Info } from "lucide-react";
-import { signIn } from "next-auth/react";
+import { useSession } from "next-auth/react";
+import Link from "next/link";
+import { useRouter } from "next/router";
 import { AiOutlineCheckCircle } from "react-icons/ai";
 import { getLimitByPlan } from "server/common/plans";
 import { Tooltip, TooltipContent, TooltipTrigger } from "./Tooltip";
-import { cn } from "lib/utils";
 
 type PricingElementProps = {
   price: string;
@@ -14,7 +16,7 @@ type PricingElementProps = {
   isFeatured?: boolean;
   priceSuffix?: string;
   ctaText?: string;
-  onClick: () => void;
+  href: string;
   isFull?: boolean;
 };
 
@@ -23,10 +25,9 @@ function PricingElement({
   price,
   subtitle,
   title,
-  isFeatured,
   priceSuffix,
   ctaText,
-  onClick,
+  href,
   isFull,
 }: PricingElementProps) {
   return (
@@ -52,8 +53,8 @@ function PricingElement({
             "lg:col-span-2 lg:ml-8 lg:grid lg:grid-cols-2 lg:items-center"
         )}
       >
-        <button
-          onClick={onClick}
+        <Link
+          href={href}
           className={cn(
             "my-6 w-full rounded-xl border px-4 py-2 transition-colors duration-200 ease-in-out",
             "border-accent-background hover:bg-accent-background",
@@ -61,7 +62,7 @@ function PricingElement({
           )}
         >
           {ctaText ?? `Choose ${title}`}
-        </button>
+        </Link>
         <ul className="space-y-2 lg:order-1">
           {features.map((feature, i) => {
             return (
@@ -99,64 +100,69 @@ function PricingElement({
 }
 
 export function PricingTable() {
+  const router = useRouter();
+  const session = useSession();
   const basePlan = getLimitByPlan(null);
   const startupPlan = getLimitByPlan("STARTUP");
   const proPlan = getLimitByPlan("PRO");
 
   return (
-    <div className="mx-auto grid max-w-md grid-cols-1 gap-y-4 md:gap-x-4 md:gap-y-12 lg:max-w-none lg:grid-cols-4">
-      <PricingElement
-        onClick={() => signIn("github", { callbackUrl: "/projects" })}
-        price="Free"
-        title="Hobby"
-        subtitle="Good for IndieHackers that want to get started with A/B Testing & Feature Flags. No Credit card required"
-        features={[
-          `${basePlan.eventsPerMonth.toLocaleString()} Events / month`,
-          `${basePlan.tests} A/B Test`,
-          `${basePlan.flags} Feature Flags`,
-          `${basePlan.environments} Environments`,
-        ]}
-      />
-      <PricingElement
-        onClick={() => signIn("github", { callbackUrl: "/projects" })}
-        price="12€"
-        title="Startup"
-        subtitle="Optimal for startups & small businesses that want to dive deeper with A/B Testing & Feature Flags"
-        features={[
-          `${startupPlan.eventsPerMonth.toLocaleString()} Events / month`,
-          `${startupPlan.tests} A/B Tests`,
-          `${startupPlan.flags} Feature Flags`,
-          `${startupPlan.environments} Environments`,
-        ]}
-        priceSuffix="/mo"
-        isFeatured
-      />
-      <PricingElement
-        onClick={() => signIn("github", { callbackUrl: "/projects" })}
-        price="89€"
-        title="Pro"
-        subtitle="Perfect for growing companies that want to scale their A/B Testing & Feature Flags and get more insights"
-        features={[
-          `${proPlan.eventsPerMonth.toLocaleString()} Events / month`,
-          `${proPlan.tests} A/B Tests`,
-          `${proPlan.flags} Feature Flags`,
-          `${proPlan.environments} Environments`,
-        ]}
-        priceSuffix="/mo"
-      />
-      <PricingElement
-        onClick={() => signIn("github", { callbackUrl: "/projects" })}
-        price="Talk to us!"
-        title="Enterprise"
-        subtitle="For even the biggest enterprise companies."
-        ctaText="Contact us"
-        features={[
-          "Unlimited Events / month",
-          "Unlimited Tests",
-          "Unlimited Feature Flags",
-          "Unlimited Environments",
-        ]}
-      />
-    </div>
+    <>
+      <div className="mx-auto grid max-w-md grid-cols-1 gap-y-4 md:gap-x-4 md:gap-y-12 lg:max-w-none lg:grid-cols-4">
+        <PricingElement
+          href={session.status === "authenticated" ? "/projects" : "/login"}
+          price="Free"
+          title="Hobby"
+          subtitle="Good for IndieHackers that want to get started with A/B Testing & Feature Flags. No Credit card required"
+          features={[
+            `${basePlan.eventsPerMonth.toLocaleString()} Events / month`,
+            `${basePlan.tests} A/B Test`,
+            `${basePlan.flags} Feature Flags`,
+            `${basePlan.environments} Environments`,
+          ]}
+        />
+        <PricingElement
+          href={session.status === "authenticated" ? "/projects" : "/login"}
+          price="12€"
+          title="Startup"
+          subtitle="Optimal for startups & small businesses that want to dive deeper with A/B Testing & Feature Flags"
+          features={[
+            `${startupPlan.eventsPerMonth.toLocaleString()} Events / month`,
+            `${startupPlan.tests} A/B Tests`,
+            `${startupPlan.flags} Feature Flags`,
+            `${startupPlan.environments} Environments`,
+          ]}
+          priceSuffix="/mo*"
+          isFeatured
+        />
+        <PricingElement
+          href={session.status === "authenticated" ? "/projects" : "/login"}
+          price="89€"
+          title="Pro"
+          subtitle="Perfect for growing companies that want to scale their A/B Testing & Feature Flags and get more insights"
+          features={[
+            `${proPlan.eventsPerMonth.toLocaleString()} Events / month`,
+            `${proPlan.tests} A/B Tests`,
+            `${proPlan.flags} Feature Flags`,
+            `${proPlan.environments} Environments`,
+          ]}
+          priceSuffix="/mo*"
+        />
+        <PricingElement
+          href={"/contact"}
+          price="Talk to us!"
+          title="Enterprise"
+          subtitle="For even the biggest enterprise companies."
+          ctaText="Contact us"
+          features={[
+            "Unlimited Events / month",
+            "Unlimited Tests",
+            "Unlimited Feature Flags",
+            "Unlimited Environments",
+          ]}
+        />
+      </div>
+      <p className="mt-8 text-center">*Those prices are per Project</p>
+    </>
   );
 }
