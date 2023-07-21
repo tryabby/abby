@@ -11,16 +11,28 @@ module.exports = {
     extend: {
       colors: {
         primary: {
-          foreground: "rgb(var(--color-primary-foreground))",
-          background: "rgb(var(--color-primary-background))",
-          hover: "rgba(var(--color-primary-foreground), 0.1)",
-          muted: "rgba(var(--color-primary-foreground), 0.6)",
+          foreground: {
+            DEFAULT: "rgba(var(--color-primary-foreground), 1)",
+            hover: "rgba(var(--color-primary-foreground), 0.9)",
+            muted: "rgba(var(--color-primary-foreground), 0.6)",
+          },
+          background: {
+            DEFAULT: "rgba(var(--color-primary-background), 1)",
+            hover: "rgba(var(--color-primary-foreground), 0.1)",
+            muted: "rgba(var(--color-primary-background), 0.6)",
+          },
         },
         accent: {
-          foreground: "rgb(var(--color-accent-foreground))",
-          background: "rgb(var(--color-accent-background))",
-          hover: "rgba(var(--color-accent-background), 0.1)",
-          muted: "rgba(var(--color-accent-background), 0.6)",
+          foreground: {
+            DEFAULT:  "rgba(var(--color-accent-foreground), 1)",
+            hover: "rgba(var(--color-accent-foreground), 0.9)",
+            muted: "rgba(var(--color-accent-foreground), 0.6)",
+          },
+          background:{
+            DEFAULT: "rgba(var(--color-accent-background), 1)",
+            hover: "rgba(var(--color-accent-background), 0.9)",
+            muted: "rgba(var(--color-accent-background), 0.6)",
+          }
         },
       },
       fontFamily: {
