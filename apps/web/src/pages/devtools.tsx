@@ -5,7 +5,6 @@ import abbyDevtools from "@tryabby/devtools";
 import { createAbby } from "@tryabby/next";
 import { DevtoolsArrow } from "components/DevtoolsArrow";
 import { SignupButton } from "components/SignupButton";
-import { useDevtoolsPosition } from "lib/hooks/useDevtoolsPosition";
 import { cn } from "lib/utils";
 import { InferGetStaticPropsType } from "next";
 
