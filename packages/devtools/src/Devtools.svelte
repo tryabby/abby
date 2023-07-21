@@ -164,7 +164,7 @@
     width: 50px;
     height: 50px;
     border-radius: 12px;
-    border-color: transparent;
+    border: 2px solid var(--pink);
     display: flex;
     align-items: center;
     justify-content: center;
