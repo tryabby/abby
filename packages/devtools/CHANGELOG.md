@@ -1,5 +1,11 @@
 # @tryabby/devtools
 
+## 4.0.1
+
+### Patch Changes
+
+- adapt to new ci colors
+
 ## 4.0.0
 
 ### Major Changes
