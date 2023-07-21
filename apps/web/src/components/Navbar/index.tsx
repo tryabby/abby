@@ -192,7 +192,7 @@ const ListItem = React.forwardRef<
       <Link
         ref={ref}
         className={cn(
-          "block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-primary-hover hover:text-primary-foreground focus:bg-primary-hover focus:text-primary-foreground",
+          "block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-primary-background-hover hover:text-primary-foreground focus:bg-primary-background-hover focus:text-primary-foreground",
           className
         )}
         {...props}
@@ -203,7 +203,7 @@ const ListItem = React.forwardRef<
             <ExternalLink width={14} height={14} className="-mt-1" />
           )}
         </div>
-        <p className="line-clamp-2 text-sm leading-snug text-primary-muted">
+        <p className="text-primary-muted line-clamp-2 text-sm leading-snug">
           {children}
         </p>
       </Link>
