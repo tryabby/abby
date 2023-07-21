@@ -201,6 +201,15 @@ export const projectRouter = router({
     .input(z.object({ projectId: z.string() }))
     .mutation(async ({ ctx, input }) => {
       const projectId = input.projectId;
+
+      const project = await ctx.prisma.project.findFirst({
+        where: {
+          id: projectId,
+        },
+      });
+
+      console.log(project);
+
       await ctx.prisma.project.delete({
         where: {
           id: projectId,
