@@ -27,7 +27,7 @@ const BlogPage: NextPageWithLayout<Props> = ({ posts }) => {
       </h2>
       <section className="grid grid-cols-1 gap-8 gap-x-12 md:grid-cols-2">
         {posts.map((p) => (
-          <Link href={`/blog/${p.slug}`}>
+          <Link href={`/tips-and-insights/${p.slug}`}>
             <div className="relative aspect-video w-full">
               <Image
                 src={p.imageUrl}
@@ -53,7 +53,7 @@ BlogPage.getLayout = (page) => {
 
 export const getStaticProps: GetStaticProps = async () => {
   const files = await fs.readdir(
-    path.resolve(process.cwd(), "src", "pages", "blog")
+    path.resolve(process.cwd(), "src", "pages", "tips-and-insights")
   );
 
   const posts: Array<PostMeta> = await Promise.all(

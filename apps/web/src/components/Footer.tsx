@@ -26,7 +26,7 @@ export function Footer() {
           </div>
           <div className="flex flex-col gap-y-4 md:gap-0">
             <h1 className="mb-2 text-2xl font-bold md:mb-3">Links</h1>
-            <Link href={`/blog`}>Blog</Link>
+            <Link href={`/tips-and-insights`}>Tips & Insights</Link>
             <Link href={DOCS_URL}>Documentation</Link>
             <Link href={GITHUB_URL}>Github</Link>
             <Link href="https://discord.gg/nk7wKf7Pv2">Discord</Link>

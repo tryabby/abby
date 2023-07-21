@@ -12,21 +12,27 @@ import {
   navigationMenuTriggerStyle,
 } from "components/ui/navigation-menu";
 import { cn } from "lib/utils";
-import { Star } from "lucide-react";
+import { ExternalLink, Star } from "lucide-react";
 import { useSession } from "next-auth/react";
 import { useTheme } from "next-themes";
 import Link from "next/link";
+import * as React from "react";
 import { Fragment, useLayoutEffect, useState } from "react";
 import { GiHamburgerMenu } from "react-icons/gi";
-import { twMerge } from "tailwind-merge";
 import { trpc } from "utils/trpc";
-import * as React from "react";
 
 type NavItem = {
   title: string;
 } & (
-  | { href: string }
-  | { subItems: { title: string; subTitle: string; href: string }[] }
+  | { href: string; isExternal?: boolean }
+  | {
+      subItems: {
+        title: string;
+        subTitle: string;
+        href: string;
+        isExternal?: boolean;
+      }[];
+    }
 );
 
 const NAV_ITEMS = [
@@ -48,8 +54,9 @@ const NAV_ITEMS = [
       },
       {
         title: "Documentation",
-        subTitle: "Learn how to use Abby",
+        subTitle: "Developers API Reference",
         href: DOCS_URL,
+        isExternal: true,
       },
     ],
   },
@@ -59,7 +66,7 @@ const NAV_ITEMS = [
       {
         title: "Tips & Insights",
         subTitle: "Learn how to use Abby",
-        href: "/about",
+        href: "/tips-and-insights",
       },
       {
         title: "Contact Us",
@@ -174,8 +181,10 @@ function NavItem({
 
 const ListItem = React.forwardRef<
   React.ElementRef<typeof Link>,
-  React.ComponentPropsWithoutRef<typeof Link>
->(({ className, title, children, ...props }, ref) => {
+  React.ComponentPropsWithoutRef<typeof Link> & {
+    isExternalLink?: boolean;
+  }
+>(({ className, title, children, isExternalLink, ...props }, ref) => {
   return (
     <NavigationMenuLink asChild>
       <Link
@@ -186,7 +195,12 @@ const ListItem = React.forwardRef<
         )}
         {...props}
       >
-        <div className="text-sm font-medium leading-none">{title}</div>
+        <div className="flex items-center space-x-2 text-sm font-medium leading-none">
+          <span>{title}</span>{" "}
+          {isExternalLink && (
+            <ExternalLink width={14} height={14} className="-mt-1" />
+          )}
+        </div>
         <p className="line-clamp-2 text-sm leading-snug text-primary-muted">
           {children}
         </p>
@@ -204,7 +218,7 @@ export function Navbar({ isInverted }: { isInverted?: boolean }) {
   return (
     <nav className="container relative flex items-center justify-between border-b border-b-accent-background px-6 py-6 md:px-16">
       <div className="flex items-center space-x-4">
-        <Link href="/" className="mr-12 hover:bg-primary-hover">
+        <Link href="/" className="mr-12">
           <Logo />
         </Link>
 
@@ -224,8 +238,12 @@ export function Navbar({ isInverted }: { isInverted?: boolean }) {
                   <>
                     <NavigationMenuTrigger>{title}</NavigationMenuTrigger>
                     <NavigationMenuContent className="min-w-[400px]">
-                      {subItems.map(({ href, title, subTitle }) => (
-                        <ListItem href={href} title={title}>
+                      {subItems.map(({ href, title, subTitle, isExternal }) => (
+                        <ListItem
+                          href={href}
+                          title={title}
+                          isExternalLink={isExternal}
+                        >
                           {subTitle}
                         </ListItem>
                       ))}
