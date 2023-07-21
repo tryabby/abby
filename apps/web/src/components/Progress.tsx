@@ -8,7 +8,7 @@ export function Progress({ currentValue, maxValue }: Props) {
   return (
     <div className="w-full rounded-full bg-gray-700" role="progressbar">
       <div
-        className="rounded-full bg-pink-600 p-1 text-center text-xs font-medium leading-none text-pink-100"
+        className="rounded-full bg-accent-background p-1 text-center text-xs font-medium leading-none text-pink-100"
         style={{ width: `${currentValuePercentage}%` }}
       >
         {" "}

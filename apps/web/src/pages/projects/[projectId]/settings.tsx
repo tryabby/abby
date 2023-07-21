@@ -78,50 +78,120 @@ const SettingsPage: NextPageWithLayout = () => {
       ) : (
         <>
           <section className="rounded-xl bg-gray-800 px-6 py-3">
+            <h2 className="mb-8 text-xl font-semibold">General Details</h2>
+            <div className="flex flex-col space-y-4">
+              <div className="flex">
+                <label className="flex flex-col">
+                  Name
+                  <div className="flex space-x-5">
+                    <input
+                      ref={projectNameRef}
+                      className="w-52 rounded-md bg-gray-700 px-3 py-2 text-pink-50/80"
+                      type="text"
+                      defaultValue={data.project.name}
+                    />
+                    <button
+                      className="w-28  rounded-md bg-accent-background px-3 py-0.5 text-accent-foreground transition-colors duration-200 ease-in-out"
+                      onClick={() => {
+                        if (!projectNameRef.current?.value) return;
+                        updateProjectName({
+                          name: projectNameRef.current?.value,
+                          projectId,
+                        });
+                      }}
+                    >
+                      Save
+                    </button>
+                  </div>
+                </label>
+              </div>
+              <p>Current Plan:</p>
+              <div className="flex space-x-5">
+                <div className="flex w-52 items-center justify-center rounded-md border px-3 py-0.5 text-primary-foreground ">
+                  <span>{getProjectPaidPlan(data.project) ?? "Free"}</span>
+                </div>
+                <button
+                  className="rounded-md bg-accent-background px-3 py-0.5 text-accent-foreground transition-colors duration-200 ease-in-out "
+                  onClick={async () => {
+                    redirectToCheckout(projectId, "STARTUP");
+                  }}
+                >
+                  Upgrade to Startup
+                </button>
+                <button
+                  className="rounded-md bg-accent-background px-3 py-0.5 text-accent-foreground transition-colors duration-200 ease-in-out"
+                  onClick={async () => {
+                    redirectToCheckout(projectId, "PRO");
+                  }}
+                >
+                  Upgrade to Pro
+                </button>
+                <Link
+                  className="rounded-md border-pink-300 bg-accent-background px-3 py-0.5 text-accent-foreground transition-colors duration-200 ease-in-out"
+                  href={`/projects/${projectId}/redeem`}
+                >
+                  <button className=" my-1">Redeem Coupon</button>
+                </Link>
+                {data.project.stripeCustomerId != null &&
+                  getProjectPaidPlan(data.project) != null && (
+                    <button
+                      className="text- ml-4 mr-auto mt-4 rounded-sm bg-blue-300 px-3 py-0.5 text-accent-foreground transition-colors duration-200 ease-in-out"
+                      onClick={async () => {
+                        redirectToBillingPortal(projectId);
+                      }}
+                    >
+                      Manage
+                    </button>
+                  )}
+              </div>
+            </div>
+          </section>
+          <section className="rounded-xl bg-gray-800 px-6 py-3">
             <h2 className="text-xl font-semibold">Members</h2>
             <h3 className="text-sm text-pink-50/80">
               Members have access to this project
             </h3>
             <div className="mt-8 divide-y divide-pink-50/20">
               {data.project.users.map(({ user, role }) => (
-                <div key={user.id} className="col flex justify-between py-3">
+                <div key={user.id} className="col flex  py-3">
                   <div className="flex items-center">
                     <span>{user.email}</span>
+                    {role !== ROLE.ADMIN && (
+                      <IconButton
+                        icon={<BsX />}
+                        title="Remove User"
+                        onClick={() => setUserToRemove(user)}
+                        className="bg-transparent text-2xl hover:bg-red-800/80"
+                      />
+                    )}
                     <span
                       className={clsx(
-                        "ml-2 rounded-sm px-2 py-0.5 text-sm capitalize text-pink-50/80",
+                        "rounded-md px-2 py-0.5 text-sm capitalize text-pink-50/80",
                         {
-                          "bg-orange-300 text-orange-800": role === ROLE.ADMIN,
-                          "bg-pink-300 text-pink-800": role === ROLE.USER,
+                          "  bg-blue-300 text-black": role === ROLE.ADMIN,
+                          "bg-blue-300/40 stroke-blue-300 text-blue-300":
+                            role === ROLE.USER,
                         }
                       )}
                     >
                       {role.toLowerCase()}
                     </span>
                   </div>
-                  {role !== ROLE.ADMIN && (
-                    <IconButton
-                      icon={<BsX />}
-                      title="Remove User"
-                      onClick={() => setUserToRemove(user)}
-                      className="bg-transparent text-2xl hover:bg-red-800/80"
-                    />
-                  )}
                 </div>
               ))}
               <form className="pt-4" onSubmit={onInvite}>
                 <label htmlFor="newUserEmail" className=" font-semibold">
                   Invite a new User:
                 </label>
-                <div className="mt-2">
+                <div className="mt-2 flex space-x-5">
                   <input
                     ref={inviteEmailRef}
                     id="newUserEmail"
                     type="email"
-                    className="w-80 max-w-full rounded-l-md bg-gray-700 px-3 py-2 pr-2 focus:outline-none"
+                    className="w-80 max-w-full rounded-md bg-gray-700 px-3 py-2 pr-2 focus:outline-none"
                     placeholder="abby@tryabby.com"
                   />{" "}
-                  <button className="-ml-1 mt-2 rounded-l-md rounded-r-md bg-gray-900 px-3 py-2 md:mt-0 md:rounded-l-none">
+                  <button className="w-32 rounded-md bg-accent-background">
                     Invite
                   </button>
                 </div>
@@ -194,71 +264,6 @@ const SettingsPage: NextPageWithLayout = () => {
                   Events
                 </p>
               </div>
-            </div>
-          </section>
-          <section className="rounded-xl bg-gray-800 px-6 py-3">
-            <h2 className="mb-8 text-xl font-semibold">Project</h2>
-            <div className="flex flex-col space-y-4">
-              <div>
-                <p>
-                  Current Plan: {getProjectPaidPlan(data.project) ?? "Free"}{" "}
-                </p>
-                <div className="flex space-x-3">
-                  <button
-                    className="mt-4 rounded-sm bg-blue-300 px-3 py-0.5 text-gray-800 transition-colors duration-200 ease-in-out hover:bg-blue-400"
-                    onClick={async () => {
-                      redirectToCheckout(projectId, "STARTUP");
-                    }}
-                  >
-                    Upgrade to Startup
-                  </button>
-                  <button
-                    className="mt-4 rounded-sm bg-blue-300 px-3 py-0.5 text-gray-800 transition-colors duration-200 ease-in-out hover:bg-blue-400"
-                    onClick={async () => {
-                      redirectToCheckout(projectId, "PRO");
-                    }}
-                  >
-                    Upgrade to Pro
-                  </button>
-                  <Link href={`/projects/${projectId}/redeem`}>
-                    <button className="mt-4 rounded-sm px-3 py-0.5 text-white transition-all duration-200 ease-in-out hover:underline">
-                      Redeem Coupon
-                    </button>
-                  </Link>
-                </div>
-                {data.project.stripeCustomerId != null &&
-                  getProjectPaidPlan(data.project) != null && (
-                    <button
-                      className="ml-4 mr-auto mt-4 rounded-sm bg-blue-300 px-3 py-0.5 text-gray-800 transition-colors duration-200 ease-in-out hover:bg-blue-400"
-                      onClick={async () => {
-                        redirectToBillingPortal(projectId);
-                      }}
-                    >
-                      Manage
-                    </button>
-                  )}
-              </div>
-              <label>
-                Name
-                <input
-                  ref={projectNameRef}
-                  className="mt-2 w-full rounded-md bg-gray-700 px-3 py-2 text-pink-50/80"
-                  type="text"
-                  defaultValue={data.project.name}
-                />
-              </label>
-              <button
-                className="mr-auto mt-4 rounded-sm bg-blue-300 px-3 py-0.5 text-gray-800 transition-colors duration-200 ease-in-out hover:bg-blue-400"
-                onClick={() => {
-                  if (!projectNameRef.current?.value) return;
-                  updateProjectName({
-                    name: projectNameRef.current?.value,
-                    projectId,
-                  });
-                }}
-              >
-                Save
-              </button>
             </div>
           </section>
         </>
