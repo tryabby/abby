@@ -19,9 +19,12 @@ import { toast } from "react-hot-toast";
 import { BsX } from "react-icons/bs";
 import { getLimitByPlan } from "server/common/plans";
 import { trpc } from "utils/trpc";
+import { DeleteProjectModal } from "components/DeleteProjectModal";
+import { useSession } from "next-auth/react";
 
 const SettingsPage: NextPageWithLayout = () => {
   const [userToRemove, setUserToRemove] = useState<User | null>(null);
+  const [isShowDeleteModal, setisShowDeleteModal] = useState(false);
   const inviteEmailRef = useRef<HTMLInputElement>(null);
   const router = useRouter();
 
@@ -31,6 +34,13 @@ const SettingsPage: NextPageWithLayout = () => {
   const { data, isLoading, isError } = trpc.project.getProjectData.useQuery({
     projectId,
   });
+  const session = useSession();
+
+  const user = data?.project.users.find(
+    (projectUser) => projectUser.user.id === session.data?.user?.id
+  );
+
+  // console.log(user);
 
   const limits = data
     ? getLimitByPlan(getProjectPaidPlan(data?.project))
@@ -47,6 +57,11 @@ const SettingsPage: NextPageWithLayout = () => {
   const { mutateAsync } = trpc.invite.createInvite.useMutation();
 
   const { redirectToCheckout, redirectToBillingPortal } = useAbbyStripe();
+
+  const deleteProject = async () => {
+    if (!projectId) return;
+    setisShowDeleteModal(true);
+  };
 
   const onInvite = async (e: FormEvent) => {
     e.preventDefault();
@@ -83,7 +98,7 @@ const SettingsPage: NextPageWithLayout = () => {
               <div className="flex">
                 <label className="flex flex-col">
                   Name
-                  <div className="flex space-x-5">
+                  <div className="col flex space-x-5">
                     <input
                       ref={projectNameRef}
                       className="w-52 rounded-md bg-gray-700 px-3 py-2 text-pink-50/80"
@@ -104,6 +119,22 @@ const SettingsPage: NextPageWithLayout = () => {
                     </button>
                   </div>
                 </label>
+                {user?.role === ROLE.ADMIN && (
+                  <div>
+                    <label
+                      className="ml-4 flex flex-col"
+                      htmlFor="Delelte Project"
+                    >
+                      Delete Project
+                      <button
+                        onClick={deleteProject}
+                        className="w-28 rounded-md border-2 border-pink-300 bg-pink-300/30 p-2 text-accent-foreground"
+                      >
+                        Delete
+                      </button>
+                    </label>
+                  </div>
+                )}
               </div>
               <p>Current Plan:</p>
               <div className="flex space-x-5">
@@ -272,6 +303,11 @@ const SettingsPage: NextPageWithLayout = () => {
         isOpen={userToRemove != null}
         onClose={() => setUserToRemove(null)}
         user={userToRemove ?? undefined}
+      />
+      <DeleteProjectModal
+        isOpen={isShowDeleteModal}
+        goToProjects={() => router.push("/")}
+        onClose={() => setisShowDeleteModal(false)}
       />
     </main>
   );

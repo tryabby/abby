@@ -197,6 +197,16 @@ export const projectRouter = router({
         },
       });
     }),
+  deleteProject: protectedProcedure
+    .input(z.object({ projectId: z.string() }))
+    .mutation(async ({ ctx, input }) => {
+      const projectId = input.projectId;
+      await ctx.prisma.project.delete({
+        where: {
+          id: projectId,
+        },
+      });
+    }),
   createProject: protectedProcedure
     .input(z.object({ projectName: z.string() }))
     .mutation(async ({ ctx, input }) => {
