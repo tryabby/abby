@@ -29,8 +29,6 @@ export const AbbyProdDevtools = withDevtools(abbyDevtools, {
 });
 
 const DevtoolsPage = () => {
-  const devtoolsPosition = useDevtoolsPosition();
-
   const showEasterEgg = useFeatureFlag("showEasterEgg");
   const showHeading = useFeatureFlag("showHeading");
   const isExcited = useFeatureFlag("ToggleMeIfYoureExcited");
