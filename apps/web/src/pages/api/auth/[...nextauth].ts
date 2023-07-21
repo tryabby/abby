@@ -17,13 +17,7 @@ export const authOptions: NextAuthOptions = {
   },
   callbacks: {
     // Include user.id on session
-    session({ session, trigger, token, newSession }) {
-      // console.log("token", token.user.lastOpenProject);
-      console.log("trigger", trigger);
-      // console.log("newSession", newSession);
-      if (trigger === "update") {
-        console.log("it should update the token");
-      }
+    session({ session, token }) {
       if (token.user) {
         session.user = {
           ...session.user,
@@ -38,7 +32,10 @@ export const authOptions: NextAuthOptions = {
 
       return session;
     },
-    async jwt({ token, user }) {
+    async jwt({ token, user, trigger, session }) {
+      if (trigger === "update" && session && "lastOpenProject" in session) {
+        token.user.lastOpenProject = session.lastOpenProject;
+      }
       if (user) {
         const projects = await prisma.projectUser.findMany({
           where: {

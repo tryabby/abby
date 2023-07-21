@@ -14,9 +14,7 @@ const Projects: NextPageWithLayout = () => {
   const [isCreateTestModalOpen, setIsCreateTestModalOpen] = useState(false);
 
   const { data: sessionData } = useSession();
-  const projectId = sessionData?.user?.lastOpenProject ?? useProjectId();
-
-  console.log("render for", projectId);
+  const projectId = useProjectId();
 
   const { data, isLoading, isError } = trpc.project.getProjectData.useQuery({
     projectId: projectId,

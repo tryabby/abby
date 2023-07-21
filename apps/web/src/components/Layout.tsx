@@ -84,11 +84,11 @@ const SideBar =
                 onChange={async (projectId) => {
                   if (projectId === currentProjectId) return;
                   closeSidebar();
-                  console.log("data");
-                  const lol = await sessionUpdate({
-                    lastOpenProject: "testID",
+
+                  await sessionUpdate({
+                    lastOpenProject: projectId,
                   });
-                  console.log("new Session:", lol);
+
                   router.push({
                     ...router,
                     query: { ...router.query, projectId },
