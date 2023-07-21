@@ -19,6 +19,7 @@ import { twMerge } from "tailwind-merge";
 import { generateCodeSnippets } from "utils/snippets";
 import abbyScreenshot from "../../public/screenshot.png";
 import { NextPageWithLayout } from "./_app";
+import { DevtoolsArrow } from "components/DevtoolsArrow";
 
 const { useAbby, AbbyProvider, useFeatureFlag, __abby__, withDevtools } =
   createAbby({
@@ -314,6 +315,7 @@ const Home: NextPageWithLayout<
           </div>
         </div>
       </section>
+      <DevtoolsArrow />
     </>
   );
 };
