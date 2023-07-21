@@ -63,8 +63,6 @@
 
   const { flags, tests } = abby?.getProjectData() ?? {};
 
-  console.log({ flags });
-
   const [send, receive] = crossfade({
     duration: 200,
     easing: quintInOut,
@@ -84,7 +82,7 @@
     style:--top={position === "top-left" || position === "top-right" ? "1rem" : "auto"}
   >
     <div class="header">
-      <h1>Abby Devtools</h1>
+      <h1>A/BBY Devtools</h1>
       <button on:click={onToggleVisibility}>
         <CloseIcon />
       </button>
@@ -95,8 +93,20 @@
       ></small
     >
     <hr />
+    <h2>A/B Tests:</h2>
+    {#each Object.entries(tests) as [testName, { selectedVariant, variants }]}
+      <Select
+        label={testName}
+        value={selectedVariant}
+        options={variants.map((v) => ({
+          label: v,
+          value: v,
+        }))}
+        onChange={(newValue) => abby.updateLocalVariant(testName, newValue)}
+      />
+    {/each}
+    <hr />
     <h2>Flags:</h2>
-
     {#each Object.entries(flags) as [flagName, flagValue]}
       {#if typeof flagValue === "boolean"}
         <Switch
@@ -120,20 +130,6 @@
         </div>
       {/if}
     {/each}
-
-    <hr />
-    <h2>A/B Tests:</h2>
-    {#each Object.entries(tests) as [testName, { selectedVariant, variants }]}
-      <Select
-        label={testName}
-        value={selectedVariant}
-        options={variants.map((v) => ({
-          label: v,
-          value: v,
-        }))}
-        onChange={(newValue) => abby.updateLocalVariant(testName, newValue)}
-      />
-    {/each}
   </div>
 {:else}
   <button
@@ -152,7 +148,7 @@
 
 <style lang="scss">
   #devtools-collapsed {
-    --pink: hsl(323 72.8% 59.2%);
+    --pink: rgb(249, 168, 212);
     bottom: var(--bottom);
     right: var(--right);
     left: var(--left);
@@ -161,13 +157,14 @@
     position: fixed;
     color: var(--pink);
     font-weight: bold;
-    background: hsl(224 71% 4%);
+    background: #121929;
     font-family: ui-monospace, "Cascadia Code", "Source Code Pro", Menlo, Consolas,
       "DejaVu Sans Mono", monospace;
 
     width: 50px;
     height: 50px;
     border-radius: 12px;
+    border-color: transparent;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -175,7 +172,7 @@
   }
 
   #devtools {
-    --pink: hsl(323 72.8% 59.2%);
+    --pink: rgb(249, 168, 212);
     font-family: ui-monospace, "Cascadia Code", "Source Code Pro", Menlo, Consolas,
       "DejaVu Sans Mono", monospace;
     position: fixed;
@@ -183,11 +180,12 @@
     right: var(--right);
     left: var(--left);
     top: var(--top);
-    background: hsl(224 71% 4%);
+    background: #121929;
     padding: 15px 10px;
     padding-top: 10px;
     z-index: 9999;
     border-radius: 6px;
+    border: 2px solid var(--pink);
     font-size: 14px;
     color: hsl(213 31% 91%);
     min-width: 300px;
