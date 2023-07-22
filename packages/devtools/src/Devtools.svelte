@@ -75,7 +75,7 @@
   <div
     in:send={{ key }}
     out:receive={{ key }}
-    id="devtools"
+    id="abby-devtools"
     style:--right={position === "top-right" || position === "bottom-right" ? "1rem" : "auto"}
     style:--bottom={position === "bottom-left" || position === "bottom-right" ? "1rem" : "auto"}
     style:--left={position === "top-left" || position === "bottom-left" ? "1rem" : "auto"}
@@ -102,7 +102,10 @@
           label: v,
           value: v,
         }))}
-        onChange={(newValue) => abby.updateLocalVariant(testName, newValue)}
+        onChange={(newValue) => {
+          window.postMessage({ type: "abby:select-variant", testName, newValue }, "*");
+          abby.updateLocalVariant(testName, newValue);
+        }}
       />
     {/each}
     <hr />
@@ -113,7 +116,10 @@
           id={flagName}
           label={flagName}
           checked={flagValue}
-          onChange={(newValue) => abby.updateFlag(flagName, newValue)}
+          onChange={(newValue) => {
+            window.postMessage({ type: "abby:update-flag", flagName, newValue }, "*");
+            abby.updateFlag(flagName, newValue);
+          }}
         />
       {:else if typeof flagValue === "string" || typeof flagValue === "number"}
         <Input
@@ -121,12 +127,21 @@
           label={flagName}
           type={typeof flagValue === "string" ? "text" : "number"}
           value={flagValue}
-          onChange={(newValue) => abby.updateFlag(flagName, newValue)}
+          onChange={(newValue) => {
+            window.postMessage({ type: "abby:update-flag", flagName, newValue }, "*");
+            abby.updateFlag(flagName, newValue);
+          }}
         />
       {:else if typeof flagValue === "object"}
         <div style="display: flex; flex-direction: column; margin: 10px 0;">
           <p style="margin-bottom: 5px;">{flagName}</p>
-          <Modal value={flagValue} onChange={(newValue) => abby.updateFlag(flagName, newValue)} />
+          <Modal
+            value={flagValue}
+            onChange={(newValue) => {
+              window.postMessage({ type: "abby:update-flag", flagName, newValue }, "*");
+              abby.updateFlag(flagName, newValue);
+            }}
+          />
         </div>
       {/if}
     {/each}
@@ -136,7 +151,7 @@
     in:send={{ key }}
     out:receive={{ key }}
     on:click={onToggleVisibility}
-    id="devtools-collapsed"
+    id="abby-devtools-collapsed"
     style:--right={position === "top-right" || position === "bottom-right" ? "1rem" : "auto"}
     style:--bottom={position === "bottom-left" || position === "bottom-right" ? "1rem" : "auto"}
     style:--left={position === "top-left" || position === "bottom-left" ? "1rem" : "auto"}
@@ -147,7 +162,7 @@
 {/if}
 
 <style lang="scss">
-  #devtools-collapsed {
+  #abby-devtools-collapsed {
     --pink: rgb(249, 168, 212);
     bottom: var(--bottom);
     right: var(--right);
@@ -171,7 +186,7 @@
     box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
   }
 
-  #devtools {
+  #abby-devtools {
     --pink: rgb(249, 168, 212);
     font-family: ui-monospace, "Cascadia Code", "Source Code Pro", Menlo, Consolas,
       "DejaVu Sans Mono", monospace;

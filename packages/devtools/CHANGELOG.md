@@ -1,5 +1,11 @@
 # @tryabby/devtools
 
+## 4.0.2
+
+### Patch Changes
+
+- add postmessage call on flag and test change
+
 ## 4.0.1
 
 ### Patch Changes
