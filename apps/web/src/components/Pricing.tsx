@@ -7,6 +7,8 @@ import { useRouter } from "next/router";
 import { AiOutlineCheckCircle } from "react-icons/ai";
 import { getLimitByPlan } from "server/common/plans";
 import { Tooltip, TooltipContent, TooltipTrigger } from "./Tooltip";
+import { usePlausible } from "next-plausible";
+import { TrackingEvent } from "lib/tracking";
 
 type PricingElementProps = {
   price: string;
@@ -30,6 +32,7 @@ function PricingElement({
   href,
   isFull,
 }: PricingElementProps) {
+  const plausible = usePlausible();
   return (
     <div
       className={cn(
@@ -55,6 +58,13 @@ function PricingElement({
       >
         <Link
           href={href}
+          onClick={() =>
+            plausible(TrackingEvent.PRICING_CLICKED, {
+              props: {
+                title,
+              },
+            })
+          }
           className={cn(
             "my-6 w-full rounded-xl border px-4 py-2 transition-colors duration-200 ease-in-out",
             "border-accent-background hover:bg-accent-background",

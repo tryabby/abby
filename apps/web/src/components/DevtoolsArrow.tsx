@@ -1,5 +1,7 @@
 import { AnimatePresence, motion } from "framer-motion";
+import { TrackingEvent } from "lib/tracking";
 import { CornerRightDown } from "lucide-react";
+import { usePlausible } from "next-plausible";
 import { useState, useEffect } from "react";
 
 const DEVTOOLS_ID = "devtools-collapsed";
@@ -52,7 +54,40 @@ export function useDevtoolsPosition() {
 }
 
 export function DevtoolsArrow() {
+  const plausible = usePlausible();
   const devtoolsPosition = useDevtoolsPosition();
+
+  useEffect(() => {
+    const onMessage = (e: MessageEvent) => {
+      const messageType = e.data.type;
+      if (!messageType?.startsWith("abby:")) return;
+
+      switch (messageType) {
+        case "abby:abby:update-flag": {
+          plausible(TrackingEvent.DEVTOOLS_INTERACTION, {
+            props: {
+              type: "update-flag",
+            },
+          });
+          break;
+        }
+        case "abby:select-variant": {
+          plausible(TrackingEvent.DEVTOOLS_INTERACTION, {
+            props: {
+              type: "select-variant",
+            },
+          });
+          break;
+        }
+      }
+    };
+
+    window.addEventListener("message", onMessage);
+
+    return () => {
+      window.removeEventListener("message", onMessage);
+    };
+  }, []);
 
   return (
     <AnimatePresence>

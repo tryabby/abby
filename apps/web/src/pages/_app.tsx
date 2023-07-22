@@ -15,6 +15,7 @@ import { TooltipProvider } from "components/Tooltip";
 
 import "../styles/globals.css";
 import "@code-hike/mdx/dist/index.css";
+import PlausibleProvider from "next-plausible";
 
 export type NextPageWithLayout<P = {}, IP = P> = NextPage<P, IP> & {
   getLayout?: (page: ReactElement) => ReactNode;
@@ -36,7 +37,7 @@ const MyApp: AppType<{ session: Session | null }> = ({
   // Use the layout defined at the page level, if available
   const getLayout = Component.getLayout ?? ((page) => page);
   return (
-    <>
+    <PlausibleProvider domain="tryabby.com">
       <AbbyProvider initialData={__ABBY_PROJECT_DATA__}>
         {/* we render different devtools on the landing page */}
         {router.asPath !== "/" && <AbbyDevtools />}
@@ -73,7 +74,7 @@ const MyApp: AppType<{ session: Session | null }> = ({
           </TooltipProvider>
         </ThemeProvider>
       </AbbyProvider>
-    </>
+    </PlausibleProvider>
   );
 };
 
