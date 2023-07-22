@@ -63,7 +63,7 @@ export function DevtoolsArrow() {
       if (!messageType?.startsWith("abby:")) return;
 
       switch (messageType) {
-        case "abby:abby:update-flag": {
+        case "abby:update-flag": {
           plausible(TrackingEvent.DEVTOOLS_INTERACTION, {
             props: {
               type: "update-flag",
