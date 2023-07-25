@@ -14,10 +14,9 @@ import {
 import { cn } from "lib/utils";
 import { ExternalLink, Star } from "lucide-react";
 import { useSession } from "next-auth/react";
-import { useTheme } from "next-themes";
 import Link from "next/link";
 import * as React from "react";
-import { Fragment, useLayoutEffect, useState } from "react";
+import { Fragment } from "react";
 import { GiHamburgerMenu } from "react-icons/gi";
 import { trpc } from "utils/trpc";
 
