@@ -92,6 +92,7 @@ const DevtoolsPage = () => {
                   height={200}
                   width={340}
                   src="https://media0.giphy.com/media/9o9dh1JRGThC1qxGTJ/giphy.gif"
+                  alt="I hate my job office rage"
                 />
               </div>
               <h3 className="bg-gradient-to-r from-yellow-400 to-orange-600 bg-clip-text text-3xl font-extrabold text-transparent lg:text-5xl">
@@ -106,6 +107,7 @@ const DevtoolsPage = () => {
                   height={200}
                   width={340}
                   src="https://media0.giphy.com/media/8xgqLTTgWqHWU/giphy.gif"
+                  alt="Thumbs Brent"
                 />
               </div>
             </div>

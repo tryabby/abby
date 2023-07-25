@@ -20,6 +20,7 @@ import { trpc } from "../utils/trpc";
 import { Select } from "./Select";
 import { UserInfo } from "./UserInfo";
 import { CreateProjectModal } from "./CreateProjectModal";
+import { useSession } from "next-auth/react";
 
 const navItemClass = (isActive: boolean) =>
   clsx(
@@ -58,6 +59,8 @@ const SideBar =
         setIsCreateProjectModal(true);
       };
 
+      const { data: session, update: sessionUpdate } = useSession();
+
       return (
         <aside
           ref={ref}
@@ -78,9 +81,14 @@ const SideBar =
                 items={projects.map((p) => ({ label: p.name, value: p.id }))}
                 value={currentProjectId}
                 isLoading={isLoading}
-                onChange={(projectId) => {
+                onChange={async (projectId) => {
                   if (projectId === currentProjectId) return;
                   closeSidebar();
+
+                  await sessionUpdate({
+                    lastOpenProjectId: projectId,
+                  });
+
                   router.push({
                     ...router,
                     query: { ...router.query, projectId },

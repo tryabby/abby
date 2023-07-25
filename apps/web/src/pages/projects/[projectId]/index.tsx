@@ -1,6 +1,6 @@
-import { Layout } from "components/Layout";
 import { AddABTestModal } from "components/AddABTestModal";
 import { DashboardHeader } from "components/DashboardHeader";
+import { Layout } from "components/Layout";
 import { FullPageLoadingSpinner } from "components/LoadingSpinner";
 import Section from "components/Test/Section";
 import { useProjectId } from "lib/hooks/useProjectId";
@@ -11,6 +11,7 @@ import { trpc } from "utils/trpc";
 
 const Projects: NextPageWithLayout = () => {
   const [isCreateTestModalOpen, setIsCreateTestModalOpen] = useState(false);
+
   const projectId = useProjectId();
 
   const { data, isLoading, isError } = trpc.project.getProjectData.useQuery({
@@ -38,7 +39,6 @@ const Projects: NextPageWithLayout = () => {
         />
       </div>
     );
-
   return (
     <>
       <div className="flex justify-end space-x-2">

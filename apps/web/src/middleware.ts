@@ -9,7 +9,11 @@ export default withAuth(
 
     if (pathName === "/projects" && !projectId) {
       const newUrl = new URL(req.nextUrl);
-      newUrl.pathname = `/projects/${req.nextauth.token?.user.projectIds[0]}`;
+      const tokenUser = req.nextauth.token?.user;
+
+      newUrl.pathname = `/projects/${
+        tokenUser?.lastOpenProjectId ?? tokenUser?.projectIds[0]
+      }`;
       return NextResponse.redirect(newUrl);
     }
   },

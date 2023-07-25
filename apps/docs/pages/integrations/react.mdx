@@ -8,7 +8,7 @@ Our React integration works with React 16.8.0 or later. It works with SPAs as we
   If you're using Next.js please check out our [Next integration](/integrations/nextjs)
 </Callout>
 
-### Installation
+## Installation
 
 To get started make sure to install the package using your favorite package manager.
 
@@ -31,9 +31,7 @@ To get started make sure to install the package using your favorite package mana
     </Tab>
 </Tabs>
 
-### Usage
-
-#### Create your Instance
+### Create your Instance
 
 To use Abby in your code you will need to create a typed Hook and Provider first. You can do this by using the `createAbby` function.
 Please copy the id of your project from the dashboard to get started.
@@ -53,16 +51,16 @@ const { AbbyProvider, useAbby } = createAbby({
 });
 ```
 
-#### Wrap your Application
+### Wrap your Application
 
 You will need to wrap your application with the `AbbyProvider` to make sure the hook works.
 If you're using Next.js you should do this in the `_app.js` file.
 
-### Hooks
-
 You can now import the hooks created by `createAbby` and use it in your components.
 
-#### useAbby
+## Usage
+
+### useAbby
 
 The `useAbby` hook returns an object with the following values:
 
@@ -91,7 +89,7 @@ function MyButton() {
 }
 ```
 
-#### useFeatureFlag
+### useFeatureFlag
 
 The `useFeatureFlag` hook returns a boolean value that indicates if the flag is active or not.
 
