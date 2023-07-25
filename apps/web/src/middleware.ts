@@ -12,7 +12,7 @@ export default withAuth(
       const tokenUser = req.nextauth.token?.user;
 
       newUrl.pathname = `/projects/${
-        tokenUser?.lastOpenProject ?? tokenUser?.projectIds[0]
+        tokenUser?.lastOpenProjectId ?? tokenUser?.projectIds[0]
       }`;
       return NextResponse.redirect(newUrl);
     }

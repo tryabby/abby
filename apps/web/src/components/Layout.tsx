@@ -86,7 +86,7 @@ const SideBar =
                   closeSidebar();
 
                   await sessionUpdate({
-                    lastOpenProject: projectId,
+                    lastOpenProjectId: projectId,
                   });
 
                   router.push({

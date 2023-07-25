@@ -197,7 +197,7 @@ const ListItem = React.forwardRef<
 ListItem.displayName = "ListItem";
 
 export function Navbar({ isInverted }: { isInverted?: boolean }) {
-  const { data, isLoading, isError } = trpc.user.getUserData.useQuery();
+  const { data: userSession, status } = useSession();
   const { data: starsCount, isLoading: isStarsLoading } =
     trpc.misc.getStars.useQuery();
 
@@ -245,9 +245,13 @@ export function Navbar({ isInverted }: { isInverted?: boolean }) {
           <Star className="h-5 w-5" />
           <span>{isStarsLoading ? "0" : `${starsCount}`}</span>
         </Link>
-        {!isLoading && !isError ? (
+        {status === "authenticated" ? (
           <NavItem
-            href={`/projects/${data.projects[0]?.id}`}
+            href={`/projects${
+              userSession.user?.lastOpenProjectId
+                ? `/${userSession.user?.lastOpenProjectId}`
+                : ""
+            }`}
             isProminent
             className="hidden lg:flex"
           >

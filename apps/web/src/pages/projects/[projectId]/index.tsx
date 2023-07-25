@@ -1,6 +1,6 @@
-import { Layout } from "components/Layout";
 import { AddABTestModal } from "components/AddABTestModal";
 import { DashboardHeader } from "components/DashboardHeader";
+import { Layout } from "components/Layout";
 import { FullPageLoadingSpinner } from "components/LoadingSpinner";
 import Section from "components/Test/Section";
 import { useProjectId } from "lib/hooks/useProjectId";
@@ -8,12 +8,10 @@ import { NextPageWithLayout } from "pages/_app";
 import { useState } from "react";
 import { AiOutlinePlus } from "react-icons/ai";
 import { trpc } from "utils/trpc";
-import { useSession } from "next-auth/react";
 
 const Projects: NextPageWithLayout = () => {
   const [isCreateTestModalOpen, setIsCreateTestModalOpen] = useState(false);
 
-  const { data: sessionData } = useSession();
   const projectId = useProjectId();
 
   const { data, isLoading, isError } = trpc.project.getProjectData.useQuery({

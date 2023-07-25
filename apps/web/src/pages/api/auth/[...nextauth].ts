@@ -24,8 +24,8 @@ export const authOptions: NextAuthOptions = {
           id: token.user.id,
           image: token.user.image,
           projectIds: token.user.projectIds,
-          lastOpenProject: session.user?.lastOpenProject
-            ? session.user?.lastOpenProject
+          lastOpenProjectId: session.user?.lastOpenProjectId
+            ? session.user?.lastOpenProjectId
             : token.user.projectIds[0],
         };
       }
@@ -33,8 +33,8 @@ export const authOptions: NextAuthOptions = {
       return session;
     },
     async jwt({ token, user, trigger, session }) {
-      if (trigger === "update" && session && "lastOpenProject" in session) {
-        token.user.lastOpenProject = session.lastOpenProject;
+      if (trigger === "update" && session && "lastOpenProjectId" in session) {
+        token.user.lastOpenProjectId = session.lastOpenProjectId;
       }
       if (user) {
         const projects = await prisma.projectUser.findMany({
