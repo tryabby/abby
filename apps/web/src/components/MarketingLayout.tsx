@@ -4,6 +4,8 @@ import { PropsWithChildren, useEffect, useState } from "react";
 import { Footer } from "./Footer";
 import { Navbar } from "./Navbar";
 import { cn } from "lib/utils";
+import { useRouter } from "next/router";
+import { getSeo } from "seo/SeoDescriptions";
 import { ArrowUpCircle } from "lucide-react";
 import { AnimatePresence, motion } from "framer-motion";
 
@@ -17,6 +19,9 @@ export function MarketingLayout({
   isMarkdown,
   seoTitle,
 }: MarketingLayoutProps) {
+  const router = useRouter();
+  const pageName = router.asPath;
+  const { metaTitle, metaDescription } = getSeo(pageName, "Marketing");
   const [showScrollToTop, setShowScrollToTop] = useState(false);
 
   useEffect(() => {
@@ -37,7 +42,7 @@ export function MarketingLayout({
 
   return (
     <>
-      <NextSeo title={seoTitle} />
+      <NextSeo title={seoTitle ?? metaTitle} description={metaDescription} />
       <main
         className={cn(
           "max-w-screen flex min-h-screen flex-col overflow-x-hidden bg-primary-background text-primary-foreground"
