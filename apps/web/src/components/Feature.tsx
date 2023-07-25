@@ -1,10 +1,11 @@
-import { IconType } from "react-icons";
+import type { LucideIcon } from "lucide-react";
+import type { IconType } from "react-icons";
 
 type Props = {
   children: React.ReactNode;
   title: string;
   subtitle: string;
-  icon: IconType;
+  icon: IconType | LucideIcon;
 };
 
 export function Feature({ children, icon: Icon, subtitle, title }: Props) {

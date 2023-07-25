@@ -1,26 +1,25 @@
 import { DOCS_URL, HttpService } from "@tryabby/core";
+import DevtoolsFactory from "@tryabby/devtools";
+import { createAbby } from "@tryabby/next";
 import { BaseCodeSnippet } from "components/CodeSnippet";
+import { Divider } from "components/Divider";
 import { Feature } from "components/Feature";
 import { MarketingLayout } from "components/MarketingLayout";
 import { PricingTable } from "components/Pricing";
-import { SignupButton } from "components/SignupButton";
+import { Clock, ExternalLink, FlaskConical, Shield } from "lucide-react";
 import { InferGetStaticPropsType } from "next";
+import { useTheme } from "next-themes";
 import Image from "next/image";
 import Link from "next/link";
+import { useEffect } from "react";
 import { BsBarChartFill, BsCodeSlash } from "react-icons/bs";
+import { FaQuestion } from "react-icons/fa";
 import { GiPadlock } from "react-icons/gi";
-import { RiGameFill } from "react-icons/ri";
+import { twMerge } from "tailwind-merge";
 import { generateCodeSnippets } from "utils/snippets";
 import abbyScreenshot from "../../public/screenshot.png";
 import { NextPageWithLayout } from "./_app";
-import { Divider } from "components/Divider";
-import { ExternalLink } from "lucide-react";
-import { FaQuestion } from "react-icons/fa";
-import { createAbby } from "@tryabby/next";
-import { twMerge } from "tailwind-merge";
-import DevtoolsFactory from "@tryabby/devtools";
-import { useTheme } from "next-themes";
-import { useEffect } from "react";
+import { DevtoolsArrow } from "components/DevtoolsArrow";
 
 const { useAbby, AbbyProvider, useFeatureFlag, __abby__, withDevtools } =
   createAbby({
@@ -93,9 +92,12 @@ const Home: NextPageWithLayout<
               Effortless <span className="mark">Feature Flags</span>
             </h1>
           </div>
-          <h2 className="mx-auto my-5 max-w-2xl text-center text-xl leading-relaxed">
-            A/BBY makes it easy to test your components and toggle your
-            features. Forget about complex setups and complicated integrations.
+          <h2 className="mx-auto mt-16 max-w-2xl text-center leading-relaxed">
+            A/BBY makes it easy to do feature testing to optimzie your website.
+            Forget about complex setups and complicated integrations. Find a
+            secure and reliable way to use feature toggles in different
+            environments for the best ab test experience. Built by developers
+            for developers
             <span className="mt-4 block font-semibold">
               Built by Developers for Developers.
             </span>
@@ -141,8 +143,8 @@ const Home: NextPageWithLayout<
               title="Privacy First"
               subtitle="Avoid big companies that track you and sell your data"
             >
-              A/BBY is all about privacy and transparency. We prove this by
-              being Open-Source. You and your users will thank you.
+              A/BBY is all about privacy and transparency. We prove it by being
+              open source.
             </Feature>
             <Feature
               icon={BsCodeSlash}
@@ -162,12 +164,29 @@ const Home: NextPageWithLayout<
               what&apos;s going on.
             </Feature>
             <Feature
-              icon={RiGameFill}
-              title="Easy to use"
-              subtitle="So easy that even your grandma can use it"
+              icon={Clock}
+              title="Test your components in minutes"
+              subtitle="Fast Implementation"
             >
               Start testing your components in under 5 minutes. Simply integrate
               it in your code and you&apos;re ready to go.
+            </Feature>
+            <Feature
+              icon={Shield}
+              title="The safe and reliable A/B testing tool"
+              subtitle="Downtime Secure"
+            >
+              A/BBY ensures a stable testing environment. Optimise your website
+              feature testing throught split testing and feature flags without
+              worrying about downtime.
+            </Feature>
+            <Feature
+              icon={FlaskConical}
+              title="Environments"
+              subtitle="Test safely"
+            >
+              Utilize different environments for each A/B test or feature flag.
+              Create various environments to test features before they go live.
             </Feature>
           </div>
         </div>
@@ -245,9 +264,9 @@ const Home: NextPageWithLayout<
             </h1>
           </div>
           <h2 className="mb-8 text-center text-lg">
-            If you&apos;re not yet familiar with website optimization and A/B
-            testing, you can learn more about the terms and background of A/B
-            testing here.
+            If you&apos;re not yet familiar with website optimization and
+            feature testing you can learn more about the terms and background of
+            A/B tests (also known as Split tests) here.
           </h2>
           <div className="flex items-center">
             <Link
@@ -296,6 +315,7 @@ const Home: NextPageWithLayout<
           </div>
         </div>
       </section>
+      <DevtoolsArrow />
     </>
   );
 };
