@@ -1,4 +1,4 @@
-import type { PostMeta } from "pages/blog";
+import type { PostMeta } from "pages/tips-and-insights";
 import { MarketingLayout, MarketingLayoutProps } from "./MarketingLayout";
 import dayjs from "dayjs";
 import Image from "next/image";

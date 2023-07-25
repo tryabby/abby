@@ -1,6 +1,6 @@
 {
   "name": "web",
-  "version": "0.2.23",
+  "version": "0.2.25",
   "private": true,
   "scripts": {
     "build": "next build",
@@ -12,7 +12,9 @@
     "start": "next start",
     "seed:events": "ts-node --compiler-options {\\\"module\\\":\\\"CommonJS\\\"} prisma/seedEvents.ts",
     "db:migrate": "prisma migrate dev",
-    "generate:coupons": "pnpm ts-node -r tsconfig-paths/register  --compiler-options {\\\"module\\\":\\\"CommonJS\\\"} prisma/generateCoupons.ts"
+    "generate:coupons": "pnpm ts-node -r tsconfig-paths/register  --compiler-options {\\\"module\\\":\\\"CommonJS\\\"} prisma/generateCoupons.ts",
+    "mailhog:up": "docker-compose -f docker-compose.mailhog.yaml up",
+    "mailhog:down": "docker-compose -f docker-compose.mailhog.yaml down"
   },
   "dependencies": {
     "@code-hike/mdx": "0.8.3-next.1",
@@ -73,7 +75,7 @@
     "isbot": "^3.6.8",
     "lodash-es": "^4.17.21",
     "logsnag": "^0.1.6",
-    "lucide-react": "^0.124.0",
+    "lucide-react": "^0.262.0",
     "micro": "^10.0.1",
     "ms": "^2.1.3",
     "next": "13.3.4",
