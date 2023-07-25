@@ -148,10 +148,12 @@ export default function ContactPage() {
                 </p>
               )}
             </div>
-            <input
+            <button
               className="border-1 mb-4 mt-5 w-24 self-center rounded-md border-accent-foreground bg-accent-background text-accent-foreground"
               type="submit"
-            />
+            >
+              Submit
+            </button>
           </form>
           <span className="max-auto inline max-w-sm text-xs text-primary-foreground">
             By submitting this form you agree to our{" "}
