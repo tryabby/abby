@@ -2,36 +2,84 @@ import { Menu, Transition } from "@headlessui/react";
 import { DOCS_URL } from "@tryabby/core";
 import clsx from "clsx";
 import Logo from "components/Logo";
+import {
+  NavigationMenu,
+  NavigationMenuContent,
+  NavigationMenuItem,
+  NavigationMenuLink,
+  NavigationMenuList,
+  NavigationMenuTrigger,
+  navigationMenuTriggerStyle,
+} from "components/ui/navigation-menu";
 import { cn } from "lib/utils";
-import { Star } from "lucide-react";
+import { ExternalLink, Star } from "lucide-react";
 import { useSession } from "next-auth/react";
+import { useTheme } from "next-themes";
 import Link from "next/link";
-import { Fragment, useLayoutEffect, useRef, useState } from "react";
+import * as React from "react";
+import { Fragment, useLayoutEffect, useState } from "react";
 import { GiHamburgerMenu } from "react-icons/gi";
 import { trpc } from "utils/trpc";
 import { useTheme } from "next-themes";
 import { twMerge } from "tailwind-merge";
 
-const NAV_ITEMS = [
+type NavItem = {
+  title: string;
+} & (
+  | { href: string; isExternal?: boolean }
+  | {
+      subItems: {
+        title: string;
+        subTitle: string;
+        href: string;
+        isExternal?: boolean;
+      }[];
+    }
+);
+
+const NAV_ITEMS: Array<NavItem> = [
   {
     title: "Features",
     href: "/#features",
-  },
-  {
-    title: "Devtools",
-    href: "/devtools",
   },
   {
     title: "Pricing",
     href: "/#pricing",
   },
   {
-    title: "Docs",
-    href: DOCS_URL,
+    title: "Developer",
+    subItems: [
+      {
+        title: "Devtools",
+        subTitle: "Painless Debugging",
+        href: "/devtools",
+      },
+      {
+        title: "Documentation",
+        subTitle: "Developers API Reference",
+        href: DOCS_URL,
+        isExternal: true,
+      },
+    ],
+  },
+  {
+    title: "Learn More",
+    subItems: [
+      {
+        title: "Tips & Insights",
+        subTitle: "Learn how to use Abby",
+        href: "/tips-and-insights",
+      },
+      {
+        title: "Contact Us",
+        subTitle: "Get in touch with us",
+        href: "/contact",
+      },
+    ],
   },
 ];
 
-function MobileNav({ isInverted }: { isInverted?: boolean }) {
+function MobileNav() {
   const { data, status } = useSession();
 
   return (
@@ -53,22 +101,28 @@ function MobileNav({ isInverted }: { isInverted?: boolean }) {
       >
         <Menu.Items
           className={cn(
-            "absolute right-12 top-[80px] z-10 flex w-[calc(100%-6rem)] flex-col space-y-4 rounded-lg p-4 shadow-xl",
-            isInverted ? "bg-zinc-800" : "bg-white"
+            "absolute right-6 top-[80px] z-10 flex w-[calc(100%-3rem)] flex-col space-y-4 rounded-lg p-4 shadow-xl",
+            "border border-accent-background bg-primary-background text-primary-foreground"
           )}
         >
-          {NAV_ITEMS.map(({ href, title }) => (
-            <Menu.Item key={href}>
-              {({ active }) => (
-                <Link
-                  className={clsx("rounded-lg p-2", active && "bg-pink-200")}
-                  href={href}
-                >
-                  {title}
-                </Link>
-              )}
-            </Menu.Item>
-          ))}
+          {NAV_ITEMS.flatMap((i) => ("subItems" in i ? i.subItems : i)).map(
+            ({ href, title, isExternal }) => (
+              <Menu.Item key={href}>
+                {({ active }) => (
+                  <Link
+                    className={clsx(
+                      "flex items-center space-x-2 rounded-lg p-2",
+                      active && "bg-accent-background text-accent-foreground"
+                    )}
+                    href={href ?? ""}
+                  >
+                    <span>{title}</span>
+                    {isExternal && <ExternalLink className="-mt-1 h-4 w-4" />}
+                  </Link>
+                )}
+              </Menu.Item>
+            )
+          )}
           <Menu.Item>
             {status === "authenticated" ? (
               <NavItem
@@ -129,14 +183,38 @@ function NavItem({
   );
 }
 
-export function Navbar({ isInverted }: { isInverted?: boolean }) {
-  const { setTheme, theme } = useTheme();
-  const [isMounted, setIsMounted] = useState(false);
+const ListItem = React.forwardRef<
+  React.ElementRef<typeof Link>,
+  React.ComponentPropsWithoutRef<typeof Link> & {
+    isExternalLink?: boolean;
+  }
+>(({ className, title, children, isExternalLink, ...props }, ref) => {
+  return (
+    <NavigationMenuLink asChild>
+      <Link
+        ref={ref}
+        className={cn(
+          "block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-primary-background-hover hover:text-primary-foreground focus:bg-primary-background-hover focus:text-primary-foreground",
+          className
+        )}
+        {...props}
+      >
+        <div className="flex items-center space-x-2 text-sm font-medium leading-none">
+          <span>{title}</span>{" "}
+          {isExternalLink && (
+            <ExternalLink width={14} height={14} className="-mt-1" />
+          )}
+        </div>
+        <p className="text-primary-muted line-clamp-2 text-sm leading-snug">
+          {children}
+        </p>
+      </Link>
+    </NavigationMenuLink>
+  );
+});
+ListItem.displayName = "ListItem";
 
-  useLayoutEffect(() => {
-    setIsMounted(true);
-  }, []);
-
+export function Navbar() {
   const { data, isLoading, isError } = trpc.user.getUserData.useQuery();
   const { data: starsCount, isLoading: isStarsLoading } =
     trpc.misc.getStars.useQuery();
@@ -147,11 +225,41 @@ export function Navbar({ isInverted }: { isInverted?: boolean }) {
         <Link href="/" className="mr-12">
           <Logo />
         </Link>
-        {NAV_ITEMS.map(({ href, title }) => (
-          <NavItem key={href} href={href} className="hidden lg:flex">
-            {title}
-          </NavItem>
-        ))}
+
+        <NavigationMenu className="hidden lg:block">
+          <NavigationMenuList>
+            {NAV_ITEMS.map((item) => (
+              <NavigationMenuItem>
+                {!("subItems" in item) ? (
+                  <Link href={item.href} legacyBehavior passHref>
+                    <NavigationMenuLink
+                      className={navigationMenuTriggerStyle()}
+                    >
+                      {item.title}
+                    </NavigationMenuLink>
+                  </Link>
+                ) : (
+                  <>
+                    <NavigationMenuTrigger>{item.title}</NavigationMenuTrigger>
+                    <NavigationMenuContent className="min-w-[400px]">
+                      {item.subItems.map(
+                        ({ href, title, subTitle, isExternal }) => (
+                          <ListItem
+                            href={href}
+                            title={title}
+                            isExternalLink={isExternal}
+                          >
+                            {subTitle}
+                          </ListItem>
+                        )
+                      )}
+                    </NavigationMenuContent>
+                  </>
+                )}
+              </NavigationMenuItem>
+            ))}
+          </NavigationMenuList>
+        </NavigationMenu>
       </div>
       <div className="flex items-center space-x-3">
         {isMounted && theme != null && (
@@ -212,7 +320,7 @@ export function Navbar({ isInverted }: { isInverted?: boolean }) {
             Log In
           </NavItem>
         )}
-        <MobileNav isInverted={isInverted} />
+        <MobileNav />
       </div>
     </nav>
   );

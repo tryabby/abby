@@ -11,12 +11,28 @@ module.exports = {
     extend: {
       colors: {
         primary: {
-          foreground: "var(--color-primary-foreground)",
-          background: "var(--color-primary-background)",
+          foreground: {
+            DEFAULT: "rgba(var(--color-primary-foreground), 1)",
+            hover: "rgba(var(--color-primary-foreground), 0.9)",
+            muted: "rgba(var(--color-primary-foreground), 0.6)",
+          },
+          background: {
+            DEFAULT: "rgba(var(--color-primary-background), 1)",
+            hover: "rgba(var(--color-primary-foreground), 0.1)",
+            muted: "rgba(var(--color-primary-background), 0.6)",
+          },
         },
         accent: {
-          foreground: "var(--color-accent-foreground)",
-          background: "var(--color-accent-background)",
+          foreground: {
+            DEFAULT:  "rgba(var(--color-accent-foreground), 1)",
+            hover: "rgba(var(--color-accent-foreground), 0.9)",
+            muted: "rgba(var(--color-accent-foreground), 0.6)",
+          },
+          background:{
+            DEFAULT: "rgba(var(--color-accent-background), 1)",
+            hover: "rgba(var(--color-accent-background), 0.9)",
+            muted: "rgba(var(--color-accent-background), 0.6)",
+          }
         },
       },
       fontFamily: {
