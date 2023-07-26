@@ -18,7 +18,7 @@ jobs:
       - name: setup node.js
         uses: actions/setup-node@v3
         with:
-          node-version: "16.19.0"
+          node-version: "18.17.0"
       - name: install pnpm
         run: npm i pnpm@8.1.0 -g
       - name: Setup npmrc
