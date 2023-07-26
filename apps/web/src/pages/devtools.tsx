@@ -1,15 +1,12 @@
+import { HttpService } from "@tryabby/core";
 import { MarketingLayout } from "components/MarketingLayout";
 import { NextPageWithLayout } from "./_app";
-import { HttpService } from "@tryabby/core";
-
-import { createAbby } from "@tryabby/next";
 import abbyDevtools from "@tryabby/devtools";
+import { createAbby } from "@tryabby/next";
+import { DevtoolsArrow } from "components/DevtoolsArrow";
+import { SignupButton } from "components/SignupButton";
 import { cn } from "lib/utils";
 import { InferGetStaticPropsType } from "next";
-import { useEffect, useState } from "react";
-import { CornerRightDown } from "lucide-react";
-import { Transition } from "@headlessui/react";
-import { SignupButton } from "components/SignupButton";
 
 const { useAbby, AbbyProvider, useFeatureFlag, withDevtools, __abby__ } =
   createAbby({
@@ -32,35 +29,10 @@ export const AbbyProdDevtools = withDevtools(abbyDevtools, {
 });
 
 const DevtoolsPage = () => {
-  const [devtoolsPosition, setDevtoolsPosition] = useState<DOMRect | null>(
-    null
-  );
-
   const showEasterEgg = useFeatureFlag("showEasterEgg");
   const showHeading = useFeatureFlag("showHeading");
   const isExcited = useFeatureFlag("ToggleMeIfYoureExcited");
   const { variant, onAct } = useAbby("MarketingButton");
-
-  useEffect(() => {
-    const devtools = document.getElementById("devtools-collapsed");
-    if (!devtools) return;
-
-    const resizeObserver = new ResizeObserver((entries) => {
-      if (!entries[0]) return;
-
-      setDevtoolsPosition(devtools.getBoundingClientRect());
-      // we only need to set it once
-      resizeObserver.disconnect();
-    });
-
-    resizeObserver.observe(devtools);
-
-    setDevtoolsPosition(devtools.getBoundingClientRect());
-
-    return () => {
-      resizeObserver.disconnect();
-    };
-  }, []);
 
   return (
     <>
@@ -120,6 +92,7 @@ const DevtoolsPage = () => {
                   height={200}
                   width={340}
                   src="https://media0.giphy.com/media/9o9dh1JRGThC1qxGTJ/giphy.gif"
+                  alt="I hate my job office rage"
                 />
               </div>
               <h3 className="bg-gradient-to-r from-yellow-400 to-orange-600 bg-clip-text text-3xl font-extrabold text-transparent lg:text-5xl">
@@ -134,6 +107,7 @@ const DevtoolsPage = () => {
                   height={200}
                   width={340}
                   src="https://media0.giphy.com/media/8xgqLTTgWqHWU/giphy.gif"
+                  alt="Thumbs Brent"
                 />
               </div>
             </div>
@@ -207,27 +181,7 @@ const DevtoolsPage = () => {
         </div>
       </section>
 
-      <Transition
-        show={devtoolsPosition != null}
-        enter="transition-opacity duration-75"
-        enterFrom="opacity-0"
-        enterTo="opacity-100"
-        leave="transition-opacity duration-150"
-        leaveFrom="opacity-100"
-        leaveTo="opacity-0"
-      >
-        <div
-          className="flex items-center font-mono text-pink-500"
-          style={{
-            zIndex: 9999,
-            position: "fixed",
-            top: (devtoolsPosition?.top ?? 0) - 40,
-            left: (devtoolsPosition?.left ?? 0) - 90,
-          }}
-        >
-          Try me out <CornerRightDown className="mt-3" />
-        </div>
-      </Transition>
+      <DevtoolsArrow />
     </>
   );
 };

@@ -14,10 +14,9 @@ import {
 import { cn } from "lib/utils";
 import { ExternalLink, Star } from "lucide-react";
 import { useSession } from "next-auth/react";
-import { useTheme } from "next-themes";
 import Link from "next/link";
 import * as React from "react";
-import { Fragment, useLayoutEffect, useState } from "react";
+import { Fragment } from "react";
 import { GiHamburgerMenu } from "react-icons/gi";
 import { trpc } from "utils/trpc";
 
@@ -35,7 +34,7 @@ type NavItem = {
     }
 );
 
-const NAV_ITEMS = [
+const NAV_ITEMS: Array<NavItem> = [
   {
     title: "Features",
     href: "/#features",
@@ -75,9 +74,9 @@ const NAV_ITEMS = [
       },
     ],
   },
-] satisfies Array<NavItem>;
+];
 
-function MobileNav({ isInverted }: { isInverted?: boolean }) {
+function MobileNav() {
   const { data, status } = useSession();
 
   return (
@@ -99,26 +98,28 @@ function MobileNav({ isInverted }: { isInverted?: boolean }) {
       >
         <Menu.Items
           className={cn(
-            "absolute right-12 top-[80px] z-10 flex w-[calc(100%-6rem)] flex-col space-y-4 rounded-lg p-4 shadow-xl",
-            isInverted ? "bg-zinc-800" : "bg-white"
+            "absolute right-6 top-[80px] z-10 flex w-[calc(100%-3rem)] flex-col space-y-4 rounded-lg p-4 shadow-xl",
+            "border border-accent-background bg-primary-background text-primary-foreground"
           )}
         >
-          {NAV_ITEMS.flatMap((i) =>
-            i.subItems
-              ? i.subItems.map((i) => ({ title: i.title, href: i.href }))
-              : i
-          ).map(({ href, title }) => (
-            <Menu.Item key={href}>
-              {({ active }) => (
-                <Link
-                  className={clsx("rounded-lg p-2", active && "bg-pink-200")}
-                  href={href ?? ""}
-                >
-                  {title}
-                </Link>
-              )}
-            </Menu.Item>
-          ))}
+          {NAV_ITEMS.flatMap((i) => ("subItems" in i ? i.subItems : i)).map(
+            ({ href, title, isExternal }) => (
+              <Menu.Item key={href}>
+                {({ active }) => (
+                  <Link
+                    className={clsx(
+                      "flex items-center space-x-2 rounded-lg p-2",
+                      active && "bg-accent-background text-accent-foreground"
+                    )}
+                    href={href ?? ""}
+                  >
+                    <span>{title}</span>
+                    {isExternal && <ExternalLink className="-mt-1 h-4 w-4" />}
+                  </Link>
+                )}
+              </Menu.Item>
+            )
+          )}
           <Menu.Item>
             {status === "authenticated" ? (
               <NavItem
@@ -190,7 +191,7 @@ const ListItem = React.forwardRef<
       <Link
         ref={ref}
         className={cn(
-          "block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-primary-hover hover:text-primary-foreground focus:bg-primary-hover focus:text-primary-foreground",
+          "block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-primary-background-hover hover:text-primary-foreground focus:bg-primary-background-hover focus:text-primary-foreground",
           className
         )}
         {...props}
@@ -201,7 +202,7 @@ const ListItem = React.forwardRef<
             <ExternalLink width={14} height={14} className="-mt-1" />
           )}
         </div>
-        <p className="line-clamp-2 text-sm leading-snug text-primary-muted">
+        <p className="text-primary-muted line-clamp-2 text-sm leading-snug">
           {children}
         </p>
       </Link>
@@ -211,7 +212,7 @@ const ListItem = React.forwardRef<
 ListItem.displayName = "ListItem";
 
 export function Navbar({ isInverted }: { isInverted?: boolean }) {
-  const { data, isLoading, isError } = trpc.user.getUserData.useQuery();
+  const { data: userSession, status } = useSession();
   const { data: starsCount, isLoading: isStarsLoading } =
     trpc.misc.getStars.useQuery();
 
@@ -222,31 +223,33 @@ export function Navbar({ isInverted }: { isInverted?: boolean }) {
           <Logo />
         </Link>
 
-        <NavigationMenu>
+        <NavigationMenu className="hidden lg:block">
           <NavigationMenuList>
-            {NAV_ITEMS.map(({ href, title, subItems }) => (
+            {NAV_ITEMS.map((item) => (
               <NavigationMenuItem>
-                {subItems == null ? (
-                  <Link href={href} legacyBehavior passHref>
+                {!("subItems" in item) ? (
+                  <Link href={item.href} legacyBehavior passHref>
                     <NavigationMenuLink
                       className={navigationMenuTriggerStyle()}
                     >
-                      {title}
+                      {item.title}
                     </NavigationMenuLink>
                   </Link>
                 ) : (
                   <>
-                    <NavigationMenuTrigger>{title}</NavigationMenuTrigger>
+                    <NavigationMenuTrigger>{item.title}</NavigationMenuTrigger>
                     <NavigationMenuContent className="min-w-[400px]">
-                      {subItems.map(({ href, title, subTitle, isExternal }) => (
-                        <ListItem
-                          href={href}
-                          title={title}
-                          isExternalLink={isExternal}
-                        >
-                          {subTitle}
-                        </ListItem>
-                      ))}
+                      {item.subItems.map(
+                        ({ href, title, subTitle, isExternal }) => (
+                          <ListItem
+                            href={href}
+                            title={title}
+                            isExternalLink={isExternal}
+                          >
+                            {subTitle}
+                          </ListItem>
+                        )
+                      )}
                     </NavigationMenuContent>
                   </>
                 )}
@@ -263,9 +266,13 @@ export function Navbar({ isInverted }: { isInverted?: boolean }) {
           <Star className="h-5 w-5" />
           <span>{isStarsLoading ? "0" : `${starsCount}`}</span>
         </Link>
-        {!isLoading && !isError ? (
+        {status === "authenticated" ? (
           <NavItem
-            href={`/projects/${data.projects[0]?.id}`}
+            href={`/projects${
+              userSession.user?.lastOpenProjectId
+                ? `/${userSession.user?.lastOpenProjectId}`
+                : ""
+            }`}
             isProminent
             className="hidden lg:flex"
           >
@@ -276,7 +283,7 @@ export function Navbar({ isInverted }: { isInverted?: boolean }) {
             Log In
           </NavItem>
         )}
-        <MobileNav isInverted={isInverted} />
+        <MobileNav />
       </div>
     </nav>
   );

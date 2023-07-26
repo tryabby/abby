@@ -217,7 +217,7 @@ export const projectRouter = router({
       });
     }),
   createProject: protectedProcedure
-    .input(z.object({ projectName: z.string() }))
+    .input(z.object({ projectName: z.string().min(3) }))
     .mutation(async ({ ctx, input }) => {
       const userId = ctx.session.user.id;
       const project = await ProjectService.createProject({

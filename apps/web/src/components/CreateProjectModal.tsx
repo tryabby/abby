@@ -22,12 +22,9 @@ export const CreateProjectModal = ({ onClose }: Props) => {
         trpcContext.user.getProjects.invalidate();
       },
     });
-  const { data } = trpc.project.getProjectData.useQuery({
-    projectId: router.query.projectId as string,
-  });
 
   const createProject = async () => {
-    if (projectName.current.length <= 3) {
+    if (projectName.current.length < 3) {
       setIsValidName(false);
       return;
     }

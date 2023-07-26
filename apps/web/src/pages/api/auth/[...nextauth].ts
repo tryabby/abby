@@ -1,6 +1,7 @@
 import NextAuth, { type NextAuthOptions } from "next-auth";
 import EmailProvider from "next-auth/providers/email";
 import GithubProvider from "next-auth/providers/github";
+import GoogleProvider from "next-auth/providers/google";
 import { PrismaAdapter } from "@next-auth/prisma-adapter";
 
 import { env } from "../../../env/server.mjs";
@@ -24,12 +25,18 @@ export const authOptions: NextAuthOptions = {
           id: token.user.id,
           image: token.user.image,
           projectIds: token.user.projectIds,
+          lastOpenProjectId: session.user?.lastOpenProjectId
+            ? session.user?.lastOpenProjectId
+            : token.user.projectIds[0],
         };
       }
 
       return session;
     },
-    async jwt({ token, user }) {
+    async jwt({ token, user, trigger, session }) {
+      if (trigger === "update" && session && "lastOpenProjectId" in session) {
+        token.user.lastOpenProjectId = session.lastOpenProjectId;
+      }
       if (user) {
         const projects = await prisma.projectUser.findMany({
           where: {
@@ -72,6 +79,15 @@ export const authOptions: NextAuthOptions = {
       from: `A/BBY <${env.ABBY_FROM_EMAIL}>`,
       server: env.EMAIL_SERVER,
     }),
+    // conditionally add Google provider if client ID and secret are set
+    ...(env.GOOGLE_CLIENT_ID && env.GOOGLE_CLIENT_SECRET
+      ? [
+          GoogleProvider({
+            clientId: env.GOOGLE_CLIENT_ID,
+            clientSecret: env.GOOGLE_CLIENT_SECRET,
+          }),
+        ]
+      : []),
     // ...add more providers here
   ],
 };

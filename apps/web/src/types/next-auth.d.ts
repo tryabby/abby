@@ -4,6 +4,7 @@ type UserSession = {
   id: string;
   image: string;
   projectIds: string[];
+  lastOpenProjectId: string | undefined;
 };
 
 declare module "next-auth" {

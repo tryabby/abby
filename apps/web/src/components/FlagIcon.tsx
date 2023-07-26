@@ -1,7 +1,6 @@
 import { FeatureFlagType } from "@prisma/client";
 import {
   Baseline,
-  Binary,
   Hash,
   LucideProps,
   ToggleLeft,
@@ -12,7 +11,8 @@ import { Tooltip, TooltipContent, TooltipTrigger } from "./Tooltip";
 
 type Props = {
   type: FeatureFlagType;
-} & LucideProps;
+  className?: string;
+};
 
 export function FlagIcon({ type, ...iconProps }: Props) {
   return (
