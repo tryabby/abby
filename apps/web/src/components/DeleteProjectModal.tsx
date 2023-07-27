@@ -3,25 +3,39 @@ import { toast } from "react-hot-toast";
 import { trpc } from "utils/trpc";
 import { Modal } from "./Modal";
 import { useRouter } from "next/router";
+import { useSession } from "next-auth/react";
 
 type Props = {
   isOpen: boolean;
   onClose: () => void;
-  goToProjects: () => void;
 };
 
-export function DeleteProjectModal({ isOpen, onClose, goToProjects }: Props) {
+export function DeleteProjectModal({ isOpen, onClose }: Props) {
   const router = useRouter();
   const projectId = useProjectId();
   const trpcContext = trpc.useContext();
+  const { data: session, status, update } = useSession();
 
   const { mutate: deleteProject } = trpc.project.deleteProject.useMutation({
-    onSuccess() {
+    async onSuccess() {
+      if (!session?.user?.projectIds) return;
+
       toast.success("Project deleted");
       onClose();
+
+      const newProjectIds = session?.user?.projectIds.filter(
+        (id) => id !== projectId
+      );
+
+      await update({
+        projectIds: newProjectIds,
+        lastOpenProjectId: newProjectIds?.[0],
+      });
+
+      await router.push(`/projects`);
+
       trpcContext.project.getProjectData.invalidate();
       trpcContext.user.getProjects.invalidate();
-      router.push("/projects");
     },
   });
 
@@ -32,7 +46,7 @@ export function DeleteProjectModal({ isOpen, onClose, goToProjects }: Props) {
       isOpen={isOpen}
       onClose={onClose}
       onConfirm={() => {
-        if (!projectId) return;
+        if (!projectId || status != "authenticated") return;
         deleteProject({ projectId });
       }}
     >

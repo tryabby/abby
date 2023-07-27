@@ -2,10 +2,7 @@ import { ROLE, User } from "@prisma/client";
 import clsx from "clsx";
 import { IconButton } from "components/IconButton";
 import { Layout } from "components/Layout";
-import {
-  FullPageLoadingSpinner,
-  LoadingSpinner,
-} from "components/LoadingSpinner";
+import { FullPageLoadingSpinner } from "components/LoadingSpinner";
 import { Progress } from "components/Progress";
 import { RemoveUserModal } from "components/RemoveUserModal";
 import dayjs from "dayjs";
@@ -21,6 +18,7 @@ import { getLimitByPlan } from "server/common/plans";
 import { trpc } from "utils/trpc";
 import { DeleteProjectModal } from "components/DeleteProjectModal";
 import { useSession } from "next-auth/react";
+import { DashboardButton } from "components/DashboardButton";
 
 const SettingsPage: NextPageWithLayout = () => {
   const [userToRemove, setUserToRemove] = useState<User | null>(null);
@@ -40,11 +38,9 @@ const SettingsPage: NextPageWithLayout = () => {
     (projectUser) => projectUser.user.id === session.data?.user?.id
   );
 
-  // console.log(user);
+  const projectPlan = data ? getProjectPaidPlan(data.project) : null;
 
-  const limits = data
-    ? getLimitByPlan(getProjectPaidPlan(data?.project))
-    : null;
+  const limits = data ? getLimitByPlan(projectPlan) : null;
 
   const { mutate: updateProjectName } = trpc.project.updateName.useMutation({
     onSuccess() {
@@ -85,6 +81,12 @@ const SettingsPage: NextPageWithLayout = () => {
     );
   };
 
+  console.log({
+    session,
+  });
+
+  const isPlanWithStripe = projectPlan != null && projectPlan != "BETA";
+
   return (
     <main className="space-y-8 text-pink-50">
       <h1 className="text-3xl font-bold">Project Settings</h1>
@@ -105,8 +107,8 @@ const SettingsPage: NextPageWithLayout = () => {
                       type="text"
                       defaultValue={data.project.name}
                     />
-                    <button
-                      className="w-28  rounded-md bg-accent-background px-3 py-0.5 text-accent-foreground transition-colors duration-200 ease-in-out"
+                    <DashboardButton
+                      className="px-12"
                       onClick={() => {
                         if (!projectNameRef.current?.value) return;
                         updateProjectName({
@@ -116,57 +118,40 @@ const SettingsPage: NextPageWithLayout = () => {
                       }}
                     >
                       Save
-                    </button>
+                    </DashboardButton>
                   </div>
                 </label>
-                {user?.role === ROLE.ADMIN && (
-                  <div>
-                    <label
-                      className="ml-4 flex flex-col"
-                      htmlFor="Delelte Project"
-                    >
-                      Delete Project
-                      <button
-                        onClick={deleteProject}
-                        className="w-28 rounded-md border-2 border-pink-300 bg-pink-300/30 p-2 text-accent-foreground"
-                      >
-                        Delete
-                      </button>
-                    </label>
-                  </div>
-                )}
               </div>
               <p>Current Plan:</p>
-              <div className="flex space-x-5">
+              <div className="my-2 flex space-x-5">
                 <div className="flex w-52 items-center justify-center rounded-md border px-3 py-0.5 text-primary-foreground ">
-                  <span>{getProjectPaidPlan(data.project) ?? "Free"}</span>
+                  <span>{projectPlan ?? "Free"}</span>
                 </div>
-                <button
-                  className="rounded-md bg-accent-background px-3 py-0.5 text-accent-foreground transition-colors duration-200 ease-in-out "
+                <DashboardButton
+                  className="px-3 py-2"
                   onClick={async () => {
                     redirectToCheckout(projectId, "STARTUP");
                   }}
                 >
                   Upgrade to Startup
-                </button>
-                <button
-                  className="rounded-md bg-accent-background px-3 py-0.5 text-accent-foreground transition-colors duration-200 ease-in-out"
+                </DashboardButton>
+                <DashboardButton
+                  className="px-3"
                   onClick={async () => {
                     redirectToCheckout(projectId, "PRO");
                   }}
                 >
                   Upgrade to Pro
-                </button>
-                <Link
-                  className="rounded-md border-pink-300 bg-accent-background px-3 py-0.5 text-accent-foreground transition-colors duration-200 ease-in-out"
-                  href={`/projects/${projectId}/redeem`}
-                >
-                  <button className=" my-1">Redeem Coupon</button>
+                </DashboardButton>
+                <Link href={`/projects/${projectId}/redeem`}>
+                  <DashboardButton className="px-3 py-2">
+                    Redeem Coupon
+                  </DashboardButton>
                 </Link>
                 {data.project.stripeCustomerId != null &&
-                  getProjectPaidPlan(data.project) != null && (
+                  projectPlan != null && (
                     <button
-                      className="text- ml-4 mr-auto mt-4 rounded-sm bg-blue-300 px-3 py-0.5 text-accent-foreground transition-colors duration-200 ease-in-out"
+                      className="text- ml-4 mr-auto mt-4 rounded-sm bg-blue-300 px-3"
                       onClick={async () => {
                         redirectToBillingPortal(projectId);
                       }}
@@ -185,7 +170,7 @@ const SettingsPage: NextPageWithLayout = () => {
             <div className="mt-8 divide-y divide-pink-50/20">
               {data.project.users.map(({ user, role }) => (
                 <div key={user.id} className="col flex  py-3">
-                  <div className="flex items-center">
+                  <div className="flex items-center space-x-2">
                     <span>{user.email}</span>
                     {role !== ROLE.ADMIN && (
                       <IconButton
@@ -197,11 +182,10 @@ const SettingsPage: NextPageWithLayout = () => {
                     )}
                     <span
                       className={clsx(
-                        "rounded-md px-2 py-0.5 text-sm capitalize text-pink-50/80",
+                        "capitaliz rounded-md px-2 py-0.5 text-sm capitalize",
                         {
-                          "  bg-blue-300 text-black": role === ROLE.ADMIN,
-                          "bg-blue-300/40 stroke-blue-300 text-blue-300":
-                            role === ROLE.USER,
+                          "bg-blue-300 text-black": role === ROLE.ADMIN,
+                          "bg-blue-300/40 text-black": role === ROLE.USER,
                         }
                       )}
                     >
@@ -222,9 +206,7 @@ const SettingsPage: NextPageWithLayout = () => {
                     className="w-80 max-w-full rounded-md bg-gray-700 px-3 py-2 pr-2 focus:outline-none"
                     placeholder="abby@tryabby.com"
                   />{" "}
-                  <button className="w-32 rounded-md bg-accent-background">
-                    Invite
-                  </button>
+                  <DashboardButton className="px-12">Invite</DashboardButton>
                 </div>
               </form>
             </div>
@@ -297,6 +279,37 @@ const SettingsPage: NextPageWithLayout = () => {
               </div>
             </div>
           </section>
+          <section className="rounded-xl bg-gray-800 px-6 py-3">
+            <h2 className="text-xl font-semibold">Danger Zone</h2>
+            <h3 className="mb-8 text-sm text-pink-50/80">
+              Delete this project and all of its data
+            </h3>
+
+            <DashboardButton
+              onClick={deleteProject}
+              disabled={
+                isPlanWithStripe ||
+                !user?.role ||
+                user.role !== ROLE.ADMIN ||
+                session.data?.user?.projectIds == null ||
+                session.data?.user?.projectIds.length === 1
+              }
+              className="bg-red-600 py-2 font-medium hover:bg-red-600"
+            >
+              Delete Project
+            </DashboardButton>
+            {isPlanWithStripe && (
+              <p className="mt-2 text-sm text-gray-400">
+                You must downgrade to the free plan before deleting this
+                project.
+              </p>
+            )}
+            {session.data?.user?.projectIds.length === 1 && (
+              <p className="mt-2 text-sm text-gray-400">
+                You must create a new project before deleting this project.
+              </p>
+            )}
+          </section>
         </>
       )}
       <RemoveUserModal
@@ -306,7 +319,6 @@ const SettingsPage: NextPageWithLayout = () => {
       />
       <DeleteProjectModal
         isOpen={isShowDeleteModal}
-        goToProjects={() => router.push("/")}
         onClose={() => setisShowDeleteModal(false)}
       />
     </main>

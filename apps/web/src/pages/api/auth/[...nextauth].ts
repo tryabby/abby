@@ -34,8 +34,13 @@ export const authOptions: NextAuthOptions = {
       return session;
     },
     async jwt({ token, user, trigger, session }) {
-      if (trigger === "update" && session && "lastOpenProjectId" in session) {
-        token.user.lastOpenProjectId = session.lastOpenProjectId;
+      if (trigger === "update" && session) {
+        if ("lastOpenProjectId" in session) {
+          token.user.lastOpenProjectId = session.lastOpenProjectId;
+        }
+        if ("projectIds" in session) {
+          token.user.projectIds = session.projectIds;
+        }
       }
       if (user) {
         const projects = await prisma.projectUser.findMany({

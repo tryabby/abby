@@ -205,10 +205,16 @@ export const projectRouter = router({
       const project = await ctx.prisma.project.findFirst({
         where: {
           id: projectId,
+          users: {
+            some: {
+              userId: ctx.session.user.id,
+              role: ROLE.ADMIN,
+            },
+          },
         },
       });
 
-      console.log(project);
+      if (!project) throw new TRPCError({ code: "UNAUTHORIZED" });
 
       await ctx.prisma.project.delete({
         where: {
