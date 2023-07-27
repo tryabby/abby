@@ -30,7 +30,7 @@ module.exports = {
           },
           background:{
             DEFAULT: "rgba(var(--color-accent-background), 1)",
-            hover: "rgba(var(--color-accent-background), 0.9)",
+            hover: "rgba(var(--color-accent-background), 0.85)",
             muted: "rgba(var(--color-accent-background), 0.6)",
           }
         },
