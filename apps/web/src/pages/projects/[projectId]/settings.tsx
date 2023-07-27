@@ -81,10 +81,6 @@ const SettingsPage: NextPageWithLayout = () => {
     );
   };
 
-  console.log({
-    session,
-  });
-
   const isPlanWithStripe = projectPlan != null && projectPlan != "BETA";
 
   return (
@@ -208,6 +204,9 @@ const SettingsPage: NextPageWithLayout = () => {
                   />{" "}
                   <DashboardButton className="px-12">Invite</DashboardButton>
                 </div>
+                <small className="mt-1 text-xs text-gray-400">
+                  Note: You can only invite users with an existing account.
+                </small>
               </form>
             </div>
           </section>
