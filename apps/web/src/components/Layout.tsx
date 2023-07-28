@@ -21,6 +21,7 @@ import { Select } from "./Select";
 import { UserInfo } from "./UserInfo";
 import { CreateProjectModal } from "./CreateProjectModal";
 import { useSession } from "next-auth/react";
+import { twMerge } from "tailwind-merge";
 
 const navItemClass = (isActive: boolean) =>
   clsx(
@@ -66,7 +67,7 @@ const SideBar =
           ref={ref}
           className={clsx(
             mobileOnly ? "flex lg:hidden" : "hidden lg:flex",
-            "fixed z-10 h-full flex-col justify-between bg-gray-900 p-10 text-pink-50 lg:relative lg:w-96"
+            "fixed z-10 h-full flex-col justify-between bg-gray-900 p-10 text-pink-50 lg:relative lg:w-full"
           )}
         >
           {isCreateProjectModal && (
@@ -147,7 +148,7 @@ const SideBar =
               Settings
             </Link>
           </nav>
-          <div>
+          <div className="w-full">
             <UserInfo />
           </div>
         </aside>
@@ -183,7 +184,13 @@ export const Layout = ({
   return (
     <>
       <NextSeo title={currentProject?.project.name} />
-      <div className="flex h-screen bg-gray-700">
+
+      <div
+        className={twMerge(
+          "grid h-screen bg-gray-700",
+          hideSidebar ? "flex" : "lg:grid-cols-[minmax(auto,320px),1fr]"
+        )}
+      >
         {!hideSidebar && (
           <>
             <SideBar
