@@ -226,7 +226,7 @@ export function Navbar({ isInverted }: { isInverted?: boolean }) {
         <NavigationMenu className="hidden lg:block">
           <NavigationMenuList>
             {NAV_ITEMS.map((item) => (
-              <NavigationMenuItem>
+              <NavigationMenuItem key={item.title}>
                 {!("subItems" in item) ? (
                   <Link href={item.href} legacyBehavior passHref>
                     <NavigationMenuLink
@@ -242,6 +242,7 @@ export function Navbar({ isInverted }: { isInverted?: boolean }) {
                       {item.subItems.map(
                         ({ href, title, subTitle, isExternal }) => (
                           <ListItem
+                            key={href}
                             href={href}
                             title={title}
                             isExternalLink={isExternal}

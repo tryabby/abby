@@ -21,6 +21,10 @@ export default withAuth(
     callbacks: {
       authorized: ({ token, req }) => {
         const pathName = req.nextUrl.pathname;
+
+        // basic auth check for /profile
+        if (pathName === "/profile") return token != null;
+
         if (!pathName.startsWith("/projects")) return true;
         const projectId = req.nextUrl.pathname.split("/")[2];
         if (!projectId) {
@@ -37,5 +41,5 @@ export default withAuth(
 ) as NextMiddleware;
 
 export const config = {
-  matcher: ["/projects/:path*", "/marketing"],
+  matcher: ["/projects/:path*", "/marketing", "/profile"],
 };
