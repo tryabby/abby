@@ -48,7 +48,12 @@ const ProfilePage: NextPageWithLayout = () => {
       <div className="mx-auto mt-12 max-w-xl">
         <h1 className="text-3xl font-bold">Account Settings</h1>
         <form onSubmit={onSubmit} className="my-8 space-y-8">
-          <Avatar role="img" className="mx-auto block h-36 w-36" />
+          <Avatar
+            role="img"
+            imageUrl={data?.image ?? ""}
+            userName={data?.name ?? data?.email ?? ""}
+            className="mx-auto block h-36 w-36"
+          />
           <div>
             <label htmlFor="name" className="block text-sm font-medium">
               Name *
