@@ -21,6 +21,7 @@ import { Select } from "./Select";
 import { UserInfo } from "./UserInfo";
 import { CreateProjectModal } from "./CreateProjectModal";
 import { useSession } from "next-auth/react";
+import { twMerge } from "tailwind-merge";
 
 const navItemClass = (isActive: boolean) =>
   clsx(
@@ -59,14 +60,14 @@ const SideBar =
         setIsCreateProjectModal(true);
       };
 
-      const { data: session, update: sessionUpdate } = useSession();
+      const { update: sessionUpdate } = useSession();
 
       return (
         <aside
           ref={ref}
           className={clsx(
             mobileOnly ? "flex lg:hidden" : "hidden lg:flex",
-            "fixed z-10 h-full flex-col justify-between bg-gray-900 p-10 text-pink-50 lg:relative lg:w-96"
+            "fixed z-10 h-full flex-col justify-between bg-gray-900 p-10 text-pink-50 lg:relative lg:w-full"
           )}
         >
           {isCreateProjectModal && (
@@ -147,7 +148,7 @@ const SideBar =
               Settings
             </Link>
           </nav>
-          <div>
+          <div className="w-full">
             <UserInfo />
           </div>
         </aside>
@@ -155,7 +156,13 @@ const SideBar =
     }
   );
 
-export const Layout = ({ children }: { children: ReactNode }) => {
+export const Layout = ({
+  children,
+  hideSidebar,
+}: {
+  children: ReactNode;
+  hideSidebar?: boolean;
+}) => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const modalButtonRef = useRef<HTMLButtonElement>(null);
   const router = useRouter();
@@ -177,51 +184,62 @@ export const Layout = ({ children }: { children: ReactNode }) => {
   return (
     <>
       <NextSeo title={currentProject?.project.name} />
-      <div className="flex h-screen bg-gray-700">
-        <SideBar
-          closeSidebar={closeSidebar}
-          mobileOnly={false}
-          key="desktop"
-          currentProjectId={currentProjectId}
-          projects={(data?.projects ?? []).map((p) => p.project)}
-          isLoading={isLoading}
-        />
-        <Transition show={isSidebarOpen}>
-          <Transition.Child
-            as={Fragment}
-            enter="transform transition ease-in-out duration-500 sm:duration-700"
-            enterFrom="-translate-x-full"
-            enterTo="translate-x-0"
-            leave="transform transition ease-in-out duration-500 sm:duration-700"
-            leaveFrom="translate-x-0"
-            leaveTo="-translate-x-full"
-            unmount={false}
-          >
+
+      <div
+        className={twMerge(
+          "grid h-screen bg-gray-700",
+          hideSidebar ? "flex" : "lg:grid-cols-[minmax(auto,320px),1fr]"
+        )}
+      >
+        {!hideSidebar && (
+          <>
             <SideBar
               closeSidebar={closeSidebar}
-              mobileOnly
+              mobileOnly={false}
+              key="desktop"
               currentProjectId={currentProjectId}
               projects={(data?.projects ?? []).map((p) => p.project)}
               isLoading={isLoading}
-              key="mobile"
             />
-          </Transition.Child>
-          <Transition.Child
-            as={Fragment}
-            enter="transition ease-in-out duration-500 sm:duration-700"
-            enterFrom="opacity-0"
-            enterTo="opacity-100"
-            leave="transition ease-in-out duration-500 sm:duration-700"
-            leaveFrom="opacity-100"
-            leaveTo="opacity-0"
-            unmount={false}
-          >
-            <div
-              className="fixed z-[9] h-screen w-screen bg-black/40"
-              onClick={closeSidebar}
-            />
-          </Transition.Child>
-        </Transition>
+
+            <Transition show={isSidebarOpen}>
+              <Transition.Child
+                as={Fragment}
+                enter="transform transition ease-in-out duration-500 sm:duration-700"
+                enterFrom="-translate-x-full"
+                enterTo="translate-x-0"
+                leave="transform transition ease-in-out duration-500 sm:duration-700"
+                leaveFrom="translate-x-0"
+                leaveTo="-translate-x-full"
+                unmount={false}
+              >
+                <SideBar
+                  closeSidebar={closeSidebar}
+                  mobileOnly
+                  currentProjectId={currentProjectId}
+                  projects={(data?.projects ?? []).map((p) => p.project)}
+                  isLoading={isLoading}
+                  key="mobile"
+                />
+              </Transition.Child>
+              <Transition.Child
+                as={Fragment}
+                enter="transition ease-in-out duration-500 sm:duration-700"
+                enterFrom="opacity-0"
+                enterTo="opacity-100"
+                leave="transition ease-in-out duration-500 sm:duration-700"
+                leaveFrom="opacity-100"
+                leaveTo="opacity-0"
+                unmount={false}
+              >
+                <div
+                  className="fixed z-[9] h-screen w-screen bg-black/40"
+                  onClick={closeSidebar}
+                />
+              </Transition.Child>
+            </Transition>
+          </>
+        )}
         <main className="relative w-full overflow-y-auto overflow-x-hidden text-white">
           <div className="flex items-center justify-between bg-gray-800 px-8 py-3 lg:hidden">
             <AbbyHeader />
