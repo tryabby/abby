@@ -1,4 +1,5 @@
 import * as RadixAvatar from "@radix-ui/react-avatar";
+import { ComponentProps } from "react";
 import { twMerge } from "tailwind-merge";
 
 function getNameFromEmail(email: string) {
@@ -10,20 +11,19 @@ function getNameFromEmail(email: string) {
   return name;
 }
 
-export const Avatar = ({
-  imageUrl,
-  userName,
-  className,
-}: {
+type Props = {
   imageUrl?: string;
   userName?: string;
-  className?: string;
-}) => (
+} & ComponentProps<(typeof RadixAvatar)["Root"]>;
+
+export const Avatar = ({ imageUrl, userName, className, ...props }: Props) => (
   <RadixAvatar.Root
+    role="button"
     className={twMerge(
       "inline-flex h-[45px] w-[45px] select-none items-center justify-center overflow-hidden rounded-full bg-gray-600 align-middle",
       className
     )}
+    {...props}
   >
     <RadixAvatar.Image
       className="h-full w-full rounded-[inherit] object-cover"

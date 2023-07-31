@@ -4,9 +4,7 @@ import { Tab, Tabs, Callout } from "nextra-theme-docs";
 
 Our Svelte integration works with Svelte version??? It works with SPAs as well as server side rendered apps.
 
-
-
-### Installation
+## Installation
 
 To get started make sure to install the package using your favorite package manager.
 
@@ -29,9 +27,9 @@ To get started make sure to install the package using your favorite package mana
     </Tab>
 </Tabs>
 
-### Usage
+## Usage
 
-#### Create your Instance
+### Create your Instance
 
 To use Abby in your code you will need to create a typed Hook and Provider first. You can do this by using the `createAbby` function.
 Please copy the id of your project from the dashboard to get started.
@@ -47,13 +45,14 @@ const { AbbyProvider, useAbby } = createAbby({
     footer: { variants: ["dark", "orange", "green"] },
     // ... your tests
   },
-  flags: ["darkMode", "newFeature"],
+  flags: { darkMode: "Boolean", newFeature: "Boolean" },
 });
 ```
 
-#### Wrap your Application
+### Wrap your Application
 
 You will need to wrap your application in a layout containing the `AbbyProvider` to make sure the hook works.
+
 ```svelte
 //+layout.svelte
 <script lang="ts">
@@ -74,18 +73,16 @@ You will need to wrap your application in a layout containing the `AbbyProvider`
 ```
 
 If you want to use SSR you also need to provide a +layout.server.ts
+
 ```tsx
 import { abby } from "$lib/abby";
 
-export const load = abby.withAbby()
+export const load = abby.withAbby();
 ```
-
-
-### Retrieving the values
 
 You can now import the functions created by `createAbby` and use it in your components.
 
-#### useAbby
+## useAbby
 
 The `useAbby` function returns an object with the following values:
 
@@ -109,7 +106,7 @@ The `useAbby` function returns an object with the following values:
 
 ```
 
-#### useFeatureFlag
+## useFeatureFlag
 
 The `useFeatureFlag` function returns a store providing a boolean value that indicates if the flag is active or not.
 

@@ -1,4 +1,9 @@
+import { z } from "zod";
 import { router, protectedProcedure } from "../trpc";
+
+export const updateProfileSchema = z.object({
+  name: z.string().min(1),
+});
 
 export const userRouter = router({
   getUserData: protectedProcedure.query(async ({ ctx }) => {
@@ -22,6 +27,9 @@ export const userRouter = router({
     return ctx.prisma.user.findUnique({
       where: {
         id: ctx.session.user.id,
+      },
+      include: {
+        accounts: true,
       },
     });
   }),
@@ -49,4 +57,16 @@ export const userRouter = router({
       }),
     };
   }),
+  updateProfile: protectedProcedure
+    .input(updateProfileSchema)
+    .mutation(async ({ ctx, input }) => {
+      return ctx.prisma.user.update({
+        where: {
+          id: ctx.session.user.id,
+        },
+        data: {
+          name: input.name,
+        },
+      });
+    }),
 });

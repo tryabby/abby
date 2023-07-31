@@ -3,6 +3,8 @@ import prettier from "prettier";
 import path from "path";
 import * as fs from "fs/promises";
 import { getHighlighter } from "shiki";
+import { AbbyConfig } from "@tryabby/core";
+import { transformDBFlagTypeToclient } from "lib/flags";
 
 // Shiki loads languages and themes using "fs" instead of "import", so Next.js
 // doesn't bundle them into production build. To work around, we manually copy
@@ -52,7 +54,7 @@ export async function generateCodeSnippets({
       options: Pick<Option, "identifier">[];
     }
   >;
-  flags: Array<Pick<FeatureFlag, "name">>;
+  flags: Array<Pick<FeatureFlag, "name" | "type">>;
 }): Promise<Record<Integrations, CodeSnippetData>> {
   touchShikiPath();
 
@@ -66,8 +68,11 @@ export async function generateCodeSnippets({
         };
         return acc;
       }, {} as Record<string, any>),
-      flags: Array.from(new Set(flags.map((flag) => flag.name))),
-    },
+      flags: flags.reduce((acc, flag) => {
+        (acc || {})[flag.name] = transformDBFlagTypeToclient(flag.type);
+        return acc;
+      }, {} as AbbyConfig["flags"]),
+    } as AbbyConfig,
     null,
     2
   );

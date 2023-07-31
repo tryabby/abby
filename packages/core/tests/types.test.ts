@@ -1,11 +1,14 @@
-import { AbbyConfig } from "../dist";
+import { AbbyConfig, FlagValueStringToType } from "../dist";
 import { Abby } from "../src/index";
 
 describe("types", () => {
   it("produces proper types", () => {
     const abby = new Abby({
       projectId: "",
-      flags: ["flag1", "flag2"],
+      flags: {
+        flag1: "Boolean",
+        flag2: "String",
+      },
       tests: {
         test1: {
           variants: ["firstVariant", "secondVariant"],
@@ -17,6 +20,7 @@ describe("types", () => {
     });
 
     assertType<boolean>(abby.getFeatureFlag("flag1"));
+    assertType<string>(abby.getFeatureFlag("flag2"));
     expectTypeOf(abby.getFeatureFlag)
       .parameter(0)
       .toEqualTypeOf<"flag1" | "flag2">();
@@ -30,13 +34,30 @@ describe("types", () => {
     // This is the potential type of the devOverrides
     type DevOverrides = NonNullable<
       NonNullable<
-        NonNullable<AbbyConfig<"flag1" | "flag2", {}>["settings"]>["flags"]
+        NonNullable<
+          AbbyConfig<
+            "flag1" | "flag2",
+            {},
+            {
+              flag1: "Boolean";
+              flag2: "String";
+            }
+          >["settings"]
+        >["flags"]
       >["devOverrides"]
     >;
 
     expectTypeOf<DevOverrides>().toEqualTypeOf<{
       flag1?: boolean;
-      flag2?: boolean;
+      flag2?: string;
     }>();
+  });
+});
+
+describe("Type Helpers", () => {
+  it("converts the strings properly", () => {
+    expectTypeOf<FlagValueStringToType<"String">>().toEqualTypeOf<string>();
+    expectTypeOf<FlagValueStringToType<"Boolean">>().toEqualTypeOf<boolean>();
+    expectTypeOf<FlagValueStringToType<"Number">>().toEqualTypeOf<number>();
   });
 });

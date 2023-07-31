@@ -1,6 +1,6 @@
 {
   "name": "angular-example",
-  "version": "0.0.3",
+  "version": "0.0.7",
   "private": true,
   "scripts": {
     "ng": "ng",

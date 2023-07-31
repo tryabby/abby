@@ -28,6 +28,8 @@ export const serverSchema = z.object({
   REDIS_URL: z.string().url(),
   ABBY_FROM_EMAIL: z.string().email(),
   GITHUB_OAUTH_TOKEN: z.string().optional(),
+  GOOGLE_CLIENT_ID: z.string().optional(),
+  GOOGLE_CLIENT_SECRET: z.string().optional(),
 });
 
 /**

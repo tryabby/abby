@@ -3,6 +3,7 @@ import { ChangeEvent, useRef, useState } from "react";
 import toast from "react-hot-toast";
 import { trpc } from "utils/trpc";
 import { Modal } from "./Modal";
+import { useSession } from "next-auth/react";
 
 type Props = {
   onClose: () => void;
@@ -13,6 +14,7 @@ export const CreateProjectModal = ({ onClose }: Props) => {
   const projectName = useRef("");
   const [isValidName, setIsValidName] = useState(true);
   const trpcContext = trpc.useContext();
+  const session = useSession();
 
   const { mutateAsync: createProjectTRPC } =
     trpc.project.createProject.useMutation({
@@ -22,12 +24,9 @@ export const CreateProjectModal = ({ onClose }: Props) => {
         trpcContext.user.getProjects.invalidate();
       },
     });
-  const { data } = trpc.project.getProjectData.useQuery({
-    projectId: router.query.projectId as string,
-  });
 
   const createProject = async () => {
-    if (projectName.current.length <= 3) {
+    if (projectName.current.length < 3) {
       setIsValidName(false);
       return;
     }
@@ -37,6 +36,10 @@ export const CreateProjectModal = ({ onClose }: Props) => {
 
     onClose();
     if (!project) return;
+    await session.update({
+      projectIds: [...(session.data?.user?.projectIds ?? []), project.id],
+      lastOpenProjectId: project.id,
+    });
     router.push(`/projects/${project.id}`);
   };
 

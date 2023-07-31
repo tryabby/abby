@@ -1,84 +1,53 @@
+import { HttpService } from "@tryabby/core";
 import { MarketingLayout } from "components/MarketingLayout";
 import { NextPageWithLayout } from "./_app";
-import { HttpService } from "@tryabby/core";
-
-import { createAbby } from "@tryabby/next";
 import abbyDevtools from "@tryabby/devtools";
+import { createAbby } from "@tryabby/next";
+import { DevtoolsArrow } from "components/DevtoolsArrow";
+import { SignupButton } from "components/SignupButton";
 import { cn } from "lib/utils";
 import { InferGetStaticPropsType } from "next";
-import { useEffect, useState } from "react";
-import { CornerRightDown } from "lucide-react";
-import { Transition } from "@headlessui/react";
-import { motion } from "framer-motion";
-import { SignupButton } from "components/SignupButton";
 
-const config = {
-  projectId: "clha6feng0002l709segjhb2d",
-  currentEnvironment: process.env.NODE_ENV,
-  tests: {
-    MarketingButton: {
-      variants: ["Dark", "Funky", "Light"],
+const { useAbby, AbbyProvider, useFeatureFlag, withDevtools, __abby__ } =
+  createAbby({
+    projectId: "clha6feng0002l709segjhb2d",
+    currentEnvironment: process.env.NODE_ENV,
+    tests: {
+      MarketingButton: {
+        variants: ["Dark", "Funky", "Light"],
+      },
     },
-  },
-  flags: ["ToggleMeIfYoureExcited", "showEasterEgg", "showHeading"],
-};
-
-const { useAbby, AbbyProvider, useFeatureFlag, withDevtools } =
-  createAbby(config);
+    flags: {
+      ToggleMeIfYoureExcited: "Boolean",
+      showEasterEgg: "Boolean",
+      showHeading: "Boolean",
+    },
+  });
 
 export const AbbyProdDevtools = withDevtools(abbyDevtools, {
   dangerouslyForceShow: true,
 });
 
 const DevtoolsPage = () => {
-  const [devtoolsPosition, setDevtoolsPosition] = useState<DOMRect | null>(
-    null
-  );
-
   const showEasterEgg = useFeatureFlag("showEasterEgg");
   const showHeading = useFeatureFlag("showHeading");
   const isExcited = useFeatureFlag("ToggleMeIfYoureExcited");
   const { variant, onAct } = useAbby("MarketingButton");
-
-  useEffect(() => {
-    const devtools = document.getElementById("devtools-collapsed");
-    if (!devtools) return;
-
-    const resizeObserver = new ResizeObserver((entries) => {
-      if (!entries[0]) return;
-
-      setDevtoolsPosition(devtools.getBoundingClientRect());
-    });
-
-    resizeObserver.observe(devtools);
-
-    setDevtoolsPosition(devtools.getBoundingClientRect());
-
-    return () => {
-      resizeObserver.disconnect();
-    };
-  }, []);
 
   return (
     <>
       <section className="container relative px-6 font-mono lg:px-16">
         <div className="flex flex-col items-center">
           <div className="flex min-h-screen flex-col py-12 lg:py-24">
-            <h1 className="mb-8 text-center text-4xl font-extrabold leading-loose lg:text-5xl lg:leading-normal">
-              Quit the{" "}
-              <span className="block lg:inline">
-                <code className="rounded-md bg-zinc-700 px-2 py-1 text-lg md:text-2xl lg:text-5xl">
-                  console.<span className="text-blue-300">log</span>(
-                  <span className="text-green-300">&quot;Flag is &quot;</span>{" "}
-                  <span className="text-orange-300"> + </span>isOn)
-                </code>
-              </span>
+            <h1 className="mb-8 text-center text-4xl font-extrabold lg:text-5xl">
+              <span className="mark">Quit</span> the console.(&quot;Flag is
+              &quot; + isOn)
             </h1>
-            <div className="space-y-4 text-center text-lg font-medium text-gray-400 lg:text-2xl">
+            <div className="space-y-4 text-center text-lg font-medium lg:text-2xl">
               <h2>
                 Debugging is already hard, Debugging a Service is even harder 😮‍💨
               </h2>
-              <h2 className="font-semibold text-pink-500">
+              <h2 className="font-semibold">
                 A/BBY is here to help you with that
               </h2>
             </div>
@@ -123,6 +92,7 @@ const DevtoolsPage = () => {
                   height={200}
                   width={340}
                   src="https://media0.giphy.com/media/9o9dh1JRGThC1qxGTJ/giphy.gif"
+                  alt="I hate my job office rage"
                 />
               </div>
               <h3 className="bg-gradient-to-r from-yellow-400 to-orange-600 bg-clip-text text-3xl font-extrabold text-transparent lg:text-5xl">
@@ -137,6 +107,7 @@ const DevtoolsPage = () => {
                   height={200}
                   width={340}
                   src="https://media0.giphy.com/media/8xgqLTTgWqHWU/giphy.gif"
+                  alt="Thumbs Brent"
                 />
               </div>
             </div>
@@ -210,27 +181,7 @@ const DevtoolsPage = () => {
         </div>
       </section>
 
-      <Transition
-        show={devtoolsPosition != null}
-        enter="transition-opacity duration-75"
-        enterFrom="opacity-0"
-        enterTo="opacity-100"
-        leave="transition-opacity duration-150"
-        leaveFrom="opacity-100"
-        leaveTo="opacity-0"
-      >
-        <div
-          className="flex items-center font-mono text-pink-500"
-          style={{
-            zIndex: 9999,
-            position: "fixed",
-            top: (devtoolsPosition?.top ?? 0) - 40,
-            left: (devtoolsPosition?.left ?? 0) - 90,
-          }}
-        >
-          Try me out <CornerRightDown className="mt-3" />
-        </div>
-      </Transition>
+      <DevtoolsArrow />
     </>
   );
 };
@@ -247,12 +198,11 @@ const OuterPage: NextPageWithLayout<
 };
 
 OuterPage.getLayout = (page) => (
-  <MarketingLayout isInverted seoTitle="Devtools">
-    {page}
-  </MarketingLayout>
+  <MarketingLayout seoTitle="Devtools">{page}</MarketingLayout>
 );
 
 export const getStaticProps = async () => {
+  const config = __abby__.getConfig();
   const data = await HttpService.getProjectData({
     projectId: config.projectId,
     environment: config.currentEnvironment,

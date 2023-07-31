@@ -1,5 +1,22 @@
 # @tryabby/next
 
+## 4.0.1
+
+### Patch Changes
+
+- @tryabby/react@4.0.1
+
+## 4.0.0
+
+### Major Changes
+
+- change feature flag behavior for multivariate flags
+
+### Patch Changes
+
+- Updated dependencies
+  - @tryabby/react@4.0.0
+
 ## 3.4.0
 
 ### Minor Changes

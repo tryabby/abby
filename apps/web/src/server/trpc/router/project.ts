@@ -197,8 +197,33 @@ export const projectRouter = router({
         },
       });
     }),
+  deleteProject: protectedProcedure
+    .input(z.object({ projectId: z.string() }))
+    .mutation(async ({ ctx, input }) => {
+      const projectId = input.projectId;
+
+      const project = await ctx.prisma.project.findFirst({
+        where: {
+          id: projectId,
+          users: {
+            some: {
+              userId: ctx.session.user.id,
+              role: ROLE.ADMIN,
+            },
+          },
+        },
+      });
+
+      if (!project) throw new TRPCError({ code: "UNAUTHORIZED" });
+
+      await ctx.prisma.project.delete({
+        where: {
+          id: projectId,
+        },
+      });
+    }),
   createProject: protectedProcedure
-    .input(z.object({ projectName: z.string() }))
+    .input(z.object({ projectName: z.string().min(3) }))
     .mutation(async ({ ctx, input }) => {
       const userId = ctx.session.user.id;
       const project = await ProjectService.createProject({

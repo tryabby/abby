@@ -7,5 +7,8 @@ export const abby = createAbby({
       variants: ["A", "B"],
     },
   },
-  flags: ["flag1", "flag2"],
+  flags: {
+    flag1: "Boolean",
+    flag2: "String",
+  },
 });

@@ -4,7 +4,7 @@ import { Tab, Tabs, Callout } from "nextra-theme-docs";
 
 Our Next.js integration works with Next.js 12 or later. It uses the React SDK under the hood and just has some additional features for Next.js.
 
-### Installation
+## Installation
 
 To get started make sure to install the package using your favorite package manager.
 
@@ -27,7 +27,7 @@ To get started make sure to install the package using your favorite package mana
     </Tab>
 </Tabs>
 
-#### Create your Instance
+### Create your Instance
 
 To use Abby in your code you will need to create a typed Hook and Provider first. You can do this by using the `createAbby` function.
 Please copy the id of your project from the dashboard to get started.
@@ -43,11 +43,11 @@ const { AbbyProvider, useAbby, withAbby } = createAbby({
     footer: { variants: ["dark", "orange", "green"] },
     // ... your tests
   },
-  flags: ["darkMode", "newFeature"],
+  flags: { darkMode: "Boolean", newFeature: "Boolean" },
 });
 ```
 
-#### Wrap your Application
+### Wrap your Application
 
 You will need to wrap your application with the `AbbyProvider` to make sure the hook works.
 This is done in the `_app.tsx` / `_app.js` file in your Next.js project.
@@ -76,10 +76,7 @@ This works really well with Static Site Generation (SSG) and Server Side Renderi
 ```tsx /withAbby(MyApp)/
 import { AbbyProvider, withAbby } from "../lib/abby";
 
-function MyApp({
-  Component,
-  pageProps: { __ABBY_PROJECT_DATA__, ...pageProps },
-}) {
+function MyApp({ Component, pageProps: { __ABBY_PROJECT_DATA__, ...pageProps } }) {
   return (
     <AbbyProvider initialData={__ABBY_PROJECT_DATA__}>
       <Component {...pageProps} />
@@ -90,6 +87,6 @@ function MyApp({
 export default withAbby(MyApp);
 ```
 
-### Usage
+## Usage
 
 For the hook usage please read the [React SDK](/integrations/react#usage) documentation.

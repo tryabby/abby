@@ -12,7 +12,7 @@ export abstract class HttpService {
   }) {
     try {
       const res = await fetch(
-        `${url ?? ABBY_BASE_URL}api/dashboard/${projectId}/data${
+        `${url ?? ABBY_BASE_URL}api/v1/data/${projectId}${
           environment ? `?environment=${environment}` : ""
         }`
       );
@@ -21,9 +21,7 @@ export abstract class HttpService {
       const data = (await res.json()) as AbbyDataResponse;
       return data;
     } catch (err) {
-      console.error(
-        "[ABBY]: failed to load project data, falling back to defaults"
-      );
+      console.error("[ABBY]: failed to load project data, falling back to defaults");
       return null;
     }
   }
@@ -37,10 +35,7 @@ export abstract class HttpService {
     type: AbbyEventType;
     data: Omit<AbbyEvent, "type">;
   }) {
-    if (
-      typeof window === "undefined" ||
-      window.location.hostname === "localhost"
-    ) {
+    if (typeof window === "undefined" || window.location.hostname === "localhost") {
       // don't send data in development
       return;
     }

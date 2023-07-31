@@ -1,27 +1,25 @@
 <script lang="ts">
-  import Switch from "./components/Switch.svelte";
+  import type { Abby } from "@tryabby/core";
+  import Mousetrap from "mousetrap";
+  import { onDestroy, onMount } from "svelte";
   import CloseIcon from "./components/CloseIcon.svelte";
   import Select from "./components/Select.svelte";
-  import type { Abby } from "@tryabby/core";
+  import Switch from "./components/Switch.svelte";
   import type { Shortcut } from "./lib/types";
-  import { onDestroy, onMount, tick } from "svelte";
-  import Mousetrap from "mousetrap";
 
-  import { crossfade } from "svelte/transition";
   import { quintInOut } from "svelte/easing";
+  import { crossfade } from "svelte/transition";
+  import Input from "./components/Input.svelte";
+  import Modal from "./components/Modal.svelte";
   import { getShowDevtools, setShowDevtools } from "./lib/storage";
 
-  export let position:
-    | "top-left"
-    | "top-right"
-    | "bottom-left"
-    | "bottom-right" = "bottom-right";
+  export let position: "top-left" | "top-right" | "bottom-left" | "bottom-right" = "bottom-right";
 
   export let defaultShow: boolean = false;
 
   export let shortcut: Shortcut | Array<Shortcut> = ["command+.", "ctrl+."];
 
-  export let abby: Abby<any, any, any>;
+  export let abby: Abby<any, any, any, any>;
 
   let show = false;
 
@@ -77,22 +75,14 @@
   <div
     in:send={{ key }}
     out:receive={{ key }}
-    id="devtools"
-    style:--right={position === "top-right" || position === "bottom-right"
-      ? "1rem"
-      : "auto"}
-    style:--bottom={position === "bottom-left" || position === "bottom-right"
-      ? "1rem"
-      : "auto"}
-    style:--left={position === "top-left" || position === "bottom-left"
-      ? "1rem"
-      : "auto"}
-    style:--top={position === "top-left" || position === "top-right"
-      ? "1rem"
-      : "auto"}
+    id="abby-devtools"
+    style:--right={position === "top-right" || position === "bottom-right" ? "1rem" : "auto"}
+    style:--bottom={position === "bottom-left" || position === "bottom-right" ? "1rem" : "auto"}
+    style:--left={position === "top-left" || position === "bottom-left" ? "1rem" : "auto"}
+    style:--top={position === "top-left" || position === "top-right" ? "1rem" : "auto"}
   >
     <div class="header">
-      <h1>Abby Devtools</h1>
+      <h1>A/BBY Devtools</h1>
       <button on:click={onToggleVisibility}>
         <CloseIcon />
       </button>
@@ -103,18 +93,6 @@
       ></small
     >
     <hr />
-    <h2>Flags:</h2>
-
-    {#each Object.entries(flags) as [flagName, flagValue]}
-      <Switch
-        id={flagName}
-        label={flagName}
-        checked={flagValue}
-        onChange={(newValue) => abby.updateFlag(flagName, newValue)}
-      />
-    {/each}
-
-    <hr />
     <h2>A/B Tests:</h2>
     {#each Object.entries(tests) as [testName, { selectedVariant, variants }]}
       <Select
@@ -124,8 +102,48 @@
           label: v,
           value: v,
         }))}
-        onChange={(newValue) => abby.updateLocalVariant(testName, newValue)}
+        onChange={(newValue) => {
+          window.postMessage({ type: "abby:select-variant", testName, newValue }, "*");
+          abby.updateLocalVariant(testName, newValue);
+        }}
       />
+    {/each}
+    <hr />
+    <h2>Flags:</h2>
+    {#each Object.entries(flags) as [flagName, flagValue]}
+      {#if typeof flagValue === "boolean"}
+        <Switch
+          id={flagName}
+          label={flagName}
+          checked={flagValue}
+          onChange={(newValue) => {
+            window.postMessage({ type: "abby:update-flag", flagName, newValue }, "*");
+            abby.updateFlag(flagName, newValue);
+          }}
+        />
+      {:else if typeof flagValue === "string" || typeof flagValue === "number"}
+        <Input
+          id={flagName}
+          label={flagName}
+          type={typeof flagValue === "string" ? "text" : "number"}
+          value={flagValue}
+          onChange={(newValue) => {
+            window.postMessage({ type: "abby:update-flag", flagName, newValue }, "*");
+            abby.updateFlag(flagName, newValue);
+          }}
+        />
+      {:else if typeof flagValue === "object"}
+        <div style="display: flex; flex-direction: column; margin: 10px 0;">
+          <p style="margin-bottom: 5px;">{flagName}</p>
+          <Modal
+            value={flagValue}
+            onChange={(newValue) => {
+              window.postMessage({ type: "abby:update-flag", flagName, newValue }, "*");
+              abby.updateFlag(flagName, newValue);
+            }}
+          />
+        </div>
+      {/if}
     {/each}
   </div>
 {:else}
@@ -133,27 +151,19 @@
     in:send={{ key }}
     out:receive={{ key }}
     on:click={onToggleVisibility}
-    id="devtools-collapsed"
-    style:--right={position === "top-right" || position === "bottom-right"
-      ? "1rem"
-      : "auto"}
-    style:--bottom={position === "bottom-left" || position === "bottom-right"
-      ? "1rem"
-      : "auto"}
-    style:--left={position === "top-left" || position === "bottom-left"
-      ? "1rem"
-      : "auto"}
-    style:--top={position === "top-left" || position === "top-right"
-      ? "1rem"
-      : "auto"}
+    id="abby-devtools-collapsed"
+    style:--right={position === "top-right" || position === "bottom-right" ? "1rem" : "auto"}
+    style:--bottom={position === "bottom-left" || position === "bottom-right" ? "1rem" : "auto"}
+    style:--left={position === "top-left" || position === "bottom-left" ? "1rem" : "auto"}
+    style:--top={position === "top-left" || position === "top-right" ? "1rem" : "auto"}
   >
     A/B
   </button>
 {/if}
 
 <style lang="scss">
-  #devtools-collapsed {
-    --pink: hsl(323 72.8% 59.2%);
+  #abby-devtools-collapsed {
+    --pink: rgb(249, 168, 212);
     bottom: var(--bottom);
     right: var(--right);
     left: var(--left);
@@ -162,34 +172,35 @@
     position: fixed;
     color: var(--pink);
     font-weight: bold;
-    background: hsl(224 71% 4%);
-    font-family: ui-monospace, "Cascadia Code", "Source Code Pro", Menlo,
-      Consolas, "DejaVu Sans Mono", monospace;
+    background: #121929;
+    font-family: ui-monospace, "Cascadia Code", "Source Code Pro", Menlo, Consolas,
+      "DejaVu Sans Mono", monospace;
 
     width: 50px;
     height: 50px;
     border-radius: 12px;
+    border: 2px solid var(--pink);
     display: flex;
     align-items: center;
     justify-content: center;
-    box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1),
-      0 4px 6px -4px rgb(0 0 0 / 0.1);
+    box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
   }
 
-  #devtools {
-    --pink: hsl(323 72.8% 59.2%);
-    font-family: ui-monospace, "Cascadia Code", "Source Code Pro", Menlo,
-      Consolas, "DejaVu Sans Mono", monospace;
+  #abby-devtools {
+    --pink: rgb(249, 168, 212);
+    font-family: ui-monospace, "Cascadia Code", "Source Code Pro", Menlo, Consolas,
+      "DejaVu Sans Mono", monospace;
     position: fixed;
     bottom: var(--bottom);
     right: var(--right);
     left: var(--left);
     top: var(--top);
-    background: hsl(224 71% 4%);
+    background: #121929;
     padding: 15px 10px;
     padding-top: 10px;
     z-index: 9999;
     border-radius: 6px;
+    border: 2px solid var(--pink);
     font-size: 14px;
     color: hsl(213 31% 91%);
     min-width: 300px;

@@ -1,6 +1,6 @@
 {
 	"name": "@tryabby/svelte",
-	"version": "0.2.0",
+	"version": "1.0.1",
 	"main": "dist/index.umd.cjs",
 	"homepage": "https://docs.tryabby.dev",
 	"type": "module",
@@ -11,17 +11,16 @@
 	"types": "dist/index.d.ts",
 	"exports": {
 		".": {
+			"types": "./dist/index.d.ts",
+			"svelte": "./dist/index,js",
 			"import": "./dist/index.js",
-			"require": "./dist/index.umd.cjs",
-			"types": "./dist/index.d.ts"
+			"require": "./dist/index.umd.cjs"
 		}
 	},
 	"scripts": {
 		"dev": "vite dev",
 		"build": "vite build",
 		"preview": "vite preview",
-		"package": "svelte-kit sync && svelte-package && publint",
-		"prepublishOnly": "npm run package",
 		"check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
 		"check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch",
 		"test": "vitest"

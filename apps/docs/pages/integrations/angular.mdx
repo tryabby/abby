@@ -4,7 +4,7 @@ import { Tab, Tabs, Callout } from "nextra-theme-docs";
 
 Our Angular integration works with Angular 15 or later.
 
-### Installation
+## Installation
 
 To get started make sure to install the packages using your favorite package manager.
 
@@ -30,12 +30,11 @@ To get started make sure to install the packages using your favorite package man
     </Tab>
 </Tabs>
 
-### Usage
-<Callout>
-Make sure, that you have set skipLibCheck to true in your tsconfig
-</Callout>
+## Usage
 
-#### Create your Module
+<Callout>Make sure, that you have set skipLibCheck to true in your tsconfig</Callout>
+
+### Create your Module
 
 To use Abby in your code you will need to import the AbbyModule in your app module first. You will need to call AbbyModule.forRoot() method with the configuration object. Please copy the id of your project from the dashboard to get started.
 
@@ -54,7 +53,7 @@ import { AbbyModule } from "@tryabby/angular";
         footer: { variants: ["dark", "orange", "green"] },
         // ... your tests
       },
-      flags: ["darkMode", "newFeature"],
+      flags: { darkMode: "Boolean", newFeature: "Boolean" },
     }),
   ],
   providers: [],
@@ -63,7 +62,7 @@ import { AbbyModule } from "@tryabby/angular";
 export class AppModule {}
 ```
 
-#### Using Abby in your Component
+### Using Abby in your Component
 
 You can now use Abby in your components. You will have access to the `AbbyService` which can be used to get the variant and act on any test.
 
@@ -85,11 +84,13 @@ export class MyComponent {
   }
 }
 ```
+
 <Callout>
-For this Example "strictPropertyInitialization" has to be set to false in your tsconfig. Otherwise you have to initialize "footerVariant" with an default value.
+  For this Example "strictPropertyInitialization" has to be set to false in your tsconfig. Otherwise
+  you have to initialize "footerVariant" with an default value.
 </Callout>
 
-#### Using Abby Directives
+### Using Abby Directives
 
 You can also use Abby's directives to conditionally show elements based on the variant or feature flag.
 

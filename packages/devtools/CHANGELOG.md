@@ -1,5 +1,23 @@
 # @tryabby/devtools
 
+## 4.0.2
+
+### Patch Changes
+
+- add postmessage call on flag and test change
+
+## 4.0.1
+
+### Patch Changes
+
+- adapt to new ci colors
+
+## 4.0.0
+
+### Major Changes
+
+- change feature flag behavior for multivariate flags
+
 ## 3.3.0
 
 ### Minor Changes

@@ -1,5 +1,23 @@
 # @tryabby/angular
 
+## 1.0.1
+
+### Patch Changes
+
+- Updated dependencies
+  - @tryabby/core@4.0.1
+
+## 1.0.0
+
+### Major Changes
+
+- change feature flag behavior for multivariate flags
+
+### Patch Changes
+
+- Updated dependencies
+  - @tryabby/core@4.0.0
+
 ## 0.1.5
 
 - make it reactive

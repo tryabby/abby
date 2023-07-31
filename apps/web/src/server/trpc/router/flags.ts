@@ -1,12 +1,8 @@
 import { TRPCError } from "@trpc/server";
-import { getFlagCount } from "lib/flags";
-import { getProjectPaidPlan } from "lib/stripe";
-import { getLimitByPlan } from "server/common/plans";
-import { ProjectService } from "server/services/ProjectService";
+import { FlagService } from "server/services/FlagService";
 import { z } from "zod";
 import { protectedProcedure, router } from "../trpc";
-import { Prisma } from "@prisma/client";
-import { FlagService } from "server/services/FlagService";
+import { FeatureFlagType } from "@prisma/client";
 
 export const flagRouter = router({
   getFlags: protectedProcedure
@@ -51,59 +47,75 @@ export const flagRouter = router({
     .input(
       z.object({
         projectId: z.string(),
-        name: z.string().min(1),
+        name: z.string(),
+        type: z.nativeEnum(FeatureFlagType),
+        value: z.string(),
       })
     )
     .mutation(async ({ ctx, input }) => {
       const projectId = input.projectId;
       const flagName = input.name;
       const userId = ctx.session.user.id;
-      await FlagService.createFlag(projectId, flagName, userId);
+      await FlagService.createFlag({
+        projectId,
+        flagName,
+        userId,
+        value: input.value,
+        type: input.type,
+      });
     }),
-  toggleFlag: protectedProcedure
+  updateFlag: protectedProcedure
     .input(
       z.object({
         flagValueId: z.string(),
-        enabled: z.boolean(),
+        value: z.string(),
+        name: z.string(),
       })
     )
     .mutation(async ({ ctx, input }) => {
-      const canUpdate = await ctx.prisma.featureFlag.findFirst({
+      const currentFlag = await ctx.prisma.featureFlagValue.findFirst({
         where: {
-          values: {
-            some: {
-              id: input.flagValueId,
-            },
-          },
-          project: {
-            users: {
-              some: {
-                userId: ctx.session.user.id,
+          id: input.flagValueId,
+          flag: {
+            project: {
+              users: {
+                some: {
+                  userId: ctx.session.user.id,
+                },
               },
             },
           },
         },
       });
 
-      if (!canUpdate) throw new TRPCError({ code: "UNAUTHORIZED" });
+      if (!currentFlag) throw new TRPCError({ code: "UNAUTHORIZED" });
 
-      await ctx.prisma.featureFlagValue.update({
-        where: {
-          id: input.flagValueId,
-        },
-        data: {
-          isEnabled: input.enabled,
-        },
-      });
-
-      await ctx.prisma.featureFlagHistory.create({
-        data: {
-          userId: ctx.session.user.id,
-          flagValueId: input.flagValueId,
-          oldValue: !input.enabled,
-          newValue: input.enabled,
-        },
-      });
+      await ctx.prisma.$transaction([
+        ctx.prisma.featureFlagValue.update({
+          where: {
+            id: input.flagValueId,
+          },
+          data: {
+            value: input.value,
+          },
+        }),
+        ctx.prisma.featureFlag.update({
+          where: {
+            id: currentFlag.flagId,
+          },
+          data: {
+            name: input.name,
+          },
+        }),
+        ctx.prisma.featureFlagHistory.create({
+          data: {
+            userId: ctx.session.user.id,
+            flagValueId: input.flagValueId,
+            oldValue: currentFlag.value,
+            newValue: input.value,
+          },
+        }),
+      ]);
     }),
   removeFlag: protectedProcedure
     .input(
