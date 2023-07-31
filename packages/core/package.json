@@ -16,6 +16,11 @@
       "require": "./dist/shared/index.js",
       "import": "./dist/shared/index.js",
       "types": "./dist/shared/index.d.ts"
+    },
+    "./config": {
+      "require": "./dist/defineConfig/index.js",
+      "import": "./dist/defineConfig/index.js",
+      "types": "./dist/defineConfig/index.d.ts"
     }
   },
   "scripts": {

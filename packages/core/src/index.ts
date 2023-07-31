@@ -5,7 +5,6 @@ import {
   FlagValue,
   FlagValueString,
   FlagValueStringToType,
-  assertUnreachable,
   flagStringToType,
   getDefaultFlagValue,
   stringifyFlagValue,
@@ -16,6 +15,7 @@ import { getWeightedRandomVariant } from "./mathHelpers";
 import { parseCookies } from "./helpers";
 
 export * from "./shared/index";
+export { defineConfig } from "./defineConfig";
 
 export type ABConfig<T extends string = string> = {
   variants: ReadonlyArray<T>;
