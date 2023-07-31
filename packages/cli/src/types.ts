@@ -12,3 +12,13 @@ export type ConfigData<FlagName extends string = string> = {
   tests: Tests,
   flags: FlagName[]
 };
+
+export enum Frameworks {
+  Angular, NextJs, React, Svelte
+}
+
+export type Framework = {
+  framework: Frameworks,
+  regex: RegExp,
+  replaceRegex: RegExp
+}
