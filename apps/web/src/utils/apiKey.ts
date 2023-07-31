@@ -1,4 +1,4 @@
-import { createHmac, randomBytes, scryptSync, timingSafeEqual } from "crypto";
+import { createHmac, randomBytes } from "crypto";
 
 export function generateRandomString(length: number): string {
   const apiKeyLength = 32; // Adjust the length of the API key as needed
