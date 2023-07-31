@@ -1,26 +1,24 @@
-import { Variants, useElementScroll } from "framer-motion";
 import { NextApiRequest, NextApiResponse } from "next";
 import { prisma } from "server/db/client";
-
 import NextCors from "nextjs-cors";
 import { z } from "zod";
 import { FlagService } from "server/services/FlagService";
 import { TestService } from "server/services/TestService";
 import { hashApiKey } from "utils/apiKey";
+import {
+  abbyConfigSchema,
+  getDefaultFlagValue,
+  stringifyFlagValue,
+} from "@tryabby/core";
+import {
+  transformClientFlagToDBType,
+  transformDBFlagTypeToclient,
+} from "lib/flags";
+import { AbbyConfigFile } from "@tryabby/core";
 
 const incomingQuerySchema = z.object({
   projectId: z.string(),
   apiKey: z.string(),
-});
-
-export const abbyConfigSchema = z.object({
-  projectId: z.string(),
-  tests: z.record(
-    z.object({
-      variants: z.array(z.string()),
-    })
-  ),
-  flags: z.array(z.string()),
 });
 
 export default async function handler(
@@ -41,7 +39,8 @@ export default async function handler(
   const { projectId, apiKey } = querySchemaResult.data;
 
   const hashedApiKey = hashApiKey(apiKey);
-  const apiKeyEntry = await prisma.aPIKey.findUnique({
+
+  const apiKeyEntry = await prisma.apiKey.findUnique({
     where: {
       hashedKey: hashedApiKey,
     },
@@ -49,25 +48,25 @@ export default async function handler(
 
   if (!apiKeyEntry) {
     return;
-  } else {
-    if (apiKeyEntry.isRevoked) {
-      res.status(401).json({ error: "API key revoked" });
-      return;
-    }
-    if (apiKeyEntry.validDays) {
-      if (apiKeyEntry.validDays !== -1) {
-        const now = new Date();
-        const validUntil = new Date(apiKeyEntry.createdAt);
-        validUntil.setDate(validUntil.getDate() + apiKeyEntry.validDays);
+  }
 
-        if (now > validUntil) {
-          res.status(401).json({ error: "API key expired" });
-          return;
-        }
+  if (apiKeyEntry.isRevoked) {
+    res.status(401).json({ error: "API key revoked" });
+    return;
+  }
+  if (apiKeyEntry.validDays) {
+    if (apiKeyEntry.validDays !== -1) {
+      const now = new Date();
+      const validUntil = new Date(apiKeyEntry.createdAt);
+      validUntil.setDate(validUntil.getDate() + apiKeyEntry.validDays);
+
+      if (now > validUntil) {
+        res.status(401).json({ error: "API key expired" });
+        return;
       }
-    } else {
-      res.status(500).json({ error: "API key has no expiration date" });
     }
+  } else {
+    res.status(500).json({ error: "API key has no expiration date" });
   }
 
   if (req.method === "GET") {
@@ -97,10 +96,11 @@ export default async function handler(
           };
           return acc;
         }, {} as Record<string, any>),
-        flags: Array.from(
-          new Set(projectData.featureFlags.map((flag) => flag.name))
-        ),
-      };
+        flags: projectData.featureFlags.reduce((acc, flag) => {
+          acc[flag.name] = transformDBFlagTypeToclient(flag.type);
+          return acc;
+        }, {} as Record<string, any>),
+      } satisfies AbbyConfigFile;
       return res.status(200).json(config);
     } catch (error) {
       console.error(error);
@@ -147,20 +147,29 @@ export default async function handler(
       }
 
       if (newConfig.flags) {
-        const flagOperation = newConfig.flags.map(async (flag) => {
-          const flagData = await prisma.featureFlag.findUnique({
-            where: {
-              projectId_name: {
-                name: flag,
-                projectId,
+        const flagOperation = Object.entries(newConfig.flags).map(
+          async ([flagName, flagTypeAsString]) => {
+            const flagValue = getDefaultFlagValue(flagTypeAsString);
+            const flagData = await prisma.featureFlag.findUnique({
+              where: {
+                projectId_name: {
+                  name: flagName,
+                  projectId,
+                },
               },
-            },
-          });
-          if (!flagData) {
-            await FlagService.createFlag({ projectId, flagName: flag, userId });
+            });
+            if (!flagData) {
+              await FlagService.createFlag({
+                projectId,
+                flagName,
+                userId,
+                type: transformClientFlagToDBType(flagTypeAsString),
+                value: stringifyFlagValue(flagValue),
+              });
+            }
+            return flagData;
           }
-          return flagData;
-        });
+        );
         const flags = await Promise.all(flagOperation);
       }
 
