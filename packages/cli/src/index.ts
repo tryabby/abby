@@ -27,61 +27,59 @@ program
     }
   });
 
-  program
-    .command("pull")
-    .argument("<filepath>", "filepath")
-    .option("-l, --localhost", "localhost")
-    .action((filepath, options) => {
-        if (!filepath) {
-            console.log(chalk.red("Filename is required"));
-            return;
-        }
-        try {
-            const token: string = getToken();
-            push(filepath, token, options.localhost);
-        } catch (e) {
-          console.error(e)
-        }
-    });
+program
+  .command("pull")
+  .argument("<filepath>", "filepath")
+  .option("-l, --localhost", "localhost")
+  .action((filepath, options) => {
+    if (!filepath) {
+      console.log(chalk.red("Filename is required"));
+      return;
+    }
+    try {
+      const token: string = getToken();
+      push(filepath, token, options.localhost);
+    } catch (e) {
+      console.error(e);
+    }
+  });
 
+program
+  .command("push")
+  .description("push local config to server")
+  .argument("<filepath>", "filepath")
+  .option("-l, --localhost", "localhost")
+  .action(async (filepath, options) => {
+    if (!filepath) {
+      console.log(chalk.red("Filename is required"));
+      return;
+    }
+    try {
+      const token: string = getToken();
+      push(filepath, token, options.localhost);
+    } catch (e) {
+      console.log(chalk.red("Please login first"));
+      return;
+    }
+  });
 
-    program
-    .command("push")
-    .description("push local config to server")
-    .argument("<filepath>", "filepath")
-    .option("-l, --localhost", "localhost")
-    .action( async (filepath, options) => {
-      if (!filepath) {
-        console.log(chalk.red("Filename is required"));
-        return;
-      }
-      try {
-        const token: string = getToken();
-        push(filepath, token, options.localhost);
-      } catch (e) {
-        console.log(chalk.red("Please login first"));
-        return;
-      }
-    });
-
-    program
-    .command("check")
-    .description("check local config against server")
-    .argument("<filepath>", "filepath")
-    .option("-l, --localhost", "localhost")
-    .action( async (filepath, options) => {
-      if (!filepath) {
-        console.log(chalk.red("Filename is required"));
-        return;
-      }
-      try {
-        const token: string = getToken();
-        const upToDate = await check(filepath, token, options.localhost);
-      } catch (e) {
-        console.log(chalk.red("Please login first"));
-        return;
-      }
-    });
-
+program
+  .command("check")
+  .description("check local config against server")
+  .argument("<filepath>", "filepath")
+  .option("-l, --localhost", "localhost")
+  .action(async (filepath, options) => {
+    if (!filepath) {
+      console.log(chalk.red("Filename is required"));
+      return;
+    }
+    try {
+      const token: string = getToken();
+      const upToDate = await check(filepath, token, options.localhost);
+    } catch (e) {
+      console.log(chalk.red("Please login first"));
+      return;
+    }
+  });
 
 program.parse(process.argv);

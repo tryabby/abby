@@ -15,16 +15,13 @@ export function loadLocalConfig(filePath: string): Promise<string> {
   });
 }
 
-
 export function getRegex(configFileString: string) {
   const regexAngular = /export const abby = ({[\s\S]*?});/;
   const regexNext = /createAbby\(({[\s\S]+?})\);/;
   const regexReact = /createAbby\(({[\s\S]+?})\);/;
   const regexSvelte = /createAbby\(({[\s\S]+?})\);/;
 
-  const regexes: RegExp[] = [
-    regexAngular, regexReact, regexNext, regexSvelte
-  ]
+  const regexes: RegExp[] = [regexAngular, regexReact, regexNext, regexSvelte];
 
   let matchedRegex: RegExp | null = null;
 
@@ -38,11 +35,27 @@ export function getRegex(configFileString: string) {
 
 export function getFramework(configFileString: string): Framework | null {
   const frameworks = [
-    { framework: Frameworks.Angular, regex: /export const abby = ({[\s\S]*?});/,  replaceRegex: /(?<=export const abby = )\{[\s\S]*?\};/},
-    { framework: Frameworks.React, regex: /createAbby\(({[\s\S]+?})\);/ , replaceRegex: /(?<=createAbby\(({[\s\S]+?})\);)/},
-    { framework: Frameworks.NextJs, regex: /createAbby\(({[\s\S]+?})\);/ , replaceRegex: /(?<=createAbby\(({[\s\S]+?})\);)/},
-    { framework: Frameworks.Svelte, regex: /createAbby\(({[\s\S]+?})\);/, replaceRegex: /(?<=createAbby\(({[\s\S]+?})\);)/},
-  ]
+    {
+      framework: Frameworks.Angular,
+      regex: /export const abby = ({[\s\S]*?});/,
+      replaceRegex: /(?<=export const abby = )\{[\s\S]*?\};/,
+    },
+    {
+      framework: Frameworks.React,
+      regex: /createAbby\(({[\s\S]+?})\);/,
+      replaceRegex: /(?<=createAbby\(({[\s\S]+?})\);)/,
+    },
+    {
+      framework: Frameworks.NextJs,
+      regex: /createAbby\(({[\s\S]+?})\);/,
+      replaceRegex: /(?<=createAbby\(({[\s\S]+?})\);)/,
+    },
+    {
+      framework: Frameworks.Svelte,
+      regex: /createAbby\(({[\s\S]+?})\);/,
+      replaceRegex: /(?<=createAbby\(({[\s\S]+?})\);)/,
+    },
+  ];
 
   let matchedFramework: Framework | null = null;
 
@@ -64,11 +77,11 @@ export function getConfigFromFileString(configFileString: string): AbbyConfig {
     const object = eval("(" + objectString + ")");
     return object as AbbyConfig;
   } else {
-    return {} as AbbyConfig
+    return {} as AbbyConfig;
   }
 }
 
 export function getParsedJSONString(object: any): string {
-  const string = JSON.stringify(object, null, 2)
+  const string = JSON.stringify(object, null, 2);
   return string.replace(/"([^"]+)":/g, "$1:");
 }

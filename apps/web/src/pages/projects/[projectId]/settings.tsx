@@ -49,8 +49,8 @@ const CreateApiKeyModal = ({
       onClose={onClose}
     >
       <div className="py-2">
-        Ensure you copy your personal access token promptly as you won't have
-        another opportunity to view it.
+        Ensure you copy your personal access token promptly as you won&apos;t
+        have another opportunity to view it.
       </div>
       <Input
         value={apiKey}

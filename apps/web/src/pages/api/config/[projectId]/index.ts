@@ -157,7 +157,7 @@ export default async function handler(
             },
           });
           if (!flagData) {
-            await FlagService.createFlag(projectId, flag, userId);
+            await FlagService.createFlag({ projectId, flagName: flag, userId });
           }
           return flagData;
         });

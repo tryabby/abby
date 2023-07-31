@@ -7,10 +7,9 @@ export abstract class HttpService {
   static async getConfigFromServer(
     projectId: string,
     apiKey: string,
-    localhost?: boolean
+    localhost?: boolean,
   ): Promise<any> {
     let url: string;
-  
 
     if (localhost) {
       console.log("LOCAL");
@@ -19,36 +18,39 @@ export abstract class HttpService {
       url = ABBY_BASE_URL;
     }
     try {
-      const response = await fetch(`${url}/api/config/${projectId}?apiKey=${apiKey}`, {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
+      const response = await fetch(
+        `${url}/api/config/${projectId}?apiKey=${apiKey}`,
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+          },
         },
-      });
-  
+      );
+
       const responseJson = await response.json();
       return responseJson;
     } catch (e) {
-      console.error(e)
+      console.error(e);
       throw e;
     }
   }
-  
+
   static async updateConfigOnServer(
     projectId: string,
     apiKey: string,
     localAbbyConfig: AbbyConfig,
-    localhost?: boolean
+    localhost?: boolean,
   ) {
     let url: string;
-    
+
     if (localhost) {
       console.log("LOCAL");
       url = LOCAL_BASE_URL;
     } else {
       url = ABBY_BASE_URL;
     }
-  
+
     try {
       const response = await fetch(
         `${url}api/config/${projectId}?apiKey=${apiKey}`,
@@ -58,17 +60,17 @@ export abstract class HttpService {
             "Content-Type": "application/json",
           },
           body: JSON.stringify(localAbbyConfig),
-        }
+        },
       );
       // const res = await response;
       const data = await response.json();
       const status: number = response.status;
-  
+
       if (status == 200) {
         console.log("pushed successfully");
       } else if (status == 500) {
         console.log(
-          "Pushed failed \n Please try again later \n 500: Internal server error"
+          "Pushed failed \n Please try again later \n 500: Internal server error",
         );
       } else if (status == 401) {
         console.log("Pushed failed \n Please check your API key \n" + data);
@@ -79,6 +81,4 @@ export abstract class HttpService {
       console.log("Error: " + e);
     }
   }
-  
 }
-

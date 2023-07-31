@@ -1,4 +1,4 @@
-import { Prisma } from "@prisma/client";
+import { FeatureFlagType, Prisma } from "@prisma/client";
 import { TRPCError } from "@trpc/server";
 import { getFlagCount } from "lib/flags";
 import { getProjectPaidPlan } from "lib/stripe";
@@ -6,7 +6,19 @@ import { getLimitByPlan } from "server/common/plans";
 import { prisma } from "server/db/client";
 
 export abstract class FlagService {
-  static async createFlag(projectId: string, flagName: string, userId: string) {
+  static async createFlag({
+    projectId,
+    flagName,
+    userId,
+    type,
+    value,
+  }: {
+    projectId: string;
+    flagName: string;
+    userId: string;
+    type: FeatureFlagType;
+    value: string;
+  }) {
     const project = await prisma.project.findFirst({
       where: {
         id: projectId,
@@ -17,8 +29,7 @@ export abstract class FlagService {
         },
       },
       include: {
-        // to get the correct amount for the limit
-        featureFlags: { distinct: ["name"] },
+        featureFlags: true,
       },
     });
 
@@ -43,6 +54,7 @@ export abstract class FlagService {
         data: {
           name: flagName,
           projectId: projectId,
+          type,
         },
       });
 
@@ -52,6 +64,7 @@ export abstract class FlagService {
             data: {
               environmentId: env.id,
               flagId: newFlag.id,
+              value,
             },
           })
         )
@@ -61,7 +74,7 @@ export abstract class FlagService {
         data: featureFlagValues.map((featureFlag) => ({
           userId: userId,
           flagValueId: featureFlag.id,
-          newValue: false,
+          newValue: value,
         })) satisfies Prisma.FeatureFlagHistoryCreateManyInput[],
       });
     });
