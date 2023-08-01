@@ -1,13 +1,23 @@
 import { Directive, Input, OnDestroy, OnInit, TemplateRef, ViewContainerRef } from "@angular/core";
-import { Subject, takeUntil, map, distinctUntilChanged } from "rxjs";
+import { Subject, takeUntil, map, distinctUntilChanged, ReplaySubject, switchMap } from "rxjs";
 import { AbbyService } from "./abby.service";
 
 @Directive({
   selector: "[featureFlag]",
 })
 export class AbbyFlag implements OnInit, OnDestroy {
-  @Input() featureFlag: string;
+  @Input()
+  set featureFlag(featureFlag: string) {
+    // ensure featureFlag is a string to quit gracefully
+    if(typeof featureFlag !== 'string') {
+      console.warn(`Expected a string as featureFlag. Got ${featureFlag}`);
+      return;
+    }
 
+    this.currentFlag$.next(featureFlag);
+  }
+
+  private currentFlag$ = new ReplaySubject<string>(1);
   private _destroy$ = new Subject<void>();
 
   constructor(
@@ -17,16 +27,18 @@ export class AbbyFlag implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit(): void {
-    const flagName = this.featureFlag.startsWith("!")
-      ? this.featureFlag.substring(1)
-      : this.featureFlag;
-
-    this.abby
-      .getFeatureFlagValue(flagName)
+    this.currentFlag$
       .pipe(
-        map(
-          (value) => (value && this.featureFlag[0] != "!") || (this.featureFlag[0] == "!" && !value)
-        ),
+        switchMap((flagName) => {
+          return this.abby
+            .getFeatureFlagValue(flagName.startsWith("!") ? flagName.slice(1) : flagName)
+            .pipe(
+              map(
+                (value) =>
+                  (value && flagName[0] != "!") || (flagName[0] == "!" && !value)
+              )
+            );
+        }),
         distinctUntilChanged(),
         takeUntil(this._destroy$)
       )

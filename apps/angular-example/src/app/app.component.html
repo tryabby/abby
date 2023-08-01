@@ -43,7 +43,14 @@
 <!-- todo -->
 
 <h3>Feature Flag live change Demo</h3>
-<!-- todo -->
+<select [formControl]="dynamicFeatureFlag">
+  <option value="AngularFlag">AngularFlag</option>
+  <option value="!AngularFlag">!AngularFlag</option>
+  <option value="AngularFlag2">AngularFlag2</option>
+  <option value="!AngularFlag2">!AngularFlag2</option>
+</select>
+
+<div *featureFlag="dynamicFeatureFlag.value">{{ dynamicFeatureFlag.value }} = ON</div>
 
 <h3>Router A/B Test Demo</h3>
 <nav>
