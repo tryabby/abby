@@ -200,20 +200,23 @@ export function FeatureFlag({
 
   const currentFlagValue = flag.values.find((f) => f.id === flagValueId)?.value;
 
-  if (!currentFlagValue) {
+  if (currentFlagValue == null) {
     return null;
   }
 
   return (
     <>
-      <span className="flex w-full items-center justify-between space-x-3 rounded-xl bg-gray-100 py-3 pl-3 pr-4 text-sm font-medium text-gray-800 dark:bg-gray-700 dark:text-gray-300">
+      <span className="flex w-full items-center justify-between space-x-3 rounded-xl bg-gray-700 py-3 pl-3 pr-4 text-sm font-medium text-gray-300">
         <div className="flex items-center space-x-2">
           <p>{environmentName}</p>
           <code
             title={currentFlagValue}
             className="max-w-[60px] overflow-hidden text-ellipsis whitespace-nowrap rounded-md bg-gray-600 p-1"
           >
-            {currentFlagValue}
+            {typeof currentFlagValue === "string" &&
+            currentFlagValue.trim() === ""
+              ? "Empty String"
+              : currentFlagValue}
           </code>
         </div>
         <div className="flex space-x-2">

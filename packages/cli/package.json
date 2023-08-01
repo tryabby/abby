@@ -7,6 +7,7 @@
     "abby": "./dist/index.js"
   },
   "scripts": {
+    "dev": "pnpm run build --watch",
     "start": "pnpm run build && ./dist/index.js",
     "create": "npm run build && npm run test",
     "build": "esbuild src/index.ts --bundle --target=node10.4 --bundle --platform=node --format=cjs --outfile=dist/index.js --external:figlet",
@@ -18,12 +19,16 @@
     "chalk": "^5.2.0",
     "clear": "^0.1.0",
     "commander": "^10.0.1",
+    "deepmerge": "^4.3.1",
+    "dotenv": "^16.0.3",
     "esbuild": "0.18.17",
     "figlet": "^1.6.0",
     "msw": "^1.2.2",
     "node-fetch": "^3.3.1",
     "tsup": "^6.5.0",
-    "vite": "^3.2.5"
+    "unconfig": "^0.3.10",
+    "vite": "^3.2.5",
+    "zod": "^3.21.4"
   },
   "devDependencies": {
     "@tryabby/core": "workspace:^",

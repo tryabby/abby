@@ -19,6 +19,7 @@ export const flagValueStringSchema = z.union([
 
 export const abbyConfigSchema = z.object({
   projectId: z.string(),
+  environments: z.array(z.string()),
   tests: z.record(
     z.object({
       variants: z.array(z.string()),

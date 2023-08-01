@@ -2,10 +2,10 @@
 import { defineConfig } from "@tryabby/core";
 
 export default defineConfig({
-  projectId: "clkij7gyf0002px7cn3ney8qi",
-  currentEnvironment: "",
+  projectId: process.env.NEXT_PUBLIC_ABBY_PROJECT_ID!,
+  currentEnvironment: process.env.VERCEL_ENV ?? process.env.NODE_ENV,
   environments: ["development", "production"],
-  apiUrl: "http://localhost:3000",
+  apiUrl: process.env.NEXT_PUBLIC_ABBY_API_URL,
   tests: {
     SignupButton: {
       variants: ["A", "B"],
@@ -16,7 +16,5 @@ export default defineConfig({
     showFooter: "Boolean",
     test: "Boolean",
     abc: "JSON",
-    xd: "Number",
-    xd2: "String",
   },
 });

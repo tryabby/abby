@@ -1,18 +1,9 @@
 import { HttpService } from "./http";
-import { getConfigFromFileString, loadLocalConfig } from "./util";
+import { loadLocalConfig } from "./util";
 
-export async function push(
-  filePath: string,
-  apiKey: string,
-  localhost?: boolean,
-): Promise<void> {
-  const localConfigString = await loadLocalConfig(filePath);
-  const localAbbyConfig = getConfigFromFileString(localConfigString);
-  const projectId = localAbbyConfig.projectId;
-  await HttpService.updateConfigOnServer(
-    projectId,
-    apiKey,
-    localAbbyConfig,
-    localhost,
-  );
+export async function push({ apiKey, localhost }: { apiKey: string; localhost?: boolean }) {
+  const { config } = await loadLocalConfig();
+
+  const projectId = config.projectId;
+  await HttpService.updateConfigOnServer(projectId, apiKey, config, localhost);
 }

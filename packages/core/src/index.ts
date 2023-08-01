@@ -55,10 +55,12 @@ export type AbbyConfig<
   FlagName extends string = string,
   Tests extends Record<string, ABConfig> = Record<string, ABConfig>,
   Flags extends Record<FlagName, FlagValueString> = Record<FlagName, FlagValueString>,
+  Environments extends Array<string> = Array<string>,
 > = {
   projectId: string;
   apiUrl?: string;
-  currentEnvironment?: string;
+  currentEnvironment?: Environments[number];
+  environments: Environments;
   tests?: Tests;
   flags?: Flags;
   settings?: Settings<F.NoInfer<FlagName>, Flags>;
@@ -70,6 +72,7 @@ export class Abby<
   TestName extends string,
   Tests extends Record<string, ABConfig>,
   Flags extends Record<FlagName, FlagValueString>,
+  Environments extends Array<string> = Array<string>,
 > {
   private log = (...args: any[]) =>
     this.config.debug ? console.log(`core.Abby`, ...args) : () => {};
@@ -90,11 +93,11 @@ export class Abby<
   private testOverrides: Map<keyof Tests, Tests[keyof Tests]["variants"][number]> = new Map();
 
   constructor(
-    private config: F.Narrow<AbbyConfig<FlagName, Tests, Flags>>,
+    private config: F.Narrow<AbbyConfig<FlagName, Tests, Flags, Environments>>,
     private persistantTestStorage?: PersistentStorage,
     private persistantFlagStorage?: PersistentStorage
   ) {
-    this._cfg = config as AbbyConfig<FlagName, Tests, Flags>;
+    this._cfg = config as AbbyConfig<FlagName, Tests, Flags, Environments>;
     this.#data.flags = Object.keys(config.flags ?? {}).reduce(
       (acc, flagName) => {
         acc[flagName as FlagName] = this.getDefaultFlagValue(

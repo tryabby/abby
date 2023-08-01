@@ -77,6 +77,7 @@ export default async function handler(
           id: projectId,
         },
         include: {
+          environments: true,
           tests: {
             include: {
               options: true,
@@ -90,6 +91,9 @@ export default async function handler(
 
       const config = {
         projectId,
+        environments: projectData.environments.map(
+          (environment) => environment.name
+        ),
         tests: projectData.tests.reduce((acc, test) => {
           acc[test.name] = {
             variants: test.options.map((option) => option.identifier),
@@ -101,6 +105,7 @@ export default async function handler(
           return acc;
         }, {} as Record<string, any>),
       } satisfies AbbyConfigFile;
+
       return res.status(200).json(config);
     } catch (error) {
       console.error(error);
@@ -118,6 +123,29 @@ export default async function handler(
       const userId = apiKeyEntry.userId;
 
       const newConfig = configSchemaResult.data;
+
+      // create all missing environments
+      if (newConfig.environments) {
+        const currentEnvironments = await prisma.environment.findMany({
+          where: {
+            projectId,
+          },
+        });
+
+        const missingEnvironments = newConfig.environments.filter(
+          (env) =>
+            !currentEnvironments.find((currentEnv) => currentEnv.name === env)
+        );
+
+        await prisma.environment.createMany({
+          data: missingEnvironments.map((envName) => ({
+            name: envName,
+            projectId,
+          })),
+        });
+
+        console.log("created missing environments", missingEnvironments);
+      }
 
       if (newConfig.tests) {
         Object.entries(newConfig.tests).forEach(async ([testName, test]) => {
@@ -158,6 +186,13 @@ export default async function handler(
                 },
               },
             });
+
+            console.log({
+              flagValue,
+              flagTypeAsString,
+              s: stringifyFlagValue(flagValue),
+            });
+
             if (!flagData) {
               await FlagService.createFlag({
                 projectId,

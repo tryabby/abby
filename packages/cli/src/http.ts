@@ -1,14 +1,9 @@
 import { AbbyConfig } from "@tryabby/core";
-import { ConfigData } from "./types";
 import { ABBY_BASE_URL, LOCAL_BASE_URL } from "./consts";
 import fetch from "node-fetch";
 
 export abstract class HttpService {
-  static async getConfigFromServer(
-    projectId: string,
-    apiKey: string,
-    localhost?: boolean,
-  ): Promise<any> {
+  static async getConfigFromServer(projectId: string, apiKey: string, localhost?: boolean) {
     let url: string;
 
     if (localhost) {
@@ -18,18 +13,16 @@ export abstract class HttpService {
       url = ABBY_BASE_URL;
     }
     try {
-      const response = await fetch(
-        `${url}/api/config/${projectId}?apiKey=${apiKey}`,
-        {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-          },
+      // TODO: refactor to use header
+      const response = await fetch(`${url}/api/config/${projectId}?apiKey=${apiKey}`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
         },
-      );
+      });
 
       const responseJson = await response.json();
-      return responseJson;
+      return responseJson as AbbyConfig;
     } catch (e) {
       console.error(e);
       throw e;
@@ -40,7 +33,7 @@ export abstract class HttpService {
     projectId: string,
     apiKey: string,
     localAbbyConfig: AbbyConfig,
-    localhost?: boolean,
+    localhost?: boolean
   ) {
     let url: string;
 
@@ -52,26 +45,22 @@ export abstract class HttpService {
     }
 
     try {
-      const response = await fetch(
-        `${url}api/config/${projectId}?apiKey=${apiKey}`,
-        {
-          method: "PUT",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(localAbbyConfig),
+      // TODO: refactor to use header
+      const response = await fetch(`${url}api/config/${projectId}?apiKey=${apiKey}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
         },
-      );
-      // const res = await response;
+        body: JSON.stringify(localAbbyConfig),
+      });
+
       const data = await response.json();
-      const status: number = response.status;
+      const status = response.status;
 
       if (status == 200) {
         console.log("pushed successfully");
       } else if (status == 500) {
-        console.log(
-          "Pushed failed \n Please try again later \n 500: Internal server error",
-        );
+        console.log("Pushed failed \n Please try again later \n 500: Internal server error");
       } else if (status == 401) {
         console.log("Pushed failed \n Please check your API key \n" + data);
       } else {

@@ -1,46 +1,38 @@
+import chalk from "chalk";
 import { HttpService } from "./http";
-import { getConfigFromFileString, loadLocalConfig } from "./util";
-import { AbbyConfig } from "@tryabby/core";
+import { loadLocalConfig } from "./util";
 
-export async function check(
-  filepath: string,
-  apiKey: string,
-  localhost?: boolean,
-): Promise<boolean> {
-  const configFileString: string = await loadLocalConfig(filepath);
-  const configFromFile: AbbyConfig = getConfigFromFileString(configFileString);
+export async function check(apiKey: string, localhost?: boolean): Promise<boolean> {
+  const { config: localConfig } = await loadLocalConfig();
 
-  const configFromAbby = (await HttpService.getConfigFromServer(
-    configFromFile.projectId,
+  const remoteConfig = await HttpService.getConfigFromServer(
+    localConfig.projectId,
     apiKey,
-    localhost,
-  )) as AbbyConfig;
+    localhost
+  );
 
   let testsUpToDate = true;
   let flagsUpToDate = true;
 
   let output = false;
 
-  if (configFromAbby && configFromFile) {
-    if (configFromAbby.tests && configFromFile.tests) {
-      for (let serverTest in configFromAbby.tests) {
-        if (!(serverTest in configFromFile.tests)) {
+  if (remoteConfig && localConfig) {
+    if (remoteConfig.tests && localConfig.tests) {
+      for (let serverTest in remoteConfig.tests) {
+        if (!(serverTest in localConfig.tests)) {
           testsUpToDate = false;
         }
       }
-      for (let localTest in configFromFile.tests) {
-        if (!(localTest in configFromAbby.tests)) {
+      for (let localTest in localConfig.tests) {
+        if (!(localTest in remoteConfig.tests)) {
           testsUpToDate = false;
         }
       }
-    } else if (configFromAbby.tests || configFromFile.tests)
-      testsUpToDate = false;
+    } else if (remoteConfig.tests || localConfig.tests) testsUpToDate = false;
 
-    if (configFromAbby.flags && configFromFile.flags) {
-      if (!(configFromAbby.flags != configFromFile.flags))
-        flagsUpToDate = false;
-    } else if (configFromAbby.flags || configFromFile.flags)
-      flagsUpToDate = false;
+    if (remoteConfig.flags && localConfig.flags) {
+      if (!(remoteConfig.flags != localConfig.flags)) flagsUpToDate = false;
+    } else if (remoteConfig.flags || localConfig.flags) flagsUpToDate = false;
 
     if (testsUpToDate && flagsUpToDate) {
       output = true;
@@ -57,7 +49,7 @@ export async function check(
     }
     return output;
   } else {
-    console.log("Something went wrong. Please check your login");
+    console.log(chalk.red("Something went wrong. Please check your login"));
     return false;
   }
 }

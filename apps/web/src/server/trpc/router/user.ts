@@ -49,7 +49,7 @@ export const userRouter = router({
   getApiKeyData: protectedProcedure.query(async ({ ctx }) => {
     return {
       user: ctx.session.user.id,
-      apiKeys: await ctx.prisma.aPIKey.findMany({
+      apiKeys: await ctx.prisma.apiKey.findMany({
         where: {
           userId: ctx.session.user.id,
           isRevoked: false,

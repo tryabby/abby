@@ -1,63 +1,52 @@
-import * as path from "path";
-import * as fs from "fs";
+import * as fs from "fs/promises";
 import { AbbyConfig } from "@tryabby/core";
-import { getFramework, getParsedJSONString, loadLocalConfig } from "./util";
+import { loadLocalConfig } from "./util";
 
-import { getConfigFromFileString } from "./util";
-import { ConfigData } from "./types";
 import { HttpService } from "./http";
+import { configRegex } from "./consts";
+import deepmerge from "deepmerge";
 
-export async function updateConfigFile(updatedConfig: string, configFileString: string) {
-  const framework = getFramework(configFileString);
-  if (!framework) return;
-
-  const updatedContent = configFileString.replace(framework.replaceRegex, updatedConfig);
-
-  console.log(updatedContent);
+export async function updateConfigFile(updatedConfig: AbbyConfig, configFileString: string) {
+  const updatedContent = configFileString.replace(
+    configRegex,
+    JSON.stringify(updatedConfig, null, 2)
+  );
 
   return updatedContent;
 }
 
-export async function updateConfig(
-  configFromFile: AbbyConfig,
-  configFromAbby: AbbyConfig
-): Promise<string> {
-  const newConfig: AbbyConfig = {
-    projectId: configFromFile.projectId,
-    currentEnvironment: configFromFile.currentEnvironment,
-    tests: configFromAbby.tests ?? configFromFile.tests,
-    flags: configFromAbby.flags ?? configFromFile.flags,
-  };
-
-  const updatedConfigString = getParsedJSONString(newConfig);
-  return updatedConfigString;
+export function mergeConfigs(localConfig: AbbyConfig, remoteConfig: AbbyConfig) {
+  return deepmerge(localConfig, remoteConfig);
 }
 
-export async function pull(filePath: string, apiKey: string, localhost?: boolean): Promise<void> {
-  const configFileString = await loadLocalConfig(filePath);
-  const configFromFile = getConfigFromFileString(configFileString);
+export async function pullAndMerge({
+  apiKey,
+  localhost,
+}: {
+  apiKey: string;
+  localhost?: boolean;
+}): Promise<void> {
+  const { config: localConfig, configFilePath } = await loadLocalConfig();
 
-  const configFromAbby = await HttpService.getConfigFromServer(
-    configFromFile.projectId,
+  const configFileContents = await fs.readFile(configFilePath, "utf-8");
+
+  const remoteConfig = await HttpService.getConfigFromServer(
+    localConfig.projectId,
     apiKey,
     localhost
   );
 
-  if (configFromAbby) {
-    const updatedConfig = await updateConfig(configFromFile, configFromAbby);
-    const updatedFileString = await updateConfigFile(updatedConfig, configFileString);
+  if (remoteConfig) {
+    const updatedConfig = mergeConfigs(localConfig, remoteConfig);
+    const updatedFileString = await updateConfigFile(updatedConfig, configFileContents);
 
     if (!updatedFileString) {
       console.error("Config in file not found");
       return;
     }
 
-    fs.writeFile(filePath, updatedFileString, (error) => {
-      if (error) {
-        console.error(error);
-        return;
-      }
-      console.log("Config File updated");
-    });
-  } else console.error("Config in file not found");
+    await fs.writeFile(configFilePath, updatedFileString);
+  } else {
+    console.error("Config in file not found");
+  }
 }
