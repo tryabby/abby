@@ -1,18 +1,22 @@
 import {
   Directive,
   Input,
+  OnDestroy,
   OnInit,
   TemplateRef,
   ViewContainerRef,
 } from "@angular/core";
+import { Subject, takeUntil } from "rxjs";
 
 import { AbbyService } from "./abby.service";
 
 @Directive({
   selector: "[abbyTest]",
 })
-export class AbbyTest implements OnInit {
+export class AbbyTest implements OnInit, OnDestroy {
   @Input() abbyTest: { testName: string; variant: string };
+
+  private _destroy$ = new Subject<void>();
 
   constructor(
     private readonly abby: AbbyService,
@@ -23,6 +27,7 @@ export class AbbyTest implements OnInit {
   ngOnInit(): void {
     this.abby
       .getVariant(this.abbyTest.testName)
+      .pipe(takeUntil(this._destroy$))
       .subscribe((selectedVariant: string) => {
         // Clear the viewContainer before creating a new view.
         this._viewContainer.clear();
@@ -32,4 +37,9 @@ export class AbbyTest implements OnInit {
         }
       });
   }
+
+    ngOnDestroy(): void {
+      this._destroy$.next();
+      this._destroy$.complete();
+    }
 }

@@ -88,7 +88,6 @@ export class AbbyService<
 
   public init(): Observable<void> {
     return this.resolveData().pipe(
-      tap(() => {}),
       map(() => void 0)
     );
   }

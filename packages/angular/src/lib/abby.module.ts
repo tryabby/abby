@@ -5,6 +5,7 @@ import { AbbyFlag } from "./flag.directive";
 import { AbbyTest } from "./test.directive";
 import { DevtoolsComponent } from "./devtools.component";
 import { F } from "ts-toolbelt";
+import { firstValueFrom } from "rxjs";
 
 export const ABBY_CONFIG_TOKEN = new InjectionToken<AbbyConfig>("AbbyConfig");
 
@@ -30,16 +31,7 @@ export class AbbyModule {
         },
         {
           provide: APP_INITIALIZER,
-          useFactory: (abby: AbbyService) => {
-            return (): Promise<any> => {
-              return new Promise((resolve, reject) => {
-                abby.init().subscribe({
-                  next: () => resolve("Initialization Successful."),
-                  error: (err) => reject(err),
-                });
-              });
-            };
-          },
+          useFactory: (abby: AbbyService) => () => firstValueFrom(abby.init()),
           deps: [AbbyService],
           multi: true,
         },
