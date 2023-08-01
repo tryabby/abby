@@ -1,5 +1,5 @@
 import { Directive, Input, OnDestroy, OnInit, TemplateRef, ViewContainerRef } from "@angular/core";
-import { Subject, takeUntil } from "rxjs";
+import { Subject, takeUntil, map, distinctUntilChanged } from "rxjs";
 import { AbbyService } from "./abby.service";
 
 @Directive({
@@ -23,14 +23,18 @@ export class AbbyFlag implements OnInit, OnDestroy {
 
     this.abby
       .getFeatureFlagValue(flagName)
-      .pipe(takeUntil(this._destroy$))
-      .subscribe((value) => {
-        this._viewContainer.clear();
-        if (
-          (value && this.featureFlag[0] != "!") || 
-          (this.featureFlag[0] == "!" && !value)
-        ) {
+      .pipe(
+        map(
+          (value) => (value && this.featureFlag[0] != "!") || (this.featureFlag[0] == "!" && !value)
+        ),
+        distinctUntilChanged(),
+        takeUntil(this._destroy$)
+      )
+      .subscribe((visible) => {
+        if (visible) {
           this._viewContainer.createEmbeddedView(this._templateRef);
+        } else {
+          this._viewContainer.clear();
         }
       });
   }

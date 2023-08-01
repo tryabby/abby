@@ -6,7 +6,7 @@ import {
   TemplateRef,
   ViewContainerRef,
 } from "@angular/core";
-import { Subject, takeUntil } from "rxjs";
+import { distinctUntilChanged, map, Subject, takeUntil } from "rxjs";
 
 import { AbbyService } from "./abby.service";
 
@@ -27,13 +27,16 @@ export class AbbyTest implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.abby
       .getVariant(this.abbyTest.testName)
-      .pipe(takeUntil(this._destroy$))
-      .subscribe((selectedVariant: string) => {
-        // Clear the viewContainer before creating a new view.
-        this._viewContainer.clear();
-
-        if (selectedVariant === this.abbyTest.variant) {
+      .pipe(
+        map((selectedVariant) => selectedVariant === this.abbyTest.variant),
+        distinctUntilChanged(),
+        takeUntil(this._destroy$)
+      )
+      .subscribe((visible) => {
+        if(visible) {
           this._viewContainer.createEmbeddedView(this._templateRef);
+        } else {
+          this._viewContainer.clear();
         }
       });
   }
