@@ -1,7 +1,7 @@
 <h1>Angular examples</h1>
 
 <h3>Simple A/B-Test Service Demo</h3>
-<div>angularTest = {{angularTest}}</div>
+<div>angularTest = {{ angularTest$ | async }}</div>
 
 <button (click)="onAct()">OnAct</button>
 
@@ -11,11 +11,15 @@
 <ng-container *abbyTest="{testName: 'AngularTest', variant: 'C'}">CCCCCC</ng-container>
 <ng-container *abbyTest="{testName: 'AngularTest', variant: 'D'}">DDDDDD</ng-container>
 
-<h4 [ngStyle]="{'color': angularTest === 'A' ? 'blue' : angularTest === 'B' ? 'green' : angularTest === 'C' ? 'yellow' : angularTest === 'D' ? 'pink' : 'grey'}">Test</h4>
-
+<h4
+  *ngIf="angularTest$ | async as angularTest"
+  [ngStyle]="{'color': angularTest === 'A' ? 'blue' : angularTest === 'B' ? 'green' : angularTest === 'C' ? 'yellow' : angularTest === 'D' ? 'pink' : 'grey'}"
+>
+  Test
+</h4>
 
 <h3>Simple Feature Flag Service Demo</h3>
-<div>angularFlag = {{angularFlag}}</div>
+<div>angularFlag = {{ angularFlag$ | async }}</div>
 
 <h3>Simple Feature Flag Directive Demo</h3>
 <div *featureFlag="'AngularFlag'">AngularFlag = ON</div>
@@ -29,7 +33,7 @@
 <h4>Feature Flag</h4>
 <div *featureFlag="'!NotExistingFlag'">AngularFlag = OFF</div>
 
-<div ></div>
+<div></div>
 <h4>Variants</h4>
 <ng-container *abbyTest="{testName: 'NotExistingTest', variant: 'A'}">AAAAAA</ng-container>
 <ng-container *abbyTest="{testName: 'NotExistingTest', variant: 'B'}">BBBBBB</ng-container>
@@ -44,32 +48,28 @@
 <h3>Router A/B Test Demo</h3>
 <nav>
   <ul>
-    <li><a [routerLink]="[{outlets: {test: 'test'}}]"  >Test</a></li>
+    <li><a [routerLink]="[{outlets: {test: 'test'}}]">Test</a></li>
   </ul>
 </nav>
 <router-outlet name="test"></router-outlet>
-
-
 
 <h3>Router Feature Flag Demo</h3>
 <div *featureFlag="'AngularFlag'">
   <nav>
     <ul>
-      <li><a [routerLink]="[{outlets: {flag: 'flag'}}]" >Feature</a></li>
+      <li><a [routerLink]="[{outlets: {flag: 'flag'}}]">Feature</a></li>
     </ul>
   </nav>
 </div>
 <router-outlet name="flag"></router-outlet>
 
-
 <h3>Lazy-loaded module Demo</h3>
 <nav>
   <ul>
-    <li><a [routerLink]="[{outlets: {lazy: 'lazy'}}]" >Lazy</a></li>
+    <li><a [routerLink]="[{outlets: {lazy: 'lazy'}}]">Lazy</a></li>
   </ul>
 </nav>
 <router-outlet name="lazy"></router-outlet>
-
 
 <h3>Angular Universal SSR Demo</h3>
 <!-- todo -->

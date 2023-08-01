@@ -1,27 +1,19 @@
-import { Component, OnInit } from '@angular/core';
-import { Abby } from './abby';
+import { Component } from "@angular/core";
+import { shareReplay } from "rxjs";
+import { Abby } from "./abby";
 
 @Component({
-  selector: 'app-root',
-  templateUrl: './app.component.html',
-  styleUrls: ['./app.component.css'],
+  selector: "app-root",
+  templateUrl: "./app.component.html",
+  styleUrls: ["./app.component.css"],
 })
-export class AppComponent implements OnInit {
-  angularTest: string;
-  angularFlag: boolean;
+export class AppComponent {
+  angularTest$ = this.abby.getVariant("AngularTest").pipe(shareReplay(1));
+  angularFlag$ = this.abby.getFeatureFlagValue("AngularFlag").pipe(shareReplay(1));
+
   constructor(public readonly abby: Abby) {}
 
-  ngOnInit() {
-    this.abby.getVariant('AngularTest').subscribe((value: string) => {
-      this.angularTest = value;
-    });
-
-    this.abby.getFeatureFlagValue('AngularFlag').subscribe((value: boolean) => {
-      this.angularFlag = value;
-    });
-  }
-
   public onAct(): void {
-    this.abby.onAct('AngularTest');
+    this.abby.onAct("AngularTest");
   }
 }
