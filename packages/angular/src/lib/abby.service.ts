@@ -22,6 +22,7 @@ import {
   tap,
 } from "rxjs";
 import { F } from "ts-toolbelt";
+import { AbbyLoggerService } from "./abby-logger.service";
 import { FlagStorageService, TestStorageService } from "./StorageService";
 
 type LocalData<FlagName extends string = string, TestName extends string = string> = {
@@ -52,11 +53,12 @@ export class AbbyService<
 
   private projectData$?: Observable<LocalData<FlagName, TestName>>;
 
-  private log = (...args: any[]) =>
-    this.config.debug ? console.log(`ng.AbbyService`, ...args) : () => {};
   private cookieChanged$ = new Subject<void>();
 
-  constructor(@Inject(AbbyService) config: F.Narrow<AbbyConfig<FlagName, Tests, Flags>>) {
+  constructor(
+    @Inject(AbbyService) config: F.Narrow<AbbyConfig<FlagName, Tests, Flags>>,
+    private abbyLogger: AbbyLoggerService
+  ) {
     this.abby = new Abby<FlagName, TestName, Tests, Flags>(
       config,
       {
@@ -91,21 +93,21 @@ export class AbbyService<
   }
 
   public getVariant<T extends keyof Tests>(testName: T): Observable<string> {
-    this.log(`getVariant(${testName as string})`);
+    this.abbyLogger.log(`getVariant(${testName as string})`);
 
     return this.resolveData().pipe(
       map((data) => this.abby.getTestVariant(testName)),
       tap((variant) => (this.selectedVariants[testName as string] = variant)),
-      tap((variant) => this.log(`getVariant(${testName as string}) =>`, variant))
+      tap((variant) => this.abbyLogger.log(`getVariant(${testName as string}) =>`, variant))
     );
   }
 
   public onAct(testName: string): void {
-    this.log(`onAct(${testName})`);
+    this.abbyLogger.log(`onAct(${testName})`);
 
     if (!this.selectedVariants[testName]) return;
 
-    this.log({
+    this.abbyLogger.log({
       url: this.config.apiUrl,
       type: AbbyEventType.ACT,
       data: {
@@ -132,15 +134,15 @@ export class AbbyService<
       ? (name.slice(1) as FlagName)
       : (name as FlagName);
 
-    this.log(`getFeatureFlagValue(${name}) -> ${this.abby.getFeatureFlag(strippedFlagName)}`);
+    this.abbyLogger.log(`getFeatureFlagValue(${name}) -> ${this.abby.getFeatureFlag(strippedFlagName)}`);
 
     return this.resolveData().pipe(
       map(() => this.abby.getFeatureFlag(strippedFlagName)),
-      tap((value) => this.log(`getFeatureFlagValue(${name}) =>`, value)),
+      tap((value) => this.abbyLogger.log(`getFeatureFlagValue(${name}) =>`, value)),
       map((featureFlagValue) => {
         return (
           (!featureFlagValue && isFeatureFlagInverted) ||
-          (featureFlagValue && !isFeatureFlagInverted )
+          (featureFlagValue && !isFeatureFlagInverted)
         );
       })
     );

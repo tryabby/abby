@@ -1,11 +1,18 @@
-import { APP_INITIALIZER, InjectionToken, ModuleWithProviders, NgModule } from "@angular/core";
+import {
+  APP_INITIALIZER,
+  inject,
+  InjectionToken,
+  ModuleWithProviders,
+  NgModule,
+} from "@angular/core";
+import { AbbyConfig } from "@tryabby/core";
+import { firstValueFrom } from "rxjs";
+import { F } from "ts-toolbelt";
+import { AbbyLoggerService } from "./abby-logger.service";
 import { AbbyService } from "./abby.service";
-import { Abby, AbbyConfig } from "@tryabby/core";
+import { DevtoolsComponent } from "./devtools.component";
 import { AbbyFlag } from "./flag.directive";
 import { AbbyTest } from "./test.directive";
-import { DevtoolsComponent } from "./devtools.component";
-import { F } from "ts-toolbelt";
-import { firstValueFrom } from "rxjs";
 
 export const ABBY_CONFIG_TOKEN = new InjectionToken<AbbyConfig>("AbbyConfig");
 
@@ -19,13 +26,16 @@ export class AbbyModule {
       ngModule: AbbyModule,
       providers: [
         {
+          provide: AbbyLoggerService,
+        },
+        {
           provide: ABBY_CONFIG_TOKEN,
           useValue: config, // assuming 'config' is your configuration data
         },
         {
           provide: AbbyService,
           useFactory: (config: AbbyConfig) => {
-            return new AbbyService(config as F.Narrow<AbbyConfig>);
+            return new AbbyService(config as F.Narrow<AbbyConfig>, inject(AbbyLoggerService));
           },
           deps: [ABBY_CONFIG_TOKEN],
         },

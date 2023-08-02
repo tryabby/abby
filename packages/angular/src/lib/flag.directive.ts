@@ -1,5 +1,6 @@
 import { Directive, Input, OnDestroy, OnInit, TemplateRef, ViewContainerRef } from "@angular/core";
 import { distinctUntilChanged, Subject, switchMap, takeUntil } from "rxjs";
+import { AbbyLoggerService } from "./abby-logger.service";
 import { AbbyService } from "./abby.service";
 
 @Directive({
@@ -9,8 +10,8 @@ export class AbbyFlag implements OnInit, OnDestroy {
   @Input()
   set featureFlag(featureFlag: string) {
     // ensure featureFlag is a string to quit gracefully
-    if(typeof featureFlag !== 'string') {
-      console.warn(`Expected a string as featureFlag. Got ${featureFlag}`);
+    if (typeof featureFlag !== "string") {
+      this.abbyLogger.warn(`Expected a string as featureFlag. Got ${featureFlag}`);
       return;
     }
 
@@ -22,6 +23,7 @@ export class AbbyFlag implements OnInit, OnDestroy {
 
   constructor(
     private readonly abby: AbbyService,
+    private readonly abbyLogger: AbbyLoggerService,
     private _viewContainer: ViewContainerRef,
     private _templateRef: TemplateRef<any>
   ) {}
