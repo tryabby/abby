@@ -1,16 +1,17 @@
 #!/usr/bin/env node
-import * as figlet from "figlet";
+import chalk from "chalk";
 import { Command } from "commander";
+import * as figlet from "figlet";
+import { getToken, writeTokenFile } from "./auth";
+import { check } from "./check";
+import { ABBY_BASE_URL, getTokenFilePath } from "./consts";
 import { pullAndMerge } from "./pull";
 import { push } from "./push";
-import { getToken, writeTokenFile } from "./auth";
-import chalk from "chalk";
-import { check } from "./check";
-import { getTokenFilePath } from "./consts";
+import { ConfigOption, HostOption } from "./sharedOptions";
 
 const program = new Command();
 
-console.log(figlet.textSync("abby-cli", { horizontalLayout: "full" }));
+console.log(chalk.magenta(figlet.textSync("abby-cli", { horizontalLayout: "full" })));
 
 program.name("abby-cli").description("CLI Tool for Abby").version("0.0.1");
 
@@ -22,19 +23,24 @@ program
       await writeTokenFile(token);
       console.log(chalk.green(`Token successfully written to ${getTokenFilePath()}`));
     } else {
-      console.log(chalk.red("You need to provide a token to log in"));
+      console.log(
+        chalk.red(`You need to provide a token to log in.`),
+        chalk.green(`\nYou can get one at ${ABBY_BASE_URL}profile`)
+      );
     }
   });
 
 program
   .command("pull")
-  .option("-l, --localhost", "localhost")
-  .action(async (options) => {
+  .addOption(HostOption)
+  .addOption(ConfigOption)
+  .action(async (options: { config?: string; host?: string }) => {
     try {
-      const token: string = await getToken();
+      const token = await getToken();
       await pullAndMerge({
         apiKey: token,
-        localhost: options.localhost,
+        apiUrl: options.host,
+        configPath: options.config,
       });
     } catch (e) {
       console.error(e);
@@ -44,11 +50,12 @@ program
 program
   .command("push")
   .description("push local config to server")
-  .option("-l, --localhost", "localhost")
-  .action(async (options) => {
+  .addOption(HostOption)
+  .addOption(ConfigOption)
+  .action(async (options: { config?: string; host?: string }) => {
     try {
-      const token: string = await getToken();
-      await push({ apiKey: token, localhost: options.localhost });
+      const token = await getToken();
+      await push({ apiKey: token, apiUrl: options.host, configPath: options.config });
     } catch (e) {
       console.log(chalk.red("Please login first"));
       return;
@@ -58,15 +65,24 @@ program
 program
   .command("check")
   .description("check local config against server")
-  .option("-l, --localhost", "localhost")
-  .action(async (options) => {
+  .addOption(HostOption)
+  .addOption(ConfigOption)
+  .action(async (options: { config?: string; host?: string }) => {
     try {
-      const token: string = await getToken();
-      const upToDate = await check(token, options.localhost);
-      if (upToDate) {
+      const token = await getToken();
+      const { isValid, invalidFlags, invalidTests } = await check({
+        apiKey: token,
+        apiUrl: options.host,
+        configPath: options.config,
+      });
+      if (isValid) {
         console.log(chalk.green("Local config is up to date"));
       } else {
-        console.log(chalk.red("Local config is not up to date"));
+        console.log(
+          chalk.red("Local config is not up to date"),
+          chalk.red(`Invalid flags: ${invalidFlags.join(", ")}`),
+          chalk.red(`Invalid tests: ${invalidTests.join(", ")}}`)
+        );
       }
     } catch (e) {
       console.error(e);

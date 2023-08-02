@@ -5,6 +5,7 @@ import { environment } from "../environments/environment";
 export const abby = {
   projectId: environment.ABBY_PROJECT_ID,
   currentEnvironment: "test",
+  environments: ["test", "prod"] as Array<string>,
   tests: {
     AngularTest: {
       variants: ["A", "B", "C", "D"],

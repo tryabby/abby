@@ -12,6 +12,7 @@ const { useAbby, AbbyProvider, useFeatureFlag, withDevtools, __abby__ } =
   createAbby({
     projectId: "clha6feng0002l709segjhb2d",
     currentEnvironment: process.env.NODE_ENV,
+    environments: ["development", "production"],
     tests: {
       MarketingButton: {
         variants: ["Dark", "Funky", "Light"],

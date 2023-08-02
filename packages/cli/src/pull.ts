@@ -5,10 +5,19 @@ import { loadLocalConfig } from "./util";
 import { HttpService } from "./http";
 import { configRegex } from "./consts";
 import deepmerge from "deepmerge";
+import * as prettier from "prettier";
 
-export async function updateConfigFile(updatedConfig: AbbyConfig, configFileString: string) {
+export function updateConfigFile(updatedConfig: AbbyConfig, configFileString: string) {
+  const matchRegex = configRegex.exec(configFileString);
+
+  const matchedObject = matchRegex?.[1];
+
+  if (!matchedObject) {
+    throw new Error("Invalid config file");
+  }
+
   const updatedContent = configFileString.replace(
-    configRegex,
+    matchedObject,
     JSON.stringify(updatedConfig, null, 2)
   );
 
@@ -16,36 +25,47 @@ export async function updateConfigFile(updatedConfig: AbbyConfig, configFileStri
 }
 
 export function mergeConfigs(localConfig: AbbyConfig, remoteConfig: AbbyConfig) {
-  return deepmerge(localConfig, remoteConfig);
+  return {
+    ...localConfig,
+    environments: Array.from(new Set([...localConfig.environments, ...remoteConfig.environments])),
+    tests: deepmerge(localConfig.tests ?? {}, remoteConfig.tests ?? {}),
+    flags: deepmerge(localConfig.flags ?? {}, remoteConfig.flags ?? {}),
+  } satisfies AbbyConfig;
 }
 
 export async function pullAndMerge({
   apiKey,
-  localhost,
+  apiUrl,
+  configPath,
 }: {
   apiKey: string;
-  localhost?: boolean;
+  apiUrl?: string;
+  configPath?: string;
 }): Promise<void> {
-  const { config: localConfig, configFilePath } = await loadLocalConfig();
+  const { config: localConfig, configFilePath } = await loadLocalConfig(configPath);
 
   const configFileContents = await fs.readFile(configFilePath, "utf-8");
 
-  const remoteConfig = await HttpService.getConfigFromServer(
-    localConfig.projectId,
+  const remoteConfig = await HttpService.getConfigFromServer({
+    projectId: localConfig.projectId,
     apiKey,
-    localhost
-  );
+    apiUrl,
+  });
 
   if (remoteConfig) {
     const updatedConfig = mergeConfigs(localConfig, remoteConfig);
-    const updatedFileString = await updateConfigFile(updatedConfig, configFileContents);
+    const updatedFileString = updateConfigFile(updatedConfig, configFileContents);
 
     if (!updatedFileString) {
       console.error("Config in file not found");
       return;
     }
 
-    await fs.writeFile(configFilePath, updatedFileString);
+    const formattedFile = await prettier.format(updatedFileString, {
+      filepath: configFilePath,
+    });
+
+    await fs.writeFile(configFilePath, formattedFile);
   } else {
     console.error("Config in file not found");
   }

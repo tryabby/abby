@@ -3,52 +3,51 @@ import { ABBY_BASE_URL, LOCAL_BASE_URL } from "./consts";
 import fetch from "node-fetch";
 
 export abstract class HttpService {
-  static async getConfigFromServer(projectId: string, apiKey: string, localhost?: boolean) {
-    let url: string;
+  static async getConfigFromServer({
+    projectId,
+    apiKey,
+    apiUrl,
+  }: {
+    projectId: string;
+    apiKey: string;
+    apiUrl?: string;
+  }) {
+    const url = apiUrl ?? ABBY_BASE_URL;
 
-    if (localhost) {
-      console.log("LOCAL");
-      url = LOCAL_BASE_URL;
-    } else {
-      url = ABBY_BASE_URL;
-    }
-    try {
-      // TODO: refactor to use header
-      const response = await fetch(`${url}/api/config/${projectId}?apiKey=${apiKey}`, {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-        },
-      });
+    const response = await fetch(`${url}/api/config/${projectId}`, {
+      method: "GET",
+      headers: {
+        Authorization: "Bearer " + apiKey,
+        "Content-Type": "application/json",
+      },
+    });
 
-      const responseJson = await response.json();
-      return responseJson as AbbyConfig;
-    } catch (e) {
-      console.error(e);
-      throw e;
+    if (!response.ok) {
+      throw new Error("Invalid response from server");
     }
+
+    const responseJson = await response.json();
+    return responseJson as AbbyConfig;
   }
 
-  static async updateConfigOnServer(
-    projectId: string,
-    apiKey: string,
-    localAbbyConfig: AbbyConfig,
-    localhost?: boolean
-  ) {
-    let url: string;
-
-    if (localhost) {
-      console.log("LOCAL");
-      url = LOCAL_BASE_URL;
-    } else {
-      url = ABBY_BASE_URL;
-    }
+  static async updateConfigOnServer({
+    projectId,
+    apiKey,
+    localAbbyConfig,
+    apiUrl,
+  }: {
+    projectId: string;
+    apiKey: string;
+    localAbbyConfig: AbbyConfig;
+    apiUrl?: string;
+  }) {
+    const url = apiUrl ?? ABBY_BASE_URL;
 
     try {
-      // TODO: refactor to use header
-      const response = await fetch(`${url}api/config/${projectId}?apiKey=${apiKey}`, {
+      const response = await fetch(`${url}api/config/${projectId}`, {
         method: "PUT",
         headers: {
+          Authorization: "Bearer " + apiKey,
           "Content-Type": "application/json",
         },
         body: JSON.stringify(localAbbyConfig),

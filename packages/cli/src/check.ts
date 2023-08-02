@@ -1,55 +1,40 @@
-import chalk from "chalk";
 import { HttpService } from "./http";
 import { loadLocalConfig } from "./util";
 
-export async function check(apiKey: string, localhost?: boolean): Promise<boolean> {
-  const { config: localConfig } = await loadLocalConfig();
+export async function check({
+  apiKey,
+  apiUrl,
+  configPath,
+}: {
+  apiKey: string;
+  apiUrl?: string;
+  configPath?: string;
+}) {
+  const { config: localConfig } = await loadLocalConfig(configPath);
 
-  const remoteConfig = await HttpService.getConfigFromServer(
-    localConfig.projectId,
+  const remoteConfig = await HttpService.getConfigFromServer({
+    projectId: localConfig.projectId,
     apiKey,
-    localhost
-  );
+    apiUrl,
+  });
 
-  let testsUpToDate = true;
-  let flagsUpToDate = true;
+  const invalidTests = Object.keys(remoteConfig.tests ?? {}).filter((key) => {
+    return (
+      localConfig.tests[key] == undefined &&
+      localConfig.tests[key] != (remoteConfig.tests ?? {})[key]
+    );
+  });
 
-  let output = false;
+  const invalidFlags = Object.keys(remoteConfig.flags ?? {}).filter((key) => {
+    return (
+      localConfig.flags[key] == undefined &&
+      localConfig.flags[key] != (remoteConfig.flags ?? {})[key]
+    );
+  });
 
-  if (remoteConfig && localConfig) {
-    if (remoteConfig.tests && localConfig.tests) {
-      for (let serverTest in remoteConfig.tests) {
-        if (!(serverTest in localConfig.tests)) {
-          testsUpToDate = false;
-        }
-      }
-      for (let localTest in localConfig.tests) {
-        if (!(localTest in remoteConfig.tests)) {
-          testsUpToDate = false;
-        }
-      }
-    } else if (remoteConfig.tests || localConfig.tests) testsUpToDate = false;
-
-    if (remoteConfig.flags && localConfig.flags) {
-      if (!(remoteConfig.flags != localConfig.flags)) flagsUpToDate = false;
-    } else if (remoteConfig.flags || localConfig.flags) flagsUpToDate = false;
-
-    if (testsUpToDate && flagsUpToDate) {
-      output = true;
-      console.log("all tests are up to date");
-    } else {
-      if (!testsUpToDate) {
-        output = false;
-        console.log("tests are not up to date");
-      }
-      if (!flagsUpToDate) {
-        output = false;
-        console.log("flags are not up to date");
-      }
-    }
-    return output;
-  } else {
-    console.log(chalk.red("Something went wrong. Please check your login"));
-    return false;
-  }
+  return {
+    isValid: invalidTests.length == 0 && invalidFlags.length == 0,
+    invalidTests,
+    invalidFlags,
+  };
 }

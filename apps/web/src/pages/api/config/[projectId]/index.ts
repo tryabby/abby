@@ -18,7 +18,6 @@ import { AbbyConfigFile } from "@tryabby/core";
 
 const incomingQuerySchema = z.object({
   projectId: z.string(),
-  apiKey: z.string(),
 });
 
 export default async function handler(
@@ -29,14 +28,23 @@ export default async function handler(
     methods: ["GET", "PUT"],
     origin: "*",
     optionsSuccessStatus: 200,
+    allowedHeaders: ["Authorization"],
   });
   const querySchemaResult = incomingQuerySchema.safeParse(req.query);
+
   if (!querySchemaResult.success) {
-    res.status(400).json({ error: "Invalid query" });
+    res.status(400).json({ error: "Invalid Query Parameters" });
     return;
   }
 
-  const { projectId, apiKey } = querySchemaResult.data;
+  const { projectId } = querySchemaResult.data;
+
+  const apiKey = req.headers["authorization"]?.split(" ")[1];
+
+  if (!apiKey) {
+    res.status(401).json({ error: "API key not provided" });
+    return;
+  }
 
   const hashedApiKey = hashApiKey(apiKey);
 
@@ -46,11 +54,7 @@ export default async function handler(
     },
   });
 
-  if (!apiKeyEntry) {
-    return;
-  }
-
-  if (apiKeyEntry.isRevoked) {
+  if (!apiKeyEntry || apiKeyEntry.isRevoked) {
     res.status(401).json({ error: "API key revoked" });
     return;
   }
@@ -87,7 +91,7 @@ export default async function handler(
         },
       });
 
-      if (!projectData) throw new Error();
+      if (!projectData) throw new Error("Cant find project");
 
       const config = {
         projectId,
@@ -143,8 +147,6 @@ export default async function handler(
             projectId,
           })),
         });
-
-        console.log("created missing environments", missingEnvironments);
       }
 
       if (newConfig.tests) {
@@ -185,12 +187,6 @@ export default async function handler(
                   projectId,
                 },
               },
-            });
-
-            console.log({
-              flagValue,
-              flagTypeAsString,
-              s: stringifyFlagValue(flagValue),
             });
 
             if (!flagData) {

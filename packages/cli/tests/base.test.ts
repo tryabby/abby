@@ -92,10 +92,10 @@ describe("Abby CLI", () => {
     const fileString = await loadLocalConfig(filePathAngular);
     const configFromFile: AbbyConfig = getConfigFromFileString(fileString);
 
-    const configFromAbby = (await HttpService.getConfigFromServer(
-      configFromFile.projectId,
-      "09876543210987654321"
-    )) as any;
+    const configFromAbby = (await HttpService.getConfigFromServer({
+      projectId: configFromFile.projectId,
+      apiKey: "09876543210987654321",
+    })) as any;
 
     if (configFromAbby) {
       const updatedConfigString = await mergeConfigs(configFromFile, configFromAbby);
@@ -106,11 +106,14 @@ describe("Abby CLI", () => {
 
   it("checks flags and tests", async () => {
     const spy = vi.spyOn(HttpService, "getConfigFromServer");
-    const upToDateFalse = await check(filePathAngular, "09876543210987654321");
+    const upToDateFalse = await check({
+      apiKey: filePathAngular,
+      localhost: "09876543210987654321",
+    });
 
     expect(upToDateFalse).toEqual(false);
 
-    const upToDateTrue = await check(filePathAngular, "test");
+    const upToDateTrue = await check({ apiKey: filePathAngular, localhost: "test" });
     expect(upToDateTrue).toEqual(true);
   });
 

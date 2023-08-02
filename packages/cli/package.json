@@ -10,7 +10,7 @@
     "dev": "pnpm run build --watch",
     "start": "pnpm run build && ./dist/index.js",
     "create": "npm run build && npm run test",
-    "build": "esbuild src/index.ts --bundle --target=node10.4 --bundle --platform=node --format=cjs --outfile=dist/index.js --external:figlet",
+    "build": "esbuild src/index.ts --bundle --target=node10.4 --bundle --platform=node --format=cjs --outfile=dist/index.js --external:figlet  --external:prettier",
     "build:prod": "tsc --noEmit && pnpm run build",
     "refresh": "rm -rf ./node_modules ./package-lock.json && npm install",
     "test": "vitest"
@@ -25,6 +25,7 @@
     "figlet": "^1.6.0",
     "msw": "^1.2.2",
     "node-fetch": "^3.3.1",
+    "prettier": "^3.0.0",
     "tsup": "^6.5.0",
     "unconfig": "^0.3.10",
     "vite": "^3.2.5",
