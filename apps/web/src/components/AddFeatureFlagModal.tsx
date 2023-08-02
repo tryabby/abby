@@ -54,7 +54,7 @@ export function ChangeFlagForm({
     const newState = { ...state, ...values };
 
     // if type changed, save the value
-    if (values.type != null && values.type !== state.type) {
+    if (values.type !== null && values.type !== state.type) {
       valueRef.current[state.type] = state.value;
       newState.value = valueRef.current[newState.type] ?? "";
     }

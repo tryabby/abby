@@ -51,7 +51,7 @@ export abstract class EventService {
       return prisma.event.findMany({
         where: {
           testId,
-          ...(specialIntervalInMs != Infinity &&
+          ...(specialIntervalInMs !== Infinity &&
             timeInterval !== SpecialTimeInterval.DAY && {
               createdAt: {
                 gte: new Date(now - getMSFromSpecialTimeInterval(timeInterval)),

@@ -64,7 +64,7 @@ const HistoryButton = ({ flagValueId }: { flagValueId: string }) => {
             sideOffset={5}
           >
             {isLoading && <LoadingSpinner />}
-            {data != null && (
+            {data !== null && (
               <>
                 <p className="text-xs">Edited {data.length} times</p>
                 <hr className="-mx-2 my-1 border-gray-700" />

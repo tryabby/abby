@@ -70,7 +70,7 @@ export default async function getWeightsHandler(
         return {
           name: flagValue.flag.name,
           isEnabled:
-            flagValue.flag.type === "BOOLEAN" ? value === true : value != null,
+            flagValue.flag.type === "BOOLEAN" ? value === true : value !== null,
         };
       }),
     } satisfies LegacyAbbyDataResponse;

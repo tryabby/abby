@@ -46,7 +46,7 @@ export function DeleteProjectModal({ isOpen, onClose }: Props) {
       isOpen={isOpen}
       onClose={onClose}
       onConfirm={() => {
-        if (!projectId || status != "authenticated") return;
+        if (!projectId || status !== "authenticated") return;
         deleteProject({ projectId });
       }}
     >
