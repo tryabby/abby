@@ -1,5 +1,5 @@
 import { Directive, Input, OnDestroy, OnInit, TemplateRef, ViewContainerRef } from "@angular/core";
-import { Subject, takeUntil, map, distinctUntilChanged, ReplaySubject, switchMap } from "rxjs";
+import { distinctUntilChanged, Subject, switchMap, takeUntil } from "rxjs";
 import { AbbyService } from "./abby.service";
 
 @Directive({
@@ -29,16 +29,7 @@ export class AbbyFlag implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.currentFlag$
       .pipe(
-        switchMap((flagName) => {
-          return this.abby
-            .getFeatureFlagValue(flagName.startsWith("!") ? flagName.slice(1) : flagName)
-            .pipe(
-              map(
-                (value) =>
-                  (value && flagName[0] !== "!") || (flagName[0] === "!" && !value)
-              )
-            );
-        }),
+        switchMap((flagName) => this.abby.getFeatureFlagValue(flagName)),
         distinctUntilChanged(),
         takeUntil(this.destroy$)
       )
