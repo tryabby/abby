@@ -85,7 +85,7 @@ export class Abby extends AbbyService<
 > {}
 
 describe("AbbyService", () => {
-  let service: AbbyService;
+  let service: Abby;
   let fixture: ComponentFixture<TestComponent>;
 
   @Component({
@@ -150,6 +150,12 @@ describe("AbbyService", () => {
   it("returns the correct variant", () => {
     service.getVariant("test2").subscribe((value: string) => {
       expect(value).toEqual("A");
+    });
+  });
+
+  it("uses lookup object when getting variant", () => {
+    service.getVariant("test2", { A: 1, B: 2 }).subscribe((value) => {
+      expect(value).toEqual(1);
     });
   });
 

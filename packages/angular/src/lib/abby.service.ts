@@ -24,6 +24,7 @@ import {
 import { F } from "ts-toolbelt";
 import { AbbyLoggerService } from "./abby-logger.service";
 import { FlagStorageService, TestStorageService } from "./StorageService";
+import { Key } from "ts-toolbelt/out/Any/Key";
 
 type LocalData<FlagName extends string = string, TestName extends string = string> = {
   tests: Record<
@@ -37,6 +38,11 @@ type LocalData<FlagName extends string = string, TestName extends string = strin
 };
 
 type PossibleFlagName<FlagName extends string> = FlagName | `!${FlagName}`;
+
+type ExtractVariants<
+  TestName extends Key,
+  Tests extends Record<TestName, ABConfig>,
+> = Tests[TestName]["variants"][number];
 
 @Injectable({ providedIn: "root" })
 export class AbbyService<
@@ -92,13 +98,28 @@ export class AbbyService<
     return this.resolveData().pipe(map(() => void 0));
   }
 
-  public getVariant<T extends keyof Tests>(testName: T): Observable<string> {
+  public getVariant<T extends keyof Tests>(testName: T): Observable<string>;
+  public getVariant<T extends keyof Tests, S>(
+    testName: T,
+    lookupObject: { [key in ExtractVariants<T, Tests>]: S }
+  ): Observable<S>;
+  public getVariant<T extends keyof Tests, S>(
+    testName: T,
+    lookupObject?: { [key in ExtractVariants<T, Tests>]: S }
+  ): Observable<string | S> {
     this.abbyLogger.log(`getVariant(${testName as string})`);
 
     return this.resolveData().pipe(
       map((data) => this.abby.getTestVariant(testName)),
       tap((variant) => (this.selectedVariants[testName as string] = variant)),
       tap((variant) => this.abbyLogger.log(`getVariant(${testName as string}) =>`, variant)),
+      map((variant) => {
+        if(lookupObject === undefined) {
+          return variant;
+        }
+
+        return lookupObject[variant];
+      }),
       shareReplay(1),
     );
   }
