@@ -1,4 +1,4 @@
-import { Directive, Input, OnDestroy, OnInit, TemplateRef, ViewContainerRef } from "@angular/core";
+import { Directive, Input, OnDestroy, TemplateRef, ViewContainerRef } from "@angular/core";
 import { distinctUntilChanged, Subject, switchMap, takeUntil } from "rxjs";
 import { AbbyLoggerService } from "./abby-logger.service";
 import { AbbyService } from "./abby.service";
@@ -6,7 +6,7 @@ import { AbbyService } from "./abby.service";
 @Directive({
   selector: "[abbyFlag]",
 })
-export class AbbyFlag implements OnInit, OnDestroy {
+export class AbbyFlag implements OnDestroy {
   @Input()
   set abbyFlag(featureFlag: string) {
     // ensure featureFlag is a string to quit gracefully
@@ -26,9 +26,7 @@ export class AbbyFlag implements OnInit, OnDestroy {
     private readonly abbyLogger: AbbyLoggerService,
     private _viewContainer: ViewContainerRef,
     private _templateRef: TemplateRef<any>
-  ) {}
-
-  ngOnInit(): void {
+  ) {
     this.currentFlag$
       .pipe(
         switchMap((flagName) => this.abby.getFeatureFlagValue(flagName)),
