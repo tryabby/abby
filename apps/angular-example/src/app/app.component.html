@@ -22,16 +22,16 @@
 <div>angularFlag = {{ angularFlag$ | async }}</div>
 
 <h3>Simple Feature Flag Directive Demo</h3>
-<div *featureFlag="'AngularFlag'">AngularFlag = ON</div>
+<div *abbyFlag="'AngularFlag'">AngularFlag = ON</div>
 
-<div *featureFlag="'!AngularFlag'">AngularFlag = OFF</div>
+<div *abbyFlag="'!AngularFlag'">AngularFlag = OFF</div>
 
 <h3>Config UI Tool Demo</h3>
 <abby-devtools [props]="{dangerouslyForceShow: true}"></abby-devtools>
 
 <h3>Default usage Demo</h3>
 <h4>Feature Flag</h4>
-<div *featureFlag="'!NotExistingFlag'">AngularFlag = OFF</div>
+<div *abbyFlag="'!NotExistingFlag'">AngularFlag = OFF</div>
 
 <h4>Variants</h4>
 <ng-container *abbyTest="{testName: 'NotExistingTest', variant: 'A'}">AAAAAA</ng-container>
@@ -49,7 +49,7 @@
   <option value="!AngularFlag2">!AngularFlag2</option>
 </select>
 
-<div *featureFlag="dynamicFeatureFlag.value ?? ''">{{ dynamicFeatureFlag.value }} = ON</div>
+<div *abbyFlag="dynamicFeatureFlag.value ?? ''">{{ dynamicFeatureFlag.value }} = ON</div>
 
 <h3>Router A/B Test Demo</h3>
 <nav>
@@ -60,7 +60,7 @@
 <router-outlet name="test"></router-outlet>
 
 <h3>Router Feature Flag Demo</h3>
-<div *featureFlag="'AngularFlag'">
+<div *abbyFlag="'AngularFlag'">
   <nav>
     <ul>
       <li><a [routerLink]="[{outlets: {flag: 'flag'}}]">Feature</a></li>

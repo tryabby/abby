@@ -4,11 +4,11 @@ import { AbbyLoggerService } from "./abby-logger.service";
 import { AbbyService } from "./abby.service";
 
 @Directive({
-  selector: "[featureFlag]",
+  selector: "[abbyFlag]",
 })
 export class AbbyFlag implements OnInit, OnDestroy {
   @Input()
-  set featureFlag(featureFlag: string) {
+  set abbyFlag(featureFlag: string) {
     // ensure featureFlag is a string to quit gracefully
     if (typeof featureFlag !== "string") {
       this.abbyLogger.warn(`Expected a string as featureFlag. Got ${featureFlag}`);
