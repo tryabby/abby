@@ -7,7 +7,7 @@ import { CTestComponent } from './test_components/c.component';
 import { DTestComponent } from './test_components/d.component';
 import { FlagComponent } from './test_components/flag.component';
 import { Abby } from './abby';
-import { combineLatest, forkJoin, tap } from 'rxjs';
+import { combineLatest } from 'rxjs';
 
 @NgModule({
   imports: [
@@ -20,8 +20,8 @@ import { combineLatest, forkJoin, tap } from 'rxjs';
 export class AppRoutingModule {
   constructor(private abby: Abby, private router: Router) {
     combineLatest({
-      angularTest: abby.getVariant('AngularTest').pipe(tap((val) => console.warn(val))),
-      angularFlag: abby.getFeatureFlagValue('AngularFlag').pipe(tap((val) => console.warn(val))),
+      angularTest: abby.getVariant('AngularTest'),
+      angularFlag: abby.getFeatureFlagValue('AngularFlag'),
     }).subscribe(({ angularTest, angularFlag }) => {
       this.router.resetConfig([
         {

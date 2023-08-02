@@ -17,8 +17,8 @@ export class AbbyFlag implements OnInit, OnDestroy {
     this.currentFlag$.next(featureFlag);
   }
 
-  private currentFlag$ = new ReplaySubject<string>(1);
-  private _destroy$ = new Subject<void>();
+  private currentFlag$ = new Subject<string>();
+  private destroy$ = new Subject<void>();
 
   constructor(
     private readonly abby: AbbyService,
@@ -35,12 +35,12 @@ export class AbbyFlag implements OnInit, OnDestroy {
             .pipe(
               map(
                 (value) =>
-                  (value && flagName[0] != "!") || (flagName[0] == "!" && !value)
+                  (value && flagName[0] !== "!") || (flagName[0] === "!" && !value)
               )
             );
         }),
         distinctUntilChanged(),
-        takeUntil(this._destroy$)
+        takeUntil(this.destroy$)
       )
       .subscribe((visible) => {
         if (visible) {
@@ -52,7 +52,7 @@ export class AbbyFlag implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    this._destroy$.next();
-    this._destroy$.complete();
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 }
