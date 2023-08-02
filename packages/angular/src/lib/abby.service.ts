@@ -98,7 +98,8 @@ export class AbbyService<
     return this.resolveData().pipe(
       map((data) => this.abby.getTestVariant(testName)),
       tap((variant) => (this.selectedVariants[testName as string] = variant)),
-      tap((variant) => this.abbyLogger.log(`getVariant(${testName as string}) =>`, variant))
+      tap((variant) => this.abbyLogger.log(`getVariant(${testName as string}) =>`, variant)),
+      shareReplay(1),
     );
   }
 
@@ -144,7 +145,8 @@ export class AbbyService<
           (!featureFlagValue && isFeatureFlagInverted) ||
           (featureFlagValue && !isFeatureFlagInverted)
         );
-      })
+      }),
+      shareReplay(1),
     );
   }
 

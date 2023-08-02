@@ -1,6 +1,6 @@
 import { Component } from "@angular/core";
 import { FormControl } from "@angular/forms";
-import { map, shareReplay } from "rxjs";
+import { map } from "rxjs";
 import { Abby } from "./abby";
 
 @Component({
@@ -9,8 +9,8 @@ import { Abby } from "./abby";
   styleUrls: ["./app.component.css"],
 })
 export class AppComponent {
-  angularTest$ = this.abby.getVariant("AngularTest").pipe(shareReplay(1));
-  angularFlag$ = this.abby.getFeatureFlagValue("AngularFlag").pipe(shareReplay(1));
+  angularTest$ = this.abby.getVariant("AngularTest");
+  angularFlag$ = this.abby.getFeatureFlagValue("AngularFlag");
 
   headerColor$ = this.angularTest$.pipe(
     map((angularTest) => {
