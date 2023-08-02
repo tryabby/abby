@@ -206,7 +206,7 @@ export function FeatureFlag({
 
   return (
     <>
-      <span className="flex w-full items-center justify-between space-x-3 rounded-xl bg-gray-100 py-3 pl-3 pr-4 text-sm font-medium text-gray-800 dark:bg-gray-700 dark:text-gray-300">
+      <span className="flex w-full items-center justify-between space-x-3 rounded-xl bg-gray-700 py-3 pl-3 pr-4 text-sm font-medium text-gray-300">
         <div className="flex items-center space-x-2">
           <p>{environmentName}</p>
           <code
