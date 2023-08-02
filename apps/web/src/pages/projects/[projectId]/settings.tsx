@@ -120,7 +120,7 @@ const SettingsPage: NextPageWithLayout = () => {
               </div>
               <p>Current Plan:</p>
               <div className="my-2 flex space-x-5">
-                <div className="flex w-52 items-center justify-center rounded-md border px-3 py-0.5 text-primary-foreground ">
+                <div className="flex w-52 items-center justify-center rounded-md border px-3 py-0.5">
                   <span>{projectPlan ?? "Free"}</span>
                 </div>
                 <DashboardButton
