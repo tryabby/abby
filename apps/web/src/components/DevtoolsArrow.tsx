@@ -2,7 +2,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import { CornerRightDown } from "lucide-react";
 import { useState, useEffect } from "react";
 
-const DEVTOOLS_ID = "devtools-collapsed";
+const DEVTOOLS_ID = "abby-devtools-collapsed";
 
 export function useDevtoolsPosition() {
   const [devtoolsPosition, setDevtoolsPosition] = useState<DOMRect | null>(
