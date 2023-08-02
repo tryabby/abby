@@ -16,7 +16,7 @@ import { AbbyService } from "./abby.service";
 export class AbbyTest implements OnInit, OnDestroy {
   @Input() abbyTest: { testName: string; variant: string };
 
-  private _destroy$ = new Subject<void>();
+  private destroy$ = new Subject<void>();
 
   constructor(
     private readonly abby: AbbyService,
@@ -30,7 +30,7 @@ export class AbbyTest implements OnInit, OnDestroy {
       .pipe(
         map((selectedVariant) => selectedVariant === this.abbyTest.variant),
         distinctUntilChanged(),
-        takeUntil(this._destroy$)
+        takeUntil(this.destroy$)
       )
       .subscribe((visible) => {
         if(visible) {
@@ -42,7 +42,7 @@ export class AbbyTest implements OnInit, OnDestroy {
   }
 
     ngOnDestroy(): void {
-      this._destroy$.next();
-      this._destroy$.complete();
+      this.destroy$.next();
+      this.destroy$.complete();
     }
 }

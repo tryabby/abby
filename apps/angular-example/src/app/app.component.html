@@ -13,7 +13,7 @@
 
 <h4
   *ngIf="angularTest$ | async as angularTest"
-  [ngStyle]="{'color': angularTest === 'A' ? 'blue' : angularTest === 'B' ? 'green' : angularTest === 'C' ? 'yellow' : angularTest === 'D' ? 'pink' : 'grey'}"
+  [ngStyle]="{'color': headerColor$ | async }"
 >
   Test
 </h4>
@@ -49,7 +49,7 @@
   <option value="!AngularFlag2">!AngularFlag2</option>
 </select>
 
-<div *featureFlag="dynamicFeatureFlag.value">{{ dynamicFeatureFlag.value }} = ON</div>
+<div *featureFlag="dynamicFeatureFlag.value ?? ''">{{ dynamicFeatureFlag.value }} = ON</div>
 
 <h3>Router A/B Test Demo</h3>
 <nav>

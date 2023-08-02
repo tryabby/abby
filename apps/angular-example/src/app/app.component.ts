@@ -1,6 +1,6 @@
 import { Component } from "@angular/core";
 import { FormControl } from "@angular/forms";
-import { shareReplay } from "rxjs";
+import { map, shareReplay } from "rxjs";
 import { Abby } from "./abby";
 
 @Component({
@@ -12,7 +12,24 @@ export class AppComponent {
   angularTest$ = this.abby.getVariant("AngularTest").pipe(shareReplay(1));
   angularFlag$ = this.abby.getFeatureFlagValue("AngularFlag").pipe(shareReplay(1));
 
-  dynamicFeatureFlag = new FormControl();
+  headerColor$ = this.angularTest$.pipe(
+    map((angularTest) => {
+      switch(angularTest) {
+        case 'A':
+          return 'blue';
+        case 'B':
+          return 'green';
+        case 'C':
+          return 'yellow';
+        case 'D':
+          return 'pink';
+        default:
+          return 'grey';
+      }
+    })
+  );
+
+  dynamicFeatureFlag = new FormControl<string | null>(null);
 
   constructor(public readonly abby: Abby) {}
 
