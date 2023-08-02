@@ -1,7 +1,6 @@
-import { useEditor, EditorContent, BubbleMenu } from "@tiptap/react";
+import { BubbleMenu, EditorContent, useEditor } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
 import clsx from "clsx";
-import { Placeholder } from "@tiptap/extension-placeholder";
 import { twMerge } from "tailwind-merge";
 
 type Props = {
