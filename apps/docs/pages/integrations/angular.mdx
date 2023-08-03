@@ -140,3 +140,15 @@ You can then consume the footer color in your template using the `async`-Pipe:
   Here is a Foooter
 </div>
 ```
+
+### Using Abby Pipes
+
+You can use the `getAbbyVariant` Pipe in your template to get the active variant of an AB Test.
+```html
+<p>{ "MyTestName" | getAbbyVariant | async }</p>
+```
+
+Optionally, you can pass in a lookup object, to map your variants to a custom type:
+```html
+<p>{ "MyTestName" | getAbbyVariant: { A: 123, B: 456, C: 789 } | async }</p>
+```

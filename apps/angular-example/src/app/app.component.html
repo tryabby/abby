@@ -17,6 +17,18 @@
 >
   Test
 </h4>
+<h4
+  [ngStyle]="{
+    'color': 'AngularTest'
+      | getAbbyVariant: { A: 'blue', B: 'green', C: 'yellow', D: 'pink' }
+      | async
+  }"
+>
+  Variants Pipe
+</h4>
+
+<h4>Variants with Lookup Object</h4>
+<p>{{ variantWithLookup$ | async }}</p>
 
 <h3>Simple Feature Flag Service Demo</h3>
 <div>angularFlag = {{ angularFlag$ | async }}</div>
