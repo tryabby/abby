@@ -39,7 +39,7 @@ type LocalData<FlagName extends string = string, TestName extends string = strin
 
 type PossibleFlagName<FlagName extends string> = FlagName | `!${FlagName}`;
 
-type ExtractVariants<
+export type ExtractVariants<
   TestName extends Key,
   Tests extends Record<TestName, ABConfig>,
 > = Tests[TestName]["variants"][number];
