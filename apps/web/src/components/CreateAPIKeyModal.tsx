@@ -44,7 +44,7 @@ export const CreateAPIKeyModal = ({ onClose, isOpen, projectId }: Props) => {
             e instanceof TRPCClientError &&
               e.shape.code === TRPC_ERROR_CODES_BY_KEY.FORBIDDEN
               ? e.message
-              : "Error creating api Key"
+              : "Error creating API Key"
           );
         }
       }}

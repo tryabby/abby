@@ -1,6 +1,6 @@
 import { createHmac, randomBytes } from "crypto";
 
-export function generateRandomString(length: number = 32): string {
+export function generateRandomString(length = 32): string {
   const apiKey = randomBytes(length).toString("hex");
   return apiKey;
 }

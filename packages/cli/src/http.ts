@@ -61,7 +61,7 @@ export abstract class HttpService {
       } else if (status == 401) {
         console.log("Pushed failed \n Please check your API key \n" + data);
       } else {
-        console.log("Pushed failed: \n" + status + ": " + data);
+        console.log(`Push failed:\n${status}: data`);
       }
     } catch (e) {
       console.log("Error: " + e);

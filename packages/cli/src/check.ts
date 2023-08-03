@@ -33,7 +33,7 @@ export async function check({
   });
 
   return {
-    isValid: invalidTests.length == 0 && invalidFlags.length == 0,
+    isValid: invalidTests.length === 0 && invalidFlags.length === 0,
     invalidTests,
     invalidFlags,
   };
