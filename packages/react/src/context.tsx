@@ -1,7 +1,6 @@
 import { Abby, AbbyConfig, ABConfig, FlagValueString, FlagValueStringToType } from "@tryabby/core";
 import React, { useCallback, useEffect, useRef, useState, type PropsWithChildren } from "react";
 import { HttpService } from "@tryabby/core";
-import { ABBY_INSTANCE_KEY } from "@tryabby/core";
 import { AbbyDataResponse, AbbyEventType } from "@tryabby/core";
 import { F } from "ts-toolbelt";
 import { FlagStorageService, TestStorageService } from "./StorageService";
@@ -168,8 +167,27 @@ export function createAbby<
     return abby.getFeatureFlag(name);
   };
 
-  const getABTestValue = <K extends keyof Tests>(name: K): Tests[K]["variants"][number] => {
-    return abby.getTestVariant(name);
+  const getABTestValue = <
+    TestName extends keyof Tests,
+    TestVariant extends Tests[TestName]["variants"][number],
+    LookupValue,
+    Lookup extends Record<TestVariant, LookupValue> | undefined = undefined
+  >(
+    testName: TestName,
+    lookupObject?: F.Narrow<Lookup>
+  ): Lookup extends undefined
+      ? TestVariant
+      : TestVariant extends keyof Lookup
+      ? Lookup[TestVariant]
+      : never => {
+    const variant = abby.getTestVariant(testName);
+    // Typescript looses its typing here, so we cast as any in favor of having
+    // better type inference for the user
+    if(lookupObject === undefined) {
+      return variant as any;
+    }
+
+    return lookupObject[variant as keyof typeof lookupObject] as any;
   };
 
   const withDevtools: withDevtoolsFunction = (factory, props) => {

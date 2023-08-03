@@ -237,4 +237,25 @@ describe("useAbby", () => {
     });
     expect(getVariants("test")).toEqual(["A", "B", "C"]);
   });
+
+  it("uses the lookup object when retrieving a variant", () => {
+    const { getABTestValue } = createAbby({
+      projectId: "123",
+      currentEnvironment: "a",
+      tests: {
+        test: {
+          variants: ["A", "B", "C"],
+        },
+      },
+    });
+
+    const activeVariant = getABTestValue("test");
+    const lookupObject = {
+      A: 1,
+      B: 2,
+      C: 3,
+    }
+
+    expect(getABTestValue("test", lookupObject)).toEqual(lookupObject[activeVariant]);
+  });
 });
