@@ -28,7 +28,7 @@ export const couponRouter = router({
         },
       });
 
-      if (!code || code.redeemedAt != null) {
+      if (!code || code.redeemedAt !== null) {
         throw new TRPCError({ code: "NOT_FOUND" });
       }
 

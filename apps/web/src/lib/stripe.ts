@@ -50,7 +50,7 @@ export const isBetaPlan = (project: Project) =>
  */
 export const getProjectPaidPlan = <T extends Project>(project: T | null) => {
   // beta plans last for ever and have special rules
-  if (project != null && isBetaPlan(project)) return BETA_PRICE_ID;
+  if (project !== null && isBetaPlan(project)) return BETA_PRICE_ID;
 
   if (
     !project ||

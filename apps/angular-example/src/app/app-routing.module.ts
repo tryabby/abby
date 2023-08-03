@@ -7,7 +7,7 @@ import { CTestComponent } from './test_components/c.component';
 import { DTestComponent } from './test_components/d.component';
 import { FlagComponent } from './test_components/flag.component';
 import { Abby } from './abby';
-import { forkJoin } from 'rxjs';
+import { combineLatest } from 'rxjs';
 
 @NgModule({
   imports: [
@@ -19,7 +19,11 @@ import { forkJoin } from 'rxjs';
 })
 export class AppRoutingModule {
   constructor(private abby: Abby, private router: Router) {
-    forkJoin({
+    // we are using `combineLatest` here, as the devtools can dynamically
+    // change the state of our feature flags during runtime.
+    // In a live environment, where flags and variants are determined once,
+    // you can use `forkJoin` here
+    combineLatest({
       angularTest: abby.getVariant('AngularTest'),
       angularFlag: abby.getFeatureFlagValue('AngularFlag'),
     }).subscribe(({ angularTest, angularFlag }) => {

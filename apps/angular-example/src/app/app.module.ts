@@ -10,6 +10,7 @@ import { CTestComponent } from './test_components/c.component';
 import { DTestComponent } from './test_components/d.component';
 import { FlagComponent } from './test_components/flag.component';
 import { abby } from './abby';
+import { ReactiveFormsModule } from '@angular/forms';
 
 @NgModule({
   declarations: [
@@ -24,6 +25,7 @@ import { abby } from './abby';
     ///BrowserModule.withServerTransition({ appId: 'angular-example' }), // for SSR
     BrowserModule,
     AppRoutingModule,
+    ReactiveFormsModule,
     AbbyModule.forRoot(abby),
   ],
   providers: [],
