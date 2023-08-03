@@ -37,12 +37,21 @@ type LocalData<FlagName extends string = string, TestName extends string = strin
   flags: Record<FlagName, FlagValue>;
 };
 
+export type InferFlagNames<C extends AbbyConfig> = InferFlags<C> extends Record<infer F, any>
+  ? F
+  : never;
+export type InferTestNames<C extends AbbyConfig> = InferTests<C> extends Record<infer T, any>
+  ? T
+  : never;
+export type InferTests<C extends AbbyConfig> = NonNullable<C["tests"]>;
+export type InferFlags<C extends AbbyConfig> = NonNullable<C["flags"]>;
+
 @Injectable({ providedIn: "root" })
 export class AbbyService<
   FlagName extends string = string,
   TestName extends string = string,
   Tests extends Record<TestName, ABConfig> = Record<TestName, ABConfig>,
-  Flags extends Record<FlagName, FlagValueString> = Record<FlagName, FlagValueString>
+  Flags extends Record<FlagName, FlagValueString> = Record<FlagName, FlagValueString>,
 > {
   private abby: Abby<FlagName, TestName, Tests, Flags>;
 

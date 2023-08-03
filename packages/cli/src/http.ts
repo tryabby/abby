@@ -1,6 +1,8 @@
 import { AbbyConfig, PullAbbyConfigResponse } from "@tryabby/core";
 import { ABBY_BASE_URL, LOCAL_BASE_URL } from "./consts";
 import fetch from "node-fetch";
+import { multiLineLog } from "./util";
+import chalk from "chalk";
 
 export abstract class HttpService {
   static async getConfigFromServer({
@@ -14,7 +16,7 @@ export abstract class HttpService {
   }) {
     const url = apiUrl ?? ABBY_BASE_URL;
 
-    const response = await fetch(`${url}/api/config/${projectId}`, {
+    const response = await fetch(`${url}/api/v1/config/${projectId}`, {
       method: "GET",
       headers: {
         Authorization: "Bearer " + apiKey,
@@ -42,7 +44,7 @@ export abstract class HttpService {
     const url = apiUrl ?? ABBY_BASE_URL;
 
     try {
-      const response = await fetch(`${url}api/config/${localAbbyConfig.projectId}`, {
+      const response = await fetch(`${url}api/v1/config/${localAbbyConfig.projectId}`, {
         method: "PUT",
         headers: {
           Authorization: "Bearer " + apiKey,
@@ -51,17 +53,16 @@ export abstract class HttpService {
         body: JSON.stringify(localAbbyConfig),
       });
 
-      const data = await response.json();
       const status = response.status;
 
       if (status == 200) {
-        console.log("pushed successfully");
+        console.log(chalk.green("Config was pushed successfully"));
       } else if (status == 500) {
-        console.log("Pushed failed \n Please try again later \n 500: Internal server error");
+        console.log(chalk.red(multiLineLog("Push failed", "Please try again later")));
       } else if (status == 401) {
-        console.log("Pushed failed \n Please check your API key \n" + data);
+        console.log(chalk.red(multiLineLog("Push failed", "Please check your API key")));
       } else {
-        console.log(`Push failed:\n${status}: data`);
+        console.log(chalk.red(multiLineLog("Push failed")));
       }
     } catch (e) {
       console.log("Error: " + e);

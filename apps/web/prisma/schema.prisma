@@ -258,15 +258,17 @@ model CouponCodes {
 }
 
 model ApiKey {
-  id        String   @id @default(cuid())
-  name      String
-  hashedKey String   @unique
-  validDays Int
-  isRevoked Boolean  @default(false)
+  id         String    @id @default(cuid())
+  name       String
+  hashedKey  String    @unique
+  validUntil DateTime
+  revokedAt  DateTime?
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-  userId    String
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([userId])
 }

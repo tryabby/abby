@@ -38,3 +38,7 @@ export async function loadLocalConfig(configPath?: string) {
   }
   return { config: result.data, configFilePath: sources[0] };
 }
+
+export function multiLineLog(...args: any[]) {
+  console.log(args.join("\n"));
+}

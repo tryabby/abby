@@ -8,6 +8,7 @@ import { ABBY_BASE_URL, getTokenFilePath } from "./consts";
 import { pullAndMerge } from "./pull";
 import { push } from "./push";
 import { ConfigOption, HostOption } from "./sharedOptions";
+import { multiLineLog } from "./util";
 
 const program = new Command();
 
@@ -57,8 +58,9 @@ program
       const token = await getToken();
       await push({ apiKey: token, apiUrl: options.host, configPath: options.config });
     } catch (e) {
-      console.log(chalk.red("Please login first"));
-      return;
+      console.log(
+        chalk.red(multiLineLog("Something went wrong. Please check your internet connection"))
+      );
     }
   });
 
