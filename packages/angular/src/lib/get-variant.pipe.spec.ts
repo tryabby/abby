@@ -1,16 +1,16 @@
-import { fakeAsync, TestBed, tick } from "@angular/core/testing";
+import {  TestBed } from "@angular/core/testing";
+import { combineLatest, } from "rxjs";
 import { AbbyModule } from "./abby.module";
 import { AbbyService } from "./abby.service";
 import { GetAbbyVariantPipe } from "./get-variant.pipe";
-import { TestStorageService } from "./StorageService";
 
 const mockConfig = {
   projectId: "mock-project-id",
   currentEnvironment: "test",
   tests: {
     test: {
-      variants: ["A"],
-    }
+      variants: ["A", "B", "C", "D"],
+    },
   },
   flags: {},
   settings: {},
@@ -20,7 +20,7 @@ const mockedData = {
   tests: [
     {
       name: "test",
-      weights: [1],
+      weights: [1, 1, 1, 1],
     },
   ],
   flags: [],
@@ -56,19 +56,33 @@ describe("GetAbbyVariantPipe", () => {
     pipe = TestBed.inject(GetAbbyVariantPipe);
   });
 
-  it('creates pipe correctly', () => {
+  it("creates pipe correctly", () => {
     expect(pipe).toBeTruthy();
   });
 
-  it('returns currently active variant', () => {
-    pipe.transform("test").subscribe((value) => {
-      expect(value).toEqual("A");
-    });
+  it("returns currently active variant", () => {
+    combineLatest([service.getVariant("test"), pipe.transform("test")]).subscribe(
+      ([expected, actual]) => {
+        expect(actual).toEqual(expected);
+      }
+    );
   });
 
-  it('uses lookup object when supplied', () => {
-    pipe.transform("test", { A: 123 }).subscribe((value) => {
-      expect(value).toEqual(123);
-    });
+  it("uses lookup object when supplied", () => {
+    const lookupObject = {
+      A: 1,
+      B: 2,
+      C: 3,
+      D: 4,
+    };
+
+    combineLatest([
+      service.getVariant("test", lookupObject),
+      pipe.transform("test")
+    ]).subscribe(
+      ([expected, actual]) => {
+        expect(lookupObject[actual as keyof typeof lookupObject]).toEqual(expected as number);
+      }
+    );
   });
 });
