@@ -8,10 +8,8 @@ import {
 } from "components/DashboardSection";
 import { DeleteProjectModal } from "components/DeleteProjectModal";
 import { IconButton } from "components/IconButton";
-import { Input } from "components/Input";
 import { Layout } from "components/Layout";
 import { FullPageLoadingSpinner } from "components/LoadingSpinner";
-import { Modal } from "components/Modal";
 import { Progress } from "components/Progress";
 import { RemoveUserModal } from "components/RemoveUserModal";
 import dayjs from "dayjs";
@@ -25,7 +23,6 @@ import { FormEvent, useRef, useState } from "react";
 import { toast } from "react-hot-toast";
 import { BsX } from "react-icons/bs";
 import { getLimitByPlan } from "server/common/plans";
-import { generateRandomString } from "utils/apiKey";
 import { trpc } from "utils/trpc";
 
 const SettingsPage: NextPageWithLayout = () => {
