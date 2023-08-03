@@ -44,7 +44,15 @@ program
         configPath: options.config,
       });
     } catch (e) {
-      console.error(e);
+      console.log(
+        chalk.red(
+          multiLineLog(
+            e instanceof Error
+              ? e.message
+              : "Something went wrong. Please check your internet connection"
+          )
+        )
+      );
     }
   });
 
@@ -59,7 +67,13 @@ program
       await push({ apiKey: token, apiUrl: options.host, configPath: options.config });
     } catch (e) {
       console.log(
-        chalk.red(multiLineLog("Something went wrong. Please check your internet connection"))
+        chalk.red(
+          multiLineLog(
+            e instanceof Error
+              ? e.message
+              : "Something went wrong. Please check your internet connection"
+          )
+        )
       );
     }
   });
@@ -87,8 +101,13 @@ program
         );
       }
     } catch (e) {
-      console.error(e);
-      console.log(chalk.red("Please login first"));
+      console.log(
+        chalk.red(
+          e instanceof Error
+            ? e.message
+            : "Something went wrong. Please check your internet connection"
+        )
+      );
       return;
     }
   });

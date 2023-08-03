@@ -18,6 +18,7 @@ describe("useAbby", () => {
     const test2Variants = ["SimonsText", "MatthiasText", "TomsText", "TimsText"] as const;
 
     const { AbbyProvider, useAbby } = createAbby({
+      environments: [],
       projectId: "123",
       tests: {
         test: { variants: ["ONLY_ONE_VARIANT"] },
@@ -50,6 +51,7 @@ describe("useAbby", () => {
 describe("useFeatureFlag", () => {
   it("returns the correct types", () => {
     const { AbbyProvider, useFeatureFlag } = createAbby({
+      environments: [],
       projectId: "123",
       flags: {
         test: "Boolean",
@@ -73,6 +75,7 @@ describe("useFeatureFlag", () => {
   // TODO: the types don't work for this yet
   it.skip("has the correct type for devOverrides", () => {
     const {} = createAbby({
+      environments: [],
       projectId: "123",
       currentEnvironment: "test",
       flags: {
@@ -93,6 +96,7 @@ describe("useFeatureFlag", () => {
   describe("getVariants", () => {
     it("has the correct types", () => {
       const { getVariants } = createAbby({
+        environments: [],
         projectId: "123",
         currentEnvironment: "test",
         tests: {

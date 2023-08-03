@@ -1,5 +1,5 @@
 import { AbbyConfig, PullAbbyConfigResponse } from "@tryabby/core";
-import { ABBY_BASE_URL, LOCAL_BASE_URL } from "./consts";
+import { ABBY_BASE_URL } from "./consts";
 import fetch from "node-fetch";
 import { multiLineLog } from "./util";
 import chalk from "chalk";
