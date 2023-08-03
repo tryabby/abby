@@ -1,11 +1,22 @@
-import { Abby, type AbbyConfig, type ABConfig, type FlagValueString } from "@tryabby/core";
+import {
+  Abby,
+  type AbbyConfig,
+  type ABConfig,
+  type ExtractVariants,
+  type FlagValueString,
+} from "@tryabby/core";
 import { HttpService, AbbyEventType } from "@tryabby/core";
-import { derived } from "svelte/store";
+import { derived, get } from "svelte/store";
 import type { F } from "ts-toolbelt";
 // import type { LayoutServerLoad, LayoutServerLoadEvent } from "../routes/$types"; TODO fix import
 import { FlagStorageService, TestStorageService } from "./StorageService";
 import AbbyProvider from "./AbbyProvider.svelte";
 import AbbyDevtools from "./AbbyDevtools.svelte";
+
+type GetABTestValue<TestName extends string, Tests extends Record<TestName, ABConfig>> = {
+  (testName: TestName): string;
+  <S>(testName: TestName, lookupObject: Record<ExtractVariants<TestName, Tests>, S>): S;
+};
 
 export function createAbby<
   FlagName extends string,
@@ -95,8 +106,27 @@ export function createAbby<
     };
   };
 
-  const getABTestValue = <T extends keyof Tests>(testName: T) => {
-    return abby.getTestVariant(testName);
+  const getABTestValue = <
+    TestName extends keyof Tests,
+    TestVariant extends Tests[TestName]["variants"][number],
+    LookupValue,
+    Lookup extends Record<TestVariant, LookupValue> | undefined = undefined
+  >(
+    testName: TestName,
+    lookupObject?: F.Narrow<Lookup>
+  ): Lookup extends undefined
+      ? TestVariant
+      : TestVariant extends keyof Lookup
+      ? Lookup[TestVariant]
+      : never => {
+    const variant = abby.getTestVariant(testName);
+    // Typescript looses its typing here, so we cast as any in favor of having
+    // better type inference for the user
+    if(lookupObject === undefined) {
+      return variant as any;
+    }
+
+    return lookupObject[variant as keyof typeof lookupObject] as any;
   };
 
   const getFeatureFlagValue = <F extends keyof Flags>(featureFlagName: F) => {

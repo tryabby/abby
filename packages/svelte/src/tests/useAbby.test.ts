@@ -1,9 +1,10 @@
 import { TestStorageService } from "../lib/StorageService";
-import { HttpService, AbbyEventType } from "@tryabby/core";
+import { HttpService, AbbyEventType, getABStorageKey } from "@tryabby/core";
 import { createAbby } from "../lib/createAbby";
 import { it, describe, expect, afterEach, vi, beforeAll, afterAll } from "vitest";
 /// @ts-ignore it doesn't have types
 import { get } from "svelte/store";
+import Cookies from "js-cookie";
 
 const OLD_ENV = process.env;
 
@@ -100,5 +101,32 @@ describe("useAbby working", () => {
     });
     const recievedVariants = get(getVariants("test"));
     expect(recievedVariants).toEqual(expectedVariants);
+  });
+
+  it("uses lookup object when retrieving variant", async () => {
+    const { getABTestValue } = createAbby({
+      projectId: "123",
+      tests: {
+        lookupTest: {
+          variants: [
+            "SimonsText",
+            "MatthiasText",
+            "TomsText",
+            "TimsText",
+          ],
+        },
+      },
+    } as const);
+
+    const pickedVariant = getABTestValue("lookupTest");
+    const lookupMap = {
+      SimonsText: 1,
+      MatthiasText: 2,
+      TomsText: 3,
+      TimsText: 4,
+    };
+
+    const value = getABTestValue("lookupTest", lookupMap);
+    expect(value).toBe(lookupMap[pickedVariant]);
   });
 });
