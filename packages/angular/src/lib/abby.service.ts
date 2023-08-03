@@ -101,11 +101,11 @@ export class AbbyService<
   public getVariant<T extends keyof Tests>(testName: T): Observable<string>;
   public getVariant<T extends keyof Tests, S>(
     testName: T,
-    lookupObject: { [key in ExtractVariants<T, Tests>]: S }
+    lookupObject: { [key in ExtractVariants<T, Tests>]: S } | undefined
   ): Observable<S>;
   public getVariant<T extends keyof Tests, S>(
     testName: T,
-    lookupObject?: { [key in ExtractVariants<T, Tests>]: S }
+    lookupObject?: { [key in ExtractVariants<T, Tests>]: S } | undefined
   ): Observable<string | S> {
     this.abbyLogger.log(`getVariant(${testName as string})`);
 

@@ -21,10 +21,6 @@ export class GetAbbyVariantPipe<TestName extends Key, Tests extends Record<TestN
     testName: TestName,
     lookupObject?: Record<ExtractVariants<TestName, Tests>, S>
   ): Observable<string | S> {
-    if (lookupObject === undefined) {
-      return this.abbyService.getVariant(testName);
-    }
-
     return this.abbyService.getVariant(testName, lookupObject);
   }
 }
