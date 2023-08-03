@@ -34,18 +34,19 @@ In order to use A/BBY you need to create a **free** account at [tryabby.com](htt
 
 You can then use the button in the top right corner of the dashboard to easily copy your A/BBY config.
 
-Create a file called `abby.ts` (or whatever you want to call this file) somewhere in your source code. That's it! You're ready to go!
+Create a file called `abby.config.ts` in the root folder of your project. That's it! You're ready to go!
 
-For this example my `abby.ts` file looks like this:
+For this example my `abby.config.ts` file looks like this:
 
 ```ts
-// abby.ts
-import { createAbby } from "@tryabby/next";
+// abby.config.ts
+import { defineConfig } from "@tryabby/next";
 
-export const { useAbby, AbbyProvider, useFeatureFlag, withAbby } = createAbby({
+export default defineConfig({
   projectId: "YOUR_PROJECT",
   // For testing purposes we only want to use the production environment
   currentEnvironment: "production",
+  environments: ["production"],
   tests: {
     theme: {
       variants: ["light", "dark"],
@@ -55,6 +56,19 @@ export const { useAbby, AbbyProvider, useFeatureFlag, withAbby } = createAbby({
     useDarkMode: "Boolean",
   },
 });
+```
+
+After that you need to create a file called `lib/abby.ts` in your project.
+This file will contain all the code (e.g. the A/BBY hooks) that is needed to integrate A/BBY into your app.
+
+````ts
+// lib/abby.ts
+
+import { createAbby } from "@tryabby/next";
+import config from "../abby.config";
+
+export const { withAbby, AbbyProvider, useFeatureFlag, useAbby, withAbbyApiHandler, withAbbyEdge } = createAbby(config);
+
 ```
 
 Now you will need to wrap your app with the `AbbyProvider` component. This is done in the `_app.tsx` file.
@@ -75,7 +89,7 @@ function MyApp({ Component, pageProps: { __ABBY_PROJECT_DATA__, ...pageProps } }
 }
 
 export default withAbby(MyApp);
-```
+````
 
 If you only want client side rendering, you can skip the `withAbby` part and just wrap your app with the `AbbyProvider` (and omit `initialData`).
 
