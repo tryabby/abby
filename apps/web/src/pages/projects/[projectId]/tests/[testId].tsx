@@ -84,7 +84,7 @@ const TestDetailPage: NextPageWithLayout = () => {
   const intervalParam = useQueryParam(INTERVAL_PARAM_NAME);
 
   const interval =
-    intervalParam != null && isValidInterval(intervalParam)
+    intervalParam !== undefined && isValidInterval(intervalParam)
       ? intervalParam
       : INTERVALS[1].value;
 

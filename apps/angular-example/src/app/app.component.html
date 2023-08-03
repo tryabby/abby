@@ -1,7 +1,7 @@
 <h1>Angular examples</h1>
 
 <h3>Simple A/B-Test Service Demo</h3>
-<div>angularTest = {{angularTest}}</div>
+<div>angularTest = {{ angularTest$ | async }}</div>
 
 <button (click)="onAct()">OnAct</button>
 
@@ -11,25 +11,40 @@
 <ng-container *abbyTest="{testName: 'AngularTest', variant: 'C'}">CCCCCC</ng-container>
 <ng-container *abbyTest="{testName: 'AngularTest', variant: 'D'}">DDDDDD</ng-container>
 
-<h4 [ngStyle]="{'color': angularTest === 'A' ? 'blue' : angularTest === 'B' ? 'green' : angularTest === 'C' ? 'yellow' : angularTest === 'D' ? 'pink' : 'grey'}">Test</h4>
+<h4
+  *ngIf="angularTest$ | async as angularTest"
+  [ngStyle]="{'color': headerColor$ | async }"
+>
+  Test
+</h4>
+<h4
+  [ngStyle]="{
+    'color': 'AngularTest'
+      | getAbbyVariant: { A: 'blue', B: 'green', C: 'yellow', D: 'pink' }
+      | async
+  }"
+>
+  Variants Pipe
+</h4>
 
+<h4>Variants with Lookup Object</h4>
+<p>{{ variantWithLookup$ | async }}</p>
 
 <h3>Simple Feature Flag Service Demo</h3>
-<div>angularFlag = {{angularFlag}}</div>
+<div>angularFlag = {{ angularFlag$ | async }}</div>
 
 <h3>Simple Feature Flag Directive Demo</h3>
-<div *featureFlag="'AngularFlag'">AngularFlag = ON</div>
+<div *abbyFlag="'AngularFlag'">AngularFlag = ON</div>
 
-<div *featureFlag="'!AngularFlag'">AngularFlag = OFF</div>
+<div *abbyFlag="'!AngularFlag'">AngularFlag = OFF</div>
 
 <h3>Config UI Tool Demo</h3>
 <abby-devtools [props]="{dangerouslyForceShow: true}"></abby-devtools>
 
 <h3>Default usage Demo</h3>
 <h4>Feature Flag</h4>
-<div *featureFlag="'!NotExistingFlag'">AngularFlag = OFF</div>
+<div *abbyFlag="'!NotExistingFlag'">AngularFlag = OFF</div>
 
-<div ></div>
 <h4>Variants</h4>
 <ng-container *abbyTest="{testName: 'NotExistingTest', variant: 'A'}">AAAAAA</ng-container>
 <ng-container *abbyTest="{testName: 'NotExistingTest', variant: 'B'}">BBBBBB</ng-container>
@@ -39,37 +54,40 @@
 <!-- todo -->
 
 <h3>Feature Flag live change Demo</h3>
-<!-- todo -->
+<select [formControl]="dynamicFeatureFlag">
+  <option value="AngularFlag">AngularFlag</option>
+  <option value="!AngularFlag">!AngularFlag</option>
+  <option value="AngularFlag2">AngularFlag2</option>
+  <option value="!AngularFlag2">!AngularFlag2</option>
+</select>
+
+<div *abbyFlag="dynamicFeatureFlag.value ?? ''">{{ dynamicFeatureFlag.value }} = ON</div>
 
 <h3>Router A/B Test Demo</h3>
 <nav>
   <ul>
-    <li><a [routerLink]="[{outlets: {test: 'test'}}]"  >Test</a></li>
+    <li><a [routerLink]="[{outlets: {test: 'test'}}]">Test</a></li>
   </ul>
 </nav>
 <router-outlet name="test"></router-outlet>
 
-
-
 <h3>Router Feature Flag Demo</h3>
-<div *featureFlag="'AngularFlag'">
+<div *abbyFlag="'AngularFlag'">
   <nav>
     <ul>
-      <li><a [routerLink]="[{outlets: {flag: 'flag'}}]" >Feature</a></li>
+      <li><a [routerLink]="[{outlets: {flag: 'flag'}}]">Feature</a></li>
     </ul>
   </nav>
 </div>
 <router-outlet name="flag"></router-outlet>
 
-
 <h3>Lazy-loaded module Demo</h3>
 <nav>
   <ul>
-    <li><a [routerLink]="[{outlets: {lazy: 'lazy'}}]" >Lazy</a></li>
+    <li><a [routerLink]="[{outlets: {lazy: 'lazy'}}]">Lazy</a></li>
   </ul>
 </nav>
 <router-outlet name="lazy"></router-outlet>
-
 
 <h3>Angular Universal SSR Demo</h3>
 <!-- todo -->

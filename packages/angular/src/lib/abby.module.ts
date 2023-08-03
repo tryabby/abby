@@ -1,16 +1,25 @@
-import { APP_INITIALIZER, InjectionToken, ModuleWithProviders, NgModule } from "@angular/core";
+import {
+  APP_INITIALIZER,
+  inject,
+  InjectionToken,
+  ModuleWithProviders,
+  NgModule,
+} from "@angular/core";
+import { firstValueFrom } from "rxjs";
+import { F } from "ts-toolbelt";
+import { AbbyLoggerService } from "./abby-logger.service";
+import { AbbyConfig } from "@tryabby/core";
 import { AbbyService } from "./abby.service";
-import { Abby, AbbyConfig } from "@tryabby/core";
+import { DevtoolsComponent } from "./devtools.component";
 import { AbbyFlag } from "./flag.directive";
 import { AbbyTest } from "./test.directive";
-import { DevtoolsComponent } from "./devtools.component";
-import { F } from "ts-toolbelt";
+import { GetAbbyVariantPipe } from "./get-variant.pipe";
 
 export const ABBY_CONFIG_TOKEN = new InjectionToken<AbbyConfig>("AbbyConfig");
 
 @NgModule({
-  declarations: [AbbyFlag, AbbyTest, DevtoolsComponent],
-  exports: [AbbyFlag, AbbyTest, DevtoolsComponent],
+  declarations: [AbbyFlag, AbbyTest, DevtoolsComponent, GetAbbyVariantPipe],
+  exports: [AbbyFlag, AbbyTest, DevtoolsComponent, GetAbbyVariantPipe],
 })
 export class AbbyModule {
   static forRoot(config: AbbyConfig): ModuleWithProviders<AbbyModule> {
@@ -18,28 +27,22 @@ export class AbbyModule {
       ngModule: AbbyModule,
       providers: [
         {
+          provide: AbbyLoggerService,
+        },
+        {
           provide: ABBY_CONFIG_TOKEN,
           useValue: config, // assuming 'config' is your configuration data
         },
         {
           provide: AbbyService,
           useFactory: (config: AbbyConfig) => {
-            return new AbbyService(config as F.Narrow<AbbyConfig>);
+            return new AbbyService(config as F.Narrow<AbbyConfig>, inject(AbbyLoggerService));
           },
           deps: [ABBY_CONFIG_TOKEN],
         },
         {
           provide: APP_INITIALIZER,
-          useFactory: (abby: AbbyService) => {
-            return (): Promise<any> => {
-              return new Promise((resolve, reject) => {
-                abby.init().subscribe({
-                  next: () => resolve("Initialization Successful."),
-                  error: (err) => reject(err),
-                });
-              });
-            };
-          },
+          useFactory: (abby: AbbyService) => () => firstValueFrom(abby.init()),
           deps: [AbbyService],
           multi: true,
         },

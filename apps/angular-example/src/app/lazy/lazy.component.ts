@@ -3,16 +3,10 @@ import { Abby } from '../abby';
 
 @Component({
   selector: 'app-lazy',
-  template: '<div>angularTest = {{angularTest}}</div>',
+  template: '<div>angularTest = {{ angularTest$ | async}}</div>',
 })
 export class LazyComponent {
-  angularTest: string;
+  angularTest$ = this.abby.getVariant('AngularTest');
 
   constructor(private readonly abby: Abby) {}
-
-  ngOnInit() {
-    this.abby.getVariant('AngularTest').subscribe((variant: string) => {
-      this.angularTest = variant;
-    });
-  }
 }

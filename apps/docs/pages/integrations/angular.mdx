@@ -64,20 +64,16 @@ export class AppModule {}
 
 ### Using Abby in your Component
 
-You can now use Abby in your components. You will have access to the `AbbyService` which can be used to get the variant and act on any test.
+You can now use Abby in your components. You will have access to the `AbbyService` which can be used to get one of your variants, a feature flag or act on any test.
 
 ```tsx
 import { AbbyService } from '@tryabby/angular';
 
 @Component({...})
 export class MyComponent {
-  footerVariant: string;
+  footerVariant$ = this.abbyService.getVariant('footer');
 
-  constructor(private abbyService: AbbyService) {
-    this.abbyService.getVariant('footer').subscribe((variant) => {
-      this.footerVariant = variant;
-    });
-  }
+  constructor(private abbyService: AbbyService) { }
 
   onAct() {
     this.abbyService.onAct('footer');
@@ -85,18 +81,13 @@ export class MyComponent {
 }
 ```
 
-<Callout>
-  For this Example "strictPropertyInitialization" has to be set to false in your tsconfig. Otherwise
-  you have to initialize "footerVariant" with an default value.
-</Callout>
-
 ### Using Abby Directives
 
-You can also use Abby's directives to conditionally show elements based on the variant or feature flag.
+You can also use Abby's directives to conditionally render elements based on the variant or feature flag.
 
 ```html
-<ng-container *featureFlag="'newFeature'">
-  <!-- This will only be shown if the newFeature flag is active. -->
+<ng-container *abbyFlag="'newFeature'">
+  <!-- This will only be shown if the newFeature flag is truthy. -->
   <p>Here is the new feature</p>
 </ng-container>
 
@@ -104,13 +95,60 @@ You can also use Abby's directives to conditionally show elements based on the v
   <!-- This will only be shown if the test variant matches the variant. -->
   <p>Here is Variant A</p>
 </ng-container>
+```
 
+The `*abbyFlag`-Directive for now only interprets feature flags as a boolean. Support for checking string, number or object values will come later.
+You can however invert the boolean it returns by putting a `!` in front of the flag name like so:
+```html
+<ng-container *abbyFlag="'!newFeature'">
+  <!-- This will only be shown if the newFeature flag is falsy. -->
+</ng-container>
+```
+
+For using variants inside an `ngStyle`-Directive, we advice you to move the logic into the component rather than the template:
+```ts
+import { AbbyService } from '@tryabby/angular';
+
+@Component({...})
+export class MyComponent {
+  footerVariant$ = this.abbyService.getVariant('footer');
+
+  footerColor$ = this.footerVariant$.pipe(
+    map((footerVariant) => {
+      switch(footerVariant) {
+        case 'dark':
+          return 'black';
+        case 'orange': 
+          return 'orange';
+        case 'green':
+          return 'green';
+        default:
+          return 'transparent'
+      }
+    })
+  );
+
+  constructor(private abbyService: AbbyService) { }
+}
+```
+You can then consume the footer color in your template using the `async`-Pipe:
+```html
 <div
   class="footer"
-  [ngStyle]="{'color': footerVariant === 'dark' ? 'black' : 
-  footerVariant === 'orange' ? 'orange' : 
-  footerVariant === 'green' ? 'green'}"
+  [ngStyle]="{ 'color': footerColor$ | async }"
 >
   Here is a Foooter
 </div>
+```
+
+### Using Abby Pipes
+
+You can use the `getAbbyVariant` Pipe in your template to get the active variant of an AB Test.
+```html
+<p>{ "MyTestName" | getAbbyVariant | async }</p>
+```
+
+Optionally, you can pass in a lookup object, to map your variants to a custom type:
+```html
+<p>{ "MyTestName" | getAbbyVariant: { A: 123, B: 456, C: 789 } | async }</p>
 ```

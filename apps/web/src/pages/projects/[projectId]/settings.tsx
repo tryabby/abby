@@ -88,7 +88,7 @@ const SettingsPage: NextPageWithLayout = () => {
     );
   };
 
-  const isPlanWithStripe = projectPlan != null && projectPlan != "BETA";
+  const isPlanWithStripe = projectPlan !== null && projectPlan !== "BETA";
 
   return (
     <main className="space-y-8 text-pink-50">
@@ -153,8 +153,8 @@ const SettingsPage: NextPageWithLayout = () => {
                     Redeem Coupon
                   </DashboardButton>
                 </Link>
-                {data.project.stripeCustomerId != null &&
-                  projectPlan != null && (
+                {data.project.stripeCustomerId !== null &&
+                  projectPlan !== null && (
                     <button
                       className="text- ml-4 mr-auto mt-4 rounded-sm bg-blue-300 px-3"
                       onClick={async () => {
@@ -299,7 +299,7 @@ const SettingsPage: NextPageWithLayout = () => {
                 isPlanWithStripe ||
                 !user?.role ||
                 user.role !== ROLE.ADMIN ||
-                session.data?.user?.projectIds == null ||
+                session.data?.user?.projectIds === null ||
                 session.data?.user?.projectIds.length === 1
               }
               className="bg-red-600 py-2 font-medium hover:bg-red-600"
@@ -321,7 +321,7 @@ const SettingsPage: NextPageWithLayout = () => {
         </>
       )}
       <RemoveUserModal
-        isOpen={userToRemove != null}
+        isOpen={userToRemove !== null}
         onClose={() => setUserToRemove(null)}
         user={userToRemove ?? undefined}
       />
