@@ -105,7 +105,9 @@ const RevokeApiKeyModal = ({
 };
 
 const ProfilePage: NextPageWithLayout = () => {
-  const [apiKeyToRevoke, setApiKeyToRevoke] = useState<string | null>(null);
+  const [apiKeyToRevoke, setApiKeyToRevoke] = useState<string | undefined>(
+    undefined
+  );
   const [isCreateApiKeyModalOpen, setIsCreateApiKeyModalOpen] = useState(false);
   const [isRevokeApiKeyModalOpen, setIsRevokeApiKeyModalOpen] = useState(false);
   const [newApiKeyInfo, setNewApiKeyInfo] = useState<{
@@ -290,10 +292,10 @@ const ProfilePage: NextPageWithLayout = () => {
       />
       <RevokeApiKeyModal
         isOpen={isRevokeApiKeyModalOpen}
-        apiKey={apiKeyToRevoke ?? undefined}
+        apiKey={apiKeyToRevoke}
         onClose={() => {
           setIsRevokeApiKeyModalOpen(false);
-          setApiKeyToRevoke(null);
+          setApiKeyToRevoke(undefined);
         }}
       />
     </>
