@@ -28,7 +28,7 @@
     "prettier": "^3.0.0",
     "tsup": "^6.5.0",
     "unconfig": "^0.3.10",
-    "vite": "^3.2.5",
+    "vite": "^4.4.8",
     "zod": "^3.21.4"
   },
   "devDependencies": {

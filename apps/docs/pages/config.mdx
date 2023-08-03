@@ -1,5 +1,7 @@
 # Configuration as Code
 
+## Introduction
+
 A/BBY aims to have the best Developer Experience possible.
 This is why A/BBY is fully configurable via Code. No need to click some buttons in a GUI.
 You `abby.config.ts` (or `abby.config.js`) file is the **single source of truth** for your A/BBY project.
@@ -12,4 +14,52 @@ import { defineConfig } from "@tryabby/core";
 // or import { defineConfig } from "@tryabby/<integration>";
 ```
 
-The config needs to be the default export of the file 
+The config needs to be the default export of the file so that the CLI can find it.
+
+```ts
+import { defineConfig } from "@tryabby/core";
+// or import { defineConfig } from "@tryabby/<integration>";
+
+export default defineConfig({
+  // your config here
+});
+```
+
+## Philosophy
+
+This configuration has two purposes:
+
+#### 1. Integrations
+
+A/BBY has many integrations to other tools and frameworks. Those can import the config and use it to configure themselves.
+For example the `@tryabby/nextjs` integration uses the config to configure the Next.js framework. Reading the config makes the integrations fully typesafe
+
+#### 2. CLI
+
+The [A/BBY CLI](/reference/cli) uses the config to know what to do. It reads from the config and can then be used to create tests or feature flags on the A/BBY platform without
+any further configuration.
+
+## Example
+
+```ts
+// abby.config.ts
+
+import { defineConfig } from "@tryabby/core";
+// or import { defineConfig } from "@tryabby/<integration>";
+
+export default defineConfig({
+  projectId: "my-project-id",
+  currentEnvironment: "development",
+  environments: ["development", "production"],
+  tests: {
+    SignupButton: {
+      variants: ["A", "B"],
+    },
+  },
+  flags: {
+    AdvancedTestStats: "JSON",
+    showFooter: "Boolean",
+    maxUserCount: "Number",
+  },
+});
+```
