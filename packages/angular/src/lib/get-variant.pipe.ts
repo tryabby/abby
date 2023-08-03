@@ -1,12 +1,13 @@
 import { Pipe, PipeTransform } from "@angular/core";
 import { ABConfig } from "@tryabby/core";
 import { Observable } from "rxjs";
+import { Key } from "ts-toolbelt/out/Any/Key";
 import { AbbyService, ExtractVariants } from "./abby.service";
 
 @Pipe({
   name: "getAbbyVariant",
 })
-export class GetAbbyVariantPipe<TestName extends string, Tests extends Record<TestName, ABConfig>>
+export class GetAbbyVariantPipe<TestName extends Key, Tests extends Record<TestName, ABConfig>>
   implements PipeTransform
 {
   constructor(private abbyService: AbbyService<string, string, Tests>) {}
