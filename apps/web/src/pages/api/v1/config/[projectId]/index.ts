@@ -44,7 +44,7 @@ export default async function handler(
     },
   });
 
-  if (!apiKeyEntry || apiKeyEntry.revokedAt != null) {
+  if (!apiKeyEntry || apiKeyEntry.revokedAt !== null) {
     res.status(401).json({ error: "API key revoked" });
     return;
   }

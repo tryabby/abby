@@ -200,7 +200,7 @@ export function FeatureFlag({
 
   const currentFlagValue = flag.values.find((f) => f.id === flagValueId)?.value;
 
-  if (currentFlagValue == null) {
+  if (currentFlagValue === undefined) {
     return null;
   }
 
