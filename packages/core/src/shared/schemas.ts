@@ -50,6 +50,8 @@ export const abbyConfigSchema = z.object({
 
 export type AbbyConfigFile = z.infer<typeof abbyConfigSchema>;
 
+export type PullAbbyConfigResponse = Pick<AbbyConfigFile, "environments" | "flags" | "tests">;
+
 export type FlagValue = z.infer<typeof flagValue>;
 
 export type FlagValueString = z.infer<typeof flagValueStringSchema>;

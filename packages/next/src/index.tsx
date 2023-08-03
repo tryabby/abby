@@ -13,12 +13,14 @@ import Cookie from "js-cookie";
 import type { NextApiHandler, NextApiRequest, NextApiResponse } from "next";
 import { getIsomorphicCookies, isBrowser, isEdgeFunction } from "./helpers";
 
+export { defineConfig } from "@tryabby/core";
+
 // TODO: figure out how to prevent re-typing of the same types
 export function createAbby<
   FlagName extends string,
   TestName extends string,
   Tests extends Record<TestName, ABConfig>,
-  Flags extends Record<FlagName, FlagValueString> = Record<FlagName, FlagValueString>
+  Flags extends Record<FlagName, FlagValueString> = Record<FlagName, FlagValueString>,
 >(config: F.Narrow<AbbyConfig<FlagName, Tests, Flags>>) {
   const {
     AbbyProvider,
@@ -70,13 +72,13 @@ export function createAbby<
         ? NextResponse
         : RequestType extends NextApiRequest
         ? NextApiResponse
-        : never
+        : never,
     >(
       name: T,
       req?: RequestType
     ): [
       Tests[T]["variants"][number],
-      RequestType extends NextRequest | NextApiRequest ? (res: ResponseType) => void : () => void
+      RequestType extends NextRequest | NextApiRequest ? (res: ResponseType) => void : () => void,
     ] {
       const cookies = getIsomorphicCookies(req);
 
@@ -126,7 +128,7 @@ export function createAbby<
         ? NextResponse
         : RequestType extends NextApiRequest
         ? NextApiResponse
-        : never
+        : never,
     >(
       name: T,
       req?: RequestType

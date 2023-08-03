@@ -9,12 +9,12 @@ import {
   abbyConfigSchema,
   getDefaultFlagValue,
   stringifyFlagValue,
+  type PullAbbyConfigResponse,
 } from "@tryabby/core";
 import {
   transformClientFlagToDBType,
   transformDBFlagTypeToclient,
 } from "lib/flags";
-import { AbbyConfigFile } from "@tryabby/core";
 
 const incomingQuerySchema = z.object({
   projectId: z.string(),
@@ -94,7 +94,6 @@ export default async function handler(
       if (!projectData) throw new Error("Cant find project");
 
       const config = {
-        projectId,
         environments: projectData.environments.map(
           (environment) => environment.name
         ),
@@ -108,7 +107,7 @@ export default async function handler(
           acc[flag.name] = transformDBFlagTypeToclient(flag.type);
           return acc;
         }, {} as Record<string, any>),
-      } satisfies AbbyConfigFile;
+      } satisfies PullAbbyConfigResponse;
 
       return res.status(200).json(config);
     } catch (error) {

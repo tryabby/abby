@@ -12,9 +12,7 @@ export async function push({
 }) {
   const { config } = await loadLocalConfig(configPath);
 
-  const projectId = config.projectId;
   await HttpService.updateConfigOnServer({
-    projectId,
     apiKey,
     localAbbyConfig: config,
     apiUrl,

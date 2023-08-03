@@ -1,30 +1,31 @@
-import { AbbyConfig } from "@tryabby/core";
+import { AbbyConfig, PullAbbyConfigResponse } from "@tryabby/core";
 import { HttpService } from "../src/http";
+import { writeFile } from "fs/promises";
+
 import { push } from "../src/push";
-import {
-  getConfigFromFileString,
-  getParsedJSONString,
-  getRegex,
-  loadLocalConfig,
-  updateConfigFile,
-} from "../src/util";
-import { config } from "process";
-import { pullAndMerge, mergeConfigs } from "../src/pull";
-import { get } from "https";
-import { check } from "../src/check";
+import { pullAndMerge } from "../src/pull";
 
-const OLD_ENV = process.env;
+vi.mock("../src/util", () => ({
+  loadLocalConfig: () =>
+    Promise.resolve({ config: sampleLocalConfig, configFilePath: "test-path" }),
+}));
 
-beforeEach(() => {
-  vi.resetModules(); // Most important - it clears the cache
-  process.env = { ...OLD_ENV }; // Make a copy
-});
+// we don't want to actually write to the file system
+vi.mock("prettier", () => ({
+  format: (str: string) => str,
+}));
 
-afterAll(() => {
-  process.env = OLD_ENV; // Restore old environment
-});
+vi.mock("fs/promises", () => ({
+  ...vi.importActual("fs/promises"),
+  readFile: () =>
+    Promise.resolve(`export default defineConfig(${JSON.stringify(sampleLocalConfig)});`),
+  writeFile: vi.fn(),
+}));
+
+const API_KEY = "test";
 
 const sampleLocalConfig = {
+  environments: [],
   projectId: "test",
   tests: {
     test1: {
@@ -34,11 +35,11 @@ const sampleLocalConfig = {
       variants: ["A", "B"],
     },
   },
-  flags: ["flag1", "flag2"],
-};
+  flags: { flag1: "Boolean", flag2: "Number" },
+} satisfies AbbyConfig;
 
 const sampleServerConfig = {
-  projectId: "test",
+  environments: ["test"],
   tests: {
     test1: {
       variants: ["A", "B", "C", "D"],
@@ -50,74 +51,36 @@ const sampleServerConfig = {
       variants: ["A", "B", "C", "D"],
     },
   },
-  flags: ["flag1", "flag2", "flag3"],
-};
-
-const filePathAngular = "./tests/mocks/angularSample.ts";
-const filePathReact = "./tests/mocks/reactSample.ts";
+  flags: { flag1: "Boolean", flag2: "Number", flag3: "JSON" },
+} satisfies PullAbbyConfigResponse;
 
 describe("Abby CLI", () => {
-  it("sends put request", async () => {
+  it("pushes the config properly", async () => {
     const spy = vi.spyOn(HttpService, "updateConfigOnServer");
-    await push({ apiKey: "./tests/mocks/angularSample.ts", localhost: "09876543210987654321" });
 
-    expect(spy).toHaveBeenCalledWith(
-      "test",
-      "09876543210987654321",
-      sampleLocalConfig as AbbyConfig,
-      undefined
-    );
+    await push({ apiKey: API_KEY });
+
+    expect(spy).toHaveBeenCalledOnce();
+    expect(spy).toHaveBeenCalledWith({
+      apiKey: API_KEY,
+      localAbbyConfig: sampleLocalConfig,
+    });
   });
 
-  it("gets angular config from file", async () => {
-    const expectedConfig = sampleLocalConfig as AbbyConfig;
-
-    const fileString = await loadLocalConfig(filePathAngular);
-    const config = getConfigFromFileString(fileString);
-
-    expect(config).toEqual(expectedConfig);
-  });
-
-  it("gets react config from server", async () => {
-    const expectedConfig = sampleLocalConfig as AbbyConfig;
-
-    const fileString = await loadLocalConfig(filePathReact);
-    const config = getConfigFromFileString(fileString);
-
-    expect(config).toEqual(expectedConfig);
-  });
-
-  it("pulls data", async () => {
+  it("pulls the config properly", async () => {
     const spy = vi.spyOn(HttpService, "getConfigFromServer");
-    const fileString = await loadLocalConfig(filePathAngular);
-    const configFromFile: AbbyConfig = getConfigFromFileString(fileString);
-
-    const configFromAbby = (await HttpService.getConfigFromServer({
-      projectId: configFromFile.projectId,
-      apiKey: "09876543210987654321",
-    })) as any;
-
-    if (configFromAbby) {
-      const updatedConfigString = await mergeConfigs(configFromFile, configFromAbby);
-
-      expect(updatedConfigString).toEqual(getParsedJSONString(sampleServerConfig));
-    } else throw new Error("Config in file not found");
-  });
-
-  it("checks flags and tests", async () => {
-    const spy = vi.spyOn(HttpService, "getConfigFromServer");
-    const upToDateFalse = await check({
-      apiKey: filePathAngular,
-      localhost: "09876543210987654321",
+    spy.mockResolvedValueOnce(sampleServerConfig);
+    await pullAndMerge({
+      apiKey: API_KEY,
     });
 
-    expect(upToDateFalse).toEqual(false);
-
-    const upToDateTrue = await check({ apiKey: filePathAngular, localhost: "test" });
-    expect(upToDateTrue).toEqual(true);
-  });
-
-  it("pull test", async () => {
-    await pullAndMerge({ filePath: filePathReact, apiKey: "09876543210987654321" });
+    expect(spy).toHaveBeenCalledOnce();
+    expect(spy).toHaveBeenCalledWith({
+      projectId: sampleLocalConfig.projectId,
+      apiKey: API_KEY,
+    });
+    expect(writeFile).toHaveBeenCalledOnce();
+    // make sure the merged test (test 3) is included in the new file
+    expect(writeFile).toHaveBeenCalledWith("test-path", expect.stringContaining("test3"));
   });
 });

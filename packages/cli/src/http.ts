@@ -1,4 +1,4 @@
-import { AbbyConfig } from "@tryabby/core";
+import { AbbyConfig, PullAbbyConfigResponse } from "@tryabby/core";
 import { ABBY_BASE_URL, LOCAL_BASE_URL } from "./consts";
 import fetch from "node-fetch";
 
@@ -27,16 +27,14 @@ export abstract class HttpService {
     }
 
     const responseJson = await response.json();
-    return responseJson as AbbyConfig;
+    return responseJson as PullAbbyConfigResponse;
   }
 
   static async updateConfigOnServer({
-    projectId,
     apiKey,
     localAbbyConfig,
     apiUrl,
   }: {
-    projectId: string;
     apiKey: string;
     localAbbyConfig: AbbyConfig;
     apiUrl?: string;
@@ -44,7 +42,7 @@ export abstract class HttpService {
     const url = apiUrl ?? ABBY_BASE_URL;
 
     try {
-      const response = await fetch(`${url}api/config/${projectId}`, {
+      const response = await fetch(`${url}api/config/${localAbbyConfig.projectId}`, {
         method: "PUT",
         headers: {
           Authorization: "Bearer " + apiKey,

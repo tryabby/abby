@@ -69,14 +69,14 @@ export const { AbbyProvider, withDevtools } = createAbby({
 export const AbbyDevtools = withDevtools(abbyDevtools, { defaultShow: true });
 
 
-````
+`````
+
   </Tab>
 </Tabs>
 
-
 You then need to simply place the Devtools inside of your `AbbyProvider`
 
-````tsx
+```tsx
 import { AbbyProvider, AbbyDevTools } from "lib/abby";
 
 // ... your application
@@ -88,7 +88,7 @@ export function App() {
     </AbbyProvider>
   );
 }
-````
+```
 
 ### Usage
 
@@ -96,8 +96,7 @@ The devtools will appear on every page if you set `defaultShow: true`.
 Otherwise you can toggle them with <kbd>CMD/CTRL + .</kbd> (or the shortcut you set in the config)
 
 <Callout type="warning" emoji="💡">
-  You will only be able to update feature flags that are consumed via hooks in
-  the current page! If you need to update a feature flag that is consumed via
-  `getFeatureFlagValue` set in the `createAbby` config.
+  You will only be able to update feature flags that are consumed via hooks in the current page! If
+  you need to update a feature flag that is consumed via `getFeatureFlagValue` set in the
+  `createAbby` config.
 </Callout>
-`````

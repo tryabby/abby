@@ -1,0 +1,15 @@
+# Configuration as Code
+
+A/BBY aims to have the best Developer Experience possible.
+This is why A/BBY is fully configurable via Code. No need to click some buttons in a GUI.
+You `abby.config.ts` (or `abby.config.js`) file is the **single source of truth** for your A/BBY project.
+
+Your configuration should be written in a file called `abby.config.ts` (or `abby.config.js`) which should be located in the root of your project.
+Every integration offers a `defineConfig` helper function which offers a typesafe way to define your configuration.
+
+```ts
+import { defineConfig } from "@tryabby/core";
+// or import { defineConfig } from "@tryabby/<integration>";
+```
+
+The config needs to be the default export of the file 

@@ -1,5 +1,5 @@
 import * as fs from "fs/promises";
-import { AbbyConfig } from "@tryabby/core";
+import { AbbyConfig, PullAbbyConfigResponse } from "@tryabby/core";
 import { loadLocalConfig } from "./util";
 
 import { HttpService } from "./http";
@@ -24,7 +24,7 @@ export function updateConfigFile(updatedConfig: AbbyConfig, configFileString: st
   return updatedContent;
 }
 
-export function mergeConfigs(localConfig: AbbyConfig, remoteConfig: AbbyConfig) {
+export function mergeConfigs(localConfig: AbbyConfig, remoteConfig: PullAbbyConfigResponse) {
   return {
     ...localConfig,
     environments: Array.from(new Set([...localConfig.environments, ...remoteConfig.environments])),
