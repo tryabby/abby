@@ -1,5 +1,11 @@
 # @tryabby/core
 
+## 4.1.0
+
+### Minor Changes
+
+- add defineConfig helper to ease the usage with the cli
+
 ## 4.0.1
 
 ### Patch Changes

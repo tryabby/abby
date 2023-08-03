@@ -1,6 +1,6 @@
 {
   "name": "@tryabby/next",
-  "version": "4.0.1",
+  "version": "4.1.0",
   "description": "",
   "main": "dist/index.js",
   "files": [
