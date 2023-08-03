@@ -17,6 +17,11 @@ import { Modal } from "components/Modal";
 import { IconButton } from "components/IconButton";
 import { BsX } from "react-icons/bs";
 import { generateRandomString } from "utils/apiKey";
+import {
+  DashboardSection,
+  DashboardSectionTitle,
+  DashboardSectionSubtitle,
+} from "components/DashboardSection";
 
 const CreateApiKeyModal = ({
   isOpen,
@@ -153,7 +158,7 @@ const ProfilePage: NextPageWithLayout = () => {
           <span>Go Back</span>
         </DashboardButton>
         <div className="mx-auto mt-12 max-w-3xl space-y-3">
-          <section className="rounded-xl bg-gray-800 px-6 py-3">
+          <DashboardSection>
             <h1 className="text-3xl font-bold">Account Settings</h1>
             <form onSubmit={onSubmit} className="mt-8 space-y-8">
               <Avatar
@@ -200,12 +205,12 @@ const ProfilePage: NextPageWithLayout = () => {
                 Save
               </DashboardButton>
             </form>
-          </section>
-          <section className="rounded-xl bg-gray-800 px-6 py-3">
-            <h2 className="text-xl font-semibold">API Keys</h2>
-            <h3 className="text-sm text-pink-50/80">
+          </DashboardSection>
+          <DashboardSection>
+            <DashboardSectionTitle>API Keys</DashboardSectionTitle>
+            <DashboardSectionSubtitle>
               API Keys are used to authenticate with the API.
-            </h3>
+            </DashboardSectionSubtitle>
             <div className="mt-8 divide-y divide-pink-50/20">
               {isAPIKeyDataLoading || isAPIKeyDataError ? (
                 <FullPageLoadingSpinner />
@@ -271,7 +276,7 @@ const ProfilePage: NextPageWithLayout = () => {
                 </div>
               </form>
             </div>
-          </section>
+          </DashboardSection>
         </div>
       </div>
       <CreateApiKeyModal

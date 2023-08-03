@@ -1,6 +1,11 @@
 import { ROLE, User } from "@prisma/client";
 import clsx from "clsx";
 import { DashboardButton } from "components/DashboardButton";
+import {
+  DashboardSection,
+  DashboardSectionSubtitle,
+  DashboardSectionTitle,
+} from "components/DashboardSection";
 import { DeleteProjectModal } from "components/DeleteProjectModal";
 import { IconButton } from "components/IconButton";
 import { Input } from "components/Input";
@@ -95,8 +100,10 @@ const SettingsPage: NextPageWithLayout = () => {
         <FullPageLoadingSpinner />
       ) : (
         <>
-          <section className="rounded-xl bg-gray-800 px-6 py-3">
-            <h2 className="mb-8 text-xl font-semibold">General Details</h2>
+          <DashboardSection>
+            <DashboardSectionTitle className="mb-8">
+              General Details
+            </DashboardSectionTitle>
             <div className="flex flex-col space-y-4">
               <div className="flex">
                 <label className="flex flex-col">
@@ -162,12 +169,12 @@ const SettingsPage: NextPageWithLayout = () => {
                   )}
               </div>
             </div>
-          </section>
-          <section className="rounded-xl bg-gray-800 px-6 py-3">
-            <h2 className="text-xl font-semibold">Members</h2>
-            <h3 className="text-sm text-pink-50/80">
+          </DashboardSection>
+          <DashboardSection>
+            <DashboardSectionTitle>Members</DashboardSectionTitle>
+            <DashboardSectionSubtitle>
               Members have access to this project
-            </h3>
+            </DashboardSectionSubtitle>
             <div className="mt-8 divide-y divide-pink-50/20">
               {data.project.users.map(({ user, role }) => (
                 <div key={user.id} className="col flex  py-3">
@@ -214,16 +221,16 @@ const SettingsPage: NextPageWithLayout = () => {
                 </small>
               </form>
             </div>
-          </section>
-          <section className="rounded-xl bg-gray-800 px-6 py-3">
-            <h2 className="text-xl font-semibold">Usage</h2>
-            <h3 className="mb-6 text-sm text-gray-400">
+          </DashboardSection>
+          <DashboardSection>
+            <DashboardSectionTitle>Usage</DashboardSectionTitle>
+            <DashboardSectionSubtitle className="mb-8">
               Current Billing Cycle (
               {dayjs(data.project.currentPeriodEnd)
                 .subtract(30, "days")
                 .format("MMM DD")}{" "}
               - {dayjs(data.project.currentPeriodEnd).format("MMM DD")})
-            </h3>
+            </DashboardSectionSubtitle>
             <div className="flex flex-col space-y-4">
               <div>
                 <h3>A/B Tests:</h3>
@@ -282,12 +289,12 @@ const SettingsPage: NextPageWithLayout = () => {
                 </p>
               </div>
             </div>
-          </section>
-          <section className="rounded-xl bg-gray-800 px-6 py-3">
-            <h2 className="text-xl font-semibold">Danger Zone</h2>
-            <h3 className="mb-8 text-sm text-pink-50/80">
+          </DashboardSection>
+          <DashboardSection>
+            <DashboardSectionTitle>Danger Zone</DashboardSectionTitle>
+            <DashboardSectionSubtitle className="mb-8">
               Delete this project and all of its data
-            </h3>
+            </DashboardSectionSubtitle>
 
             <DashboardButton
               onClick={deleteProject}
@@ -313,7 +320,7 @@ const SettingsPage: NextPageWithLayout = () => {
                 You must create a new project before deleting this project.
               </p>
             )}
-          </section>
+          </DashboardSection>
         </>
       )}
       <RemoveUserModal
