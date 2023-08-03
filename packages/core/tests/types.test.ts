@@ -58,11 +58,3 @@ describe("Type Helpers", () => {
     expectTypeOf<FlagValueStringToType<"Number">>().toEqualTypeOf<number>();
   });
 });
-
-describe("abbyConfig", () => {
-  const config = new Abby({
-    environments: ["xd", "lol"],
-    currentEnvironment: "lol",
-    projectId: "123",
-  });
-});

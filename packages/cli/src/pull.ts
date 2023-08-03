@@ -10,7 +10,7 @@ import * as prettier from "prettier";
 export function updateConfigFile(updatedConfig: AbbyConfig, configFileString: string) {
   const matchRegex = configRegex.exec(configFileString);
 
-  const matchedObject = matchRegex?.[1];
+  const matchedObject = matchRegex?.at(1);
 
   if (!matchedObject) {
     throw new Error("Invalid config file");
