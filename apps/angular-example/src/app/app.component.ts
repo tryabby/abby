@@ -12,6 +12,13 @@ export class AppComponent {
   angularTest$ = this.abby.getVariant("AngularTest");
   angularFlag$ = this.abby.getFeatureFlagValue("AngularFlag");
 
+  variantWithLookup$ = this.abby.getVariant("AngularTest", {
+    A: 1,
+    B: 2,
+    C: 3,
+    D: 4,
+  });
+
   headerColor$ = this.angularTest$.pipe(
     map((angularTest) => {
       switch(angularTest) {
