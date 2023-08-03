@@ -257,7 +257,6 @@ const ProfilePage: NextPageWithLayout = () => {
 
                       const apiKey = await createApiKey({
                         name: name,
-                        validDays: 365,
                       });
 
                       setNewApiKeyInfo({

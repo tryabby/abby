@@ -1,24 +1,24 @@
 import { z } from "zod";
 import { protectedProcedure, router } from "../trpc";
 import { generateRandomString, hashApiKey } from "utils/apiKey";
+import dayjs from "dayjs";
 
 export const apiKeyRouter = router({
   createApiKey: protectedProcedure
     .input(
       z.object({
         name: z.string(),
-        validDays: z.number(),
       })
     )
     .mutation(async ({ ctx, input }) => {
       const apiKey = generateRandomString();
       const hashedApiKey = hashApiKey(apiKey);
 
-      const apiKeyEntry = await ctx.prisma.apiKey.create({
+      await ctx.prisma.apiKey.create({
         data: {
           hashedKey: hashedApiKey,
           name: input.name,
-          validDays: input.validDays,
+          validUntil: dayjs().add(1, "year").toDate(),
           userId: ctx.session.user.id,
         },
       });
@@ -32,12 +32,12 @@ export const apiKeyRouter = router({
       })
     )
     .mutation(async ({ ctx, input }) => {
-      const apiKeyEntry = await ctx.prisma.apiKey.update({
+      await ctx.prisma.apiKey.update({
         where: {
           id: input.id,
         },
         data: {
-          isRevoked: true,
+          revokedAt: new Date(),
         },
       });
     }),

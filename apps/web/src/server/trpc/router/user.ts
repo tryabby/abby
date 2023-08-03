@@ -52,7 +52,7 @@ export const userRouter = router({
       apiKeys: await ctx.prisma.apiKey.findMany({
         where: {
           userId: ctx.session.user.id,
-          isRevoked: false,
+          revokedAt: null,
         },
       }),
     };
