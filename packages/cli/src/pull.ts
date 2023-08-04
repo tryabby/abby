@@ -1,7 +1,6 @@
 import * as fs from "fs/promises";
 import { AbbyConfig, PullAbbyConfigResponse } from "@tryabby/core";
 import { loadLocalConfig } from "./util";
-
 import { HttpService } from "./http";
 import { configRegex } from "./consts";
 import deepmerge from "deepmerge";
