@@ -5,7 +5,9 @@ import {
   FlagValue,
   FlagValueString,
   FlagValueStringToType,
-  assertUnreachable,
+  flagStringToType,
+  getDefaultFlagValue,
+  stringifyFlagValue,
 } from "./shared/";
 import { HttpService } from "./shared";
 import { F } from "ts-toolbelt";
@@ -13,6 +15,7 @@ import { getWeightedRandomVariant } from "./mathHelpers";
 import { parseCookies } from "./helpers";
 
 export * from "./shared/index";
+export { defineConfig } from "./defineConfig";
 
 export type ABConfig<T extends string = string> = {
   variants: ReadonlyArray<T>;
@@ -20,7 +23,7 @@ export type ABConfig<T extends string = string> = {
 
 type Settings<
   FlagName extends string,
-  Flags extends Record<FlagName, FlagValueString> = Record<FlagName, FlagValueString>
+  Flags extends Record<FlagName, FlagValueString> = Record<FlagName, FlagValueString>,
 > = {
   flags?: {
     defaultValues?: {
@@ -51,11 +54,13 @@ interface PersistentStorage {
 export type AbbyConfig<
   FlagName extends string = string,
   Tests extends Record<string, ABConfig> = Record<string, ABConfig>,
-  Flags extends Record<FlagName, FlagValueString> = Record<FlagName, FlagValueString>
+  Flags extends Record<FlagName, FlagValueString> = Record<FlagName, FlagValueString>,
+  Environments extends Array<string> = Array<string>,
 > = {
   projectId: string;
   apiUrl?: string;
-  currentEnvironment?: string;
+  currentEnvironment?: Environments[number];
+  environments: Environments;
   tests?: Tests;
   flags?: Flags;
   settings?: Settings<F.NoInfer<FlagName>, Flags>;
@@ -66,7 +71,8 @@ export class Abby<
   FlagName extends string,
   TestName extends string,
   Tests extends Record<string, ABConfig>,
-  Flags extends Record<FlagName, FlagValueString>
+  Flags extends Record<FlagName, FlagValueString>,
+  Environments extends Array<string> = Array<string>,
 > {
   private log = (...args: any[]) =>
     this.config.debug ? console.log(`core.Abby`, ...args) : () => {};
@@ -87,18 +93,21 @@ export class Abby<
   private testOverrides: Map<keyof Tests, Tests[keyof Tests]["variants"][number]> = new Map();
 
   constructor(
-    private config: F.Narrow<AbbyConfig<FlagName, Tests, Flags>>,
+    private config: F.Narrow<AbbyConfig<FlagName, Tests, Flags, Environments>>,
     private persistantTestStorage?: PersistentStorage,
     private persistantFlagStorage?: PersistentStorage
   ) {
-    this._cfg = config as AbbyConfig<FlagName, Tests, Flags>;
-    this.#data.flags = Object.keys(config.flags ?? {}).reduce((acc, flagName) => {
-      acc[flagName as FlagName] = this.getDefaultFlagValue(
-        flagName as FlagName,
-        config.flags as any
-      );
-      return acc;
-    }, {} as Record<FlagName, FlagValue>);
+    this._cfg = config as AbbyConfig<FlagName, Tests, Flags, Environments>;
+    this.#data.flags = Object.keys(config.flags ?? {}).reduce(
+      (acc, flagName) => {
+        acc[flagName as FlagName] = this.getDefaultFlagValue(
+          flagName as FlagName,
+          config.flags as any
+        );
+        return acc;
+      },
+      {} as Record<FlagName, FlagValue>
+    );
     this.#data.tests = config.tests ?? ({} as any);
   }
 
@@ -139,22 +148,28 @@ export class Abby<
     data: AbbyDataResponse
   ): LocalData<FlagName, TestName> {
     return {
-      tests: data.tests.reduce((acc, { name, weights }) => {
-        if (!acc[name as keyof Tests]) {
-          return acc;
-        }
+      tests: data.tests.reduce(
+        (acc, { name, weights }) => {
+          if (!acc[name as keyof Tests]) {
+            return acc;
+          }
 
-        // assigned the fetched weights to the initial config
-        acc[name as keyof Tests] = {
-          ...acc[name as keyof Tests],
-          weights,
-        };
-        return acc;
-      }, (this.config.tests ?? {}) as any),
-      flags: data.flags.reduce((acc, { name, value }) => {
-        acc[name] = value;
-        return acc;
-      }, {} as Record<string, FlagValue>),
+          // assigned the fetched weights to the initial config
+          acc[name as keyof Tests] = {
+            ...acc[name as keyof Tests],
+            weights,
+          };
+          return acc;
+        },
+        (this.config.tests ?? {}) as any
+      ),
+      flags: data.flags.reduce(
+        (acc, { name, value }) => {
+          acc[name] = value;
+          return acc;
+        },
+        {} as Record<string, FlagValue>
+      ),
     };
   }
 
@@ -387,48 +402,19 @@ export class Abby<
 
     if (defaultValue != null) return defaultValue;
 
-    switch (flagType) {
-      case "Boolean":
-        return false;
-      case "String":
-        return "";
-      case "Number":
-        return 0;
-      case "JSON":
-        return {};
-      default:
-        assertUnreachable(flagType);
-    }
+    return getDefaultFlagValue(flagType);
   }
 
   private flagStringToType(flagName: string, stringifiedValue: string): FlagValue {
     const flagType = this._cfg.flags?.[flagName as keyof Flags]!;
 
-    switch (flagType) {
-      case "Boolean":
-        return stringifiedValue === "true";
-      case "String":
-        return stringifiedValue;
-      case "Number":
-        return parseInt(stringifiedValue, 10);
-      case "JSON":
-        return JSON.parse(stringifiedValue);
-      default:
-        assertUnreachable(flagType);
-    }
+    return flagStringToType({
+      stringifiedValue,
+      flagType,
+    });
   }
 
   private stringifiedFlagValue(value: FlagValue): string {
-    switch (typeof value) {
-      case "boolean":
-      case "number":
-        return value.toString();
-      case "string":
-        return value;
-      case "object":
-        return JSON.stringify(value);
-      default:
-        assertUnreachable(value);
-    }
+    return stringifyFlagValue(value);
   }
 }

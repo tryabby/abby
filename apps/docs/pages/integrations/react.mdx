@@ -31,17 +31,18 @@ To get started make sure to install the package using your favorite package mana
     </Tab>
 </Tabs>
 
-### Create your Instance
+### Create your config
 
-To use Abby in your code you will need to create a typed Hook and Provider first. You can do this by using the `createAbby` function.
-Please copy the id of your project from the dashboard to get started.
+To use A/BBY you need to create your config first. You can do this by creating a file called `abby.config.ts` in your `root` folder. This file will be used to configure your project.
 
-```jsx
-import { createAbby } from "@tryabby/react";
+```ts
+// abby.config.ts
+import { defineConfig } from "@tryabby/react";
 
-const { AbbyProvider, useAbby } = createAbby({
+export default defineConfig({
   projectId: "<YOUR_PROJECT_ID>",
   currentEnvironment: process.env.NODE_ENV,
+  environments: ["production", "development"],
   tests: {
     test: { variants: ["A", "B"] },
     footer: { variants: ["dark", "orange", "green"] },
@@ -49,6 +50,18 @@ const { AbbyProvider, useAbby } = createAbby({
   },
   flags: { darkMode: "Boolean", newFeature: "Boolean" },
 });
+```
+
+### Create your Instance
+
+To use Abby in your code you will need to create a typed Hook and Provider first. You can do this by using the `createAbby` function.
+Please copy the id of your project from the dashboard to get started.
+
+```jsx
+import { createAbby } from "@tryabby/react";
+import abbyConfig from "../abby.config";
+
+const { AbbyProvider, useAbby } = createAbby(abbyConfig);
 ```
 
 ### Wrap your Application

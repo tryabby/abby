@@ -22,6 +22,7 @@ describe("useAbby", () => {
     const spy = vi.spyOn(TestStorageService, "set");
 
     const { AbbyProvider, useAbby } = createAbby({
+      environments: [],
       projectId: "123",
       tests: {
         test: { variants: ["OldFooter", "NewFooter"] },
@@ -51,6 +52,7 @@ describe("useAbby", () => {
     getSpy.mockReturnValue(persistedValue);
 
     const { AbbyProvider, useAbby } = createAbby({
+      environments: [],
       projectId: "123",
       tests: {
         test: { variants },
@@ -73,6 +75,7 @@ describe("useAbby", () => {
   it("should ping the current info on mount", () => {
     const spy = vi.spyOn(HttpService, "sendData");
     const { AbbyProvider, useAbby } = createAbby({
+      environments: [],
       projectId: "123",
       tests: {
         test: { variants: ["A", "B", "C"] },
@@ -93,6 +96,7 @@ describe("useAbby", () => {
   it("should notify the server with onAct", () => {
     const spy = vi.spyOn(HttpService, "sendData");
     const { AbbyProvider, useAbby } = createAbby({
+      environments: [],
       projectId: "123",
       tests: {
         test: { variants: ["A", "B", "C"] },
@@ -115,6 +119,7 @@ describe("useAbby", () => {
 
   it("should return the correct feature flags", () => {
     const { AbbyProvider, useFeatureFlag } = createAbby({
+      environments: [],
       projectId: "123",
       flags: {
         flag1: "Boolean",
@@ -143,6 +148,7 @@ describe("useAbby", () => {
 
   it("should respect the default values for feature flags", () => {
     const { AbbyProvider, useFeatureFlag } = createAbby({
+      environments: [],
       projectId: "123",
       flags: {
         flag1: "Boolean",
@@ -164,6 +170,7 @@ describe("useAbby", () => {
   it("uses the devOverrides", () => {
     process.env.NODE_ENV = "development";
     const { AbbyProvider, useFeatureFlag } = createAbby({
+      environments: [],
       projectId: "123",
       flags: {
         flag1: "Boolean",
@@ -203,6 +210,7 @@ describe("useAbby", () => {
 
   it("gets the stored feature flag value using a function properly", () => {
     const { getFeatureFlagValue } = createAbby({
+      environments: [],
       projectId: "123",
       flags: {
         flag1: "Boolean",
@@ -218,6 +226,7 @@ describe("useAbby", () => {
 
   it("returns the correct possible variant values", () => {
     const { getVariants } = createAbby({
+      environments: [],
       projectId: "123",
       currentEnvironment: "a",
       tests: {

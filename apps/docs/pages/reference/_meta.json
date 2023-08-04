@@ -3,5 +3,6 @@
     "react": "React",
     "svelte": "Svelte",
     "angular": "Angular",
-    "http": "HTTP API"
+    "http": "HTTP API",
+    "cli": "CLI"
 }

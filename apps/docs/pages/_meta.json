@@ -15,6 +15,7 @@
   "a-b-testing": "A/B Tests",
   "feature-flags": "Feature Flags",
   "environments": "Environments",
+  "config": "Configuration as Code",
   "-- More --": {
     "type": "separator",
     "title": "More"

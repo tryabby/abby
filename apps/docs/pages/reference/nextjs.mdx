@@ -6,14 +6,14 @@
 
 The `createAbby` function takes an object as a parameter. The object can contain the following properties:
 
-| Name               | Type            | Required | Description                                             | details               |
-| ------------------ | --------------- | :------: | ------------------------------------------------------- | --------------------- |
-| projectId          | `string`        |    ✅    | The ID of your project in Abby                          | -                     |
-| apiUrl             | `string`        |          | The URL of the Abby API. Defaults to the hosted version | -                     |
-| currentEnvironment | `string`        |    ✅    | The current environment of your application             | [link](/environments) |
-| tests              | `object`        |          | An object containing your defined A/B Tests             | -                     |
-| flags              | `Array<string>` |          | An array containing your defined Feature Flags          | -                     |
-| settings           | `object`        |          | An object with additional settings for A/BBY            | -                     |
+| Name               | Type     | Required | Description                                             | details               |
+| ------------------ | -------- | :------: | ------------------------------------------------------- | --------------------- |
+| projectId          | `string` |    ✅    | The ID of your project in Abby                          | -                     |
+| apiUrl             | `string` |          | The URL of the Abby API. Defaults to the hosted version | -                     |
+| currentEnvironment | `string` |    ✅    | The current environment of your application             | [link](/environments) |
+| tests              | `object` |          | An object containing your defined A/B Tests             | -                     |
+| flags              | `object` |          | An array containing your defined Feature Flags          | -                     |
+| settings           | `object` |          | An object with additional settings for A/BBY            | -                     |
 
 #### tests
 
@@ -54,12 +54,20 @@ const abby = createAbby({
 
 The settings property is an object containing additional settings for A/BBY. The following properties are available:
 
-- `flags.devDefault`: A boolean to set the default value of all feature flags in development mode. Defaults to `true`.
+- `flags.defaultValues`: Allows you to set a general default value for each flag type. The keys of the object represent the types of the flags.
+  The default value is the following:
 
-- `flags.default`: A boolean to set the default value of all feature flags in production mode. Defaults to `false`.
+  ```json
+  {
+    "Boolean": false,
+    "String": "",
+    "Number": 0,
+    "JSON": {}
+  }
+  ```
 
 - `flags.devOverrides`: An object containing the values of feature flags in development mode. The keys of the object represent the names of the flags.
-  The values are booleans.
+  The values need to be of the type of the flag. This means if your flag is a `String` flag, this needs to be a `string`.
 
 ### Return Values
 

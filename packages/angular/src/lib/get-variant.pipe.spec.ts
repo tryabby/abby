@@ -1,11 +1,13 @@
-import {  TestBed } from "@angular/core/testing";
-import { combineLatest, } from "rxjs";
+import { TestBed } from "@angular/core/testing";
+import { combineLatest } from "rxjs";
 import { AbbyModule } from "./abby.module";
 import { AbbyService } from "./abby.service";
 import { GetAbbyVariantPipe } from "./get-variant.pipe";
+import { AbbyConfig } from "@tryabby/core";
 
 const mockConfig = {
   projectId: "mock-project-id",
+  environments: [],
   currentEnvironment: "test",
   tests: {
     test: {
@@ -14,7 +16,7 @@ const mockConfig = {
   },
   flags: {},
   settings: {},
-} as const;
+} satisfies AbbyConfig;
 
 const mockedData = {
   tests: [
@@ -76,10 +78,7 @@ describe("GetAbbyVariantPipe", () => {
       D: 4,
     };
 
-    combineLatest([
-      service.getVariant("test", lookupObject),
-      pipe.transform("test")
-    ]).subscribe(
+    combineLatest([service.getVariant("test", lookupObject), pipe.transform("test")]).subscribe(
       ([expected, actual]) => {
         expect(lookupObject[actual as keyof typeof lookupObject]).toEqual(expected as number);
       }

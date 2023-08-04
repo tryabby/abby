@@ -1,5 +1,6 @@
 import { createAbby } from "../lib/createAbby";
 export const abby = createAbby({
+  environments: [],
   projectId: "123",
   currentEnvironment: process.env.NODE_ENV,
   tests: {

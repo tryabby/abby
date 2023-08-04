@@ -2,8 +2,7 @@
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
 
 generator client {
-  provider        = "prisma-client-js"
-  previewFeatures = ["jsonProtocol"]
+  provider = "prisma-client-js"
 }
 
 datasource db {
@@ -73,6 +72,7 @@ model User {
   projects           ProjectUser[]
   featureFlagHistory FeatureFlagHistory[]
   CouponCodes        CouponCodes[]
+  apiKeys            ApiKey[]
 }
 
 model VerificationToken {
@@ -255,4 +255,20 @@ model CouponCodes {
   redeemedById String?
 
   @@index([redeemedById])
+}
+
+model ApiKey {
+  id         String    @id @default(cuid())
+  name       String
+  hashedKey  String    @unique
+  validUntil DateTime
+  revokedAt  DateTime?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
 }

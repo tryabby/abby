@@ -57,3 +57,20 @@ export function transformDBFlagTypeToclient(
       assertUnreachable(type);
   }
 }
+
+export function transformClientFlagToDBType(
+  type: FlagValueString
+): FeatureFlagType {
+  switch (type) {
+    case "Boolean":
+      return FeatureFlagType.BOOLEAN;
+    case "Number":
+      return FeatureFlagType.NUMBER;
+    case "String":
+      return FeatureFlagType.STRING;
+    case "JSON":
+      return FeatureFlagType.JSON;
+    default:
+      assertUnreachable(type);
+  }
+}

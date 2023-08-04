@@ -34,28 +34,38 @@ To get started make sure to install the packages using your favorite package man
 
 <Callout>Make sure, that you have set skipLibCheck to true in your tsconfig</Callout>
 
+### Create your config
+
+To use A/BBY you need to create your config first. You can do this by creating a file called `abby.config.ts` in your `root` folder. This file will be used to configure your project.
+
+```ts
+// abby.config.ts
+import { defineConfig } from "@tryabby/angular";
+
+export default defineConfig({
+  projectId: "<YOUR_PROJECT_ID>",
+  currentEnvironment: environment.production ? "production" : "development",
+  environments: ["production", "development"],
+  tests: {
+    test: { variants: ["A", "B"] },
+    footer: { variants: ["dark", "orange", "green"] },
+    // ... your tests
+  },
+  flags: { darkMode: "Boolean", newFeature: "Boolean" },
+});
+```
+
 ### Create your Module
 
 To use Abby in your code you will need to import the AbbyModule in your app module first. You will need to call AbbyModule.forRoot() method with the configuration object. Please copy the id of your project from the dashboard to get started.
 
 ```ts
 import { AbbyModule } from "@tryabby/angular";
+import abbyConfig from "../abby.config";
 
 @NgModule({
   declarations: [AppComponent],
-  imports: [
-    BrowserModule,
-    AbbyModule.forRoot({
-      projectId: "<YOUR_PROJECT_ID>",
-      currentEnvironment: environment.production ? "production" : "development",
-      tests: {
-        test: { variants: ["A", "B"] },
-        footer: { variants: ["dark", "orange", "green"] },
-        // ... your tests
-      },
-      flags: { darkMode: "Boolean", newFeature: "Boolean" },
-    }),
-  ],
+  imports: [BrowserModule, AbbyModule.forRoot(abbyConfig)],
   providers: [],
   bootstrap: [AppComponent],
 })
@@ -99,6 +109,7 @@ You can also use Abby's directives to conditionally render elements based on the
 
 The `*abbyFlag`-Directive for now only interprets feature flags as a boolean. Support for checking string, number or object values will come later.
 You can however invert the boolean it returns by putting a `!` in front of the flag name like so:
+
 ```html
 <ng-container *abbyFlag="'!newFeature'">
   <!-- This will only be shown if the newFeature flag is falsy. -->
@@ -106,6 +117,7 @@ You can however invert the boolean it returns by putting a `!` in front of the f
 ```
 
 For using variants inside an `ngStyle`-Directive, we advice you to move the logic into the component rather than the template:
+
 ```ts
 import { AbbyService } from '@tryabby/angular';
 
@@ -118,7 +130,7 @@ export class MyComponent {
       switch(footerVariant) {
         case 'dark':
           return 'black';
-        case 'orange': 
+        case 'orange':
           return 'orange';
         case 'green':
           return 'green';
@@ -131,24 +143,23 @@ export class MyComponent {
   constructor(private abbyService: AbbyService) { }
 }
 ```
+
 You can then consume the footer color in your template using the `async`-Pipe:
+
 ```html
-<div
-  class="footer"
-  [ngStyle]="{ 'color': footerColor$ | async }"
->
-  Here is a Foooter
-</div>
+<div class="footer" [ngStyle]="{ 'color': footerColor$ | async }">Here is a Foooter</div>
 ```
 
 ### Using Abby Pipes
 
 You can use the `getAbbyVariant` Pipe in your template to get the active variant of an AB Test.
+
 ```html
 <p>{ "MyTestName" | getAbbyVariant | async }</p>
 ```
 
 Optionally, you can pass in a lookup object, to map your variants to a custom type:
+
 ```html
 <p>{ "MyTestName" | getAbbyVariant: { A: 123, B: 456, C: 789 } | async }</p>
 ```

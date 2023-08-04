@@ -25,6 +25,7 @@ const { useAbby, AbbyProvider, useFeatureFlag, __abby__, withDevtools } =
   createAbby({
     projectId: "clk8ld04v0000l0085dqsxpsr",
     currentEnvironment: "production",
+    environments: ["production", "development"],
     tests: {
       SignupButton: {
         variants: ["A", "B", "C"],

@@ -37,6 +37,15 @@ type LocalData<FlagName extends string = string, TestName extends string = strin
   flags: Record<FlagName, FlagValue>;
 };
 
+export type InferFlagNames<C extends AbbyConfig> = InferFlags<C> extends Record<infer F, any>
+  ? F
+  : never;
+export type InferTestNames<C extends AbbyConfig> = InferTests<C> extends Record<infer T, any>
+  ? T
+  : never;
+export type InferTests<C extends AbbyConfig> = NonNullable<C["tests"]>;
+export type InferFlags<C extends AbbyConfig> = NonNullable<C["flags"]>;
+
 type PossibleFlagName<FlagName extends string> = FlagName | `!${FlagName}`;
 
 export type ExtractVariants<
@@ -114,13 +123,13 @@ export class AbbyService<
       tap((variant) => (this.selectedVariants[testName as string] = variant)),
       tap((variant) => this.abbyLogger.log(`getVariant(${testName as string}) =>`, variant)),
       map((variant) => {
-        if(lookupObject === undefined) {
+        if (lookupObject === undefined) {
           return variant;
         }
 
         return lookupObject[variant];
       }),
-      shareReplay(1),
+      shareReplay(1)
     );
   }
 
@@ -156,7 +165,9 @@ export class AbbyService<
       ? (name.slice(1) as FlagName)
       : (name as FlagName);
 
-    this.abbyLogger.log(`getFeatureFlagValue(${name}) -> ${this.abby.getFeatureFlag(strippedFlagName)}`);
+    this.abbyLogger.log(
+      `getFeatureFlagValue(${name}) -> ${this.abby.getFeatureFlag(strippedFlagName)}`
+    );
 
     return this.resolveData().pipe(
       map(() => this.abby.getFeatureFlag(strippedFlagName)),
@@ -167,7 +178,7 @@ export class AbbyService<
           (featureFlagValue && !isFeatureFlagInverted)
         );
       }),
-      shareReplay(1),
+      shareReplay(1)
     );
   }
 

@@ -15,6 +15,7 @@ afterAll(() => {
 describe("withAbby", () => {
   it("works properly", async () => {
     const { getFeatureFlagValue, withAbby } = createAbby({
+      environments: [],
       projectId: "123",
       tests: {},
       flags: { flag1: "Boolean", flag2: "String" },
@@ -41,6 +42,7 @@ describe("withAbby", () => {
     /// @ts-ignore
     process.env.NODE_ENV = "development";
     const { getFeatureFlagValue, withAbby } = createAbby({
+      environments: [],
       projectId: "123",
       tests: {},
       flags: { flag1: "Boolean", flag2: "String" },

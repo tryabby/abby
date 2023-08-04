@@ -5,6 +5,7 @@ import { createAbby } from "../src";
 describe("useAbby", () => {
   it("returns the correct amount of options", () => {
     const { AbbyProvider, useAbby } = createAbby({
+      environments: [],
       projectId: "123",
       tests: {
         test: { variants: ["OldFooter", "NewFooter"] },
@@ -25,6 +26,7 @@ describe("useAbby", () => {
 
   it("has the correct types", () => {
     const { AbbyProvider, useAbby, useFeatureFlag } = createAbby({
+      environments: [],
       projectId: "123",
       tests: {
         test: { variants: ["OldFooter", "NewFooter"] },

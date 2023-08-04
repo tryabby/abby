@@ -20,6 +20,7 @@ afterAll(() => {
 describe("useAbby", () => {
   it("doesn't render a variant on the server", () => {
     const { AbbyProvider, useAbby } = createAbby({
+      environments: [],
       projectId: "123",
       tests: {
         showFooter: {
@@ -67,6 +68,7 @@ describe("useAbby", () => {
 describe("useFeatureFlag", () => {
   it("renders the correct feature flag on the server", () => {
     const { AbbyProvider, useFeatureFlag } = createAbby({
+      environments: [],
       projectId: "123",
       flags: {
         test: "Boolean",

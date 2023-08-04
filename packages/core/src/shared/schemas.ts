@@ -17,9 +17,44 @@ export const flagValue = z.union([
   z.record(z.string(), z.unknown()),
 ]);
 
+export const flagValueStringSchema = z.union([
+  z.literal("String"),
+  z.literal("Boolean"),
+  z.literal("Number"),
+  z.literal("JSON"),
+]);
+
+export const abbyConfigSchema = z.object({
+  projectId: z.string(),
+  apiUrl: z.string().optional(),
+  currentEnvironment: z.string().optional(),
+  environments: z.array(z.string()),
+  tests: z.record(
+    z.object({
+      variants: z.array(z.string()),
+    })
+  ),
+  flags: z.record(flagValueStringSchema),
+  settings: z
+    .object({
+      flags: z
+        .object({
+          defaultValues: z.record(z.string(), flagValue).optional(),
+          devOverrides: z.record(z.string(), flagValue).optional(),
+        })
+        .optional(),
+    })
+    .optional(),
+  debug: z.boolean().optional(),
+});
+
+export type AbbyConfigFile = z.infer<typeof abbyConfigSchema>;
+
+export type PullAbbyConfigResponse = Pick<AbbyConfigFile, "environments" | "flags" | "tests">;
+
 export type FlagValue = z.infer<typeof flagValue>;
 
-export type FlagValueString = "String" | "Boolean" | "Number" | "JSON";
+export type FlagValueString = z.infer<typeof flagValueStringSchema>;
 
 export type FlagValueStringToType<T extends FlagValueString> = T extends "String"
   ? string

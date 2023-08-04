@@ -8,6 +8,6 @@ module.exports = {
     },
   },
   rules: {
-    eqeqeq: "error",
+    eqeqeq: ["error", "smart"],
   },
 };

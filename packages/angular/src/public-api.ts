@@ -8,3 +8,4 @@ export * from "./lib/test.directive";
 export * from "./lib/flag.directive";
 export * from "./lib/get-variant.pipe";
 export * from "./lib/devtools.component";
+export { defineConfig } from "@tryabby/core";

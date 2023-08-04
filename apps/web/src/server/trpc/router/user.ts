@@ -46,6 +46,17 @@ export const userRouter = router({
       }),
     };
   }),
+  getApiKeyData: protectedProcedure.query(async ({ ctx }) => {
+    return {
+      userId: ctx.session.user.id,
+      apiKeys: await ctx.prisma.apiKey.findMany({
+        where: {
+          userId: ctx.session.user.id,
+          revokedAt: null,
+        },
+      }),
+    };
+  }),
   updateProfile: protectedProcedure
     .input(updateProfileSchema)
     .mutation(async ({ ctx, input }) => {

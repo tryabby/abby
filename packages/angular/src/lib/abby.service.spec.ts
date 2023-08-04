@@ -5,6 +5,7 @@ import { AbbyModule } from "./abby.module";
 
 import { Component, Injectable } from "@angular/core";
 import { TestStorageService } from "./StorageService";
+import type { AbbyConfig } from "@tryabby/core";
 import { zip } from "rxjs";
 import { Routes } from "@angular/router";
 import { AbbyFlag } from "./flag.directive";
@@ -12,6 +13,7 @@ import { AbbyFlag } from "./flag.directive";
 const mockConfig = {
   projectId: "mock-project-id",
   currentEnvironment: "test",
+  environments: ["test", "production"],
   tests: {
     test: {
       variants: ["A", "B", "C", "D"],
@@ -41,7 +43,7 @@ const mockConfig = {
       },
     },
   },
-} as const;
+} satisfies AbbyConfig;
 
 const mockedData = {
   tests: [

@@ -200,7 +200,7 @@ export function FeatureFlag({
 
   const currentFlagValue = flag.values.find((f) => f.id === flagValueId)?.value;
 
-  if (!currentFlagValue) {
+  if (currentFlagValue == null) {
     return null;
   }
 
@@ -213,7 +213,10 @@ export function FeatureFlag({
             title={currentFlagValue}
             className="max-w-[60px] overflow-hidden text-ellipsis whitespace-nowrap rounded-md bg-gray-600 p-1"
           >
-            {currentFlagValue}
+            {typeof currentFlagValue === "string" &&
+            currentFlagValue.trim() === ""
+              ? "Empty String"
+              : currentFlagValue}
           </code>
         </div>
         <div className="flex space-x-2">

@@ -1,6 +1,6 @@
 {
 	"name": "@tryabby/svelte",
-	"version": "1.0.1",
+	"version": "1.1.0",
 	"main": "dist/index.umd.cjs",
 	"homepage": "https://docs.tryabby.dev",
 	"type": "module",
@@ -37,8 +37,8 @@
 		"@testing-library/jest-dom": "^5.16.5",
 		"@testing-library/svelte": "^3.2.2",
 		"@testing-library/user-event": "^14.4.3",
-		"@tsconfig/svelte": "^3.0.0",
 		"@tryabby/devtools": "workspace:*",
+		"@tsconfig/svelte": "^3.0.0",
 		"@types/jest": "^29.5.1",
 		"@types/js-cookie": "^3.0.3",
 		"@types/testing-library__jest-dom": "^5.14.5",
@@ -53,9 +53,9 @@
 		"svelte-check": "^2.10.3",
 		"tslib": "^2.5.0",
 		"typescript": "^4.9.3",
-		"vite": "^4.2.0",
+		"vite": "^4.4.8",
 		"vite-plugin-dts": "2.3.0",
-		"vitest": "^0.25.8"
+		"vitest": "^0.33.0"
 	},
 	"dependencies": {
 		"@tryabby/core": "workspace:*",

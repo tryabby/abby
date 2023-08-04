@@ -10,6 +10,7 @@ describe("featureFlags working", () => {
     const FLAG2 = "flag2";
 
     const { useFeatureFlag, __abby__ } = createAbby({
+      environments: [],
       projectId: "123",
       flags: {
         [FLAG1]: "Boolean",
@@ -28,6 +29,7 @@ describe("featureFlags working", () => {
 
   it("should respect the default values for feature flags", async () => {
     const { useFeatureFlag, __abby__ } = createAbby({
+      environments: [],
       projectId: "123",
       flags: {
         flag1: "Boolean",
@@ -53,6 +55,7 @@ describe("featureFlags working", () => {
   it("uses the devOverrides", () => {
     process.env.NODE_ENV = "development";
     const { useFeatureFlag } = createAbby({
+      environments: [],
       projectId: "123",
       flags: {
         flag1: "Boolean",
@@ -85,6 +88,7 @@ describe("featureFlags working", () => {
 
   it("gets the value for an enviroment", async () => {
     const { getFeatureFlagValue, __abby__ } = createAbby({
+      environments: [],
       projectId: "123",
       flags: {
         flag1: "Boolean",

@@ -1,6 +1,6 @@
 {
   "name": "@tryabby/core",
-  "version": "4.0.1",
+  "version": "4.1.0",
   "description": "",
   "main": "dist/index.js",
   "files": [
@@ -16,6 +16,11 @@
       "require": "./dist/shared/index.js",
       "import": "./dist/shared/index.js",
       "types": "./dist/shared/index.d.ts"
+    },
+    "./config": {
+      "require": "./dist/defineConfig/index.js",
+      "import": "./dist/defineConfig/index.js",
+      "types": "./dist/defineConfig/index.d.ts"
     }
   },
   "scripts": {
@@ -34,8 +39,8 @@
     "tsconfig": "workspace:*",
     "tsup": "^6.5.0",
     "typescript": "^4.9.3",
-    "vite": "^3.2.5",
-    "vitest": "^0.25.3",
+    "vite": "^4.4.8",
+    "vitest": "^0.33.0",
     "zod": "^3.19.1"
   },
   "dependencies": {

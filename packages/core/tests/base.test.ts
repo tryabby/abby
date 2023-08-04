@@ -17,6 +17,7 @@ describe("Abby", () => {
     const variants = ["variant1", "variant2"];
 
     const abby = new Abby({
+      environments: [],
       projectId: "",
       tests: {
         a: { variants },
@@ -33,6 +34,7 @@ describe("Abby", () => {
     const variants = ["variant1", "variant2"];
 
     const abby = new Abby({
+      environments: [],
       projectId: "",
       tests: {
         a: { variants },
@@ -46,6 +48,7 @@ describe("Abby", () => {
 
   it("gets a feature flag", async () => {
     const abby = new Abby({
+      environments: [],
       projectId: "abc",
       flags: {
         flag1: "String",
@@ -62,6 +65,7 @@ describe("Abby", () => {
 
   it("uses the devOverrides", () => {
     const abby = new Abby({
+      environments: [],
       projectId: "",
       flags: {
         flag1: "Boolean",
@@ -88,6 +92,7 @@ describe("Abby", () => {
     process.env.NODE_ENV = "development";
 
     const abby = new Abby({
+      environments: [],
       projectId: "",
       tests: {
         a: { variants: ["variant1", "variant2"] },
@@ -106,6 +111,7 @@ describe("Abby", () => {
 
   it("updates local feature flag", () => {
     const abby = new Abby({
+      environments: [],
       projectId: "",
       flags: {
         flag1: "Boolean",

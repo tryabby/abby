@@ -1,5 +1,16 @@
 # @tryabby/next
 
+## 4.1.0
+
+### Minor Changes
+
+- add defineConfig helper to ease the usage with the cli
+
+### Patch Changes
+
+- Updated dependencies
+  - @tryabby/react@4.1.0
+
 ## 4.0.1
 
 ### Patch Changes
