@@ -1,7 +1,13 @@
 import { HttpService } from "./http";
 import { loadLocalConfig } from "./util";
 
-export async function check({
+/**
+ * Verify that the local config is valid
+ * This includes validating the local config against the schema
+ * and checking that all tests and flags are present on the server
+ * Think of this as a "lint + fetch" for the local config
+ */
+export async function verifyLocalConfig({
   apiKey,
   apiUrl,
   configPath,

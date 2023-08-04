@@ -3,7 +3,7 @@ import chalk from "chalk";
 import { Command } from "commander";
 import * as figlet from "figlet";
 import { getToken, writeTokenFile } from "./auth";
-import { check } from "./check";
+import { verifyLocalConfig } from "./check";
 import { ABBY_BASE_URL, getTokenFilePath } from "./consts";
 import { pullAndMerge } from "./pull";
 import { push } from "./push";
@@ -86,7 +86,7 @@ program
   .action(async (options: { config?: string; host?: string }) => {
     try {
       const token = await getToken();
-      const { isValid, invalidFlags, invalidTests } = await check({
+      const { isValid, invalidFlags, invalidTests } = await verifyLocalConfig({
         apiKey: token,
         apiUrl: options.host,
         configPath: options.config,
