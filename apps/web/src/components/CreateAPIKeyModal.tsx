@@ -27,7 +27,7 @@ export const CreateAPIKeyModal = ({ onClose, isOpen, projectId }: Props) => {
     <Modal
       isOpen={isOpen}
       onClose={onClose}
-      title="Create new Api Key"
+      title="Create new API Key"
       confirmText="Create"
       initialFocusRef={inputRef}
       onConfirm={async () => {
