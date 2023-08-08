@@ -64,4 +64,27 @@ describe("useAbby", () => {
 
     expectTypeOf(ff2Result.current).toEqualTypeOf<string>();
   });
+
+  it("uses lookup object when retrieving AB test variant", () => {
+    const { getABTestValue } = createAbby({
+      projectId: "123",
+      tests: {
+        test2: {
+          variants: ["SimonsText", "MatthiasText", "TomsText", "TimsText"],
+        },
+      },
+    });
+
+    const lookupMap = {
+      SimonsText: "a",
+      MatthiasText: "b",
+      TomsText: "c",
+      TimsText: "d",
+    };
+
+    const activeVariant = getABTestValue("test2")[0];
+    const value = getABTestValue("test2", undefined, lookupMap)[0];
+
+    expect(value).toBe(lookupMap[activeVariant]);
+  });
 });
