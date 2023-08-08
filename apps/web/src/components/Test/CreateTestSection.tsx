@@ -124,7 +124,7 @@ export function CreateTestSection({
 
                     {variants.filter((variant) => variant.name === name)
                       .length > 1 && (
-                      <p className="mt-1 pl-2 text-xs text-red-500">
+                      <p className="mt-1 pl-2 text-xs text-accent-background">
                         A variant with this name already exists
                       </p>
                     )}
