@@ -46,6 +46,14 @@ export function CreateTestSection({
   setVariants,
   variants,
 }: Props) {
+  const updateWeights = (draft: { name: string; weight: number }[]) => {
+    if (draft.length <= 2) {
+      draft.forEach((draftItem) => {
+        draftItem.weight = 100 / draft.length;
+      });
+    }
+  };
+
   const addVariant = () => {
     const maxVariantIndex = getMaxDefaultVariantNameIndex(variants);
 
@@ -55,9 +63,7 @@ export function CreateTestSection({
           name: `${DEFAULT_NEW_VARIANT_PREFIX}${maxVariantIndex + 1}`,
           weight: 0,
         });
-        draft.forEach((variant) => {
-          variant.weight = 100 / draft.length;
-        });
+        updateWeights(draft);
       })
     );
   };
@@ -67,9 +73,7 @@ export function CreateTestSection({
     setVariants(
       produce(variants, (draft) => {
         draft.splice(index, 1);
-        draft.forEach((variant) => {
-          variant.weight = 100 / draft.length;
-        });
+        updateWeights(draft);
       })
     );
   };

@@ -16,6 +16,11 @@ export const getUpdatedWeights = ({
     return weights;
   }
 
+  if (weights.length > 2) {
+    weights[indexToUpdate] = newWeight;
+    return weights;
+  }
+
   const maxValue = 100;
   const remaining = maxValue - newWeight;
 
