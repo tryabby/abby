@@ -105,17 +105,21 @@ The settings property is an object containing additional settings for A/BBY. The
 
 - `AbbyService` is a angular service, which provides methods for getting
 
-### getVariant(testName: string)
+### getVariant(testName: string, lookupObject?)
 
 Resolves the selected variant for a given test name.
+Automatically maps the active variant to a custom value if `lookupObject` is provided.
 
 #### Parameters
 
-The name of the test, needs to be one of the defined tests.
+- `testName`: The name of the test, needs to be one of the defined tests.
+- `lookupObject`: An optional lookup object to automatically map the active variant to a custom value.
 
 #### Return Value
 
 The variant of the test _Type: `string`_
+
+Or the custom value from the `lookupObject` when provided
 
 ### getFeatureFlagValue(flagName: string)
 
@@ -163,6 +167,31 @@ The name of the feature flag. The name can be prefixed with ! to invert the flag
 
 ```html
 <div *featureFlag="'test-flag'"></div>
+```
+
+## Pipes
+
+### getAbbyVariant Pipe
+
+Returns the active variant for an AB-Test.
+Automatically maps the active variant to a custom value if `lookupObject` is provided.
+
+#### Parameters
+
+- `testName`: The name of the test, needs to be one of the defined tests.
+- `lookupObject`: An optional lookup object to automatically map the active variant to a custom value.
+
+#### Example
+```html
+<h4
+  [ngStyle]="{
+    'color': 'AngularTest'
+      | getAbbyVariant: { A: 'blue', B: 'green', C: 'yellow', D: 'pink' }
+      | async
+  }"
+>
+  Variants Pipe
+</h4>
 ```
 
 ## Devtool Component
