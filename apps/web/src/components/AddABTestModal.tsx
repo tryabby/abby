@@ -4,16 +4,19 @@ import { useRef, useState } from "react";
 import { toast } from "react-hot-toast";
 import { trpc } from "utils/trpc";
 import { Modal } from "./Modal";
-import { CreateTestSection } from "./Test/CreateTestSection";
+import {
+  CreateTestSection,
+  DEFAULT_NEW_VARIANT_PREFIX,
+} from "./Test/CreateTestSection";
 
 type UIVariant = { name: string; weight: number };
 
 const INITIAL_VARIANTS: Array<UIVariant> = [
   {
-    name: "A",
+    name: `${DEFAULT_NEW_VARIANT_PREFIX}1`,
   },
   {
-    name: "B",
+    name: `${DEFAULT_NEW_VARIANT_PREFIX}2`,
   },
   // give each variant a weight of 100 / number of variants
 ].map((v, _, array) => ({ ...v, weight: 100 / array.length }));

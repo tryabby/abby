@@ -18,6 +18,28 @@ type Props = {
   >;
 };
 
+export const DEFAULT_NEW_VARIANT_PREFIX = "New Variant ";
+
+function getMaxDefaultVariantNameIndex(variants: Props["variants"]): number {
+  const variantsIndexes = variants
+    .filter((variant) => variant.name.startsWith(DEFAULT_NEW_VARIANT_PREFIX))
+    .map((defaultVariant) => {
+      const index = /[0-9]+/.exec(defaultVariant.name)?.[0];
+
+      if (!index) {
+        return 0;
+      }
+
+      return parseInt(index);
+    });
+
+  if (variantsIndexes.length === 0) {
+    return 0;
+  }
+
+  return Math.max(...variantsIndexes);
+}
+
 export function CreateTestSection({
   setTestName,
   testName,
@@ -25,9 +47,14 @@ export function CreateTestSection({
   variants,
 }: Props) {
   const addVariant = () => {
+    const maxVariantIndex = getMaxDefaultVariantNameIndex(variants);
+
     setVariants(
       produce(variants, (draft) => {
-        draft.push({ name: "New Variant", weight: 0 });
+        draft.push({
+          name: `${DEFAULT_NEW_VARIANT_PREFIX}${maxVariantIndex + 1}`,
+          weight: 0,
+        });
         draft.forEach((variant) => {
           variant.weight = 100 / draft.length;
         });
