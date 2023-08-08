@@ -37,8 +37,14 @@ export const AddABTestModal = ({ onClose, isOpen, projectId }: Props) => {
   const [isConfirmButtonDisabled, setIsConfirmButtonDisabled] = useState(false);
   useEffect(() => {
     const uniqueVariants = new Set(variants.map((variant) => variant.name));
+    const variantsIncludeDuplicates = uniqueVariants.size !== variants.length;
 
-    setIsConfirmButtonDisabled(uniqueVariants.size !== variants.length);
+    const variantsWeightSum = variants
+      .map(({ weight }) => weight)
+      .reduce((sum, weight) => (sum += weight), 0);
+    const weightSumNot100 = variantsWeightSum !== 100;
+
+    setIsConfirmButtonDisabled(variantsIncludeDuplicates || weightSumNot100);
   }, [variants]);
 
   const createTestMutation = trpc.tests.createTest.useMutation();

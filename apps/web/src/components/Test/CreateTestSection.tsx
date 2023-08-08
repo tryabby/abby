@@ -78,6 +78,10 @@ export function CreateTestSection({
     );
   };
 
+  const weightSum = variants
+    .map(({ weight }) => weight)
+    .reduce((sum, weight) => (sum += weight), 0);
+
   return (
     <section className="flex w-full flex-col text-white">
       <h2 className="h-8 font-bold text-pink-200">{testName}</h2>
@@ -158,13 +162,24 @@ export function CreateTestSection({
                 </Fragment>
               );
             })}
-            <button
-              type="button"
-              onClick={addVariant}
-              className="self-end rounded-sm bg-blue-300 px-3 py-0.5 text-gray-800 transition-colors duration-200 ease-in-out hover:bg-blue-400"
-            >
-              Add Variant
-            </button>
+            <div className="grid grid-cols-[1fr_auto_1fr]">
+              <span></span>
+              {weightSum !== 100 ? (
+                <p className="text-center text-accent-background">
+                  Your weights must add up to 100%. Your weights currently make
+                  up {weightSum}%
+                </p>
+              ) : (
+                <span></span>
+              )}
+              <button
+                type="button"
+                onClick={addVariant}
+                className="w-fit self-end justify-self-end rounded-sm bg-blue-300 px-3 py-0.5 text-gray-800 transition-colors duration-200 ease-in-out hover:bg-blue-400"
+              >
+                Add Variant
+              </button>
+            </div>
           </div>
         </Card>
       </div>
