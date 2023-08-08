@@ -51,6 +51,30 @@ describe("useAbby working", () => {
     expect(result).toEqual(persistedValue);
   });
 
+  it("should look up the return value", () => {
+    const persistedValue = "SimonsText";
+    const variants = ["SimonsText", "MatthiasText", "TomsText", "TimsText"] as const;
+
+    const getSpy = vi.spyOn(TestStorageService, "get");
+
+    getSpy.mockReturnValue(persistedValue);
+    const { useAbby } = createAbby({
+      projectId: "123",
+      tests: {
+        test: { variants },
+      },
+    });
+
+    const { variant } = useAbby("test", {
+      SimonsText: "a",
+      MatthiasText: "b",
+      TomsText: "c",
+      TimsText: "d",
+    });
+    const result = get(variant);
+    expect(result).toBe("a");
+  });
+
   it("should ping the current info on mount", () => {
     const spy = vi.spyOn(HttpService, "sendData");
     const { useAbby } = createAbby({
@@ -108,12 +132,7 @@ describe("useAbby working", () => {
       projectId: "123",
       tests: {
         lookupTest: {
-          variants: [
-            "SimonsText",
-            "MatthiasText",
-            "TomsText",
-            "TimsText",
-          ],
+          variants: ["SimonsText", "MatthiasText", "TomsText", "TimsText"],
         },
       },
     } as const);

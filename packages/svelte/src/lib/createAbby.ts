@@ -1,22 +1,17 @@
-import {
-  Abby,
-  type AbbyConfig,
-  type ABConfig,
-  type ExtractVariants,
-  type FlagValueString,
-} from "@tryabby/core";
+import { Abby, type AbbyConfig, type ABConfig, type FlagValueString } from "@tryabby/core";
 import { HttpService, AbbyEventType } from "@tryabby/core";
-import { derived, get } from "svelte/store";
+import { derived, type Readable } from "svelte/store";
 import type { F } from "ts-toolbelt";
 // import type { LayoutServerLoad, LayoutServerLoadEvent } from "../routes/$types"; TODO fix import
 import { FlagStorageService, TestStorageService } from "./StorageService";
 import AbbyProvider from "./AbbyProvider.svelte";
 import AbbyDevtools from "./AbbyDevtools.svelte";
 
-type GetABTestValue<TestName extends string, Tests extends Record<TestName, ABConfig>> = {
-  (testName: TestName): string;
-  <S>(testName: TestName, lookupObject: Record<ExtractVariants<TestName, Tests>, S>): S;
-};
+type ABTestReturnValue<Lookup, TestVariant> = Lookup extends undefined
+  ? TestVariant
+  : TestVariant extends keyof Lookup
+  ? Lookup[TestVariant]
+  : never;
 
 export function createAbby<
   FlagName extends string,
@@ -68,14 +63,27 @@ export function createAbby<
     });
   };
 
-  const useAbby = <K extends keyof Tests>(testName: K) => {
-    const variant = derived<any, string>(abby, ($v) => {
-      return abby.getTestVariant(testName);
-    });
+  const useAbby = <
+    TestName extends keyof Tests,
+    TestVariant extends Tests[TestName]["variants"][number],
+    LookupValue,
+    Lookup extends Record<TestVariant, LookupValue> | undefined = undefined
+  >(
+    testName: TestName,
+    lookupObject?: F.Narrow<Lookup>
+  ): {
+    variant: Readable<ABTestReturnValue<Lookup, TestVariant>>;
+    onAct: () => void;
+  } => {
     let selectedVariant: string = "";
-    variant.subscribe((data) => {
-      selectedVariant = data;
+    const variant = derived<any, ABTestReturnValue<Lookup, TestVariant>>(abby, ($v) => {
+      selectedVariant = abby.getTestVariant(testName);
+      return lookupObject ? lookupObject[selectedVariant] : selectedVariant;
     });
+
+    // ensure side effect is triggered
+    variant.subscribe(() => {});
+
     const onAct = () => {
       HttpService.sendData({
         url: config.apiUrl,
@@ -88,6 +96,7 @@ export function createAbby<
       });
     };
     notify(testName, selectedVariant);
+
     return { variant, onAct };
   };
 
@@ -114,15 +123,11 @@ export function createAbby<
   >(
     testName: TestName,
     lookupObject?: F.Narrow<Lookup>
-  ): Lookup extends undefined
-      ? TestVariant
-      : TestVariant extends keyof Lookup
-      ? Lookup[TestVariant]
-      : never => {
+  ): ABTestReturnValue<Lookup, TestVariant> => {
     const variant = abby.getTestVariant(testName);
     // Typescript looses its typing here, so we cast as any in favor of having
     // better type inference for the user
-    if(lookupObject === undefined) {
+    if (lookupObject === undefined) {
       return variant as any;
     }
 
