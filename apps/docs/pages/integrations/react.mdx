@@ -102,6 +102,34 @@ function MyButton() {
 }
 ```
 
+Optionally, you can pass a lookup object to automatically map the selected variant to a custom value.
+```tsx
+import { useAbby } from "./abby";
+
+function MyButton() {
+  const { variant, onAct } = useAbby(
+    "footer",
+    {
+      dark: "bg-gray-900",
+      orange: "bg-orange-500",
+      green: "bg-green-500",
+    }
+  );
+
+  return (
+    <main className="p-6">
+      <h1>Abby Test Page:</h1>
+      <button
+        className={`rounded-lg py-2 px-4 text-white ${variant}`}
+        onClick={onAct}
+      >
+        Cool Button
+      </button>
+    </main>
+  );
+}
+```
+
 ### useFeatureFlag
 
 The `useFeatureFlag` hook returns a boolean value that indicates if the flag is active or not.

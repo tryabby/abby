@@ -13,12 +13,18 @@ export type withDevtoolsFunction = (
   }
 ) => () => JSX.Element | null;
 
+type ABTestReturnValue<Lookup, TestVariant> = Lookup extends undefined
+  ? TestVariant
+  : TestVariant extends keyof Lookup
+  ? Lookup[TestVariant]
+  : never;
+
 export function createAbby<
   FlagName extends string,
   TestName extends string,
   Tests extends Record<TestName, ABConfig>,
   Flags extends Record<FlagName, FlagValueString> = Record<FlagName, FlagValueString>,
-  ConfigType extends AbbyConfig<FlagName, Tests> = AbbyConfig<FlagName, Tests>
+  ConfigType extends AbbyConfig<FlagName, Tests> = AbbyConfig<FlagName, Tests>,
 >(abbyConfig: F.Narrow<AbbyConfig<FlagName, Tests, Flags>>) {
   const abby = new Abby<FlagName, TestName, Tests, Flags>(
     abbyConfig,
@@ -63,7 +69,18 @@ export function createAbby<
   // we need to return the config as a const so that the types are narrowed
   const config = abbyConfig as unknown as ConfigType;
 
-  const useAbby = <K extends keyof Tests>(name: K) => {
+  const useAbby = <
+    K extends keyof Tests,
+    TestVariant extends Tests[K]["variants"][number],
+    LookupValue,
+    Lookup extends Record<TestVariant, LookupValue> | undefined = undefined,
+  >(
+    name: TestName,
+    lookupObject?: F.Narrow<Lookup>
+  ): {
+    variant: ABTestReturnValue<Lookup, TestVariant>;
+    onAct: () => void;
+  } => {
     const { tests } = useAbbyData();
 
     // always render an empty string on the first render to avoid SSR mismatches
@@ -75,7 +92,7 @@ export function createAbby<
       const newVariant = tests[name as unknown as TestName]?.selectedVariant;
 
       // should never be undefined after mount
-      if (newVariant != null) {
+      if (newVariant !== undefined) {
         setSelectedVariant(newVariant);
       }
       // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -123,7 +140,11 @@ export function createAbby<
        * It will automatically send the selected variant to the server.
        */
       onAct: onAct,
-      variant: (selectedVariant ?? "") as Tests[K]["variants"][number],
+      variant: lookupObject
+        ? lookupObject[selectedVariant as keyof typeof lookupObject]
+        : // Typescript fails here. If we cast selectedVariant to TestVariant
+          // it still assumes that it is a string. So we cast it to any instead
+          (selectedVariant as any),
     };
   };
 
@@ -171,19 +192,15 @@ export function createAbby<
     TestName extends keyof Tests,
     TestVariant extends Tests[TestName]["variants"][number],
     LookupValue,
-    Lookup extends Record<TestVariant, LookupValue> | undefined = undefined
+    Lookup extends Record<TestVariant, LookupValue> | undefined = undefined,
   >(
     testName: TestName,
     lookupObject?: F.Narrow<Lookup>
-  ): Lookup extends undefined
-      ? TestVariant
-      : TestVariant extends keyof Lookup
-      ? Lookup[TestVariant]
-      : never => {
+  ): ABTestReturnValue<Lookup, TestVariant> => {
     const variant = abby.getTestVariant(testName);
     // Typescript looses its typing here, so we cast as any in favor of having
     // better type inference for the user
-    if(lookupObject === undefined) {
+    if (lookupObject === undefined) {
       return variant as any;
     }
 

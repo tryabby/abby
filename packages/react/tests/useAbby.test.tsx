@@ -72,6 +72,32 @@ describe("useAbby", () => {
     expect(result.current.variant).toEqual(persistedValue);
   });
 
+  it("looks up the selected variant in the lookup object", () => {
+    const persistedValue = "SimonsText";
+    const variants = ["SimonsText", "MatthiasText", "TomsText", "TimsText"] as const;
+
+    const getSpy = vi.spyOn(TestStorageService, "get");
+    getSpy.mockReturnValue(persistedValue);
+
+    const { AbbyProvider, useAbby } = createAbby({
+      projectId: "123",
+      tests: {
+        test: { variants },
+      },
+    });
+
+    const wrapper = ({ children }: PropsWithChildren) => <AbbyProvider>{children}</AbbyProvider>;
+    const { result } = renderHook(
+      () => useAbby("test", { SimonsText: "a", MatthiasText: "b", TomsText: "c", TimsText: "d" }),
+      {
+        wrapper,
+      }
+    );
+
+    // value set in localstorage
+    expect(result.current.variant).toEqual("a");
+  });
+
   it("should ping the current info on mount", () => {
     const spy = vi.spyOn(HttpService, "sendData");
     const { AbbyProvider, useAbby } = createAbby({
@@ -254,7 +280,7 @@ describe("useAbby", () => {
       A: 1,
       B: 2,
       C: 3,
-    }
+    };
 
     expect(getABTestValue("test", lookupObject)).toEqual(lookupObject[activeVariant]);
   });
