@@ -15,6 +15,7 @@ type Props = {
   initialFocusRef?: React.RefObject<HTMLElement>;
   size?: "base" | "full";
   isConfirming?: boolean;
+  isConfirmButtonDisabled?: boolean;
 };
 
 export const Modal = ({
@@ -28,6 +29,7 @@ export const Modal = ({
   initialFocusRef,
   size = "base",
   isConfirming = false,
+  isConfirmButtonDisabled = false,
 }: Props) => {
   const cancelButtonRef = useRef<HTMLButtonElement>(null);
 
@@ -96,7 +98,7 @@ export const Modal = ({
                     type="button"
                     className="inline-flex w-full justify-center rounded-md border border-transparent bg-pink-600 px-4 py-2 text-base font-medium text-white shadow-sm hover:bg-pink-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 disabled:opacity-80 sm:ml-3 sm:w-auto sm:text-sm"
                     onClick={handleConfirm}
-                    disabled={isConfirming}
+                    disabled={isConfirming || isConfirmButtonDisabled}
                   >
                     {isConfirming && (
                       <Loader2 className="mr-2 h-4 w-4 animate-spin" />

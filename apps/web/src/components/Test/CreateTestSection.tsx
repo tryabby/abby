@@ -97,23 +97,32 @@ export function CreateTestSection({
                     htmlFor={name}
                     className="mb-0 mt-2 flex items-center justify-between text-sm font-medium text-pink-100 dark:text-white"
                   >
-                    <input
-                      className="flex items-center space-x-4 rounded-md bg-gray-700 p-2 pr-4 focus:outline focus:outline-blue-400"
-                      placeholder="New Variant"
-                      value={name}
-                      onChange={(e) => {
-                        setVariants(
-                          produce(variants, (draft) => {
-                            if (draft[i]) {
-                              draft[i]!.name = e.target.value;
-                            }
-                          })
-                        );
-                      }}
-                    />
+                    <div>
+                      <input
+                        className="space-x-4 rounded-md bg-gray-700 p-2 pr-4 focus:outline focus:outline-blue-400"
+                        placeholder="New Variant"
+                        value={name}
+                        onChange={(e) => {
+                          setVariants(
+                            produce(variants, (draft) => {
+                              if (draft[i]) {
+                                draft[i]!.name = e.target.value;
+                              }
+                            })
+                          );
+                        }}
+                      />
+
+                      {variants.filter((variant) => variant.name === name)
+                        .length > 1 && (
+                        <p className="mt-1 pl-2 text-xs text-red-500">
+                          A variant with this name already exists
+                        </p>
+                      )}
+                    </div>
                     <span>{Math.round(weight)}%</span>
                     <button
-                      className="flex aspect-square h-full items-center justify-center rounded-md bg-gray-700 transition-colors duration-200 ease-in-out hover:bg-red-700/40"
+                      className="flex aspect-square h-8 items-center justify-center rounded-md bg-gray-700 transition-colors duration-200 ease-in-out hover:bg-red-700/40"
                       title="Delete this Variant"
                       onClick={() => removeVariant(i)}
                     >

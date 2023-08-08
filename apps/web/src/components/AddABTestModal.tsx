@@ -1,6 +1,6 @@
 import { TRPCClientError } from "@trpc/client";
 import { TRPC_ERROR_CODES_BY_KEY } from "@trpc/server/rpc";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { toast } from "react-hot-toast";
 import { trpc } from "utils/trpc";
 import { Modal } from "./Modal";
@@ -33,6 +33,14 @@ export const AddABTestModal = ({ onClose, isOpen, projectId }: Props) => {
   const [testName, setTestName] = useState(INITIAL_TEST_NAME);
   const [variants, setVariants] =
     useState<Array<{ name: string; weight: number }>>(INITIAL_VARIANTS);
+
+  const [isConfirmButtonDisabled, setIsConfirmButtonDisabled] = useState(false);
+  useEffect(() => {
+    const uniqueVariants = new Set(variants.map((variant) => variant.name));
+
+    setIsConfirmButtonDisabled(uniqueVariants.size !== variants.length);
+  }, [variants]);
+
   const createTestMutation = trpc.tests.createTest.useMutation();
 
   const trpcContext = trpc.useContext();
@@ -83,6 +91,7 @@ export const AddABTestModal = ({ onClose, isOpen, projectId }: Props) => {
       onConfirm={onCreateClick}
       size="full"
       isConfirming={createTestMutation.isLoading}
+      isConfirmButtonDisabled={isConfirmButtonDisabled}
     >
       <CreateTestSection
         setTestName={setTestName}
