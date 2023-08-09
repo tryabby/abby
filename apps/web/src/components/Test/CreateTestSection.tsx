@@ -1,6 +1,6 @@
 import produce from "immer";
 import { getUpdatedWeights } from "lib/helper";
-import { Dispatch, Fragment, SetStateAction } from "react";
+import { ChangeEvent, Dispatch, Fragment, SetStateAction } from "react";
 import { BiTrash } from "react-icons/bi";
 import { Card } from "./Section";
 
@@ -82,6 +82,35 @@ export function CreateTestSection({
     .map(({ weight }) => weight)
     .reduce((sum, weight) => (sum += weight), 0);
 
+  const handleWeightChange = (
+    index: number,
+    event: ChangeEvent<HTMLInputElement>
+  ) => {
+    const rawEventValue = event.target.value !== "" ? event.target.value : 0;
+
+    const eventValue =
+      typeof rawEventValue === "number"
+        ? rawEventValue
+        : parseInt(rawEventValue);
+
+    if (isNaN(eventValue)) {
+      return;
+    }
+
+    setVariants((currentVariants) => {
+      const updatedWeights = getUpdatedWeights({
+        indexToUpdate: index,
+        newWeight: eventValue,
+        weights: variants.map((v) => v.weight),
+      });
+
+      return currentVariants.map((currentVariant, i) => ({
+        name: currentVariant.name,
+        weight: updatedWeights[i] ?? 0,
+      }));
+    });
+  };
+
   return (
     <section className="flex w-full flex-col text-white">
       <h2 className="h-8 font-bold text-pink-200">{testName}</h2>
@@ -120,10 +149,15 @@ export function CreateTestSection({
                       }}
                     />
                     <span className="justify-self-center">
-                      {Math.round(weight)}%
+                      <input
+                        className="w-[5ch] rounded-md bg-gray-700 px-2 py-2 text-right focus:outline focus:outline-blue-400"
+                        value={weight}
+                        onChange={(e) => handleWeightChange(i, e)}
+                      />
+                      %
                     </span>
                     <button
-                      className="flex aspect-square h-8 items-center justify-center justify-self-end rounded-md bg-gray-700 transition-colors duration-200 ease-in-out hover:bg-red-700/40"
+                      className="flex aspect-square h-full items-center justify-center justify-self-end rounded-md bg-gray-700 transition-colors duration-200 ease-in-out hover:bg-red-700/40"
                       title="Delete this Variant"
                       onClick={() => removeVariant(i)}
                     >
@@ -143,20 +177,7 @@ export function CreateTestSection({
                     min="0"
                     max="100"
                     value={weight}
-                    onChange={(e) => {
-                      setVariants((currentVariants) => {
-                        const updatedWeights = getUpdatedWeights({
-                          indexToUpdate: i,
-                          newWeight: e.target.valueAsNumber,
-                          weights: variants.map((v) => v.weight),
-                        });
-
-                        return currentVariants.map((currentVariant, i) => ({
-                          name: currentVariant.name,
-                          weight: updatedWeights[i] ?? 0,
-                        }));
-                      });
-                    }}
+                    onChange={(e) => handleWeightChange(i, e)}
                     className="h-2 w-full cursor-pointer"
                   ></input>
                 </Fragment>
