@@ -16,6 +16,7 @@ import dayjs from "dayjs";
 import { getFlagCount } from "lib/flags";
 import { getProjectPaidPlan, useAbbyStripe } from "lib/stripe";
 import { useSession } from "next-auth/react";
+import { usePlausible } from "next-plausible";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { NextPageWithLayout } from "pages/_app";
@@ -23,6 +24,7 @@ import { FormEvent, useRef, useState } from "react";
 import { toast } from "react-hot-toast";
 import { BsX } from "react-icons/bs";
 import { getLimitByPlan } from "server/common/plans";
+import { PlausibleEvents } from "types/plausible-events";
 import { trpc } from "utils/trpc";
 
 const SettingsPage: NextPageWithLayout = () => {
@@ -30,6 +32,7 @@ const SettingsPage: NextPageWithLayout = () => {
   const [isShowDeleteModal, setisShowDeleteModal] = useState(false);
   const inviteEmailRef = useRef<HTMLInputElement>(null);
   const router = useRouter();
+  const plausible = usePlausible<PlausibleEvents>();
 
   const projectId = router.query.projectId as string;
   const projectNameRef = useRef<HTMLInputElement>(null);
@@ -135,6 +138,9 @@ const SettingsPage: NextPageWithLayout = () => {
                 <DashboardButton
                   className="px-3 py-2"
                   onClick={async () => {
+                    plausible("Plan Upgrade Clicked", {
+                      props: { Plan: "STARTUP" },
+                    });
                     redirectToCheckout(projectId, "STARTUP");
                   }}
                 >
@@ -143,6 +149,9 @@ const SettingsPage: NextPageWithLayout = () => {
                 <DashboardButton
                   className="px-3"
                   onClick={async () => {
+                    plausible("Plan Upgrade Clicked", {
+                      props: { Plan: "PRO" },
+                    });
                     redirectToCheckout(projectId, "PRO");
                   }}
                 >

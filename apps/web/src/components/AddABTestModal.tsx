@@ -1,7 +1,9 @@
 import { TRPCClientError } from "@trpc/client";
 import { TRPC_ERROR_CODES_BY_KEY } from "@trpc/server/rpc";
+import { usePlausible } from "next-plausible";
 import { useRef, useState } from "react";
 import { toast } from "react-hot-toast";
+import { PlausibleEvents } from "types/plausible-events";
 import { trpc } from "utils/trpc";
 import { Modal } from "./Modal";
 import { CreateTestSection } from "./Test/CreateTestSection";
@@ -34,6 +36,8 @@ export const AddABTestModal = ({ onClose, isOpen, projectId }: Props) => {
 
   const trpcContext = trpc.useContext();
 
+  const plausible = usePlausible<PlausibleEvents>();
+
   const onCreateClick = async () => {
     try {
       if (!variants.length || !variants[0]) throw new Error();
@@ -60,6 +64,9 @@ export const AddABTestModal = ({ onClose, isOpen, projectId }: Props) => {
       setVariants(INITIAL_VARIANTS);
 
       onClose();
+      plausible("AB-Test Created", {
+        props: { "Amount Of Variants": variants.length },
+      });
       toast.success("Test created");
     } catch (e) {
       toast.error(

@@ -13,6 +13,8 @@ import { getFlagTypeClassName, transformDBFlagTypeToclient } from "lib/flags";
 import { JSONEditor } from "./JSONEditor";
 import { Switch } from "./ui/switch";
 import { Toggle } from "./Toggle";
+import { usePlausible } from "next-plausible";
+import { PlausibleEvents } from "types/plausible-events";
 
 type Props = {
   onClose: () => void;
@@ -157,6 +159,7 @@ export const AddFeatureFlagModal = ({ onClose, isOpen, projectId }: Props) => {
   const inputRef = useRef<HTMLInputElement>(null);
   const ctx = trpc.useContext();
   const stateRef = useRef<FlagFormValues>();
+  const plausible = usePlausible<PlausibleEvents>();
 
   const [errors, setErrors] = useState<Partial<FlagFormValues>>({});
 
@@ -198,6 +201,9 @@ export const AddFeatureFlagModal = ({ onClose, isOpen, projectId }: Props) => {
             projectId,
           });
           toast.success("Flag created");
+          plausible("Feature Flag Created", {
+            props: { "Feature Flag Type": stateRef.current.type },
+          });
           onClose();
         } catch (e) {
           toast.error(

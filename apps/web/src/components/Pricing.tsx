@@ -2,10 +2,12 @@ import clsx from "clsx";
 import { cn } from "lib/utils";
 import { Info } from "lucide-react";
 import { useSession } from "next-auth/react";
+import { usePlausible } from "next-plausible";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { AiOutlineCheckCircle } from "react-icons/ai";
 import { getLimitByPlan } from "server/common/plans";
+import { Plan, PlausibleEvents } from "types/plausible-events";
 import { Tooltip, TooltipContent, TooltipTrigger } from "./Tooltip";
 
 type PricingElementProps = {
@@ -18,6 +20,7 @@ type PricingElementProps = {
   ctaText?: string;
   href: string;
   isFull?: boolean;
+  planName: Plan;
 };
 
 function PricingElement({
@@ -29,7 +32,10 @@ function PricingElement({
   ctaText,
   href,
   isFull,
+  planName,
 }: PricingElementProps) {
+  const plausible = usePlausible<PlausibleEvents>();
+
   return (
     <div
       className={cn(
@@ -60,6 +66,9 @@ function PricingElement({
             "border-accent-background hover:bg-accent-background",
             isFull && "lg:order-2 lg:w-64 lg:justify-self-center"
           )}
+          onClick={() =>
+            plausible("Plan Selected", { props: { Plan: planName } })
+          }
         >
           {ctaText ?? `Choose ${title}`}
         </Link>
@@ -113,6 +122,7 @@ export function PricingTable() {
           href={session.status === "authenticated" ? "/projects" : "/login"}
           price="Free"
           title="Hobby"
+          planName="HOBBY"
           subtitle="Good for IndieHackers that want to get started with A/B Testing & Feature Flags. No Credit card required"
           features={[
             `${basePlan.eventsPerMonth.toLocaleString()} Events / month`,
@@ -126,6 +136,7 @@ export function PricingTable() {
           price="12€"
           title="Startup"
           subtitle="Optimal for startups & small businesses that want to dive deeper with A/B Testing & Feature Flags"
+          planName="STARTUP"
           features={[
             `${startupPlan.eventsPerMonth.toLocaleString()} Events / month`,
             `${startupPlan.tests} A/B Tests`,
@@ -139,6 +150,7 @@ export function PricingTable() {
           href={session.status === "authenticated" ? "/projects" : "/login"}
           price="89€"
           title="Pro"
+          planName="PRO"
           subtitle="Perfect for growing companies that want to scale their A/B Testing & Feature Flags and get more insights"
           features={[
             `${proPlan.eventsPerMonth.toLocaleString()} Events / month`,
@@ -152,6 +164,7 @@ export function PricingTable() {
           href={"/contact"}
           price="Talk to us!"
           title="Enterprise"
+          planName="ENTERPRISE"
           subtitle="For even the biggest enterprise companies."
           ctaText="Contact us"
           features={[

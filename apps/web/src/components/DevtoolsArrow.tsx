@@ -1,6 +1,8 @@
 import { AnimatePresence, motion } from "framer-motion";
 import { CornerRightDown } from "lucide-react";
+import { usePlausible } from "next-plausible";
 import { useState, useEffect } from "react";
+import { PlausibleEvents } from "types/plausible-events";
 
 const DEVTOOLS_ID = "abby-devtools-collapsed";
 
@@ -8,6 +10,7 @@ export function useDevtoolsPosition() {
   const [devtoolsPosition, setDevtoolsPosition] = useState<DOMRect | null>(
     null
   );
+  const plausible = usePlausible<PlausibleEvents>();
 
   useEffect(() => {
     const devtools = document.getElementById(DEVTOOLS_ID);
@@ -26,10 +29,16 @@ export function useDevtoolsPosition() {
 
     setDevtoolsPosition(devtools.getBoundingClientRect());
 
+    const devtoolsAnalytics = () => {
+      plausible("Devtools Opened");
+    };
+    devtools.addEventListener("click", devtoolsAnalytics);
+
     return () => {
       resizeObserver.disconnect();
+      devtools.removeEventListener("click", devtoolsAnalytics);
     };
-  }, []);
+  }, [plausible]);
 
   // listen to window resize
   useEffect(() => {
