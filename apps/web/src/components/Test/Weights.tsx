@@ -2,7 +2,7 @@ import { Option } from "@prisma/client";
 import { Button } from "components/Button";
 import { getUpdatedWeights } from "lib/helper";
 import { useRouter } from "next/router";
-import { ChangeEvent, ChangeEventHandler, useState } from "react";
+import { ChangeEvent, ChangeEventHandler, useEffect, useState } from "react";
 import { toast } from "react-hot-toast";
 import type { ClientOption } from "server/trpc/router/project";
 import { trpc } from "utils/trpc";
@@ -59,6 +59,12 @@ const Weights = ({ options }: { options: ClientOption[] }) => {
     );
   };
 
+  const [weightsSum, setWeightsSum] = useState(0);
+  useEffect(() => {
+    const sum = weights.reduce((sum, curr) => (sum += curr), 0);
+    setWeightsSum(sum);
+  }, [weights]);
+
   const onSave = async () => {
     try {
       if (!options.length || !options[0]) throw new Error();
@@ -93,8 +99,18 @@ const Weights = ({ options }: { options: ClientOption[] }) => {
           option={option}
         />
       ))}
-      <div className="flex flex-col items-end">
-        <Button onClick={onSave}>Save</Button>
+      <div className="flex justify-between">
+        {weightsSum !== 100 ? (
+          <p className="text-center text-accent-background">
+            Your weights must add up to 100%. Your weights currently make up{" "}
+            {weightsSum}%
+          </p>
+        ) : (
+          <span></span>
+        )}
+        <Button onClick={onSave} disabled={weightsSum !== 100}>
+          Save
+        </Button>
       </div>
     </div>
   );
