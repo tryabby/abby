@@ -20,4 +20,5 @@ export type PlausibleEvents = {
     "Feature Flag Type": FeatureFlagType;
   };
   "Devtools Opened": never;
+  "API Project Data Retrieved": never;
 };
