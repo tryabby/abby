@@ -89,7 +89,7 @@ export const AddABTestModal = ({ onClose, isOpen, projectId }: Props) => {
     <Modal
       isOpen={isOpen}
       onClose={onClose}
-      title="Create new feature flag"
+      title="Create new A/B Test"
       confirmText="Create"
       onConfirm={onCreateClick}
       size="full"
