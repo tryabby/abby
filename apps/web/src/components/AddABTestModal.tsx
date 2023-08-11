@@ -34,18 +34,15 @@ export const AddABTestModal = ({ onClose, isOpen, projectId }: Props) => {
   const [variants, setVariants] =
     useState<Array<{ name: string; weight: number }>>(INITIAL_VARIANTS);
 
-  const [isConfirmButtonDisabled, setIsConfirmButtonDisabled] = useState(false);
-  useEffect(() => {
-    const uniqueVariants = new Set(variants.map((variant) => variant.name));
-    const variantsIncludeDuplicates = uniqueVariants.size !== variants.length;
+  const variantsIncludeDuplicates =
+    new Set(variants.map((variant) => variant.name)).size !== variants.length;
 
-    const variantsWeightSum = variants
-      .map(({ weight }) => weight)
-      .reduce((sum, weight) => (sum += weight), 0);
-    const weightSumNot100 = variantsWeightSum !== 100;
+  const variantsWeightSum = variants
+    .map(({ weight }) => weight)
+    .reduce((sum, weight) => (sum += weight), 0);
 
-    setIsConfirmButtonDisabled(variantsIncludeDuplicates || weightSumNot100);
-  }, [variants]);
+  const isConfirmButtonDisabled =
+    variantsIncludeDuplicates || variantsWeightSum !== 100;
 
   const createTestMutation = trpc.tests.createTest.useMutation();
 

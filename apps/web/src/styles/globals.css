@@ -88,7 +88,3 @@ html {
   z-index: -1;
   transform: rotate(-1deg);
 }
-
-button:disabled {
-  cursor: not-allowed;
-}

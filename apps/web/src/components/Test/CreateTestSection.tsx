@@ -20,6 +20,13 @@ type Props = {
 
 export const DEFAULT_NEW_VARIANT_PREFIX = "New Variant ";
 
+/**
+ * Searches through a list of variants, that start with the default variant name,
+ * and determines the currently largest number behind the prefix
+ *
+ * @example
+ * ["New Variant 4", "New Variant 1", "Other Variant 5"] -> 4
+ */
 function getMaxDefaultVariantNameIndex(variants: Props["variants"]): number {
   const variantsIndexes = variants
     .filter((variant) => variant.name.startsWith(DEFAULT_NEW_VARIANT_PREFIX))
@@ -148,13 +155,15 @@ export function CreateTestSection({
                         );
                       }}
                     />
-                    <span className="justify-self-center">
+                    <span className="relative block w-[7ch] justify-self-center">
                       <input
-                        className="w-[5ch] rounded-md bg-gray-700 px-2 py-2 text-right focus:outline focus:outline-blue-400"
+                        className="w-full rounded-md bg-gray-700 py-2 pr-6 text-right focus:outline focus:outline-blue-400"
                         value={weight}
                         onChange={(e) => handleWeightChange(i, e)}
                       />
-                      %
+                      <span className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-400">
+                        %
+                      </span>
                     </span>
                     <button
                       className="flex aspect-square h-full items-center justify-center justify-self-end rounded-md bg-gray-700 transition-colors duration-200 ease-in-out hover:bg-red-700/40"

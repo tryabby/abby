@@ -59,11 +59,7 @@ const Weights = ({ options }: { options: ClientOption[] }) => {
     );
   };
 
-  const [weightsSum, setWeightsSum] = useState(0);
-  useEffect(() => {
-    const sum = weights.reduce((sum, curr) => (sum += curr), 0);
-    setWeightsSum(sum);
-  }, [weights]);
+  const weightsSum = weights.reduce((sum, curr) => (sum += curr), 0);
 
   const onSave = async () => {
     try {
@@ -101,7 +97,7 @@ const Weights = ({ options }: { options: ClientOption[] }) => {
       ))}
       <div className="flex justify-between">
         {weightsSum !== 100 ? (
-          <p className="text-center text-accent-background">
+          <p className="text-center text-xs text-accent-background">
             Your weights must add up to 100%. Your weights currently make up{" "}
             {weightsSum}%
           </p>

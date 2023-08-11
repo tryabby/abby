@@ -21,7 +21,7 @@ export function Button<T extends React.ElementType = "button">({
     <Component
       {...props}
       className={twMerge(
-        "rounded-sm bg-blue-300 px-3 py-0.5 text-gray-800 transition-colors duration-200 ease-in-out hover:bg-blue-400",
+        "rounded-sm bg-blue-300 px-3 py-0.5 text-gray-800 transition-colors duration-200 ease-in-out hover:bg-blue-400 disabled:cursor-not-allowed disabled:opacity-70 disabled:hover:bg-blue-300",
         className
       )}
     >
