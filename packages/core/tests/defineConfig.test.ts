@@ -1,3 +1,4 @@
+import { F } from "ts-toolbelt";
 import { Abby } from "../dist";
 import { defineConfig } from "../src/defineConfig";
 
@@ -28,5 +29,15 @@ describe("defineConfig", () => {
     expectTypeOf(abby.getFeatureFlag("d")).toEqualTypeOf<Record<string, unknown>>();
 
     expectTypeOf(abby.getVariants).parameter(0).toEqualTypeOf<"abTest">();
+
+    expectTypeOf(defineConfig).parameter(0).toHaveProperty("projectId").toBeString();
+    expectTypeOf(defineConfig).parameter(0).toHaveProperty("tests");
+    expectTypeOf(defineConfig).parameter(0).toHaveProperty("flags");
+
+    expectTypeOf(defineConfig).parameter(0).toHaveProperty("environments").items.toBeString();
+    expectTypeOf(defineConfig)
+      .parameter(0)
+      .toHaveProperty("apiUrl")
+      .toEqualTypeOf<string | undefined>();
   });
 });

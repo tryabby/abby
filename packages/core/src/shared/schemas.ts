@@ -10,6 +10,10 @@ export const abbyEventSchema = z.object({
 
 export type AbbyEvent = z.infer<typeof abbyEventSchema>;
 
+export type FlagValue = boolean | string | number | Record<string, unknown>;
+
+export type FlagValueString = "String" | "Boolean" | "Number" | "JSON";
+
 export const flagValue = z.union([
   z.boolean(),
   z.string(),
@@ -51,10 +55,6 @@ export const abbyConfigSchema = z.object({
 export type AbbyConfigFile = z.infer<typeof abbyConfigSchema>;
 
 export type PullAbbyConfigResponse = Pick<AbbyConfigFile, "environments" | "flags" | "tests">;
-
-export type FlagValue = z.infer<typeof flagValue>;
-
-export type FlagValueString = z.infer<typeof flagValueStringSchema>;
 
 export type FlagValueStringToType<T extends FlagValueString> = T extends "String"
   ? string
