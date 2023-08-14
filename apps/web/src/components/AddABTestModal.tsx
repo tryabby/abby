@@ -1,19 +1,22 @@
 import { TRPCClientError } from "@trpc/client";
 import { TRPC_ERROR_CODES_BY_KEY } from "@trpc/server/rpc";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { toast } from "react-hot-toast";
 import { trpc } from "utils/trpc";
 import { Modal } from "./Modal";
-import { CreateTestSection } from "./Test/CreateTestSection";
+import {
+  CreateTestSection,
+  DEFAULT_NEW_VARIANT_PREFIX,
+} from "./Test/CreateTestSection";
 
 type UIVariant = { name: string; weight: number };
 
 const INITIAL_VARIANTS: Array<UIVariant> = [
   {
-    name: "A",
+    name: `${DEFAULT_NEW_VARIANT_PREFIX}1`,
   },
   {
-    name: "B",
+    name: `${DEFAULT_NEW_VARIANT_PREFIX}2`,
   },
   // give each variant a weight of 100 / number of variants
 ].map((v, _, array) => ({ ...v, weight: 100 / array.length }));
@@ -30,6 +33,17 @@ export const AddABTestModal = ({ onClose, isOpen, projectId }: Props) => {
   const [testName, setTestName] = useState(INITIAL_TEST_NAME);
   const [variants, setVariants] =
     useState<Array<{ name: string; weight: number }>>(INITIAL_VARIANTS);
+
+  const variantsIncludeDuplicates =
+    new Set(variants.map((variant) => variant.name)).size !== variants.length;
+
+  const variantsWeightSum = variants
+    .map(({ weight }) => weight)
+    .reduce((sum, weight) => (sum += weight), 0);
+
+  const isConfirmButtonDisabled =
+    variantsIncludeDuplicates || variantsWeightSum !== 100;
+
   const createTestMutation = trpc.tests.createTest.useMutation();
 
   const trpcContext = trpc.useContext();
@@ -75,11 +89,12 @@ export const AddABTestModal = ({ onClose, isOpen, projectId }: Props) => {
     <Modal
       isOpen={isOpen}
       onClose={onClose}
-      title="Create new feature flag"
+      title="Create new A/B Test"
       confirmText="Create"
       onConfirm={onCreateClick}
       size="full"
       isConfirming={createTestMutation.isLoading}
+      isConfirmButtonDisabled={isConfirmButtonDisabled}
     >
       <CreateTestSection
         setTestName={setTestName}

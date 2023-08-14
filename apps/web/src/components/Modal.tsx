@@ -3,6 +3,7 @@ import clsx from "clsx";
 import { Loader2 } from "lucide-react";
 import { Fragment, useRef } from "react";
 import { twMerge } from "tailwind-merge";
+import { Button } from "./Button";
 
 type Props = {
   onClose: () => void;
@@ -15,6 +16,7 @@ type Props = {
   initialFocusRef?: React.RefObject<HTMLElement>;
   size?: "base" | "full";
   isConfirming?: boolean;
+  isConfirmButtonDisabled?: boolean;
 };
 
 export const Modal = ({
@@ -28,6 +30,7 @@ export const Modal = ({
   initialFocusRef,
   size = "base",
   isConfirming = false,
+  isConfirmButtonDisabled = false,
 }: Props) => {
   const cancelButtonRef = useRef<HTMLButtonElement>(null);
 
@@ -92,17 +95,17 @@ export const Modal = ({
                   </div>
                 </div>
                 <div className="bg-gray-600 px-4 py-3 sm:flex sm:flex-row-reverse sm:px-6">
-                  <button
+                  <Button
                     type="button"
-                    className="inline-flex w-full justify-center rounded-md border border-transparent bg-pink-600 px-4 py-2 text-base font-medium text-white shadow-sm hover:bg-pink-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 disabled:opacity-80 sm:ml-3 sm:w-auto sm:text-sm"
+                    className="inline-flex w-full justify-center rounded-md border border-transparent bg-pink-600 px-4 py-2 text-base font-medium text-white shadow-sm hover:bg-pink-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 disabled:opacity-80 disabled:hover:bg-pink-600 sm:ml-3 sm:w-auto sm:text-sm"
                     onClick={handleConfirm}
-                    disabled={isConfirming}
+                    disabled={isConfirming || isConfirmButtonDisabled}
                   >
                     {isConfirming && (
                       <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                     )}
                     {confirmText ?? "Confirm"}
-                  </button>
+                  </Button>
                   <button
                     type="button"
                     className="mt-3 inline-flex w-full justify-center rounded-md border border-gray-500 bg-gray-700 px-4 py-2 text-base font-medium text-white shadow-sm outline-none hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 sm:ml-3 sm:mt-0 sm:w-auto sm:text-sm"
