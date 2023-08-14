@@ -59,6 +59,7 @@ describe("useAbby working", () => {
 
     getSpy.mockReturnValue(persistedValue);
     const { useAbby } = createAbby({
+      environments: [],
       projectId: "123",
       tests: {
         test: { variants },
@@ -129,13 +130,14 @@ describe("useAbby working", () => {
 
   it("uses lookup object when retrieving variant", async () => {
     const { getABTestValue } = createAbby({
+      environments: [],
       projectId: "123",
       tests: {
         lookupTest: {
           variants: ["SimonsText", "MatthiasText", "TomsText", "TimsText"],
         },
       },
-    } as const);
+    });
 
     const pickedVariant = getABTestValue("lookupTest");
     const lookupMap = {

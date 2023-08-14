@@ -3,6 +3,7 @@ import {
   ABConfig,
   createAbby as baseCreateAbby,
   withDevtoolsFunction,
+  ABTestReturnValue,
 } from "@tryabby/react";
 import { AbbyDataResponse, FlagValueString, getABStorageKey } from "@tryabby/core";
 import type { F } from "ts-toolbelt";
@@ -48,7 +49,21 @@ export function createAbby<
 
   return {
     AbbyProvider,
-    useAbby,
+    // we need to retype the useAbby function here
+    // because re-using the types from the react package causes the ts-toolbelt package to behave weirdly
+    // and therefore not working as expected
+    useAbby: useAbby as <
+      K extends keyof Tests,
+      TestVariant extends Tests[K]["variants"][number],
+      LookupValue,
+      Lookup extends Record<TestVariant, LookupValue> | undefined = undefined,
+    >(
+      name: K,
+      lookupObject?: F.Narrow<Lookup>
+    ) => {
+      variant: ABTestReturnValue<Lookup, TestVariant>;
+      onAct: () => void;
+    },
     useFeatureFlag,
     withAbby: withAbby(config as AbbyConfig<FlagName, Tests>, __abby__),
     getFeatureFlagValue,

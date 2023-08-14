@@ -13,7 +13,7 @@ export type withDevtoolsFunction = (
   }
 ) => () => JSX.Element | null;
 
-type ABTestReturnValue<Lookup, TestVariant> = Lookup extends undefined
+export type ABTestReturnValue<Lookup, TestVariant> = Lookup extends undefined
   ? TestVariant
   : TestVariant extends keyof Lookup
   ? Lookup[TestVariant]
@@ -75,7 +75,7 @@ export function createAbby<
     LookupValue,
     Lookup extends Record<TestVariant, LookupValue> | undefined = undefined,
   >(
-    name: TestName,
+    name: K,
     lookupObject?: F.Narrow<Lookup>
   ): {
     variant: ABTestReturnValue<Lookup, TestVariant>;
