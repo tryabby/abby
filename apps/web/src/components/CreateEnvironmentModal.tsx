@@ -1,12 +1,11 @@
 import { TRPCClientError } from "@trpc/client";
 import { TRPC_ERROR_CODES_BY_KEY } from "@trpc/server/rpc";
-import { useProjectId } from "lib/hooks/useProjectId";
-import { usePlausible } from "next-plausible";
 import { useRef, useState } from "react";
 import { toast } from "react-hot-toast";
 import { PlausibleEvents } from "types/plausible-events";
 import { trpc } from "utils/trpc";
 import { Modal } from "./Modal";
+import { useTracking } from "lib/tracking";
 
 type Props = {
   onClose: () => void;
@@ -28,7 +27,7 @@ export const CreateEnvironmentModal = ({
       ctx.flags.getFlags.invalidate({ projectId });
     },
   });
-  const plausible = usePlausible<PlausibleEvents>();
+  const trackEvent = useTracking();
 
   return (
     <Modal
@@ -49,7 +48,7 @@ export const CreateEnvironmentModal = ({
           });
           setName("");
           toast.success("Environment created");
-          plausible("Environment Created");
+          trackEvent("Environment Created");
           onClose();
         } catch (e) {
           toast.error(

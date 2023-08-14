@@ -20,8 +20,8 @@ import { generateCodeSnippets } from "utils/snippets";
 import abbyScreenshot from "../../public/screenshot.png";
 import { NextPageWithLayout } from "./_app";
 import { DevtoolsArrow } from "components/DevtoolsArrow";
-import { usePlausible } from "next-plausible";
 import { PlausibleEvents } from "types/plausible-events";
+import { useTracking } from "lib/tracking";
 
 const { useAbby, AbbyProvider, useFeatureFlag, __abby__, withDevtools } =
   createAbby({
@@ -68,7 +68,7 @@ const Home: NextPageWithLayout<
 
   const forceDarkTheme = useFeatureFlag("ForceDarkTheme");
 
-  const plausible = usePlausible<PlausibleEvents>();
+  const trackEvent = useTracking();
 
   useEffect(() => {
     if (forceDarkTheme) {
@@ -112,7 +112,7 @@ const Home: NextPageWithLayout<
             <Link
               href="/login"
               onClick={() => {
-                plausible("Sign Up Clicked");
+                trackEvent("Sign Up Clicked");
                 onAct();
               }}
               className={twMerge(

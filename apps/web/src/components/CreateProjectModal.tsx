@@ -4,8 +4,7 @@ import toast from "react-hot-toast";
 import { trpc } from "utils/trpc";
 import { Modal } from "./Modal";
 import { useSession } from "next-auth/react";
-import { usePlausible } from "next-plausible";
-import { PlausibleEvents } from "types/plausible-events";
+import { useTracking } from "lib/tracking";
 
 type Props = {
   onClose: () => void;
@@ -17,7 +16,7 @@ export const CreateProjectModal = ({ onClose }: Props) => {
   const [isValidName, setIsValidName] = useState(true);
   const trpcContext = trpc.useContext();
   const session = useSession();
-  const plausible = usePlausible<PlausibleEvents>();
+  const trackEvent = useTracking();
 
   const { mutateAsync: createProjectTRPC } =
     trpc.project.createProject.useMutation({
@@ -44,7 +43,7 @@ export const CreateProjectModal = ({ onClose }: Props) => {
       projectIds: [...(session.data?.user?.projectIds ?? []), project.id],
       lastOpenProjectId: project.id,
     });
-    plausible("Project Created");
+    trackEvent("Project Created");
     router.push(`/projects/${project.id}`);
   };
 

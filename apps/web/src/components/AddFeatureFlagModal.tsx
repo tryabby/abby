@@ -1,20 +1,19 @@
+import { FeatureFlagType } from "@prisma/client";
 import { TRPCClientError } from "@trpc/client";
 import { TRPC_ERROR_CODES_BY_KEY } from "@trpc/server/rpc";
+import { getFlagTypeClassName, transformDBFlagTypeToclient } from "lib/flags";
+import { cn } from "lib/utils";
 import { useRef, useState } from "react";
 import { toast } from "react-hot-toast";
 import { trpc } from "utils/trpc";
-import { Modal } from "./Modal";
-import { FeatureFlagType } from "@prisma/client";
-import { RadioSelect } from "./RadioSelect";
-import { Input } from "./ui/input";
 import { FlagIcon } from "./FlagIcon";
-import { cn } from "lib/utils";
-import { getFlagTypeClassName, transformDBFlagTypeToclient } from "lib/flags";
 import { JSONEditor } from "./JSONEditor";
-import { Switch } from "./ui/switch";
+import { Modal } from "./Modal";
+import { RadioSelect } from "./RadioSelect";
+
 import { Toggle } from "./Toggle";
-import { usePlausible } from "next-plausible";
-import { PlausibleEvents } from "types/plausible-events";
+
+import { useTracking } from "lib/tracking";
 
 type Props = {
   onClose: () => void;
@@ -159,7 +158,7 @@ export const AddFeatureFlagModal = ({ onClose, isOpen, projectId }: Props) => {
   const inputRef = useRef<HTMLInputElement>(null);
   const ctx = trpc.useContext();
   const stateRef = useRef<FlagFormValues>();
-  const plausible = usePlausible<PlausibleEvents>();
+  const trackEvent = useTracking();
 
   const [errors, setErrors] = useState<Partial<FlagFormValues>>({});
 
@@ -201,7 +200,7 @@ export const AddFeatureFlagModal = ({ onClose, isOpen, projectId }: Props) => {
             projectId,
           });
           toast.success("Flag created");
-          plausible("Feature Flag Created", {
+          trackEvent("Feature Flag Created", {
             props: { "Feature Flag Type": stateRef.current.type },
           });
           onClose();

@@ -2,13 +2,14 @@ import clsx from "clsx";
 import { cn } from "lib/utils";
 import { Info } from "lucide-react";
 import { useSession } from "next-auth/react";
-import { usePlausible } from "next-plausible";
+
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { AiOutlineCheckCircle } from "react-icons/ai";
 import { getLimitByPlan } from "server/common/plans";
-import { Plan, PlausibleEvents } from "types/plausible-events";
+import { Plan } from "types/plausible-events";
 import { Tooltip, TooltipContent, TooltipTrigger } from "./Tooltip";
+import { useTracking } from "lib/tracking";
 
 type PricingElementProps = {
   price: string;
@@ -34,7 +35,7 @@ function PricingElement({
   isFull,
   planName,
 }: PricingElementProps) {
-  const plausible = usePlausible<PlausibleEvents>();
+  const trackEvent = useTracking();
 
   return (
     <div
@@ -67,7 +68,7 @@ function PricingElement({
             isFull && "lg:order-2 lg:w-64 lg:justify-self-center"
           )}
           onClick={() =>
-            plausible("Plan Selected", { props: { Plan: planName } })
+            trackEvent("Plan Selected", { props: { Plan: planName } })
           }
         >
           {ctaText ?? `Choose ${title}`}
