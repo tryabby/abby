@@ -1,2 +1,2 @@
-export { createAbby, type withDevtoolsFunction } from "./context";
+export { createAbby, type withDevtoolsFunction, type ABTestReturnValue } from "./context";
 export { type ABConfig, type AbbyConfig, defineConfig } from "@tryabby/core";

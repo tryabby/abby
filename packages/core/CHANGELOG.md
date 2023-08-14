@@ -1,5 +1,11 @@
 # @tryabby/core
 
+## 4.2.0
+
+### Minor Changes
+
+- add lookup object to useAbby and ab test value function
+
 ## 4.1.0
 
 ### Minor Changes

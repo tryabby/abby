@@ -2,13 +2,12 @@
 @tailwind components;
 @tailwind utilities;
 
-
 :root {
   --color-primary-background: 255, 255, 255;
   --color-primary-foreground: 18, 25, 41;
   --color-accent-background: 249, 168, 212;
   --color-accent-foreground: 0, 0, 0;
-} 
+}
 
 .dark {
   --color-primary-background: 18, 25, 41;
@@ -18,19 +17,17 @@
 }
 
 @font-face {
-  font-family: 'Mona Sans';
-  src:
-    url('/Mona-Sans.woff2') format('woff2 supports variations'),
-    url('/Mona-Sans.woff2') format('woff2-variations');
+  font-family: "Mona Sans";
+  src: url("/Mona-Sans.woff2") format("woff2 supports variations"),
+    url("/Mona-Sans.woff2") format("woff2-variations");
   font-weight: 200 900;
   font-stretch: 75% 125%;
   font-display: swap;
 }
 
 @font-face {
-  font-family: 'Fragment Mono';
-  src:
-    url('/FragmentMono-Regular.ttf') format('ttf')
+  font-family: "Fragment Mono";
+  src: url("/FragmentMono-Regular.ttf") format("ttf");
 }
 
 html {
@@ -38,7 +35,7 @@ html {
 }
 
 .shiki {
-  @apply mr-auto rounded-lg p-4 !font-mono pt-24 overflow-x-auto;
+  @apply mr-auto overflow-x-auto rounded-lg p-4 pt-24 !font-mono;
 }
 
 .shiki * {

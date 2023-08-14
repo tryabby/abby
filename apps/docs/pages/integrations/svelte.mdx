@@ -116,7 +116,22 @@ The `useAbby` function returns an object with the following values:
 		<button on:click={onAct}> B</button>
 	{/if}
 </body>
+```
 
+Optionally, you can provide a lookup object to map the active to a custom value.
+```svelte
+<script lang="ts">
+    import { abby } from "$lib/abby";
+    const { variant , onAct } = abby.useAbby("test", {
+        A: "Hello",
+        B: "Goodbye"
+    });
+</script>
+
+<body>
+    <h1>Abby Test Page:</h1>
+    <p>{ variant } World!</p>
+</body>
 ```
 
 ## useFeatureFlag
