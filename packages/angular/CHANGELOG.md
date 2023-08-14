@@ -1,5 +1,16 @@
 # @tryabby/angular
 
+## 1.2.0
+
+### Minor Changes
+
+- add lookup object to useAbby and ab test value function
+
+### Patch Changes
+
+- Updated dependencies
+  - @tryabby/core@4.2.0
+
 ## 1.1.0
 
 ### Minor Changes
