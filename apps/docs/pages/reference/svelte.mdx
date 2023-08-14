@@ -79,11 +79,12 @@ New users will get a random value for a test depending on the defined weights
 
 ##### Parameters
 
-- `string`: The name of the test or flag, needs to be one of the defined tests.
+- `testName`: The name of the test or flag, needs to be one of the defined tests.
+- `lookupObject`: An optional lookup object to automatically map the active variant to a custom value.
 
 ##### Return Values
 
-- `variant` : Store providing the variant of the test
+- `variant`: Store providing the variant of the test or the looked up value if you provided a `lookupObject` 
 
 - `onAct`: A function to call when the user performs an action associated with the test _Type: `function`_
 
@@ -118,17 +119,18 @@ The name of the test or flag, needs to be one of the defined flags.
 
 #### getABTestValue
 
-`getABTestValue` is a function to access the users variant of an A/B Test. This can be called in a non-svelte scope.
+`getABTestValue` is a function to access the users variant of an A/B Test. This can be called in a non-react scope.
 If the user is new, a random variant will be generated based on the weights, persisted in a cookie and returned.
 Otherwise the variant will be read from the cookie and returned.
 
 ##### Parameters
 
-The name of the test, needs to be one of the defined tests.
+- `testName`: The name of the test, needs to be one of the defined tests.
+- `lookupObject`: An optional lookup object to automatically map the active variant to a custom value.
 
 ##### Return Values
 
-The variant of the test.
+The variant of the test or the looked up value if you provided a `lookupObject`
 
 #### \_\_abby\_\_
 

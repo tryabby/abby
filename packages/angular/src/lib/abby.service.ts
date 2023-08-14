@@ -1,5 +1,6 @@
 import { Inject, Injectable } from "@angular/core";
 import { Route } from "@angular/router";
+import { ExtractVariants } from "@tryabby/core";
 import {
   Abby,
   AbbyConfig,
@@ -24,7 +25,6 @@ import {
 import { F } from "ts-toolbelt";
 import { AbbyLoggerService } from "./abby-logger.service";
 import { FlagStorageService, TestStorageService } from "./StorageService";
-import { Key } from "ts-toolbelt/out/Any/Key";
 
 type LocalData<FlagName extends string = string, TestName extends string = string> = {
   tests: Record<
@@ -47,11 +47,6 @@ export type InferTests<C extends AbbyConfig> = NonNullable<C["tests"]>;
 export type InferFlags<C extends AbbyConfig> = NonNullable<C["flags"]>;
 
 type PossibleFlagName<FlagName extends string> = FlagName | `!${FlagName}`;
-
-export type ExtractVariants<
-  TestName extends Key,
-  Tests extends Record<TestName, ABConfig>,
-> = Tests[TestName]["variants"][number];
 
 @Injectable({ providedIn: "root" })
 export class AbbyService<

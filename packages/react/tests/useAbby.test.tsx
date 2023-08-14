@@ -72,6 +72,33 @@ describe("useAbby", () => {
     expect(result.current.variant).toEqual(persistedValue);
   });
 
+  it("looks up the selected variant in the lookup object", () => {
+    const persistedValue = "SimonsText";
+    const variants = ["SimonsText", "MatthiasText", "TomsText", "TimsText"] as const;
+
+    const getSpy = vi.spyOn(TestStorageService, "get");
+    getSpy.mockReturnValue(persistedValue);
+
+    const { AbbyProvider, useAbby } = createAbby({
+      environments: [],
+      projectId: "123",
+      tests: {
+        test: { variants },
+      },
+    });
+
+    const wrapper = ({ children }: PropsWithChildren) => <AbbyProvider>{children}</AbbyProvider>;
+    const { result } = renderHook(
+      () => useAbby("test", { SimonsText: "a", MatthiasText: "b", TomsText: "c", TimsText: "d" }),
+      {
+        wrapper,
+      }
+    );
+
+    // value set in localstorage
+    expect(result.current.variant).toEqual("a");
+  });
+
   it("should ping the current info on mount", () => {
     const spy = vi.spyOn(HttpService, "sendData");
     const { AbbyProvider, useAbby } = createAbby({
@@ -237,4 +264,116 @@ describe("useAbby", () => {
     });
     expect(getVariants("test")).toEqual(["A", "B", "C"]);
   });
+
+  it("uses the lookup object when retrieving a variant", () => {
+    const { getABTestValue } = createAbby({
+      environments: [],
+      projectId: "123",
+      currentEnvironment: "a",
+      tests: {
+        test: {
+          variants: ["A", "B", "C"],
+        },
+      },
+    });
+
+    const activeVariant = getABTestValue("test");
+    const lookupObject = {
+      A: 1,
+      B: 2,
+      C: 3,
+    };
+
+    expect(getABTestValue("test", lookupObject)).toEqual(lookupObject[activeVariant]);
+  });
+
+  it("produces proper types with a lookup objects", () => {
+    const { getABTestValue } = createAbby({
+      environments: [],
+      projectId: "123",
+      currentEnvironment: "a",
+      tests: {
+        test: {
+          variants: ["A", "B", "C"],
+        },
+      },
+    });
+
+    const activeVariant = getABTestValue("test", {
+      A: "Hello",
+      B: "Bonjour",
+      C: "Hola",
+    });
+
+    expectTypeOf(activeVariant).toEqualTypeOf<"Hello" | "Bonjour" | "Hola">();
+  });
+
+  it("produces proper types with a a lookup object in the hook", () => {
+    const { AbbyProvider, useAbby } = createAbby({
+      environments: [],
+      projectId: "123",
+      tests: {
+        test: {
+          variants: ["A", "B", "C"],
+        },
+      },
+    });
+
+    const wrapper = ({ children }: PropsWithChildren) => <AbbyProvider>{children}</AbbyProvider>;
+
+    const { result } = renderHook(
+      () =>
+        useAbby("test", {
+          A: "Hello",
+          B: "Bonjour",
+          C: "Hola",
+        }),
+      {
+        wrapper,
+      }
+    );
+
+    expectTypeOf(result.current.variant).toEqualTypeOf<"Hello" | "Bonjour" | "Hola">();
+  });
+});
+
+it("has the correct types", () => {
+  const { AbbyProvider, useAbby, useFeatureFlag } = createAbby({
+    environments: [],
+    projectId: "123",
+    tests: {
+      test: { variants: ["OldFooter", "NewFooter"] },
+      test2: {
+        variants: ["SimonsText", "MatthiasText", "TomsText", "TimsText"],
+      },
+    },
+    flags: {
+      flag1: "Boolean",
+      flag2: "String",
+    },
+  });
+
+  const wrapper = ({ children }: PropsWithChildren) => <AbbyProvider>{children}</AbbyProvider>;
+
+  expectTypeOf(useAbby).parameter(0).toEqualTypeOf<"test" | "test2">();
+
+  const { result } = renderHook(() => useAbby("test"), {
+    wrapper,
+  });
+
+  expectTypeOf(result.current.variant).toEqualTypeOf<"OldFooter" | "NewFooter">();
+
+  expectTypeOf(useFeatureFlag).parameters.toEqualTypeOf<["flag1" | "flag2"]>();
+
+  const { result: ffResult } = renderHook(() => useFeatureFlag("flag1"), {
+    wrapper,
+  });
+
+  expectTypeOf(ffResult.current).toEqualTypeOf<boolean>();
+
+  const { result: ff2Result } = renderHook(() => useFeatureFlag("flag2"), {
+    wrapper,
+  });
+
+  expectTypeOf(ff2Result.current).toEqualTypeOf<string>();
 });

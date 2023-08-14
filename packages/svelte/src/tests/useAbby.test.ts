@@ -1,9 +1,10 @@
 import { TestStorageService } from "../lib/StorageService";
-import { HttpService, AbbyEventType } from "@tryabby/core";
+import { HttpService, AbbyEventType, getABStorageKey } from "@tryabby/core";
 import { createAbby } from "../lib/createAbby";
 import { it, describe, expect, afterEach, vi, beforeAll, afterAll } from "vitest";
 /// @ts-ignore it doesn't have types
 import { get } from "svelte/store";
+import Cookies from "js-cookie";
 
 const OLD_ENV = process.env;
 
@@ -48,6 +49,31 @@ describe("useAbby working", () => {
     expect(getSpy).toBeCalled();
     // value set in localstorage
     expect(result).toEqual(persistedValue);
+  });
+
+  it("should look up the return value", () => {
+    const persistedValue = "SimonsText";
+    const variants = ["SimonsText", "MatthiasText", "TomsText", "TimsText"] as const;
+
+    const getSpy = vi.spyOn(TestStorageService, "get");
+
+    getSpy.mockReturnValue(persistedValue);
+    const { useAbby } = createAbby({
+      environments: [],
+      projectId: "123",
+      tests: {
+        test: { variants },
+      },
+    });
+
+    const { variant } = useAbby("test", {
+      SimonsText: "a",
+      MatthiasText: "b",
+      TomsText: "c",
+      TimsText: "d",
+    });
+    const result = get(variant);
+    expect(result).toBe("a");
   });
 
   it("should ping the current info on mount", () => {
@@ -100,5 +126,28 @@ describe("useAbby working", () => {
     });
     const recievedVariants = get(getVariants("test"));
     expect(recievedVariants).toEqual(expectedVariants);
+  });
+
+  it("uses lookup object when retrieving variant", async () => {
+    const { getABTestValue } = createAbby({
+      environments: [],
+      projectId: "123",
+      tests: {
+        lookupTest: {
+          variants: ["SimonsText", "MatthiasText", "TomsText", "TimsText"],
+        },
+      },
+    });
+
+    const pickedVariant = getABTestValue("lookupTest");
+    const lookupMap = {
+      SimonsText: 1,
+      MatthiasText: 2,
+      TomsText: 3,
+      TimsText: 4,
+    };
+
+    const value = getABTestValue("lookupTest", lookupMap);
+    expect(value).toBe(lookupMap[pickedVariant]);
   });
 });

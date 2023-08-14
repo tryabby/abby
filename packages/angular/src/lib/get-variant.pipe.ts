@@ -1,8 +1,8 @@
 import { Pipe, PipeTransform } from "@angular/core";
-import { ABConfig } from "@tryabby/core";
+import { ABConfig, ExtractVariants } from "@tryabby/core";
 import { Observable } from "rxjs";
 import { Key } from "ts-toolbelt/out/Any/Key";
-import { AbbyService, ExtractVariants } from "./abby.service";
+import { AbbyService } from "./abby.service";
 
 @Pipe({
   name: "getAbbyVariant",

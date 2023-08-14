@@ -3,6 +3,7 @@ import {
   ABConfig,
   createAbby as baseCreateAbby,
   withDevtoolsFunction,
+  ABTestReturnValue,
 } from "@tryabby/react";
 import { AbbyDataResponse, FlagValueString, getABStorageKey } from "@tryabby/core";
 import type { F } from "ts-toolbelt";
@@ -48,7 +49,21 @@ export function createAbby<
 
   return {
     AbbyProvider,
-    useAbby,
+    // we need to retype the useAbby function here
+    // because re-using the types from the react package causes the ts-toolbelt package to behave weirdly
+    // and therefore not working as expected
+    useAbby: useAbby as <
+      K extends keyof Tests,
+      TestVariant extends Tests[K]["variants"][number],
+      LookupValue,
+      Lookup extends Record<TestVariant, LookupValue> | undefined = undefined,
+    >(
+      name: K,
+      lookupObject?: F.Narrow<Lookup>
+    ) => {
+      variant: ABTestReturnValue<Lookup, TestVariant>;
+      onAct: () => void;
+    },
     useFeatureFlag,
     withAbby: withAbby(config as AbbyConfig<FlagName, Tests>, __abby__),
     getFeatureFlagValue,
@@ -67,6 +82,9 @@ export function createAbby<
      */
     getABTestValue<
       T extends keyof Tests,
+      TestVariant extends Tests[T]["variants"][number],
+      LookupValue,
+      Lookup extends Record<TestVariant, LookupValue> | undefined = undefined,
       RequestType extends NextRequest | NextApiRequest | undefined = undefined,
       ResponseType extends NextResponse | NextApiResponse = RequestType extends NextRequest
         ? NextResponse
@@ -75,9 +93,14 @@ export function createAbby<
         : never,
     >(
       name: T,
-      req?: RequestType
+      req?: RequestType,
+      lookupObject?: F.Narrow<Lookup>
     ): [
-      Tests[T]["variants"][number],
+      Lookup extends undefined
+        ? TestVariant
+        : TestVariant extends keyof Lookup
+        ? Lookup[TestVariant]
+        : never,
       RequestType extends NextRequest | NextApiRequest ? (res: ResponseType) => void : () => void,
     ] {
       const cookies = getIsomorphicCookies(req);
@@ -87,7 +110,12 @@ export function createAbby<
       const cookieKey = getABStorageKey(config.projectId, name as string);
 
       if (storedValue) {
-        return [typeof storedValue === "string" ? storedValue : storedValue.value, () => {}];
+        const storedVariant = typeof storedValue === "string" ? storedValue : storedValue.value;
+
+        return [
+          lookupObject ? lookupObject[storedVariant as keyof typeof lookupObject] : storedVariant,
+          () => {},
+        ];
       }
 
       const newValue = __abby__.getTestVariant(name);
@@ -113,7 +141,10 @@ export function createAbby<
         res.setHeader("Set-Cookie", `${cookieKey}=${newValue};`);
       };
 
-      return [newValue, setCookieFunc];
+      return [
+        lookupObject ? (lookupObject[newValue as keyof typeof lookupObject] as any) : newValue,
+        setCookieFunc,
+      ];
     },
     /**
      * Isomorphic function to reset the value of an A/B test
