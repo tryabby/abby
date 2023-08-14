@@ -32,7 +32,6 @@ const MyApp: AppType<{ session: Session | null }> = ({
   pageProps: { session, __ABBY_PROJECT_DATA__, ...pageProps },
 }: AppPropsWithLayout) => {
   const router = useRouter();
-  const plausibleDomain = process.env["PLAUSIBLE_DOMAIN"];
 
   const currentPageUrl = `https://www.tryabby.com${router.asPath}`;
   // Use the layout defined at the page level, if available
@@ -45,7 +44,9 @@ const MyApp: AppType<{ session: Session | null }> = ({
         <ThemeProvider attribute="class" defaultTheme="dark">
           <TooltipProvider>
             <SessionProvider session={session}>
-              <PlausibleProvider domain={plausibleDomain ?? ""}>
+              <PlausibleProvider
+                domain={env.NEXT_PUBLIC_PLAUSIBLE_DOMAIN ?? ""}
+              >
                 <main className={`font-sans`}>
                   <DefaultSeo
                     defaultTitle="A/BBY - Open Source A/B Testing & Feature Flags"

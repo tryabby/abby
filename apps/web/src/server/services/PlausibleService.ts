@@ -1,8 +1,9 @@
+import { env } from "env/client.mjs";
 import { PlausibleEvents } from "types/plausible-events";
 
 export abstract class PlausibleService {
   private static readonly PLAUSIBLE_API_URL = "https://plausible.io/api";
-  private static readonly SITE_DOMAIN = process.env["PLAUSIBLE_DOMAIN"];
+  private static readonly SITE_DOMAIN = env.NEXT_PUBLIC_PLAUSIBLE_DOMAIN;
 
   // API calls to the Plausible API require a UserAgent to be set
   // for tracking. For privacy reasons, we will use a static random
@@ -13,7 +14,11 @@ export abstract class PlausibleService {
   static async trackPlausibleGoal(
     eventName: keyof PlausibleEvents,
     url?: string
-  ): Promise<Response> {
+  ) {
+    if (process.env.NODE_ENV !== "production" || !this.SITE_DOMAIN) {
+      return;
+    }
+
     return fetch(`${this.PLAUSIBLE_API_URL}/event`, {
       method: "POST",
       headers: {

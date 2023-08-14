@@ -1,8 +1,6 @@
 import { Html, Head, Main, NextScript } from "next/document";
 
 export default function Document() {
-  const plausibleDomain = process.env["PLAUSIBLE_DOMAIN"];
-
   return (
     <Html>
       <Head>
@@ -14,13 +12,6 @@ export default function Document() {
           crossOrigin="anonymous"
         />
         <link rel="icon" href="/favicon.png" />
-        {plausibleDomain && (
-          <script
-            defer
-            data-domain={plausibleDomain}
-            src="https://plausible.io/js/script.js"
-          ></script>
-        )}
       </Head>
       <body>
         <Main />
