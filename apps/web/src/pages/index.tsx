@@ -20,6 +20,8 @@ import { generateCodeSnippets } from "utils/snippets";
 import abbyScreenshot from "../../public/screenshot.png";
 import { NextPageWithLayout } from "./_app";
 import { DevtoolsArrow } from "components/DevtoolsArrow";
+import { PlausibleEvents } from "types/plausible-events";
+import { useTracking } from "lib/tracking";
 
 const { useAbby, AbbyProvider, useFeatureFlag, __abby__, withDevtools } =
   createAbby({
@@ -66,6 +68,8 @@ const Home: NextPageWithLayout<
 
   const forceDarkTheme = useFeatureFlag("ForceDarkTheme");
 
+  const trackEvent = useTracking();
+
   useEffect(() => {
     if (forceDarkTheme) {
       setTheme("dark");
@@ -107,7 +111,10 @@ const Home: NextPageWithLayout<
           <div className="flex flex-col items-center">
             <Link
               href="/login"
-              onClick={() => onAct()}
+              onClick={() => {
+                trackEvent("Sign Up Clicked");
+                onAct();
+              }}
               className={twMerge(
                 "mt-12 rounded-xl bg-accent-background px-6 py-2 text-xl font-semibold text-accent-foreground no-underline transition-transform duration-150 ease-in-out hover:scale-110"
               )}

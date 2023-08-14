@@ -15,6 +15,7 @@ import { TooltipProvider } from "components/Tooltip";
 
 import "../styles/globals.css";
 import "@code-hike/mdx/dist/index.css";
+import PlausibleProvider from "next-plausible";
 
 export type NextPageWithLayout<P = {}, IP = P> = NextPage<P, IP> & {
   getLayout?: (page: ReactElement) => ReactNode;
@@ -43,32 +44,36 @@ const MyApp: AppType<{ session: Session | null }> = ({
         <ThemeProvider attribute="class" defaultTheme="dark">
           <TooltipProvider>
             <SessionProvider session={session}>
-              <main className={`font-sans`}>
-                <DefaultSeo
-                  defaultTitle="A/BBY - Open Source A/B Testing & Feature Flags"
-                  titleTemplate="%s | A/BBY"
-                  description={seoDescription}
-                  canonical={currentPageUrl}
-                  openGraph={{
-                    url: currentPageUrl,
-                    title: "A/BBY",
-                    type: "website",
-                    description: seoDescription,
-                    images: [
-                      {
-                        url: "https://www.tryabby.com/og.png",
-                        width: 1200,
-                        height: 630,
-                        alt: "A/BBY",
-                        type: "image/png",
-                      },
-                    ],
-                    siteName: "A/BBY",
-                  }}
-                />
-                <Toaster />
-                {getLayout(<Component {...pageProps} />)}
-              </main>
+              <PlausibleProvider
+                domain={env.NEXT_PUBLIC_PLAUSIBLE_DOMAIN ?? ""}
+              >
+                <main className={`font-sans`}>
+                  <DefaultSeo
+                    defaultTitle="A/BBY - Open Source A/B Testing & Feature Flags"
+                    titleTemplate="%s | A/BBY"
+                    description={seoDescription}
+                    canonical={currentPageUrl}
+                    openGraph={{
+                      url: currentPageUrl,
+                      title: "A/BBY",
+                      type: "website",
+                      description: seoDescription,
+                      images: [
+                        {
+                          url: "https://www.tryabby.com/og.png",
+                          width: 1200,
+                          height: 630,
+                          alt: "A/BBY",
+                          type: "image/png",
+                        },
+                      ],
+                      siteName: "A/BBY",
+                    }}
+                  />
+                  <Toaster />
+                  {getLayout(<Component {...pageProps} />)}
+                </main>
+              </PlausibleProvider>
             </SessionProvider>
           </TooltipProvider>
         </ThemeProvider>

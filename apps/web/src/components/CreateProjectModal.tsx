@@ -4,6 +4,7 @@ import toast from "react-hot-toast";
 import { trpc } from "utils/trpc";
 import { Modal } from "./Modal";
 import { useSession } from "next-auth/react";
+import { useTracking } from "lib/tracking";
 
 type Props = {
   onClose: () => void;
@@ -15,6 +16,7 @@ export const CreateProjectModal = ({ onClose }: Props) => {
   const [isValidName, setIsValidName] = useState(true);
   const trpcContext = trpc.useContext();
   const session = useSession();
+  const trackEvent = useTracking();
 
   const { mutateAsync: createProjectTRPC } =
     trpc.project.createProject.useMutation({
@@ -36,10 +38,12 @@ export const CreateProjectModal = ({ onClose }: Props) => {
 
     onClose();
     if (!project) return;
+
     await session.update({
       projectIds: [...(session.data?.user?.projectIds ?? []), project.id],
       lastOpenProjectId: project.id,
     });
+    trackEvent("Project Created");
     router.push(`/projects/${project.id}`);
   };
 

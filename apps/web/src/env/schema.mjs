@@ -44,6 +44,7 @@ export const clientSchema = z.object({
   NEXT_PUBLIC_STRIPE_STARTER_PLAN_PRICE_ID: z.string().min(1),
   NEXT_PUBLIC_STRIPE_PRO_PLAN_PRICE_ID: z.string().min(1),
   NEXT_PUBLIC_ABBY_PROJECT_ID: z.string().min(1),
+  NEXT_PUBLIC_PLAUSIBLE_DOMAIN: z.string().optional(),
 });
 
 /**

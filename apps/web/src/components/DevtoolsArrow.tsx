@@ -1,5 +1,7 @@
 import { AnimatePresence, motion } from "framer-motion";
+import { useTracking } from "lib/tracking";
 import { CornerRightDown } from "lucide-react";
+
 import { useState, useEffect } from "react";
 
 const DEVTOOLS_ID = "abby-devtools-collapsed";
@@ -8,6 +10,7 @@ export function useDevtoolsPosition() {
   const [devtoolsPosition, setDevtoolsPosition] = useState<DOMRect | null>(
     null
   );
+  const trackEvent = useTracking();
 
   useEffect(() => {
     const devtools = document.getElementById(DEVTOOLS_ID);
@@ -26,10 +29,16 @@ export function useDevtoolsPosition() {
 
     setDevtoolsPosition(devtools.getBoundingClientRect());
 
+    const devtoolsAnalytics = () => {
+      trackEvent("Devtools Opened");
+    };
+    devtools.addEventListener("click", devtoolsAnalytics);
+
     return () => {
       resizeObserver.disconnect();
+      devtools.removeEventListener("click", devtoolsAnalytics);
     };
-  }, []);
+  }, [trackEvent]);
 
   // listen to window resize
   useEffect(() => {
@@ -52,7 +61,40 @@ export function useDevtoolsPosition() {
 }
 
 export function DevtoolsArrow() {
+  const trackEvent = useTracking();
   const devtoolsPosition = useDevtoolsPosition();
+
+  useEffect(() => {
+    const onMessage = (e: MessageEvent) => {
+      const messageType = e.data.type;
+      if (!messageType?.startsWith("abby:")) return;
+
+      switch (messageType) {
+        case "abby:update-flag": {
+          trackEvent("Devtools Interaction", {
+            props: {
+              type: "Flag Updated",
+            },
+          });
+          break;
+        }
+        case "abby:select-variant": {
+          trackEvent("Devtools Interaction", {
+            props: {
+              type: "Variant Selected",
+            },
+          });
+          break;
+        }
+      }
+    };
+
+    window.addEventListener("message", onMessage);
+
+    return () => {
+      window.removeEventListener("message", onMessage);
+    };
+  }, [trackEvent]);
 
   return (
     <AnimatePresence>

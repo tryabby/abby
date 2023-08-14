@@ -15,6 +15,7 @@ import { RemoveUserModal } from "components/RemoveUserModal";
 import dayjs from "dayjs";
 import { getFlagCount } from "lib/flags";
 import { getProjectPaidPlan, useAbbyStripe } from "lib/stripe";
+import { useTracking } from "lib/tracking";
 import { useSession } from "next-auth/react";
 import Link from "next/link";
 import { useRouter } from "next/router";
@@ -30,6 +31,7 @@ const SettingsPage: NextPageWithLayout = () => {
   const [isShowDeleteModal, setisShowDeleteModal] = useState(false);
   const inviteEmailRef = useRef<HTMLInputElement>(null);
   const router = useRouter();
+  const trackEvent = useTracking();
 
   const projectId = router.query.projectId as string;
   const projectNameRef = useRef<HTMLInputElement>(null);
@@ -135,6 +137,9 @@ const SettingsPage: NextPageWithLayout = () => {
                 <DashboardButton
                   className="px-3 py-2"
                   onClick={async () => {
+                    trackEvent("Plan Upgrade Clicked", {
+                      props: { Plan: "STARTUP" },
+                    });
                     redirectToCheckout(projectId, "STARTUP");
                   }}
                 >
@@ -143,6 +148,9 @@ const SettingsPage: NextPageWithLayout = () => {
                 <DashboardButton
                   className="px-3"
                   onClick={async () => {
+                    trackEvent("Plan Upgrade Clicked", {
+                      props: { Plan: "PRO" },
+                    });
                     redirectToCheckout(projectId, "PRO");
                   }}
                 >
