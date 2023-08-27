@@ -44,7 +44,7 @@ export abstract class HttpService {
     const url = apiUrl ?? ABBY_BASE_URL;
 
     try {
-      const response = await fetch(`${url}api/v1/config/${localAbbyConfig.projectId}`, {
+      const response = await fetch(`${url}/api/v1/config/${localAbbyConfig.projectId}`, {
         method: "PUT",
         headers: {
           Authorization: "Bearer " + apiKey,

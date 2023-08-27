@@ -1,11 +1,14 @@
 {
   "name": "@tryabby/cli",
-  "version": "0.1.0",
+  "version": "0.2.2",
   "private": false,
   "main": "./dist/index.js",
   "bin": {
     "abby": "./dist/index.js"
   },
+  "files": [
+    "dist"
+  ],
   "scripts": {
     "dev": "pnpm run build --watch",
     "start": "pnpm run build && ./dist/index.js",
