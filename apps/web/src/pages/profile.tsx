@@ -1,27 +1,25 @@
 import { CreateNextContextOptions } from "@trpc/server/adapters/next";
+import { Avatar } from "components/Avatar";
 import { DashboardButton } from "components/DashboardButton";
+import {
+  DashboardSection,
+  DashboardSectionSubtitle,
+  DashboardSectionTitle,
+} from "components/DashboardSection";
+import { IconButton } from "components/IconButton";
+import { Input } from "components/Input";
 import { Layout } from "components/Layout";
 import { FullPageLoadingSpinner } from "components/LoadingSpinner";
+import { Modal } from "components/Modal";
 import { ArrowLeft } from "lucide-react";
 import { GetServerSideProps } from "next";
 import { useRouter } from "next/router";
+import { useRef, useState } from "react";
+import { toast } from "react-hot-toast";
+import { BsX } from "react-icons/bs";
 import { getSSRTrpc } from "server/trpc/helpers";
 import { trpc } from "utils/trpc";
 import { NextPageWithLayout } from "./_app";
-import { Avatar } from "components/Avatar";
-import { Input } from "components/Input";
-import { z } from "zod";
-import { toast } from "react-hot-toast";
-import { useRef, useState } from "react";
-import { Modal } from "components/Modal";
-import { IconButton } from "components/IconButton";
-import { BsX } from "react-icons/bs";
-import { generateRandomString } from "utils/apiKey";
-import {
-  DashboardSection,
-  DashboardSectionTitle,
-  DashboardSectionSubtitle,
-} from "components/DashboardSection";
 
 const CreateApiKeyModal = ({
   isOpen,
@@ -34,10 +32,11 @@ const CreateApiKeyModal = ({
   name: string;
   apiKey: string;
 }) => {
+  const [isHovered, setIsHovered] = useState(false);
   return (
     <Modal
       title={"Your API Key"}
-      confirmText="Copy"
+      confirmText="Copy and Close"
       cancelText="Close"
       onConfirm={() => {
         navigator.clipboard.writeText(apiKey);
@@ -55,6 +54,9 @@ const CreateApiKeyModal = ({
       <Input
         value={apiKey}
         readOnly
+        type={isHovered ? "text" : "password"}
+        onMouseEnter={() => setIsHovered(true)}
+        onMouseLeave={() => setIsHovered(false)}
         className="py-3 focus:ring-green-400 dark:focus:ring-green-500"
         onClick={() => {
           navigator.clipboard.writeText(apiKey).then(() => {
@@ -62,7 +64,9 @@ const CreateApiKeyModal = ({
           });
         }}
       />
-      <div className="pt-2 text-sm text-gray-500">Expires in 365 Days</div>
+      <div className="pt-2 text-sm text-gray-500">
+        Expires in 365 Days | Hover to reveal
+      </div>
     </Modal>
   );
 };
