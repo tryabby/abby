@@ -22,6 +22,8 @@ import { UserInfo } from "./UserInfo";
 import { CreateProjectModal } from "./CreateProjectModal";
 import { useSession } from "next-auth/react";
 import { twMerge } from "tailwind-merge";
+import { Book, ExternalLink } from "lucide-react";
+import { DOCS_URL } from "@tryabby/core";
 
 const navItemClass = (isActive: boolean) =>
   clsx(
@@ -149,6 +151,14 @@ const SideBar =
             </Link>
           </nav>
           <div className="w-full">
+            <Link
+              href={DOCS_URL}
+              onClick={closeSidebar}
+              className={twMerge(navItemClass(false), "mb-3")}
+            >
+              <Book className="mr-2" />
+              Documentation <ExternalLink className="-mt-1 ml-2 w-3" />
+            </Link>
             <UserInfo />
           </div>
         </aside>
