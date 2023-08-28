@@ -59,7 +59,9 @@ const Weights = ({ options }: { options: ClientOption[] }) => {
     );
   };
 
-  const weightsSum = weights.reduce((sum, curr) => (sum += curr), 0);
+  const weightsSum = Math.round(
+    weights.reduce((sum, curr) => (sum += curr), 0)
+  );
 
   const onSave = async () => {
     try {

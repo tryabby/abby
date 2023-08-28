@@ -85,9 +85,11 @@ export function CreateTestSection({
     );
   };
 
-  const weightSum = variants
-    .map(({ weight }) => weight)
-    .reduce((sum, weight) => (sum += weight), 0);
+  const weightSum = Math.round(
+    variants
+      .map(({ weight }) => weight)
+      .reduce((sum, weight) => (sum += weight), 0)
+  );
 
   const handleWeightChange = (
     index: number,
