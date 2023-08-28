@@ -76,9 +76,7 @@ export async function startServerAndGetToken(host?: string) {
         server.server?.close();
         resolve(token);
       })
-      .listen(freePort, () => {
-        console.log("Listening on port", freePort);
-      });
+      .listen(freePort);
 
     process.on("SIGTERM", () => {
       server.server?.closeAllConnections();
