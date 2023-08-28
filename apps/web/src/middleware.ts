@@ -23,7 +23,7 @@ export default withAuth(
         const pathName = req.nextUrl.pathname;
 
         // basic auth check for /profile
-        if (pathName === "/profile") return token !== null;
+        if (pathName.startsWith("/profile")) return token !== null;
 
         if (!pathName.startsWith("/projects")) return true;
         const projectId = req.nextUrl.pathname.split("/")[2];
@@ -41,5 +41,10 @@ export default withAuth(
 ) as NextMiddleware;
 
 export const config = {
-  matcher: ["/projects/:path*", "/marketing", "/profile"],
+  matcher: [
+    "/projects/:path*",
+    "/marketing",
+    "/profile",
+    "/profile/generate-token",
+  ],
 };
