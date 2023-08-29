@@ -56,7 +56,8 @@ export function CodeSnippetModalButton() {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger
-        onClick={() => {
+        // all other events are prevented by radix :(
+        onPointerDown={() => {
           trackEvent("Dashboard Code Clicked");
         }}
       >

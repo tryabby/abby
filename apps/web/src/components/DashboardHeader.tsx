@@ -24,12 +24,16 @@ export function DashboardHeader({ title }: Props) {
       <h1 className="text-3xl font-bold">{title}</h1>
       <div className="flex space-x-2">
         <DropdownMenu>
-          <DropdownMenuTrigger
-            onClick={() => {
-              trackEvent("Dashboard Help Clicked");
-            }}
-          >
-            <IconButton as="div" icon={<HelpCircle />} title="" />
+          <DropdownMenuTrigger>
+            <IconButton
+              as="div"
+              // all other events are prevented by radix :(
+              onPointerDown={() => {
+                trackEvent("Dashboard Help Clicked");
+              }}
+              icon={<HelpCircle />}
+              title=""
+            />
           </DropdownMenuTrigger>
           <DropdownMenuContent side="bottom" align="end">
             <DropdownMenuItem disabled>Need help?</DropdownMenuItem>
