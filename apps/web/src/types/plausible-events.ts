@@ -24,4 +24,6 @@ export type PlausibleEvents = {
     type: "Flag Updated" | "Variant Selected";
   };
   "API Project Data Retrieved": never;
+  "Dashboard Help Clicked": never;
+  "Dashboard Code Clicked": never;
 };

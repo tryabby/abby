@@ -16,7 +16,7 @@ importers:
         version: link:packages/eslint-config-custom
       prettier:
         specifier: latest
-        version: 3.0.1
+        version: 3.0.2
       turbo:
         specifier: latest
         version: 1.10.12
@@ -359,8 +359,8 @@ importers:
         specifier: 4.22.1
         version: 4.22.1(next@13.4.8)(nodemailer@6.9.3)(react-dom@18.2.0)(react@18.2.0)
       next-plausible:
-        specifier: ^3.10.1
-        version: 3.10.1(next@13.4.8)(react-dom@18.2.0)(react@18.2.0)
+        specifier: ^3.11.1
+        version: 3.11.1(next@13.4.8)(react-dom@18.2.0)(react@18.2.0)
       next-seo:
         specifier: ^5.15.0
         version: 5.15.0(next@13.4.8)(react-dom@18.2.0)(react@18.2.0)
@@ -776,7 +776,7 @@ importers:
         version: 8.8.0(eslint@7.32.0)
       eslint-config-turbo:
         specifier: latest
-        version: 1.10.12(eslint@7.32.0)
+        version: 1.10.9(eslint@7.32.0)
       eslint-plugin-react:
         specifier: 7.31.8
         version: 7.31.8(eslint@7.32.0)
@@ -13209,13 +13209,13 @@ packages:
       eslint: 7.32.0
     dev: false
 
-  /eslint-config-turbo@1.10.12(eslint@7.32.0):
-    resolution: {integrity: sha512-z3jfh+D7UGYlzMWGh+Kqz++hf8LOE96q3o5R8X4HTjmxaBWlLAWG+0Ounr38h+JLR2TJno0hU9zfzoPNkR9BdA==}
+  /eslint-config-turbo@1.10.9(eslint@7.32.0):
+    resolution: {integrity: sha512-YA5QWxWte/NiRJL0/Cv7aATfIvS5sUAuyD6ZuyTZEzwyU7E6FUXGo44amjf9INkyj96HrJ2nYWoFkCRx3vs6Ag==}
     peerDependencies:
       eslint: '>6.6.0'
     dependencies:
       eslint: 7.32.0
-      eslint-plugin-turbo: 1.10.12(eslint@7.32.0)
+      eslint-plugin-turbo: 1.10.9(eslint@7.32.0)
     dev: false
 
   /eslint-import-resolver-node@0.3.7:
@@ -13649,8 +13649,8 @@ packages:
       string.prototype.matchall: 4.0.8
     dev: true
 
-  /eslint-plugin-turbo@1.10.12(eslint@7.32.0):
-    resolution: {integrity: sha512-uNbdj+ohZaYo4tFJ6dStRXu2FZigwulR1b3URPXe0Q8YaE7thuekKNP+54CHtZPH9Zey9dmDx5btAQl9mfzGOw==}
+  /eslint-plugin-turbo@1.10.9(eslint@7.32.0):
+    resolution: {integrity: sha512-o8Nga4WFMvzF0lo3d3UyjGli2JOUn/4SRtRdvcf4EA9/TPotU/NUHqO16Cp0SHZJG/tGYIy5LY1O/EO7Mxbd1A==}
     peerDependencies:
       eslint: '>6.6.0'
     dependencies:
@@ -18000,8 +18000,8 @@ packages:
       - supports-color
     dev: false
 
-  /next-plausible@3.10.1(next@13.4.8)(react-dom@18.2.0)(react@18.2.0):
-    resolution: {integrity: sha512-3GyBQH+sUfovemgwvodx84djMlF/o+FoSPtCS2QVFNiJtwGFuhs6CQckMIv+VWdz9zERwZB2nJLJLmgV6aT/aA==}
+  /next-plausible@3.11.1(next@13.4.8)(react-dom@18.2.0)(react@18.2.0):
+    resolution: {integrity: sha512-Gd+QU+XflVTx65yJ2cNZyrOQLrpz3uKjGLEG4ls+CIVqK3yjsVGCMsEWJcvv1LAeVfHUQtCyp1xyAltLn5Odcg==}
     peerDependencies:
       next: ^11.1.0 || ^12.0.0 || ^13.0.0
       react: ^16.8.0 || ^17.0.0 || ^18.0.0
@@ -19429,8 +19429,8 @@ packages:
     hasBin: true
     dev: false
 
-  /prettier@3.0.1:
-    resolution: {integrity: sha512-fcOWSnnpCrovBsmFZIGIy9UqK2FaI7Hqax+DIO0A9UxeVoY4iweyaFjS5TavZN97Hfehph0nhsZnjlVKzEQSrQ==}
+  /prettier@3.0.2:
+    resolution: {integrity: sha512-o2YR9qtniXvwEZlOKbveKfDQVyqxbEIWn48Z8m3ZJjBjcCmUy3xZGIv+7AkaeuaTr6yPXJjwv07ZWlsWbEy1rQ==}
     engines: {node: '>=14'}
     hasBin: true
     dev: true
