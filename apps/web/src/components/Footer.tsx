@@ -4,6 +4,7 @@ import Link from "next/link";
 import { DOCS_URL } from "@tryabby/core";
 
 const GITHUB_URL = "https://github.com/tryabby/abby";
+export const DISCORD_INVITE_URL = "https://discord.gg/nk7wKf7Pv2";
 
 export function Footer() {
   return (
@@ -29,7 +30,7 @@ export function Footer() {
             <Link href={`/tips-and-insights`}>Tips & Insights</Link>
             <Link href={DOCS_URL}>Documentation</Link>
             <Link href={GITHUB_URL}>Github</Link>
-            <Link href="https://discord.gg/nk7wKf7Pv2">Discord</Link>
+            <Link href={DISCORD_INVITE_URL}>Discord</Link>
           </div>
           <div className="flex flex-col gap-y-4 md:gap-0">
             <h1 className="mb-2 text-2xl font-bold md:mb-3">Legal</h1>
@@ -46,7 +47,7 @@ export function Footer() {
             <a href={GITHUB_URL}>
               <Github />
             </a>
-            <a href="https://discord.gg/nk7wKf7Pv2">
+            <a href={DISCORD_INVITE_URL}>
               <BsDiscord size={24} />
             </a>
           </div>

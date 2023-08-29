@@ -13,6 +13,7 @@ import {
 import { Code, Copy } from "lucide-react";
 import { useProjectId } from "lib/hooks/useProjectId";
 import { toast } from "react-hot-toast";
+import { useTracking } from "lib/tracking";
 
 function CodeSnippetModal({
   isOpen,
@@ -40,6 +41,7 @@ function CodeSnippetModal({
 }
 
 export function CodeSnippetModalButton() {
+  const trackEvent = useTracking();
   const projectId = useProjectId();
   const [isOpen, setIsOpen] = useState(false);
 
@@ -53,7 +55,11 @@ export function CodeSnippetModalButton() {
 
   return (
     <DropdownMenu>
-      <DropdownMenuTrigger>
+      <DropdownMenuTrigger
+        onClick={() => {
+          trackEvent("Dashboard Code Clicked");
+        }}
+      >
         <IconButton as="div" icon={<BsCodeSlash />} title="" />
       </DropdownMenuTrigger>
       <DropdownMenuContent side="bottom" align="end">
