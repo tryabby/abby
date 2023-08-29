@@ -11,24 +11,33 @@ export abstract class PlausibleService {
   private static readonly BACKEND_USER_AGENT =
     "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/96.0.4664.110 Safari/537.36 RuxitSynthetic/1.0 v5219369128283793614 t7034606369950548413 athe94ac249 altpriv cvcv=2 smf=0";
 
-  static async trackPlausibleGoal(
-    eventName: keyof PlausibleEvents,
+  static async trackPlausibleGoal<EventName extends keyof PlausibleEvents>(
+    eventName: EventName,
+    props?: PlausibleEvents[EventName],
     url?: string
   ) {
     if (process.env.NODE_ENV !== "production" || !this.SITE_DOMAIN) {
       return;
     }
 
-    return fetch(`${this.PLAUSIBLE_API_URL}/event`, {
+    const res = await fetch(`${this.PLAUSIBLE_API_URL}/event`, {
       method: "POST",
       headers: {
         "User-Agent": this.BACKEND_USER_AGENT,
+        "Content-Type": "application/json",
       },
       body: JSON.stringify({
         name: eventName,
         domain: this.SITE_DOMAIN,
         url: url ?? `${this.SITE_DOMAIN}/api`,
+        props,
       }),
     });
+
+    if (!res.ok) {
+      console.error(
+        `Error while sending tracking data to Plausible: ${res.status} ${res.statusText}`
+      );
+    }
   }
 }

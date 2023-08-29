@@ -84,6 +84,7 @@ export default async function getWeightsHandler(
 
     PlausibleService.trackPlausibleGoal(
       "API Project Data Retrieved",
+      { projectId },
       req.url
     ).catch((e) =>
       console.error("Error while sending tracking data to Plausible: ", e)
