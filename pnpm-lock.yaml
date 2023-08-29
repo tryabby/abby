@@ -359,7 +359,7 @@ importers:
         specifier: 4.22.1
         version: 4.22.1(next@13.4.8)(nodemailer@6.9.3)(react-dom@18.2.0)(react@18.2.0)
       next-plausible:
-        specifier: ^3.11.1
+        specifier: ^3.10.1
         version: 3.11.1(next@13.4.8)(react-dom@18.2.0)(react@18.2.0)
       next-seo:
         specifier: ^5.15.0
