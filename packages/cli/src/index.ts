@@ -8,7 +8,8 @@ import { ABBY_BASE_URL, getTokenFilePath } from "./consts";
 import { pullAndMerge } from "./pull";
 import { push } from "./push";
 import { ConfigOption, HostOption } from "./sharedOptions";
-import { multiLineLog } from "./util";
+import { multiLineLog, startServerAndGetToken } from "./util";
+import { initAbbyConfig } from "./init";
 
 const program = new Command();
 
@@ -18,15 +19,23 @@ program.name("abby-cli").description("CLI Tool for Abby").version("0.0.1");
 
 program
   .command("login")
+  .addOption(HostOption)
   .option("-t, --token <token>", "token")
-  .action(async ({ token }) => {
-    if (typeof token === "string") {
-      await writeTokenFile(token);
+  .action(async ({ token, host }: { token?: string; host?: string }) => {
+    let tokenToUse = token;
+
+    // the token parameter is optional, if not given we start a login flow
+    if (typeof token !== "string") {
+      tokenToUse = await startServerAndGetToken(host);
+    }
+
+    if (typeof tokenToUse === "string") {
+      await writeTokenFile(tokenToUse);
       console.log(chalk.green(`Token successfully written to ${getTokenFilePath()}`));
     } else {
       console.log(
         chalk.red(`You need to provide a token to log in.`),
-        chalk.green(`\nYou can get one at ${ABBY_BASE_URL}profile`)
+        chalk.green(`\nYou can get one at ${ABBY_BASE_URL}/profile`)
       );
     }
   });
@@ -100,6 +109,27 @@ program
           chalk.red(`Invalid tests: ${invalidTests.join(", ")}}`)
         );
       }
+    } catch (e) {
+      console.log(
+        chalk.red(
+          e instanceof Error
+            ? e.message
+            : "Something went wrong. Please check your internet connection"
+        )
+      );
+      return;
+    }
+  });
+
+program
+  .command("init")
+  .description("create your local config file")
+  .addOption(ConfigOption)
+  .action(async (options: { config?: string }) => {
+    try {
+      const configPath = options.config ?? "./abby.config.ts";
+      await initAbbyConfig({ path: configPath });
+      console.log(chalk.green(`Config file created successfully at ${configPath}`));
     } catch (e) {
       console.log(
         chalk.red(
