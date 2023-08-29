@@ -19,7 +19,7 @@ import { toast } from "react-hot-toast";
 import { BsX } from "react-icons/bs";
 import { getSSRTrpc } from "server/trpc/helpers";
 import { trpc } from "utils/trpc";
-import { NextPageWithLayout } from "./_app";
+import { NextPageWithLayout } from "../_app";
 
 const CreateApiKeyModal = ({
   isOpen,
