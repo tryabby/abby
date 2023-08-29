@@ -7,6 +7,7 @@ import { trackPlanOverage } from "lib/logsnag";
 import { RequestCache } from "server/services/RequestCache";
 import { transformFlagValue } from "lib/flags";
 import { LegacyAbbyDataResponse } from "@tryabby/core";
+import { PlausibleService } from "server/services/PlausibleService";
 
 const incomingQuerySchema = z.object({
   projectId: z.string(),
@@ -82,6 +83,14 @@ export default async function getWeightsHandler(
     }
 
     await RequestCache.increment(projectId);
+
+    PlausibleService.trackPlausibleGoal(
+      "API Project Data Retrieved",
+      { projectId: event.projectId },
+      req.url
+    ).catch((e) =>
+      console.error("Error while sending tracking data to Plausible: ", e)
+    );
 
     return;
   } catch (e) {
