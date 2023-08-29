@@ -9,6 +9,7 @@ import { pullAndMerge } from "./pull";
 import { push } from "./push";
 import { ConfigOption, HostOption } from "./sharedOptions";
 import { multiLineLog, startServerAndGetToken } from "./util";
+import { initAbbyConfig } from "./init";
 
 const program = new Command();
 
@@ -108,6 +109,27 @@ program
           chalk.red(`Invalid tests: ${invalidTests.join(", ")}}`)
         );
       }
+    } catch (e) {
+      console.log(
+        chalk.red(
+          e instanceof Error
+            ? e.message
+            : "Something went wrong. Please check your internet connection"
+        )
+      );
+      return;
+    }
+  });
+
+program
+  .command("init")
+  .description("create your local config file")
+  .addOption(ConfigOption)
+  .action(async (options: { config?: string }) => {
+    try {
+      const configPath = options.config ?? "./abby.config.ts";
+      await initAbbyConfig({ path: configPath });
+      console.log(chalk.green(`Config file created successfully at ${configPath}`));
     } catch (e) {
       console.log(
         chalk.red(

@@ -29,12 +29,14 @@ export const abbyConfigSchema = z.object({
   apiUrl: z.string().optional(),
   currentEnvironment: z.string().optional(),
   environments: z.array(z.string()),
-  tests: z.record(
-    z.object({
-      variants: z.array(z.string()),
-    })
-  ),
-  flags: z.record(flagValueStringSchema),
+  tests: z
+    .record(
+      z.object({
+        variants: z.array(z.string()),
+      })
+    )
+    .optional(),
+  flags: z.record(flagValueStringSchema).optional(),
   settings: z
     .object({
       flags: z
