@@ -66,6 +66,8 @@ export default async function incomingDataHandler(
       }
     }
 
+    const duration = performance.now() - now;
+
     res.status(200).end();
 
     // TODO: add those to a queue and process them in a background job as they are not critical
@@ -80,8 +82,8 @@ export default async function incomingDataHandler(
     RequestService.storeRequest({
       projectId: event.projectId,
       type: "TRACK_VIEW",
-      durationInMs: performance.now() - now,
-    }).then((e) => {
+      durationInMs: duration,
+    }).catch((e) => {
       console.error("Unable to store request", e);
     });
   } catch (err) {

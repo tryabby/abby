@@ -77,6 +77,8 @@ export default async function getWeightsHandler(
       }),
     } satisfies AbbyDataResponse;
 
+    const duration = performance.now() - now;
+
     res.json(response);
 
     if (is80PercentOfLimit) {
@@ -88,8 +90,8 @@ export default async function getWeightsHandler(
     RequestService.storeRequest({
       projectId,
       type: "GET_CONFIG",
-      durationInMs: performance.now() - now,
-    }).then((e) => {
+      durationInMs: duration,
+    }).catch((e) => {
       console.error("Unable to store request", e);
     });
 
