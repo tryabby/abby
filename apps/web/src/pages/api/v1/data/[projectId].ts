@@ -8,6 +8,7 @@ import { trackPlanOverage } from "lib/logsnag";
 import { RequestCache } from "server/services/RequestCache";
 import { transformFlagValue } from "lib/flags";
 import { PlausibleService } from "server/services/PlausibleService";
+import { RequestService } from "server/services/RequestService";
 
 const incomingQuerySchema = z.object({
   projectId: z.string(),
@@ -18,6 +19,8 @@ export default async function getWeightsHandler(
   req: NextApiRequest,
   res: NextApiResponse
 ) {
+  const now = performance.now();
+
   await NextCors(req, res, {
     methods: ["GET"],
     origin: "*",
@@ -82,13 +85,13 @@ export default async function getWeightsHandler(
 
     await RequestCache.increment(projectId);
 
-    PlausibleService.trackPlausibleGoal(
-      "API Project Data Retrieved",
-      { projectId },
-      req.url
-    ).catch((e) =>
-      console.error("Error while sending tracking data to Plausible: ", e)
-    );
+    RequestService.storeRequest({
+      projectId,
+      type: "GET_CONFIG",
+      durationInMs: performance.now() - now,
+    }).then((e) => {
+      console.error("Unable to store request", e);
+    });
 
     return;
   } catch (e) {

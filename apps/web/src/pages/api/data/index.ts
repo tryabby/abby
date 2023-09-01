@@ -7,11 +7,13 @@ import isBot from "isbot";
 import { Ratelimit } from "@upstash/ratelimit"; // for deno: see above
 import { Redis } from "@upstash/redis";
 import { RequestCache } from "server/services/RequestCache";
+import { RequestService } from "server/services/RequestService";
 
 export default async function incomingDataHandler(
   req: NextApiRequest,
   res: NextApiResponse
 ) {
+  const now = performance.now();
   await NextCors(req, res, {
     methods: ["POST"],
     origin: "*",
@@ -75,6 +77,13 @@ export default async function incomingDataHandler(
     }
 
     await RequestCache.increment(event.projectId);
+    RequestService.storeRequest({
+      projectId: event.projectId,
+      type: "TRACK_VIEW",
+      durationInMs: performance.now() - now,
+    }).then((e) => {
+      console.error("Unable to store request", e);
+    });
   } catch (err) {
     console.error(err);
     res.status(500).end();

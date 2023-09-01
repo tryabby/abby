@@ -3,7 +3,7 @@ import { NextApiRequest, NextApiResponse } from "next";
 import NextCors from "nextjs-cors";
 import { prisma } from "server/db/client";
 import * as ConfigService from "server/services/ConfigService";
-import { hashApiKey } from "utils/apiKey";
+import { hashString } from "utils/apiKey";
 import { z } from "zod";
 
 const incomingQuerySchema = z.object({
@@ -36,7 +36,7 @@ export default async function handler(
     return;
   }
 
-  const hashedApiKey = hashApiKey(apiKey);
+  const hashedApiKey = hashString(apiKey);
 
   const apiKeyEntry = await prisma.apiKey.findUnique({
     where: {

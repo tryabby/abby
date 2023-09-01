@@ -1,16 +1,14 @@
 import { createHmac, randomBytes } from "crypto";
+import { env } from "env/server.mjs";
 
 export function generateRandomString(length = 32): string {
   const apiKey = randomBytes(length).toString("hex");
   return apiKey;
 }
 
-export function hashApiKey(apiKey: string): string {
-  const hmac = createHmac(
-    "sha256",
-    "dieserkeyistsupergeheimbittenichtweitergebendanke"
-  );
-  hmac.update(apiKey);
+export function hashString(data: string): string {
+  const hmac = createHmac("sha256", env.HASHING_SECRET);
+  hmac.update(data);
   const hashKey = hmac.digest("hex");
   return hashKey;
 }
