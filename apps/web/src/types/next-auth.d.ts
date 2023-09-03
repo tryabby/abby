@@ -5,6 +5,7 @@ type UserSession = {
   image: string;
   projectIds: string[];
   lastOpenProjectId: string | undefined;
+  hasCompletedOnboarding: boolean;
 };
 
 declare module "next-auth" {

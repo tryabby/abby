@@ -7,6 +7,16 @@ export default withAuth(
     const projectId = req.nextUrl.searchParams.get("projectId");
     const pathName = req.nextUrl.pathname;
 
+    // redirect to /welcome if user has not completed onboarding
+    if (
+      pathName.startsWith("/projects") &&
+      !req.nextauth.token?.user.hasCompletedOnboarding
+    ) {
+      const newUrl = new URL(req.nextUrl);
+      newUrl.pathname = "/welcome";
+      return NextResponse.redirect(newUrl);
+    }
+
     if (pathName === "/projects" && !projectId) {
       const newUrl = new URL(req.nextUrl);
       const tokenUser = req.nextauth.token?.user;
@@ -21,6 +31,9 @@ export default withAuth(
     callbacks: {
       authorized: ({ token, req }) => {
         const pathName = req.nextUrl.pathname;
+
+        // onboarding needs authentification
+        if (pathName === "/welcome") return token !== null;
 
         // basic auth check for /profile
         if (pathName.startsWith("/profile")) return token !== null;
@@ -46,5 +59,6 @@ export const config = {
     "/marketing",
     "/profile",
     "/profile/generate-token",
+    "/welcome",
   ],
 };

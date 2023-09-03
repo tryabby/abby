@@ -93,13 +93,15 @@
     "react-hook-form": "^7.43.9",
     "react-hot-toast": "^2.4.0",
     "react-icons": "^4.8.0",
+    "react-use-wizard": "^2.2.3",
     "shiki": "^0.11.1",
     "stripe": "^11.18.0",
     "superjson": "1.9.1",
     "tailwind-merge": "^1.12.0",
     "tailwindcss-animate": "^1.0.5",
     "ts-pattern": "^4.2.2",
-    "zod": "^3.21.4"
+    "zod": "^3.21.4",
+    "zustand": "^4.4.1"
   },
   "devDependencies": {
     "@next/bundle-analyzer": "13.3.4",

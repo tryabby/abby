@@ -69,4 +69,30 @@ export const userRouter = router({
         },
       });
     }),
+  onboardUser: protectedProcedure
+    .input(
+      z.object({
+        name: z.string().min(1),
+        profession: z.string(),
+        technologies: z.array(z.string()),
+        experienceLevelFlags: z.number().min(1).max(5),
+        experienceLevelTests: z.number().min(1).max(5),
+      })
+    )
+    .mutation(async ({ ctx, input }) => {
+      const userId = ctx.session.user.id;
+      await ctx.prisma.user.update({
+        where: {
+          id: userId,
+        },
+        data: {
+          name: input.name,
+          profession: input.profession,
+          technologies: input.technologies,
+          experienceLevelFlags: input.experienceLevelFlags,
+          experienceLevelTests: input.experienceLevelTests,
+          hasCompletedOnboarding: true,
+        },
+      });
+    }),
 });
