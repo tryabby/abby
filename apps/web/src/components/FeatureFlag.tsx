@@ -14,6 +14,8 @@ import { LoadingSpinner } from "./LoadingSpinner";
 import { Modal } from "./Modal";
 import { Edit } from "lucide-react";
 import { ChangeFlagForm, FlagFormValues } from "./AddFeatureFlagModal";
+import { Switch } from "./ui/switch";
+import { cn } from "lib/utils";
 
 dayjs.extend(relativeTime);
 
@@ -127,7 +129,7 @@ const ConfirmUpdateModal = ({
 
   const { mutate: updateFlag } = trpc.flags.updateFlag.useMutation({
     onSuccess(_, { value, flagValueId }) {
-      trpcContext.flags.getFlags.setData({ projectId }, (prev) => {
+      trpcContext.flags.getFlags.setData({ projectId, types: [] }, (prev) => {
         if (!prev) return prev;
 
         const flagToUpdate = prev.flags.find((flag) =>
@@ -148,14 +150,14 @@ const ConfirmUpdateModal = ({
       onClose();
     },
     onError() {
-      toast.error("Failed to toggle flag");
+      toast.error(`Failed to update ${type === "BOOLEAN" ? "flag" : "value"}`);
     },
   });
 
   return (
     <Modal
-      title="Update Flag"
-      confirmText={`Update Flag`}
+      title={`Update ${type === "BOOLEAN" ? "flag" : "value"}`}
+      confirmText={`Update ${type === "BOOLEAN" ? "flag" : "value"}`}
       onConfirm={() => updateFlag({ ...state, flagValueId })}
       isOpen={isOpen}
       onClose={onClose}
@@ -171,6 +173,7 @@ const ConfirmUpdateModal = ({
         onChange={(newState) => setState(newState)}
         errors={{}}
         canChangeType={false}
+        isRemoteConfig={type !== "BOOLEAN"}
       />
       <h3 className="mt-8 text-sm font-semibold">Description:</h3>
       {!description ? (
@@ -187,6 +190,7 @@ type Props = {
   projectId: string;
   environmentName: string;
   flagValueId: string;
+  type: FeatureFlagType;
 };
 
 export function FeatureFlag({
@@ -194,6 +198,7 @@ export function FeatureFlag({
   projectId,
   environmentName,
   flagValueId,
+  type,
 }: Props) {
   const [isUpdateConfirmationModalOpen, setIsUpdateConfirmationModalOpen] =
     useState(false);
@@ -211,7 +216,12 @@ export function FeatureFlag({
           <p>{environmentName}</p>
           <code
             title={currentFlagValue}
-            className="max-w-[60px] overflow-hidden text-ellipsis whitespace-nowrap rounded-md bg-gray-600 p-1"
+            className={cn(
+              "max-w-[60px] overflow-hidden text-ellipsis whitespace-nowrap rounded-md bg-gray-600 p-1",
+              type === "BOOLEAN" && currentFlagValue === "true"
+                ? "text-green-500"
+                : "text-red-500"
+            )}
           >
             {typeof currentFlagValue === "string" &&
             currentFlagValue.trim() === ""
