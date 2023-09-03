@@ -73,6 +73,13 @@ model User {
   featureFlagHistory FeatureFlagHistory[]
   CouponCodes        CouponCodes[]
   apiKeys            ApiKey[]
+
+  // Metadata
+  hasCompletedOnboarding Boolean @default(false)
+  profession             String?
+  technologies           Json? // gonna be an array of strings
+  experienceLevelFlags   Int?
+  experienceLevelTests   Int?
 }
 
 model VerificationToken {
