@@ -1,5 +1,11 @@
 # @tryabby/core
 
+## 4.3.0
+
+### Minor Changes
+
+- add fallbackValue option
+
 ## 4.2.0
 
 ### Minor Changes
