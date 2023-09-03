@@ -10,7 +10,10 @@ export default withAuth(
     // redirect to /welcome if user has not completed onboarding
     if (
       pathName.startsWith("/projects") &&
-      !req.nextauth.token?.user.hasCompletedOnboarding
+      req.nextauth.token?.user &&
+      // required check since old sessions don't have this field
+      "hasCompletedOnboarding" in req.nextauth.token.user &&
+      req.nextauth.token.user.hasCompletedOnboarding === false
     ) {
       const newUrl = new URL(req.nextUrl);
       newUrl.pathname = "/welcome";
