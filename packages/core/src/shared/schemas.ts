@@ -43,6 +43,7 @@ export const abbyConfigSchema = z.object({
         .object({
           defaultValues: z.record(z.string(), flagValue).optional(),
           devOverrides: z.record(z.string(), flagValue).optional(),
+          fallbackValues: z.record(z.string(), flagValue).optional(),
         })
         .optional(),
     })

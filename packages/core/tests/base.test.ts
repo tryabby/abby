@@ -88,6 +88,33 @@ describe("Abby", () => {
     expect(abby.getFeatureFlag("flag1")).toBe(true);
   });
 
+  it("uses fallbacks", () => {
+    const abby = new Abby({
+      environments: [],
+      projectId: "",
+      flags: {
+        flag1: "String",
+        flag2: "String",
+      },
+      settings: {
+        flags: {
+          fallbackValues: {
+            flag1: "fallback1",
+          },
+          defaultValues: {
+            String: "default",
+          },
+        },
+      },
+    });
+
+    abby.init({ flags: [], tests: [] });
+
+    expect(abby.getFeatureFlag("flag1")).toBe("fallback1");
+
+    expect(abby.getFeatureFlag("flag2")).toBe("default");
+  });
+
   it("updates a local variant in dev mode", () => {
     process.env.NODE_ENV = "development";
 

@@ -32,6 +32,9 @@ type Settings<
     devOverrides?: {
       [K in keyof Flags]?: FlagValueStringToType<Flags[K]>;
     };
+    fallbackValues?: {
+      [K in keyof Flags]?: FlagValueStringToType<Flags[K]>;
+    };
   };
 };
 
@@ -252,10 +255,19 @@ export class Abby<
 
     const flagType = this._cfg.flags?.[key];
     const defaultValue = this._cfg.settings?.flags?.defaultValues?.[flagType!];
+    const fallbackValue = this._cfg.settings?.flags?.fallbackValues?.[key];
 
-    // return the defaultValue if exists
-    if (!storedValue && defaultValue != null) {
-      return defaultValue;
+    // if we dont have a stored value
+    // we first check if we have a specified fallback value for this flag
+    // otherwise we check if we have a specified default value for this flag type
+    // otherwise we return undefined
+    if (!storedValue) {
+      if (fallbackValue != null) {
+        return fallbackValue;
+      }
+      if (defaultValue != null) {
+        return defaultValue;
+      }
     }
 
     this.log(`getFeatureFlag() => storedValue:`, storedValue);
