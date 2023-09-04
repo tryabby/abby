@@ -25,7 +25,6 @@ export type ABConfig<T extends string = string> = {
 
 type Settings<
   FlagName extends string,
-  Flags extends FlagName[] = FlagName[],
   RemoteConfigName extends string = string,
   RemoteConfig extends Record<RemoteConfigName, RemoteConfigValueString> = Record<
     RemoteConfigName,
@@ -35,7 +34,7 @@ type Settings<
   flags?: {
     defaultValue?: boolean;
     devOverrides?: {
-      [K in Flags[number]]?: boolean;
+      [K in FlagName]?: boolean;
     };
   };
   remoteConfig?: {
@@ -72,7 +71,6 @@ interface PersistentStorage {
 export type AbbyConfig<
   FlagName extends string = string,
   Tests extends Record<string, ABConfig> = Record<string, ABConfig>,
-  Flags extends FlagName[] = FlagName[],
   Environments extends Array<string> = Array<string>,
   RemoteConfigName extends string = string,
   RemoteConfig extends Record<RemoteConfigName, RemoteConfigValueString> = Record<
@@ -85,19 +83,18 @@ export type AbbyConfig<
   currentEnvironment?: Environments[number];
   environments: Environments;
   tests?: Tests;
-  flags?: Flags;
-  remoteConfig: RemoteConfig;
-  settings?: Settings<F.NoInfer<FlagName>, Flags>;
+  flags?: FlagName[];
+  remoteConfig?: RemoteConfig;
+  settings?: Settings<F.NoInfer<FlagName>>;
   debug?: boolean;
 };
 
 export class Abby<
   FlagName extends string,
   TestName extends string,
-  RemoteConfigName extends string,
   Tests extends Record<string, ABConfig>,
-  Flags extends FlagName[],
   RemoteConfig extends Record<RemoteConfigName, RemoteConfigValueString>,
+  RemoteConfigName extends Extract<keyof RemoteConfig, string>,
   Environments extends Array<string> = Array<string>,
 > {
   private log = (...args: any[]) =>
@@ -111,7 +108,7 @@ export class Abby<
 
   private listeners = new Set<(newData: LocalData<FlagName, TestName>) => void>();
 
-  private _cfg: AbbyConfig<FlagName, Tests, Flags>;
+  private _cfg: AbbyConfig<FlagName, Tests>;
 
   private dataInitialized: Boolean = false;
 
@@ -120,12 +117,14 @@ export class Abby<
   private remoteConfigOverrides = new Map<string, RemoteConfigValue>();
 
   constructor(
-    private config: F.Narrow<AbbyConfig<FlagName, Tests, Flags, Environments>>,
+    private config: F.Narrow<
+      AbbyConfig<FlagName, Tests, Environments, RemoteConfigName, RemoteConfig>
+    >,
     private persistantTestStorage?: PersistentStorage,
     private persistantFlagStorage?: PersistentStorage,
     private persistentRemoteConfigStorage?: PersistentStorage
   ) {
-    this._cfg = config as AbbyConfig<FlagName, Tests, Flags, Environments>;
+    this._cfg = config as AbbyConfig<FlagName, Tests, Environments>;
     this.#data.flags = Object.values(this._cfg.flags ?? {}).reduce(
       (acc, flagName) => {
         acc[flagName as FlagName] = DEFAULT_FEATURE_FLAG_VALUE;
@@ -134,7 +133,7 @@ export class Abby<
       {} as Record<FlagName, boolean>
     );
     this.#data.tests = config.tests ?? ({} as any);
-    this.#data.remoteConfig = Object.keys(config).reduce(
+    this.#data.remoteConfig = Object.keys(config.remoteConfig ?? {}).reduce(
       (acc, remoteConfigName) => {
         acc[remoteConfigName as RemoteConfigName] = this.getDefaultRemoteConfigValue(
           remoteConfigName,
@@ -315,9 +314,9 @@ export class Abby<
    * @param key the name of the remote config
    * @returns the value of the remote config
    */
-  getRemoteConfig<T extends RemoteConfigName>(
+  getRemoteConfig<T extends RemoteConfigName, Curr extends RemoteConfig[T] = RemoteConfig[T]>(
     key: T
-  ): RemoteConfigValueStringToType<RemoteConfig[RemoteConfigName]> {
+  ): RemoteConfigValueStringToType<Curr> {
     this.log(`getRemoteConfig()`, key);
 
     const storedValue = this.#data.remoteConfig[key];
@@ -335,7 +334,7 @@ export class Abby<
     }
 
     const defaultValue =
-      this._cfg.settings?.remoteConfig?.defaultValues?.[this._cfg.remoteConfig[key]];
+      this._cfg.settings?.remoteConfig?.defaultValues?.[this._cfg.remoteConfig?.[key]!];
 
     if (storedValue === undefined && defaultValue !== undefined) {
       return defaultValue as RemoteConfigValueStringToType<RemoteConfig[RemoteConfigName]>;
@@ -491,7 +490,7 @@ export class Abby<
         this.flagOverrides.set(flagName, flagValue);
       }
 
-      if (cookieName.startsWith(ABBY_RC_STORAGE_PREFIX)) {
+      if (cookieName.startsWith(ABBY_RC_STORAGE_PREFIX) && this._cfg.remoteConfig) {
         const remoteConfigName = cookieName.replace(
           `${ABBY_RC_STORAGE_PREFIX}${this.config.projectId}_`,
           ""
