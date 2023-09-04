@@ -1,5 +1,5 @@
 import { Key } from "ts-toolbelt/out/Any/Key";
-import { ABConfig } from "..";
+import { ABConfig, RemoteConfigValue } from "..";
 
 export enum AbbyEventType {
   PING,
@@ -15,6 +15,7 @@ export type AbbyDataResponse = {
     name: string;
     value: boolean;
   }>;
+  remoteConfig: Array<{ name: string; value: RemoteConfigValue }>;
 };
 
 export type LegacyAbbyDataResponse = {

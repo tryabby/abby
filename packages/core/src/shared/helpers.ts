@@ -1,7 +1,5 @@
-import { F } from "ts-toolbelt";
-import { FlagValueStringToType } from "../../dist";
 import { ABBY_AB_STORAGE_PREFIX, ABBY_FF_STORAGE_PREFIX } from "./constants";
-import { FlagValue, FlagValueString } from "./schemas";
+import { RemoteConfigValue, RemoteConfigValueString } from "./schemas";
 
 export function getABStorageKey(projectId: string, testName: string): string {
   return `${ABBY_AB_STORAGE_PREFIX}${projectId}_${testName}`;
@@ -15,16 +13,14 @@ export function assertUnreachable(x: never): never {
   throw new Error("Reached unreachable code");
 }
 
-export function flagStringToType({
+export function remoteConfigStringToType({
   stringifiedValue,
-  flagType,
+  remoteConfigType,
 }: {
   stringifiedValue: string;
-  flagType: FlagValueString;
-}): FlagValue {
-  switch (flagType) {
-    case "Boolean":
-      return stringifiedValue === "true";
+  remoteConfigType: RemoteConfigValueString;
+}): RemoteConfigValue {
+  switch (remoteConfigType) {
     case "String":
       return stringifiedValue;
     case "Number":
@@ -32,14 +28,14 @@ export function flagStringToType({
     case "JSON":
       return JSON.parse(stringifiedValue);
     default:
-      assertUnreachable(flagType);
+      assertUnreachable(remoteConfigType);
   }
 }
 
-export function getDefaultFlagValue(flagType: FlagValueString): FlagValue {
-  switch (flagType) {
-    case "Boolean":
-      return false;
+export function getDefaultRemoteConfigValue(
+  remoteConfigType: RemoteConfigValueString
+): RemoteConfigValue {
+  switch (remoteConfigType) {
     case "String":
       return "";
     case "Number":
@@ -47,13 +43,12 @@ export function getDefaultFlagValue(flagType: FlagValueString): FlagValue {
     case "JSON":
       return {};
     default:
-      assertUnreachable(flagType);
+      assertUnreachable(remoteConfigType);
   }
 }
 
-export function stringifyFlagValue(value: FlagValue) {
+export function stringifyRemoteConfigValue(value: RemoteConfigValue) {
   switch (typeof value) {
-    case "boolean":
     case "number":
       return value.toString();
     case "string":
