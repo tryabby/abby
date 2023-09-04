@@ -205,7 +205,7 @@ export class Abby<
         },
         {} as Record<string, boolean>
       ),
-      remoteConfig: data.remoteConfig.reduce(
+      remoteConfig: (data.remoteConfig ?? []).reduce(
         (acc, { name, value }) => {
           acc[name] = value;
           return acc;
