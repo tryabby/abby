@@ -14,12 +14,13 @@ import { DevtoolsComponent } from "./devtools.component";
 import { AbbyFlag } from "./flag.directive";
 import { AbbyTest } from "./test.directive";
 import { GetAbbyVariantPipe } from "./get-variant.pipe";
+import { GetRemoteConfigPipe } from "./get-remote-config.pipe";
 
 export const ABBY_CONFIG_TOKEN = new InjectionToken<AbbyConfig>("AbbyConfig");
 
 @NgModule({
-  declarations: [AbbyFlag, AbbyTest, DevtoolsComponent, GetAbbyVariantPipe],
-  exports: [AbbyFlag, AbbyTest, DevtoolsComponent, GetAbbyVariantPipe],
+  declarations: [AbbyFlag, AbbyTest, DevtoolsComponent, GetAbbyVariantPipe, GetRemoteConfigPipe],
+  exports: [AbbyFlag, AbbyTest, DevtoolsComponent, GetAbbyVariantPipe, GetRemoteConfigPipe],
 })
 export class AbbyModule {
   static forRoot(config: AbbyConfig): ModuleWithProviders<AbbyModule> {

@@ -75,6 +75,8 @@ export default async function getWeightsHandler(
           value: transformFlagValue(flagValue.value, flagValue.flag.type),
         };
       }),
+      // TODO: fetch non-boolean feature flags for this field
+      remoteConfig: [],
     } satisfies AbbyDataResponse;
 
     const duration = performance.now() - now;
