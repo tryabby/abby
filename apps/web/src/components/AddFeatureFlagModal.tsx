@@ -189,7 +189,9 @@ export const AddFeatureFlagModal = ({
     <Modal
       isOpen={isOpen}
       onClose={onClose}
-      title="Create new feature flag"
+      title={
+        isRemoteConfig ? "Create new remote config" : "Create new feature flag"
+      }
       confirmText="Create"
       initialFocusRef={inputRef}
       size="full"

@@ -218,6 +218,7 @@ export const FeatureFlagPageContent = ({
             isOpen={isCreateFlagModalOpen}
             onClose={() => setIsCreateFlagModalOpen(false)}
             projectId={projectId}
+            isRemoteConfig={type === "Remote Config"}
           />
           <CreateEnvironmentModal
             isOpen={isCreateEnvironmentModalOpen}
