@@ -36,13 +36,13 @@ export const abbyConfigSchema = z.object({
       })
     )
     .optional(),
-  flags: z.record(flagValueStringSchema).optional(),
+  flags: z.array(z.string()).optional(),
   settings: z
     .object({
       flags: z
         .object({
-          defaultValues: z.record(z.string(), flagValue).optional(),
-          devOverrides: z.record(z.string(), flagValue).optional(),
+          defaultValue: z.boolean().optional(),
+          devOverrides: z.record(z.string(), z.boolean()).optional(),
         })
         .optional(),
     })

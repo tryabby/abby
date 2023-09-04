@@ -8,6 +8,7 @@ import {
   flagStringToType,
   getDefaultFlagValue,
   stringifyFlagValue,
+  DEFAULT_FEATURE_FLAG_VALUE,
 } from "./shared/";
 import { HttpService } from "./shared";
 import { F } from "ts-toolbelt";
@@ -21,16 +22,11 @@ export type ABConfig<T extends string = string> = {
   variants: ReadonlyArray<T>;
 };
 
-type Settings<
-  FlagName extends string,
-  Flags extends Record<FlagName, FlagValueString> = Record<FlagName, FlagValueString>,
-> = {
+type Settings<FlagName extends string, Flags extends FlagName[] = FlagName[]> = {
   flags?: {
-    defaultValues?: {
-      [K in FlagValueString]?: FlagValueStringToType<K>;
-    };
+    defaultValue?: boolean;
     devOverrides?: {
-      [K in keyof Flags]?: FlagValueStringToType<Flags[K]>;
+      [K in Flags[number]]?: boolean;
     };
   };
 };
@@ -43,7 +39,7 @@ type LocalData<FlagName extends string = string, TestName extends string = strin
       selectedVariant?: string;
     }
   >;
-  flags: Record<FlagName, FlagValue>;
+  flags: Record<FlagName, boolean>;
 };
 
 interface PersistentStorage {
@@ -54,7 +50,7 @@ interface PersistentStorage {
 export type AbbyConfig<
   FlagName extends string = string,
   Tests extends Record<string, ABConfig> = Record<string, ABConfig>,
-  Flags extends Record<FlagName, FlagValueString> = Record<FlagName, FlagValueString>,
+  Flags extends FlagName[] = FlagName[],
   Environments extends Array<string> = Array<string>,
 > = {
   projectId: string;
@@ -71,7 +67,7 @@ export class Abby<
   FlagName extends string,
   TestName extends string,
   Tests extends Record<string, ABConfig>,
-  Flags extends Record<FlagName, FlagValueString>,
+  Flags extends FlagName[],
   Environments extends Array<string> = Array<string>,
 > {
   private log = (...args: any[]) =>
@@ -88,7 +84,7 @@ export class Abby<
 
   private dataInitialized: Boolean = false;
 
-  private flagOverrides = new Map<string, FlagValueStringToType<Flags[keyof Flags]>>();
+  private flagOverrides = new Map<string, boolean>();
 
   private testOverrides: Map<keyof Tests, Tests[keyof Tests]["variants"][number]> = new Map();
 
@@ -100,13 +96,10 @@ export class Abby<
     this._cfg = config as AbbyConfig<FlagName, Tests, Flags, Environments>;
     this.#data.flags = Object.keys(config.flags ?? {}).reduce(
       (acc, flagName) => {
-        acc[flagName as FlagName] = this.getDefaultFlagValue(
-          flagName as FlagName,
-          config.flags as any
-        );
+        acc[flagName as FlagName] = DEFAULT_FEATURE_FLAG_VALUE;
         return acc;
       },
-      {} as Record<FlagName, FlagValue>
+      {} as Record<FlagName, boolean>
     );
     this.#data.tests = config.tests ?? ({} as any);
   }
@@ -168,7 +161,7 @@ export class Abby<
           acc[name] = value;
           return acc;
         },
-        {} as Record<string, FlagValue>
+        {} as Record<string, boolean>
       ),
     };
   }
@@ -223,12 +216,10 @@ export class Abby<
    * @param key the name of the feature flag
    * @returns the value of the feature flag
    */
-  getFeatureFlag<T extends keyof Flags, CurrentFlag extends Flags[T] = Flags[T]>(
-    key: T
-  ): FlagValueStringToType<CurrentFlag> {
+  getFeatureFlag(key: FlagName): boolean {
     this.log(`getFeatureFlag()`, key);
 
-    const storedValue = this.#data.flags[key as unknown as FlagName];
+    const storedValue = this.#data.flags[key];
 
     const localOverride = this.flagOverrides?.get(key as unknown as FlagName);
 
@@ -250,16 +241,15 @@ export class Abby<
       }
     }
 
-    const flagType = this._cfg.flags?.[key];
-    const defaultValue = this._cfg.settings?.flags?.defaultValues?.[flagType!];
+    const defaultValue = this._cfg.settings?.flags?.defaultValue;
 
     // return the defaultValue if exists
-    if (!storedValue && defaultValue != null) {
+    if (storedValue === undefined && defaultValue != null) {
       return defaultValue;
     }
 
     this.log(`getFeatureFlag() => storedValue:`, storedValue);
-    return storedValue as FlagValueStringToType<CurrentFlag>;
+    return storedValue;
   }
 
   /**
@@ -315,7 +305,7 @@ export class Abby<
    * @param name the name of the feature flag
    * @param value the value to override the feature flag with
    */
-  updateFlag<F extends FlagName>(name: F, value: FlagValueStringToType<Flags[F]>) {
+  updateFlag(name: FlagName, value: boolean) {
     this.flagOverrides.set(name, value);
     if (process.env.NODE_ENV === "development") {
       this.persistantFlagStorage?.set(name, this.stringifiedFlagValue(value));
@@ -388,29 +378,9 @@ export class Abby<
           ""
         );
 
-        this.flagOverrides.set(flagName, this.flagStringToType(flagName, cookieValue) as any);
+        const flagValue = cookieValue === "true";
+        this.flagOverrides.set(flagName, flagValue);
       }
-    });
-  }
-
-  private getDefaultFlagValue<FlagName extends string>(flagName: FlagName, flags: Flags) {
-    const flagType = flags[flagName as unknown as keyof Flags];
-
-    const defaultValue = (this.config.settings?.flags?.defaultValues as any)?.[flagName] as
-      | FlagValue
-      | undefined;
-
-    if (defaultValue != null) return defaultValue;
-
-    return getDefaultFlagValue(flagType);
-  }
-
-  private flagStringToType(flagName: string, stringifiedValue: string): FlagValue {
-    const flagType = this._cfg.flags?.[flagName as keyof Flags]!;
-
-    return flagStringToType({
-      stringifiedValue,
-      flagType,
     });
   }
 
