@@ -9,7 +9,11 @@ import { HttpService, AbbyEventType } from "@tryabby/core";
 import { derived, type Readable } from "svelte/store";
 import type { F } from "ts-toolbelt";
 // import type { LayoutServerLoad, LayoutServerLoadEvent } from "../routes/$types"; TODO fix import
-import { FlagStorageService, TestStorageService } from "./StorageService";
+import {
+  FlagStorageService,
+  RemoteConfigStorageService,
+  TestStorageService,
+} from "./StorageService";
 import AbbyProvider from "./AbbyProvider.svelte";
 import AbbyDevtools from "./AbbyDevtools.svelte";
 
@@ -53,6 +57,16 @@ export function createAbby<
       set: (key: string, value: any) => {
         if (typeof window === "undefined") return;
         FlagStorageService.set(config.projectId, key, value);
+      },
+    },
+    {
+      get: (key: string) => {
+        if (typeof window === "undefined") return null;
+        return RemoteConfigStorageService.get(config.projectId, key);
+      },
+      set: (key: string, value: any) => {
+        if (typeof window === "undefined") return;
+        RemoteConfigStorageService.set(config.projectId, key, value);
       },
     }
   );

@@ -1,4 +1,8 @@
-import { ABBY_AB_STORAGE_PREFIX, ABBY_FF_STORAGE_PREFIX } from "./constants";
+import {
+  ABBY_AB_STORAGE_PREFIX,
+  ABBY_FF_STORAGE_PREFIX,
+  ABBY_RC_STORAGE_PREFIX,
+} from "./constants";
 import { RemoteConfigValue, RemoteConfigValueString } from "./schemas";
 
 export function getABStorageKey(projectId: string, testName: string): string {
@@ -7,6 +11,10 @@ export function getABStorageKey(projectId: string, testName: string): string {
 
 export function getFFStorageKey(projectId: string, flagName: string): string {
   return `${ABBY_FF_STORAGE_PREFIX}${projectId}_${flagName}`;
+}
+
+export function getRCStorageKey(projectId: string, remoteConfigName: string): string {
+  return `${ABBY_RC_STORAGE_PREFIX}${projectId}_${remoteConfigName}`;
 }
 
 export function assertUnreachable(x: never): never {

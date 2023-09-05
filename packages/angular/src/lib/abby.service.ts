@@ -21,7 +21,11 @@ import {
 } from "rxjs";
 import { F } from "ts-toolbelt";
 import { AbbyLoggerService } from "./abby-logger.service";
-import { FlagStorageService, TestStorageService } from "./StorageService";
+import {
+  FlagStorageService,
+  RemoteConfigStorageService,
+  TestStorageService,
+} from "./StorageService";
 
 type LocalData<
   FlagName extends string = string,
@@ -98,6 +102,17 @@ export class AbbyService<
         set: (key: string, value: any) => {
           if (typeof window === "undefined") return;
           FlagStorageService.set(config.projectId, key, value);
+          this.cookieChanged$.next();
+        },
+      },
+      {
+        get: (key: string) => {
+          if (typeof window === "undefined") return null;
+          return RemoteConfigStorageService.get(config.projectId, key);
+        },
+        set: (key: string, value: any) => {
+          if (typeof window === "undefined") return;
+          RemoteConfigStorageService.set(config.projectId, key, value);
           this.cookieChanged$.next();
         },
       }

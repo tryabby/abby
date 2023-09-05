@@ -9,7 +9,11 @@ import React, { useCallback, useEffect, useRef, useState, type PropsWithChildren
 import { HttpService } from "@tryabby/core";
 import { AbbyDataResponse, AbbyEventType } from "@tryabby/core";
 import { F } from "ts-toolbelt";
-import { FlagStorageService, TestStorageService } from "./StorageService";
+import {
+  FlagStorageService,
+  RemoteConfigStorageService,
+  TestStorageService,
+} from "./StorageService";
 import type { AbbyDevtoolProps, DevtoolsFactory } from "@tryabby/devtools";
 
 export type withDevtoolsFunction = (
@@ -59,6 +63,16 @@ export function createAbby<
       set: (key: string, value: any) => {
         if (typeof window === "undefined") return;
         FlagStorageService.set(abbyConfig.projectId, key, value);
+      },
+    },
+    {
+      get: (key: string) => {
+        if (typeof window === "undefined") return null;
+        return RemoteConfigStorageService.get(abbyConfig.projectId, key);
+      },
+      set: (key: string, value: any) => {
+        if (typeof window === "undefined") return;
+        RemoteConfigStorageService.set(abbyConfig.projectId, key, value);
       },
     }
   );
