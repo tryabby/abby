@@ -5,7 +5,7 @@ import {
   withDevtoolsFunction,
   ABTestReturnValue,
 } from "@tryabby/react";
-import { AbbyDataResponse, FlagValueString, getABStorageKey } from "@tryabby/core";
+import { AbbyDataResponse, getABStorageKey, RemoteConfigValueString } from "@tryabby/core";
 import type { F } from "ts-toolbelt";
 import { ABBY_DATA_KEY, withAbby } from "./withAbby";
 import { HttpService } from "@tryabby/core";
@@ -21,17 +21,27 @@ export function createAbby<
   FlagName extends string,
   TestName extends string,
   Tests extends Record<TestName, ABConfig>,
-  Flags extends Record<FlagName, FlagValueString> = Record<FlagName, FlagValueString>,
->(config: F.Narrow<AbbyConfig<FlagName, Tests, Flags>>) {
+  RemoteConfig extends Record<RemoteConfigName, RemoteConfigValueString>,
+  RemoteConfigName extends Extract<keyof RemoteConfig, string>,
+  ConfigType extends AbbyConfig<
+    FlagName,
+    Tests,
+    string[],
+    RemoteConfigName,
+    RemoteConfig
+  > = AbbyConfig<FlagName, Tests, string[], RemoteConfigName, RemoteConfig>,
+>(config: F.Narrow<AbbyConfig<FlagName, Tests, string[], RemoteConfigName, RemoteConfig>>) {
   const {
     AbbyProvider,
     useAbby,
     useFeatureFlag,
     getFeatureFlagValue,
+    useRemoteConfig,
+    getRemoteConfig,
     __abby__,
     getVariants,
     withDevtools,
-  } = baseCreateAbby<FlagName, TestName, Tests, Flags>(config);
+  } = baseCreateAbby<FlagName, TestName, Tests, RemoteConfig, RemoteConfigName, ConfigType>(config);
 
   const abbyApiHandler =
     <HandlerType extends NextApiHandler | NextMiddleware>(handler: HandlerType) =>
@@ -67,6 +77,8 @@ export function createAbby<
     useFeatureFlag,
     withAbby: withAbby(config as AbbyConfig<FlagName, Tests>, __abby__),
     getFeatureFlagValue,
+    useRemoteConfig,
+    getRemoteConfig,
     __abby__,
     getVariants,
     withDevtools: withDevtools as withDevtoolsFunction,

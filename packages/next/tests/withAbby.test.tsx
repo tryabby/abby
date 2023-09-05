@@ -18,7 +18,7 @@ describe("withAbby", () => {
       environments: [],
       projectId: "123",
       tests: {},
-      flags: { flag1: "Boolean", flag2: "String" },
+      flags: ["flag1"],
     });
 
     const Component = withAbby(() => <></>);
@@ -35,7 +35,6 @@ describe("withAbby", () => {
 
     render(<Component {...props} />);
     expect(getFeatureFlagValue("flag1")).toBe(true);
-    expect(getFeatureFlagValue("flag2")).toBe("test");
   });
 
   it("seeds the flags in development with the cookies", async () => {
@@ -45,7 +44,7 @@ describe("withAbby", () => {
       environments: [],
       projectId: "123",
       tests: {},
-      flags: { flag1: "Boolean", flag2: "String" },
+      flags: ["flag1"],
     });
 
     const Component = withAbby(() => <></>);
@@ -56,7 +55,7 @@ describe("withAbby", () => {
       ctx: {
         req: {
           headers: {
-            cookie: `${ABBY_FF_STORAGE_PREFIX}123_flag1=false; ${ABBY_FF_STORAGE_PREFIX}123_flag2=test`,
+            cookie: `${ABBY_FF_STORAGE_PREFIX}123_flag1=false;`,
           },
         },
       },
@@ -64,6 +63,28 @@ describe("withAbby", () => {
 
     render(<Component {...props} />);
     expect(getFeatureFlagValue("flag1")).toBe(false);
-    expect(getFeatureFlagValue("flag2")).toBe("test");
+  });
+
+  it("returns correct value for remoteConfig", async () => {
+    const { withAbby, getRemoteConfig } = createAbby({
+      environments: [],
+      projectId: "123",
+      remoteConfig: {
+        remoteConfig1: "String",
+      },
+    });
+    const Component = withAbby(() => <></>);
+
+    const props = await (Component as any).getInitialProps({
+      Component: () => {},
+      ctx: {
+        req: {
+          headers: {},
+        },
+      },
+    });
+
+    render(<Component {...props} />);
+    expect(getRemoteConfig("remoteConfig1")).toBe("FooBar");
   });
 });
