@@ -19,7 +19,7 @@
 
   export let shortcut: Shortcut | Array<Shortcut> = ["command+.", "ctrl+."];
 
-  export let abby: Abby<any, any, any, any>;
+  export let abby: Abby<any, any, any, any, any>;
 
   let show = false;
 
@@ -61,7 +61,7 @@
     window.removeEventListener("message", onMessage);
   });
 
-  const { flags, tests } = abby?.getProjectData() ?? {};
+  const { flags, tests, remoteConfig } = abby?.getProjectData() ?? {};
 
   const [send, receive] = crossfade({
     duration: 200,
@@ -111,35 +111,38 @@
     <hr />
     <h2>Flags:</h2>
     {#each Object.entries(flags) as [flagName, flagValue]}
-      {#if typeof flagValue === "boolean"}
-        <Switch
-          id={flagName}
-          label={flagName}
-          checked={flagValue}
-          onChange={(newValue) => {
-            window.postMessage({ type: "abby:update-flag", flagName, newValue }, "*");
-            abby.updateFlag(flagName, newValue);
-          }}
-        />
-      {:else if typeof flagValue === "string" || typeof flagValue === "number"}
+      <Switch
+        id={flagName}
+        label={flagName}
+        checked={flagValue}
+        onChange={(newValue) => {
+          window.postMessage({ type: "abby:update-flag", flagName, newValue }, "*");
+          abby.updateFlag(flagName, newValue);
+        }}
+      />
+    {/each}
+    <hr />
+    <h2>Remote Config:</h2>
+    {#each Object.entries(remoteConfig) as [remoteConfigName, remoteConfigValue]}
+      {#if typeof remoteConfigValue === "string" || typeof remoteConfigValue === "number"}
         <Input
-          id={flagName}
-          label={flagName}
-          type={typeof flagValue === "string" ? "text" : "number"}
-          value={flagValue}
+          id={remoteConfigName}
+          label={remoteConfigName}
+          type={typeof remoteConfigValue === "string" ? "text" : "number"}
+          value={remoteConfigValue}
           onChange={(newValue) => {
-            window.postMessage({ type: "abby:update-flag", flagName, newValue }, "*");
-            abby.updateFlag(flagName, newValue);
+            window.postMessage({ type: "abby:update-flag", remoteConfigName, newValue }, "*");
+            abby.updateRemoteConfig(remoteConfigName, newValue);
           }}
         />
-      {:else if typeof flagValue === "object"}
+      {:else if typeof remoteConfigValue === "object"}
         <div style="display: flex; flex-direction: column; margin: 10px 0;">
-          <p style="margin-bottom: 5px;">{flagName}</p>
+          <p style="margin-bottom: 5px;">{remoteConfigName}</p>
           <Modal
-            value={flagValue}
+            value={remoteConfigValue}
             onChange={(newValue) => {
-              window.postMessage({ type: "abby:update-flag", flagName, newValue }, "*");
-              abby.updateFlag(flagName, newValue);
+              window.postMessage({ type: "abby:update-flag", remoteConfigName, newValue }, "*");
+              abby.updateRemoteConfig(remoteConfigName, newValue);
             }}
           />
         </div>

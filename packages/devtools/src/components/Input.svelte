@@ -40,6 +40,7 @@
     transition: all 150ms ease;
     margin-top: 5px;
     color: var(--pink);
+    box-sizing: border-box;
 
     &:required:invalid {
       color: #5a667f;
