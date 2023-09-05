@@ -3,7 +3,7 @@ import prettier from "prettier";
 import path from "path";
 import * as fs from "fs/promises";
 import { getHighlighter } from "shiki";
-import { AbbyConfig } from "@tryabby/core";
+import { AbbyConfig, RemoteConfigValueString } from "@tryabby/core";
 import { transformDBFlagTypeToclient } from "lib/flags";
 
 // Shiki loads languages and themes using "fs" instead of "import", so Next.js
@@ -68,10 +68,17 @@ export async function generateCodeSnippets({
         };
         return acc;
       }, {} as Record<string, any>),
-      flags: flags.reduce((acc, flag) => {
-        (acc || {})[flag.name] = transformDBFlagTypeToclient(flag.type);
+      flags: flags
+        .filter((flag) => flag.type === "BOOLEAN")
+        .map((flag) => flag.name),
+      remoteConfig: flags.reduce((acc, flag) => {
+        if (flag.type !== "BOOLEAN") {
+          acc[flag.name] = transformDBFlagTypeToclient(
+            flag.type
+          ) as RemoteConfigValueString;
+        }
         return acc;
-      }, {} as AbbyConfig["flags"]),
+      }, {} as Record<string, RemoteConfigValueString>),
     } as AbbyConfig,
     null,
     2
