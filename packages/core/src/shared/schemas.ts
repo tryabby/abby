@@ -46,7 +46,13 @@ export const abbyConfigSchema = z.object({
         .optional(),
       remoteConfig: z
         .object({
-          defaultValues: z.record(remoteConfigValueStringSchema, remoteConfigValue).optional(),
+          defaultValues: z
+            .object({
+              String: z.string(),
+              Number: z.number(),
+              JSON: z.record(z.string(), z.unknown()),
+            })
+            .partial(),
           devOverrides: z.record(z.string(), remoteConfigValue).optional(),
         })
         .optional(),
