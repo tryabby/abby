@@ -165,7 +165,7 @@ export class Abby<
     this.init(data);
   }
 
-  async getProjectDataAsync(): Promise<LocalData<FlagName, TestName>> {
+  async getProjectDataAsync(): Promise<LocalData<FlagName, TestName, RemoteConfigName>> {
     this.log(`getProjectDataAsync()`);
 
     if (!this.dataInitialized) {
@@ -220,7 +220,7 @@ export class Abby<
    * This also includes the overrides from the dev tools and the local overrides
    * @returns the local data
    */
-  getProjectData(): LocalData<FlagName, TestName> {
+  getProjectData(): LocalData<FlagName, TestName, RemoteConfigName> {
     this.log(`getProjectData()`);
 
     return {
