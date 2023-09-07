@@ -73,19 +73,29 @@ export const inviteRouter = router({
       if (!ctx.session.user.email) {
         throw new TRPCError({ code: "UNAUTHORIZED" });
       }
-
-      await sendInviteEmail({
-        invitee: {
-          name: userToInvite.name ?? undefined,
-          email: input.email,
-        },
-        inviter: {
-          name: ctx.session.user.name ?? ctx.session.user.email,
-          email: ctx.session.user.email,
-        },
-        project: currentProject,
-        inviteId: invite.id,
-      });
+      try {
+        await sendInviteEmail({
+          invitee: {
+            name: userToInvite.name ?? undefined,
+            email: input.email,
+          },
+          inviter: {
+            name: ctx.session.user.name ?? ctx.session.user.email,
+            email: ctx.session.user.email,
+          },
+          project: currentProject,
+          inviteId: invite.id,
+        });
+        // we need to make sure the invite is deleted if the email fails to send
+        // so that the user can try again
+      } catch (e) {
+        await prisma.projectInvite.delete({
+          where: {
+            id: invite.id,
+          },
+        });
+        throw e;
+      }
 
       return {
         inviteId: invite.id,
