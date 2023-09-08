@@ -49,6 +49,8 @@ export type InferTestNames<C extends AbbyConfig> = InferTests<C> extends Record<
   : never;
 export type InferTests<C extends AbbyConfig> = NonNullable<C["tests"]>;
 export type InferFlags<C extends AbbyConfig> = NonNullable<C["flags"]>;
+export type InferRemoteConfig<C extends AbbyConfig> = NonNullable<C["remoteConfig"]>;
+export type InferRemoteConfigName<C extends AbbyConfig> = keyof NonNullable<C["remoteConfig"]>;
 
 type PossibleFlagName<FlagName extends string> = FlagName | `!${FlagName}`;
 
