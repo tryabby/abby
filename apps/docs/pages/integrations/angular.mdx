@@ -51,7 +51,10 @@ export default defineConfig({
     footer: { variants: ["dark", "orange", "green"] },
     // ... your tests
   },
-  flags: { darkMode: "Boolean", newFeature: "Boolean" },
+  flags: ['darkMode', 'newFeature'],
+  remoteConfig: {
+    customButtonText: "String",
+  }
 });
 ```
 
@@ -74,7 +77,7 @@ export class AppModule {}
 
 ### Using Abby in your Component
 
-You can now use Abby in your components. You will have access to the `AbbyService` which can be used to get one of your variants, a feature flag or act on any test.
+You can now use Abby in your components. You will have access to the `AbbyService` which can be used to get one of your variants, a feature flag, a remote config variable or act on any test.
 
 ```tsx
 import { AbbyService } from '@tryabby/angular';
@@ -107,9 +110,7 @@ You can also use Abby's directives to conditionally render elements based on the
 </ng-container>
 ```
 
-The `*abbyFlag`-Directive for now only interprets feature flags as a boolean. Support for checking string, number or object values will come later.
-You can however invert the boolean it returns by putting a `!` in front of the flag name like so:
-
+Feature Flags can be inverted by putting a `!` in front of the flagname.
 ```html
 <ng-container *abbyFlag="'!newFeature'">
   <!-- This will only be shown if the newFeature flag is falsy. -->
@@ -152,6 +153,8 @@ You can then consume the footer color in your template using the `async`-Pipe:
 
 ### Using Abby Pipes
 
+#### getAbbyVariant
+
 You can use the `getAbbyVariant` Pipe in your template to get the active variant of an AB Test.
 
 ```html
@@ -162,4 +165,12 @@ Optionally, you can pass in a lookup object, to map your variants to a custom ty
 
 ```html
 <p>{ "MyTestName" | getAbbyVariant: { A: 123, B: 456, C: 789 } | async }</p>
+```
+
+#### getRemoteConfig
+
+You can use the `getRemoteConfig` Pipe in your template to get the value for a Remote Configuration variable.
+
+```html
+<button>{{ "customButtonText" | getAbbyRemoteConfig | async }}</button>
 ```

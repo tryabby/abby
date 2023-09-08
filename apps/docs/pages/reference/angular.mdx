@@ -9,14 +9,15 @@ You can then use the AbbyService in your components or services to interact with
 
 The `AbbyModule.forRoot()` method takes an object as a parameter. The object can contain the following properties:
 
-| Name               | Type     | Required | Description                                             | details               |
-| ------------------ | -------- | :------: | ------------------------------------------------------- | --------------------- |
-| projectId          | `string` |    ✅    | The ID of your project in Abby                          | -                     |
-| apiUrl             | `string` |          | The URL of the Abby API. Defaults to the hosted version | -                     |
-| currentEnvironment | `string` |    ✅    | The current environment of your application             | [link](/environments) |
-| tests              | `object` |          | An object containing your defined A/B Tests             | -                     |
-| flags              | `object` |          | An array containing your defined Feature Flags          | -                     |
-| settings           | `object` |          | An object with additional settings for A/BBY            | -                     |
+| Name               | Type     | Required | Description                                                        | details               |
+| ------------------ | -------- | :------: | ------------------------------------------------------------------ | --------------------- |
+| projectId          | `string` |    ✅    | The ID of your project in Abby                                     | -                     |
+| apiUrl             | `string` |          | The URL of the Abby API. Defaults to the hosted version            | -                     |
+| currentEnvironment | `string` |    ✅    | The current environment of your application                        | [link](/environments) |
+| tests              | `object` |          | An object containing your defined A/B Tests                        | -                     |
+| flags              | `array`  |          | An array containing your defined Feature Flags                     | -                     |
+| remoteConfig       | `object` |          | An object containing the name of your remote config and their type | -                     |
+| settings           | `object` |          | An object with additional settings for A/BBY                       | -                     |
 
 #### properties
 
@@ -44,8 +45,13 @@ export const abby = {
     test: {
       variants: ["control", "variant-a", "variant-b"],
     },
-    flags: { "test-flag": "Boolean" },
   },
+  flags: ["test-flag"],
+  remoteConfig: {
+    remoteConfig1: "String",
+    remoteConfig2: "Number",
+    remoteConfig3: "JSON",
+  }
 };
 
 @Injectable({
@@ -53,8 +59,9 @@ export const abby = {
   useExisting: AbbyService,
 })
 export class Abby extends AbbyService<
-  (typeof abby)["flags"][number],
-  keyof (typeof abby)["tests"]
+  InferFlagNames<typeof abby>,
+  InferTestNames<typeof abby>,
+  InferTests<typeof abby>,
 > {}
 ```
 
@@ -86,20 +93,30 @@ export class AppModule {}
 
 The settings property is an object containing additional settings for A/BBY. The following properties are available:
 
-- `flags.defaultValues`: Allows you to set a general default value for each flag type. The keys of the object represent the types of the flags.
-  The default value is the following:
+- `flags.defaultValue`: Allows you to set a general default boolean value for each Feature Flag type.
 
   ```json
-  {
-    "Boolean": false,
-    "String": "",
-    "Number": 0,
-    "JSON": {}
-  }
+  flags: {
+    defaultValue: false,
+  },
   ```
 
 - `flags.devOverrides`: An object containing the values of feature flags in development mode. The keys of the object represent the names of the flags.
-  The values need to be of the type of the flag. This means if your flag is a `String` flag, this needs to be a `string`.
+
+- `remoteConfig.defaultValue`: Allows you to set default values for the possible Remote Config types.
+
+  ```json
+  remoteConfig: {
+    defaultValues: {
+      String: "",
+      Number: 0,
+      JSON: {},
+    },
+  },
+  ```
+
+- `remoteConfig.devOverrides`: An object containing the values of Remote Configuration variables in development mode.
+  The keys of the object represent the names of the flags. The value must be assignable to the type of the variable.
 
 ## AbbyService
 
@@ -127,11 +144,23 @@ Resolves the value of a feature flag by the flagname.
 
 #### Parameters
 
-The name of the test or flag, needs to be one of the defined flags.
+The name of the flag, needs to be one of the defined flags.
 
 #### Return Value
 
 The value of the flag _Type: `boolean`_
+
+### getRemoteConfig
+
+`getRemoteConfig` is a function to access the value of a Remote Configuration variable. This can be called in a non-react scope (Regular Typescript, Edge Functions and API Routes)
+
+#### Parameters
+
+The name of the Remote Configuration variable, which needs to be one of the keys in your `remoteConfig` object in your `abby.config.ts`.
+
+#### Return Value
+
+The current value of the Remote Configuration variable. The type will be according to the specified type in the `abby.config.ts`
 
 ### onAct
 
@@ -192,6 +221,19 @@ Automatically maps the active variant to a custom value if `lookupObject` is pro
 >
   Variants Pipe
 </h4>
+```
+
+### getAbbyRemoteConfig Pipe
+
+Returns the current value for a Remote Configuration variable.
+
+#### Parameters
+
+The name of the Remote Configuration variable, which needs to be one of the keys in your `remoteConfig` object in your ABBY config.
+
+#### Example
+```html
+<p>angularRemoteConfig: {{ "angularRemoteConfig" | getAbbyRemoteConfig | async }}</p>
 ```
 
 ## Devtool Component

@@ -46,7 +46,10 @@ export default defineConfig({
     footer: { variants: ["dark", "orange", "green"] },
     // ... your tests
   },
-  flags: { darkMode: "Boolean", newFeature: "Boolean" },
+  flags: ["darkMode", "newFeature"],
+  remoteConfig: {
+    customButtonText: "String",
+  },
 });
 ```
 
@@ -148,5 +151,21 @@ The `useFeatureFlag` function returns a store providing a boolean value that ind
 	{#if $newFeature}
 		my super secret feature
 	{/if}
+</body>
+```
+
+## useRemoteConfig
+
+The `useRemoteConfig` function returns a store providing a custom value as specified in your `abby.config.ts`.
+The return type will automatically be inferred from your config.
+
+```svelte
+<script lang="ts">
+  import { abby } from "$lib/abby";
+  const customButtonText = abby.useRemoteConfig("customButtonText");
+</script>
+
+<body>
+  <button>{$customButtonText}</button>
 </body>
 ```
