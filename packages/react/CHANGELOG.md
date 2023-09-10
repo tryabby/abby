@@ -1,5 +1,16 @@
 # @tryabby/react
 
+## 5.0.0
+
+### Major Changes
+
+- add remote config
+
+### Patch Changes
+
+- Updated dependencies
+  - @tryabby/core@5.0.0
+
 ## 4.2.0
 
 ### Minor Changes

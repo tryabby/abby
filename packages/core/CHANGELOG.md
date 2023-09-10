@@ -1,5 +1,11 @@
 # @tryabby/core
 
+## 5.0.0
+
+### Major Changes
+
+- add remote config
+
 ## 4.2.0
 
 ### Minor Changes
