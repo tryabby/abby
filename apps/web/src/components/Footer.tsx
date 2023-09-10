@@ -1,9 +1,12 @@
 import { Github } from "lucide-react";
-import { BsDiscord } from "react-icons/bs";
+import { BsDiscord, BsLinkedin } from "react-icons/bs";
+import { RiTwitterXLine } from "react-icons/ri";
 import Link from "next/link";
 import { DOCS_URL } from "@tryabby/core";
 
 const GITHUB_URL = "https://github.com/tryabby/abby";
+const LINKEDIN_URL = "https://www.linkedin.com/company/a-bby/";
+const TWITTER_URL = "https://twitter.com/tryabby";
 export const DISCORD_INVITE_URL = "https://discord.gg/nk7wKf7Pv2";
 
 export function Footer() {
@@ -46,6 +49,12 @@ export function Footer() {
           <div className="flex items-center space-x-4">
             <a href={GITHUB_URL}>
               <Github />
+            </a>
+            <a href={LINKEDIN_URL}>
+              <BsLinkedin size={24} />
+            </a>
+            <a href={TWITTER_URL}>
+              <RiTwitterXLine size={24} />
             </a>
             <a href={DISCORD_INVITE_URL}>
               <BsDiscord size={24} />
