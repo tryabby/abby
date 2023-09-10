@@ -12,10 +12,10 @@ export function Footer() {
       <div className="container px-6 py-6 md:px-16 md:py-12">
         <div className="grid grid-cols-1 gap-8 md:grid-cols-4">
           <div>
-            <h1 className="mb-3 text-2xl font-bold">A/BBY</h1>
+            <h1 className="mb-3 text-2xl font-bold">Abby</h1>
             <h2 className="mb-8">
-              A simple and easy to use Open-Source A/B testing & Feature Flags
-              tool for developers.
+              A simple and easy to use Open-Source Feature Flagging & Remote
+              Config tool for developers.
             </h2>
           </div>
           <div className="flex flex-col gap-y-4 md:gap-0">
@@ -42,7 +42,7 @@ export function Footer() {
       </div>
       <div className="container">
         <div className="flex flex-col justify-between gap-y-4 border-t border-gray-600 px-6 py-6  sm:flex-row md:px-16">
-          <p>© {new Date().getFullYear()} A/BBY. All rights reserved.</p>
+          <p>© {new Date().getFullYear()} Abby. All rights reserved.</p>
           <div className="flex items-center space-x-4">
             <a href={GITHUB_URL}>
               <Github />

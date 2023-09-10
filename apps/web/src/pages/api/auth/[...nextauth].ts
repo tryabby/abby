@@ -93,7 +93,7 @@ export const authOptions: NextAuthOptions = {
       clientSecret: env.GITHUB_SECRET,
     }),
     EmailProvider({
-      from: `A/BBY <${env.ABBY_FROM_EMAIL}>`,
+      from: `Abby <${env.ABBY_FROM_EMAIL}>`,
       server: env.EMAIL_SERVER,
     }),
     // conditionally add Google provider if client ID and secret are set

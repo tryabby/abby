@@ -2,9 +2,9 @@
 
 ## Introduction
 
-A/BBY aims to have the best Developer Experience possible.
-This is why A/BBY is fully configurable via Code. No need to click some buttons in a GUI.
-You `abby.config.ts` (or `abby.config.js`) file is the **single source of truth** for your A/BBY project.
+Abby aims to have the best Developer Experience possible.
+This is why Abby is fully configurable via Code. No need to click some buttons in a GUI.
+You `abby.config.ts` (or `abby.config.js`) file is the **single source of truth** for your Abby project.
 
 Your configuration should be written in a file called `abby.config.ts` (or `abby.config.js`) which should be located in the root of your project.
 Every integration offers a `defineConfig` helper function which offers a typesafe way to define your configuration.
@@ -31,12 +31,12 @@ This configuration has two purposes:
 
 #### 1. Integrations
 
-A/BBY has many integrations to other tools and frameworks. Those can import the config and use it to configure themselves.
+Abby has many integrations to other tools and frameworks. Those can import the config and use it to configure themselves.
 For example the `@tryabby/nextjs` integration uses the config to configure the Next.js framework. Reading the config makes the integrations fully typesafe
 
 #### 2. CLI
 
-The [A/BBY CLI](/reference/cli) uses the config to know what to do. It reads from the config and can then be used to create tests or feature flags on the A/BBY platform without
+The [Abby CLI](/reference/cli) uses the config to know what to do. It reads from the config and can then be used to create tests or feature flags on the Abby platform without
 any further configuration.
 
 ## Example
@@ -56,7 +56,7 @@ export default defineConfig({
       variants: ["A", "B"],
     },
   },
-  flags: ['showFooter'],
+  flags: ["showFooter"],
   remoteConfig: {
     customButtonText: "String",
     maxUserCount: "Number",
@@ -90,14 +90,14 @@ export default defineConfig({
 The `defineCOnfig` function takes an object as a parameter. The object can contain the following properties:
 
 | Name               | Type     | Required | Description                                              | details               |
-| ------------------ | -------- | :------: | -------------------------------------------------------  | --------------------- |
+| ------------------ | -------- | :------: | -------------------------------------------------------- | --------------------- |
 | projectId          | `string` |    ✅    | The ID of your project in Abby                           | -                     |
 | apiUrl             | `string` |          | The URL of the Abby API. Defaults to the hosted version  | -                     |
 | currentEnvironment | `string` |    ✅    | The current environment of your application              | [link](/environments) |
 | tests              | `object` |          | An object containing your defined A/B Tests              | -                     |
 | flags              | `array`  |          | An array containing your defined Feature Flag names      | -                     |
-| remoteConfig       | `object` |          | An object containing your Remote Configuration variables | -
-| settings           | `object` |          | An object with additional settings for A/BBY             | -                     |
+| remoteConfig       | `object` |          | An object containing your Remote Configuration variables | -                     |
+| settings           | `object` |          | An object with additional settings for Abby              | -                     |
 
 #### tests
 
@@ -134,11 +134,12 @@ const abby = createAbby({
 });
 ```
 
-#### remoteConfig 
+#### remoteConfig
 
 The remoteConfig property is an object containing your Remote Configuration variables and their respective types.
 
 ##### Example
+
 ```ts
 const abby = createAbby({
   // ... your config
@@ -147,14 +148,14 @@ const abby = createAbby({
     myNumberVariable: "Number",
     myJSONVariable: "JSON",
   },
-})
+});
 ```
 
 #### settings
 
-The settings property is an object containing additional settings for A/BBY. The following properties are available:
+The settings property is an object containing additional settings for Abby. The following properties are available:
 
-- `flags.defaultValue`: Allows you to set a fallback boolean value for your Feature Flags, in case you forgot to add them 
+- `flags.defaultValue`: Allows you to set a fallback boolean value for your Feature Flags, in case you forgot to add them
   in your dashboard or when they could not be fetched correctly.
 
   ```json
@@ -175,7 +176,7 @@ The settings property is an object containing additional settings for A/BBY. The
   ```
 
 - `remoteConfig.defaultValues`: An object containing default values for each Remote Configuration type.
-  
+
   ```json
   remoteConfig: {
     defaultValues: {

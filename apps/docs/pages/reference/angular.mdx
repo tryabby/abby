@@ -2,7 +2,7 @@
 
 ## AbbyModule
 
-The AbbyModule is an Angular module that provides a service and some directives to work with A/BBY.
+The AbbyModule is an Angular module that provides a service and some directives to work with Abby.
 You can then use the AbbyService in your components or services to interact with the Abby platform. The AbbyFlag, AbbyTest and DevtoolsComponent directives can be used in your templates to show/hide content based on feature flags or AB tests.
 
 ### Parameters
@@ -17,7 +17,7 @@ The `AbbyModule.forRoot()` method takes an object as a parameter. The object can
 | tests              | `object` |          | An object containing your defined A/B Tests                        | -                     |
 | flags              | `array`  |          | An array containing your defined Feature Flags                     | -                     |
 | remoteConfig       | `object` |          | An object containing the name of your remote config and their type | -                     |
-| settings           | `object` |          | An object with additional settings for A/BBY                       | -                     |
+| settings           | `object` |          | An object with additional settings for Abby                        | -                     |
 
 #### properties
 
@@ -51,7 +51,7 @@ export const abby = {
     remoteConfig1: "String",
     remoteConfig2: "Number",
     remoteConfig3: "JSON",
-  }
+  },
 };
 
 @Injectable({
@@ -93,7 +93,7 @@ export class AppModule {}
 
 #### settings
 
-The settings property is an object containing additional settings for A/BBY. The following properties are available:
+The settings property is an object containing additional settings for Abby. The following properties are available:
 
 - `flags.defaultValue`: Allows you to set a general default boolean value for each Feature Flag type.
 
@@ -213,6 +213,7 @@ Automatically maps the active variant to a custom value if `lookupObject` is pro
 - `lookupObject`: An optional lookup object to automatically map the active variant to a custom value.
 
 #### Example
+
 ```html
 <h4
   [ngStyle]="{
@@ -234,6 +235,7 @@ Returns the current value for a Remote Configuration variable.
 The name of the Remote Configuration variable, which needs to be one of the keys in your `remoteConfig` object in your ABBY config.
 
 #### Example
+
 ```html
 <p>angularRemoteConfig: {{ "angularRemoteConfig" | getAbbyRemoteConfig | async }}</p>
 ```

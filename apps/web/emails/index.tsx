@@ -10,7 +10,7 @@ import ContactFormularEmail, {
 const transporter = createTransport({
   pool: true,
   url: env.EMAIL_SERVER,
-  from: `A/BBY <${env.ABBY_FROM_EMAIL}>`,
+  from: `Abby <${env.ABBY_FROM_EMAIL}>`,
 });
 
 export function sendInviteEmail(props: InviteEmailProps) {
@@ -18,8 +18,8 @@ export function sendInviteEmail(props: InviteEmailProps) {
 
   return transporter.sendMail({
     to: props.invitee.email,
-    from: `A/BBY <${env.ABBY_FROM_EMAIL}>`,
-    subject: `Join ${props.inviter.name} on A/BBY`,
+    from: `Abby <${env.ABBY_FROM_EMAIL}>`,
+    subject: `Join ${props.inviter.name} on Abby`,
     html: email,
   });
 }
@@ -29,7 +29,7 @@ export function sendContactFormularEmail(props: ContactMailProps) {
   const abbyContactAdress = "tim@tryabby.com";
   return transporter.sendMail({
     to: abbyContactAdress,
-    from: `A/BBY <${env.ABBY_FROM_EMAIL}>`,
+    from: `Abby <${env.ABBY_FROM_EMAIL}>`,
     subject: `New Message from ${props.name} ${props.surname}`,
     html: email,
   });

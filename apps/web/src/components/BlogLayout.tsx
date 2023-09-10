@@ -30,7 +30,7 @@ export function BlogLayout({ children, seoTitle, meta }: Props) {
         </section>
         <Divider className="my-12" />
         <div className="mx-auto w-full rounded-lg p-4 text-center text-lg font-semibold leading-loose">
-          A/BBY is an Open Source SaaS for developers to streamline A/B testing
+          Abby is an Open Source SaaS for developers to streamline A/B testing
           and feature flagging.
           <br />
           Make data-driven decisions and improve user experience with ease.

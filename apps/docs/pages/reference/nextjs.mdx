@@ -14,7 +14,7 @@ The `createAbby` function takes an object as a parameter. The object can contain
 | tests              | `object` |          | An object containing your defined A/B Tests                        | -                     |
 | flags              | `array`  |          | An array containing your defined Feature Flags                     | -                     |
 | remoteConfig       | `object` |          | An object containing the name of your remote config and their type | -                     |
-| settings           | `object` |          | An object with additional settings for A/BBY                       | -                     |
+| settings           | `object` |          | An object with additional settings for Abby                        | -                     |
 
 #### tests
 
@@ -47,13 +47,13 @@ The flags property is an array containing your defined Feature Flags. You probab
 ```ts
 const abby = createAbby({
   // ... your config
-  flags: ['test-flag'],
+  flags: ["test-flag"],
 });
 ```
 
 #### settings
 
-The settings property is an object containing additional settings for A/BBY. The following properties are available:
+The settings property is an object containing additional settings for Abby. The following properties are available:
 
 - `flags.defaultValue`: Allows you to set a general default boolean value for each Feature Flag type.
 

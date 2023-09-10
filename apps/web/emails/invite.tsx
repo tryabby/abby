@@ -30,14 +30,14 @@ export default function Email({ inviteId, invitee, inviter, project }: Props) {
     <Html>
       <Head />
       {/* @ts-ignore types are off */}
-      <Preview>Join {inviter.name} on A/BBY</Preview>
+      <Preview>Join {inviter.name} on Abby</Preview>
       <Section style={main}>
         <Container style={container}>
           <Section style={{ marginTop: "32px" }}>
-            <h1>A/BBY</h1>
+            <h1>Abby</h1>
           </Section>
           <Text style={h1}>
-            Join <strong>{project.name}</strong> on <strong>A/BBY</strong>
+            Join <strong>{project.name}</strong> on <strong>Abby</strong>
           </Text>
           <Text style={text}>Hello {invitee.name ?? invitee.email},</Text>
           <Text style={text}>
@@ -46,7 +46,7 @@ export default function Email({ inviteId, invitee, inviter, project }: Props) {
               {inviter.email}
             </Link>
             ) has invited you to the <strong>{project.name}</strong> team on{" "}
-            <strong>A/BBY</strong>.
+            <strong>Abby</strong>.
           </Text>
           <Section style={{ textAlign: "center" }}>
             <Button

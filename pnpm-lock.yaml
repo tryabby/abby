@@ -181,6 +181,9 @@ importers:
       '@dnd-kit/utilities':
         specifier: ^3.2.1
         version: 3.2.1(react@18.2.0)
+      '@fontsource/martian-mono':
+        specifier: ^5.0.8
+        version: 5.0.8
       '@headlessui/react':
         specifier: ^1.7.13
         version: 1.7.15(react-dom@18.2.0)(react@18.2.0)
@@ -5903,6 +5906,10 @@ packages:
       '@floating-ui/dom': 1.4.3
       react: 18.2.0
       react-dom: 18.2.0(react@18.2.0)
+    dev: false
+
+  /@fontsource/martian-mono@5.0.8:
+    resolution: {integrity: sha512-9XXGJww+3rrztm6d8aauiHUW1LMWmOlKmAQkpZKN1j5PQ3MrGWk+E2C+vN/9DxcCBSz55tZAtMCcOSFSqJXT7g==}
     dev: false
 
   /@gar/promisify@1.1.3:

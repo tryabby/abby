@@ -2,7 +2,7 @@
 
 ## AbbyModule
 
-The AbbyModule is an Angular module that provides a service and some directives to work with A/BBY.
+The AbbyModule is an Angular module that provides a service and some directives to work with Abby.
 You can then use the AbbyService in your components or services to interact with the Abby platform. The AbbyFlag, AbbyTest and DevtoolsComponent directives can be used in your templates to show/hide content based on feature flags or AB tests.
 
 ### Parameters
@@ -16,7 +16,7 @@ The `AbbyModule.forRoot()` method takes an object as a parameter. The object can
 | currentEnvironment | `string` |    ✅    | The current environment of your application             | [link](/environments) |
 | tests              | `object` |          | An object containing your defined A/B Tests             | -                     |
 | flags              | `object` |          | An array containing your defined Feature Flags          | -                     |
-| settings           | `object` |          | An object with additional settings for A/BBY            | -                     |
+| settings           | `object` |          | An object with additional settings for Abby             | -                     |
 
 #### properties
 
@@ -84,7 +84,7 @@ export class AppModule {}
 
 #### settings
 
-The settings property is an object containing additional settings for A/BBY. The following properties are available:
+The settings property is an object containing additional settings for Abby. The following properties are available:
 
 - `flags.defaultValues`: Allows you to set a general default value for each flag type. The keys of the object represent the types of the flags.
   The default value is the following:

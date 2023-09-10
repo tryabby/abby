@@ -33,7 +33,7 @@ To get started make sure to install the package using your favorite package mana
 
 ### Create your config
 
-To use A/BBY you need to create your config first. You can do this by creating a file called `abby.config.ts` in your `root` folder. This file will be used to configure your project.
+To use Abby you need to create your config first. You can do this by creating a file called `abby.config.ts` in your `root` folder. This file will be used to configure your project.
 
 ```ts
 // abby.config.ts
@@ -51,7 +51,7 @@ export default defineConfig({
   flags: ["darkMode", "newFeature"],
   remoteConfig: {
     customButtonText: "String",
-  }
+  },
 });
 ```
 
@@ -106,26 +106,21 @@ function MyButton() {
 ```
 
 Optionally, you can pass a lookup object to automatically map the selected variant to a custom value.
+
 ```tsx
 import { useAbby } from "./abby";
 
 function MyButton() {
-  const { variant, onAct } = useAbby(
-    "footer",
-    {
-      dark: "bg-gray-900",
-      orange: "bg-orange-500",
-      green: "bg-green-500",
-    }
-  );
+  const { variant, onAct } = useAbby("footer", {
+    dark: "bg-gray-900",
+    orange: "bg-orange-500",
+    green: "bg-green-500",
+  });
 
   return (
     <main className="p-6">
       <h1>Abby Test Page:</h1>
-      <button
-        className={`rounded-lg py-2 px-4 text-white ${variant}`}
-        onClick={onAct}
-      >
+      <button className={`rounded-lg py-2 px-4 text-white ${variant}`} onClick={onAct}>
         Cool Button
       </button>
     </main>
@@ -169,5 +164,6 @@ function HomePage() {
       <h1>Welcome back, User</h1>
       <button>{customButtonText}</button>
     </main>
-  )
+  );
 }
+```

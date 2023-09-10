@@ -6,25 +6,25 @@ export default {
 
     const currentPageUrl = `https://docs.tryabby.com${router.asPath}`;
     return {
-      titleTemplate: "%s – A/BBY Docs",
+      titleTemplate: "%s – Abby Docs",
       description:
-        "A/BBY is a SaaS tool for developers to streamline A/B testing and feature flagging. Make data-driven decisions and improve user experience with ease.",
+        "Abby is a SaaS tool for developers to streamline A/B testing and feature flagging. Make data-driven decisions and improve user experience with ease.",
       openGraph: {
         url: currentPageUrl,
-        title: "A/BBY Docs",
+        title: "Abby Docs",
         type: "website",
         description:
-          "A/BBY is a SaaS tool for developers to streamline A/B testing and feature flagging. Make data-driven decisions and improve user experience with ease.",
+          "Abby is a SaaS tool for developers to streamline A/B testing and feature flagging. Make data-driven decisions and improve user experience with ease.",
         images: [
           {
             url: "https://www.tryabby.com/og.png",
             width: 1200,
             height: 630,
-            alt: "A/BBY",
+            alt: "Abby",
             type: "image/png",
           },
         ],
-        siteName: "A/BBY Docs",
+        siteName: "Abby Docs",
       },
     };
   },
@@ -33,7 +33,7 @@ export default {
       <link rel="icon" href="https://www.tryabby.com/favicon.png" />
     </>
   ),
-  logo: <span style={{ fontSize: "1.75rem", fontWeight: "bold" }}>A/BBY</span>,
+  logo: <span style={{ fontSize: "1.75rem", fontWeight: "bold" }}>Abby</span>,
   // docsRepositoryBase: 'https://github.com/cstrnt/abby/blob/main/apps/docs/pages',
   project: {
     // link: "https://github.com/cstrnt/abby",

@@ -14,7 +14,7 @@ The `createAbby` function takes an object as a parameter. The object can contain
 | tests              | `object` |          | An object containing your defined A/B Tests                        | -                     |
 | flags              | `array`  |          | An array containing your defined Feature Flags                     | -                     |
 | remoteConfig       | `object` |          | An object containing the name of your remote config and their type | -                     |
-| settings           | `object` |          | An object with additional settings for A/BBY                       | -                     |
+| settings           | `object` |          | An object with additional settings for Abby                        | -                     |
 
 #### tests
 
@@ -53,7 +53,7 @@ const abby = createAbby({
 
 #### settings
 
-The settings property is an object containing additional settings for A/BBY. The following properties are available:
+The settings property is an object containing additional settings for Abby. The following properties are available:
 
 - `flags.defaultValue`: Allows you to set a general default boolean value for each Feature Flag type.
 
@@ -95,7 +95,7 @@ New users will get a random value for a test depending on the defined weights
 
 ##### Return Values
 
-- `variant`: Store providing the variant of the test or the looked up value if you provided a `lookupObject` 
+- `variant`: Store providing the variant of the test or the looked up value if you provided a `lookupObject`
 
 - `onAct`: A function to call when the user performs an action associated with the test _Type: `function`_
 

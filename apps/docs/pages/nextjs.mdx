@@ -1,8 +1,8 @@
 import { Tab, Tabs } from "nextra-theme-docs";
 
-# Using A/BBY with Next.js
+# Using Abby with Next.js
 
-A/BBY was built to be the best solution for Feature Flags, A/B Testing and Remote Configuration variables in Next.js.
+Abby was built to be the best solution for Feature Flags, A/B Testing and Remote Configuration variables in Next.js.
 It deeply integrates with Next.js and provides a seamless developer experience.
 
 ## Installation
@@ -30,9 +30,9 @@ Install the `@tryabby/next` package using your favorite package manager:
 
 ## Configuration
 
-In order to use A/BBY you need to create a **free** account at [tryabby.com](https://www.tryabby.com) first.
+In order to use Abby you need to create a **free** account at [tryabby.com](https://www.tryabby.com) first.
 
-You can then use the button in the top right corner of the dashboard to easily copy your A/BBY config.
+You can then use the button in the top right corner of the dashboard to easily copy your Abby config.
 
 Create a file called `abby.config.ts` in the root folder of your project. That's it! You're ready to go!
 
@@ -55,12 +55,12 @@ export default defineConfig({
   flags: ["useDarkMode"],
   remoteConfig: {
     customButtonText: "String",
-  }
+  },
 });
 ```
 
 After that you need to create a file called `lib/abby.ts` in your project.
-This file will contain all the code (e.g. the A/BBY hooks) that is needed to integrate A/BBY into your app.
+This file will contain all the code (e.g. the Abby hooks) that is needed to integrate Abby into your app.
 
 ````ts
 // lib/abby.ts
@@ -117,7 +117,7 @@ export function HomePage() {
 }
 ```
 
-You can now go to the A/BBY dashboard and enable the `useDarkmode` flag for your project. You will see the text "Darkmode is enabled" on your homepage.
+You can now go to the Abby dashboard and enable the `useDarkmode` flag for your project. You will see the text "Darkmode is enabled" on your homepage.
 
 #### Remote Configuration
 
@@ -134,10 +134,11 @@ export function HomePage() {
       <h1>My Homepage</h1>
       <button>{customButtonText}</button>
     </>
-  )
+  );
 }
 ```
-You can now control the text, which the button is displaying, on the A/BBY dashboard.
+
+You can now control the text, which the button is displaying, on the Abby dashboard.
 
 #### A/B Tests
 
@@ -167,15 +168,15 @@ This is a simple example of an A/B Test. Once you loaded the page you will get e
 
 ### Non-React Context
 
-You might want to use A/BBY outside of React. For example in your app's middleware or in a Next.js API route.
+You might want to use Abby outside of React. For example in your app's middleware or in a Next.js API route.
 
 #### Edge Functions
 
 [Edge Functions](https://vercel.com/docs/concepts/functions/edge-functions) are Vercel's globally distributed serverless functions.
 They are a great way to run code on the edge of the Vercel network and use a leaner runtime with less functionality.
-A/BBY works perfectly with Edge Functions.
+Abby works perfectly with Edge Functions.
 
-The best usecase with Edge Functions and A/BBY is to use them in your middleware, for example to redirect users to a beta version of your app.
+The best usecase with Edge Functions and Abby is to use them in your middleware, for example to redirect users to a beta version of your app.
 
 ```ts
 // middleware.ts

@@ -21,7 +21,7 @@ type Props = {
 const BlogPage: NextPageWithLayout<Props> = ({ posts }) => {
   return (
     <div className="container px-6 pb-8 md:px-16">
-      <h1 className="mb-4 text-5xl font-bold">A/BBY Blog</h1>
+      <h1 className="mb-4 text-5xl font-bold">Abby Blog</h1>
       <h2 className="mb-4 text-xl text-gray-500">
         Stay up to date with the latest news and updates
       </h2>
