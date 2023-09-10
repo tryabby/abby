@@ -1,5 +1,11 @@
 # @tryabby/cli
 
+## 1.0.1
+
+### Patch Changes
+
+- add fallback values to remote config
+
 ## 1.0.0
 
 ### Major Changes
