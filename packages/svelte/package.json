@@ -1,6 +1,6 @@
 {
 	"name": "@tryabby/svelte",
-	"version": "1.2.1",
+	"version": "2.0.0",
 	"main": "dist/index.umd.cjs",
 	"homepage": "https://docs.tryabby.dev",
 	"type": "module",

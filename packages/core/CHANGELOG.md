@@ -1,10 +1,10 @@
 # @tryabby/core
 
-## 4.3.0
+## 5.0.0
 
-### Minor Changes
+### Major Changes
 
-- add fallbackValue option
+- add remote config
 
 ## 4.2.0
 

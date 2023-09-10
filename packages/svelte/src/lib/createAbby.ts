@@ -1,9 +1,19 @@
-import { Abby, type AbbyConfig, type ABConfig, type FlagValueString } from "@tryabby/core";
+import {
+  Abby,
+  type AbbyConfig,
+  type ABConfig,
+  type RemoteConfigValueString,
+  type RemoteConfigValueStringToType,
+} from "@tryabby/core";
 import { HttpService, AbbyEventType } from "@tryabby/core";
 import { derived, type Readable } from "svelte/store";
 import type { F } from "ts-toolbelt";
 // import type { LayoutServerLoad, LayoutServerLoadEvent } from "../routes/$types"; TODO fix import
-import { FlagStorageService, TestStorageService } from "./StorageService";
+import {
+  FlagStorageService,
+  RemoteConfigStorageService,
+  TestStorageService,
+} from "./StorageService";
 import AbbyProvider from "./AbbyProvider.svelte";
 import AbbyDevtools from "./AbbyDevtools.svelte";
 
@@ -17,10 +27,17 @@ export function createAbby<
   FlagName extends string,
   TestName extends string,
   Tests extends Record<TestName, ABConfig>,
-  Flags extends Record<FlagName, FlagValueString> = Record<FlagName, FlagValueString>,
-  ConfigType extends AbbyConfig<FlagName, Tests> = AbbyConfig<FlagName, Tests>
->(config: F.Narrow<AbbyConfig<FlagName, Tests, Flags>>) {
-  const abby = new Abby<FlagName, TestName, Tests, Flags>(
+  RemoteConfig extends Record<RemoteConfigName, RemoteConfigValueString>,
+  RemoteConfigName extends Extract<keyof RemoteConfig, string>,
+  ConfigType extends AbbyConfig<FlagName, Tests> = AbbyConfig<
+    FlagName,
+    Tests,
+    string[],
+    RemoteConfigName,
+    RemoteConfig
+  >
+>(config: F.Narrow<AbbyConfig<FlagName, Tests, string[], RemoteConfigName, RemoteConfig>>) {
+  const abby = new Abby<FlagName, TestName, Tests, RemoteConfig, RemoteConfigName>(
     config,
     {
       get: (key: string) => {
@@ -40,6 +57,16 @@ export function createAbby<
       set: (key: string, value: any) => {
         if (typeof window === "undefined") return;
         FlagStorageService.set(config.projectId, key, value);
+      },
+    },
+    {
+      get: (key: string) => {
+        if (typeof window === "undefined") return null;
+        return RemoteConfigStorageService.get(config.projectId, key);
+      },
+      set: (key: string, value: any) => {
+        if (typeof window === "undefined") return;
+        RemoteConfigStorageService.set(config.projectId, key, value);
       },
     }
   );
@@ -134,13 +161,27 @@ export function createAbby<
     return lookupObject[variant as keyof typeof lookupObject] as any;
   };
 
-  const getFeatureFlagValue = <F extends keyof Flags>(featureFlagName: F) => {
+  const getFeatureFlagValue = (featureFlagName: FlagName) => {
     return abby.getFeatureFlag(featureFlagName);
   };
 
-  const useFeatureFlag = <F extends keyof Flags>(flagName: F) => {
+  const useFeatureFlag = (flagName: FlagName) => {
     return derived(abby, ($v) => {
       return abby.getFeatureFlag(flagName);
+    });
+  };
+
+  const getRemoteConfig = <T extends RemoteConfigName, Config extends RemoteConfig[T]>(
+    remoteConfigName: T
+  ): RemoteConfigValueStringToType<Config> => {
+    return abby.getRemoteConfig(remoteConfigName);
+  };
+
+  const useRemoteConfig = <T extends RemoteConfigName, Config extends RemoteConfig[T]>(
+    remoteConfigName: T
+  ): Readable<RemoteConfigValueStringToType<Config>> => {
+    return derived(abby, ($v) => {
+      return abby.getRemoteConfig(remoteConfigName);
     });
   };
 
@@ -170,6 +211,8 @@ export function createAbby<
     useAbby,
     useFeatureFlag,
     getFeatureFlagValue,
+    getRemoteConfig,
+    useRemoteConfig,
     getABTestValue,
     __abby__: abby,
     getABResetFunction,

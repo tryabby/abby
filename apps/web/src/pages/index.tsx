@@ -20,7 +20,6 @@ import { generateCodeSnippets } from "utils/snippets";
 import abbyScreenshot from "../../public/screenshot.png";
 import { NextPageWithLayout } from "./_app";
 import { DevtoolsArrow } from "components/DevtoolsArrow";
-import { PlausibleEvents } from "types/plausible-events";
 import { useTracking } from "lib/tracking";
 
 const { useAbby, AbbyProvider, useFeatureFlag, __abby__, withDevtools } =
@@ -33,9 +32,7 @@ const { useAbby, AbbyProvider, useFeatureFlag, __abby__, withDevtools } =
         variants: ["A", "B", "C"],
       },
     },
-    flags: {
-      ForceDarkTheme: "Boolean",
-    },
+    flags: ["ForceDarkTheme"],
   });
 
 const Devtools = withDevtools(DevtoolsFactory, {

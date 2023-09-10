@@ -56,23 +56,29 @@ export default defineConfig({
       variants: ["A", "B"],
     },
   },
-  flags: {
-    AdvancedTestStats: "JSON",
-    showFooter: "Boolean",
+  flags: ['showFooter'],
+  remoteConfig: {
+    customButtonText: "String",
     maxUserCount: "Number",
+    AdvancedTestStats: "JSON",
   },
   settings: {
     flags: {
+      defaultValue: false,
+      devOverrides: {
+        showFooter: true,
+      },
+    },
+    remoteConfig: {
       defaultValues: {
-        Boolean: false,
         JSON: {},
         Number: 0,
         String: "",
       },
       devOverrides: {
-        AdvancedTestStats: {},
-        showFooter: true,
         maxUserCount: 40,
+        AdvancedTestStats: {},
+        customButtonText: "My cool button",
       },
     },
   },
@@ -83,14 +89,15 @@ export default defineConfig({
 
 The `defineCOnfig` function takes an object as a parameter. The object can contain the following properties:
 
-| Name               | Type     | Required | Description                                             | details               |
-| ------------------ | -------- | :------: | ------------------------------------------------------- | --------------------- |
-| projectId          | `string` |    ✅    | The ID of your project in Abby                          | -                     |
-| apiUrl             | `string` |          | The URL of the Abby API. Defaults to the hosted version | -                     |
-| currentEnvironment | `string` |    ✅    | The current environment of your application             | [link](/environments) |
-| tests              | `object` |          | An object containing your defined A/B Tests             | -                     |
-| flags              | `object` |          | An object containing your defined Feature Flags         | -                     |
-| settings           | `object` |          | An object with additional settings for A/BBY            | -                     |
+| Name               | Type     | Required | Description                                              | details               |
+| ------------------ | -------- | :------: | -------------------------------------------------------  | --------------------- |
+| projectId          | `string` |    ✅    | The ID of your project in Abby                           | -                     |
+| apiUrl             | `string` |          | The URL of the Abby API. Defaults to the hosted version  | -                     |
+| currentEnvironment | `string` |    ✅    | The current environment of your application              | [link](/environments) |
+| tests              | `object` |          | An object containing your defined A/B Tests              | -                     |
+| flags              | `array`  |          | An array containing your defined Feature Flag names      | -                     |
+| remoteConfig       | `object` |          | An object containing your Remote Configuration variables | -
+| settings           | `object` |          | An object with additional settings for A/BBY             | -                     |
 
 #### tests
 
@@ -123,25 +130,71 @@ The flags property is an array containing your defined Feature Flags. You probab
 ```ts
 const abby = createAbby({
   // ... your config
-  flags: { "test-flag": "Boolean" },
+  flags: ["test-flag"],
 });
+```
+
+#### remoteConfig 
+
+The remoteConfig property is an object containing your Remote Configuration variables and their respective types.
+
+##### Example
+```ts
+const abby = createAbby({
+  // ... your config
+  remoteConfig: {
+    myStringVariable: "String",
+    myNumberVariable: "Number",
+    myJSONVariable: "JSON",
+  },
+})
 ```
 
 #### settings
 
 The settings property is an object containing additional settings for A/BBY. The following properties are available:
 
-- `flags.defaultValues`: Allows you to set a general default value for each flag type. The keys of the object represent the types of the flags.
-  The default value is the following:
+- `flags.defaultValue`: Allows you to set a fallback boolean value for your Feature Flags, in case you forgot to add them 
+  in your dashboard or when they could not be fetched correctly.
 
   ```json
-  {
-    "Boolean": false,
-    "String": "",
-    "Number": 0,
-    "JSON": {}
-  }
+  flags: {
+    defaultValue: true,
+  },
   ```
 
 - `flags.devOverrides`: An object containing the values of feature flags in development mode. The keys of the object represent the names of the flags.
-  The values need to be of the type of the flag. This means if your flag is a `String` flag, this needs to be a `string`.
+
+  ```json
+  flags: {
+    devOverrides: {
+      showHeader: true,
+      showFooter: false,
+    },
+  },
+  ```
+
+- `remoteConfig.defaultValues`: An object containing default values for each Remote Configuration type.
+  
+  ```json
+  remoteConfig: {
+    defaultValues: {
+      String: "Default string value",
+      Number: 100,
+      JSON: { default: true },
+    },
+  },
+  ```
+
+- `remoteConfig.devOverrides`: An object containing the values of Remote Configuration variables in development mode. The keys of the object represent the names of the flags.
+  The values need to be of the type of the variable. The value must be of the same type as the variable.
+
+  ```json
+  remoteConfig: {
+    devOverrides: {
+      myStringVariable: "dev mode string value",
+      myNumberVariable: 100,
+      JSON: { devMode: true },
+    },
+  },
+  ```

@@ -44,7 +44,10 @@ export default defineConfig({
     footer: { variants: ["dark", "orange", "green"] },
     // ... your tests
   },
-  flags: { darkMode: "Boolean", newFeature: "Boolean" },
+  flags: ["darkMode", "newFeature"],
+  remoteConfig: {
+    customButtonText: "String",
+  }
 });
 ```
 

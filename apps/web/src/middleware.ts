@@ -26,7 +26,7 @@ export default withAuth(
 
       newUrl.pathname = `/projects/${
         tokenUser?.lastOpenProjectId ?? tokenUser?.projectIds[0]
-      }`;
+      }/flags`;
       return NextResponse.redirect(newUrl);
     }
   },

@@ -22,7 +22,7 @@ import { UserInfo } from "./UserInfo";
 import { CreateProjectModal } from "./CreateProjectModal";
 import { useSession } from "next-auth/react";
 import { twMerge } from "tailwind-merge";
-import { Book, ExternalLink } from "lucide-react";
+import { Book, ExternalLink, SlidersHorizontal } from "lucide-react";
 import { DOCS_URL } from "@tryabby/core";
 
 const navItemClass = (isActive: boolean) =>
@@ -110,16 +110,6 @@ const SideBar =
             </div>
             <hr className="mb-2 border-pink-50/20" />
             <Link
-              href={`/projects/${currentProjectId}`}
-              onClick={closeSidebar}
-              className={navItemClass(
-                router.pathname.endsWith("/projects/[projectId]")
-              )}
-            >
-              <MdSpaceDashboard className="mr-2" />
-              A/B Tests
-            </Link>
-            <Link
               href={`/projects/${currentProjectId}/flags`}
               onClick={closeSidebar}
               className={navItemClass(
@@ -130,6 +120,16 @@ const SideBar =
               Feature Flags
             </Link>
             <Link
+              href={`/projects/${currentProjectId}/remote-config`}
+              onClick={closeSidebar}
+              className={navItemClass(
+                router.pathname.endsWith("/projects/[projectId]/remote-config")
+              )}
+            >
+              <SlidersHorizontal className="mr-2 w-5" />
+              Remote Config
+            </Link>
+            <Link
               href={`/projects/${currentProjectId}/environments`}
               onClick={closeSidebar}
               className={navItemClass(
@@ -138,6 +138,16 @@ const SideBar =
             >
               <FiServer className="mr-2" />
               Environments
+            </Link>
+            <Link
+              href={`/projects/${currentProjectId}`}
+              onClick={closeSidebar}
+              className={navItemClass(
+                router.pathname.endsWith("/projects/[projectId]")
+              )}
+            >
+              <MdSpaceDashboard className="mr-2" />
+              A/B Tests
             </Link>
             <Link
               href={`/projects/${currentProjectId}/settings`}

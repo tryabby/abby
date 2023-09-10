@@ -1,15 +1,12 @@
 import { Inject, Injectable } from "@angular/core";
 import { Route } from "@angular/router";
-import { ExtractVariants } from "@tryabby/core";
 import {
-  Abby,
-  AbbyConfig,
-  AbbyEventType,
-  ABConfig,
-  FlagValue,
-  FlagValueString,
-  HttpService,
+  ExtractVariants,
+  RemoteConfigValue,
+  RemoteConfigValueString,
+  RemoteConfigValueStringToType,
 } from "@tryabby/core";
+import { Abby, AbbyConfig, AbbyEventType, ABConfig, HttpService } from "@tryabby/core";
 import {
   from,
   map,
@@ -24,9 +21,17 @@ import {
 } from "rxjs";
 import { F } from "ts-toolbelt";
 import { AbbyLoggerService } from "./abby-logger.service";
-import { FlagStorageService, TestStorageService } from "./StorageService";
+import {
+  FlagStorageService,
+  RemoteConfigStorageService,
+  TestStorageService,
+} from "./StorageService";
 
-type LocalData<FlagName extends string = string, TestName extends string = string> = {
+type LocalData<
+  FlagName extends string = string,
+  TestName extends string = string,
+  RemoteConfigName extends string = string,
+> = {
   tests: Record<
     TestName,
     ABConfig & {
@@ -34,17 +39,18 @@ type LocalData<FlagName extends string = string, TestName extends string = strin
       selectedVariant?: string;
     }
   >;
-  flags: Record<FlagName, FlagValue>;
+  flags: Record<FlagName, boolean>;
+  remoteConfig: Record<RemoteConfigName, RemoteConfigValue>;
 };
 
-export type InferFlagNames<C extends AbbyConfig> = InferFlags<C> extends Record<infer F, any>
-  ? F
-  : never;
+export type InferFlagNames<C extends AbbyConfig> = InferFlags<C>[number];
 export type InferTestNames<C extends AbbyConfig> = InferTests<C> extends Record<infer T, any>
   ? T
   : never;
 export type InferTests<C extends AbbyConfig> = NonNullable<C["tests"]>;
 export type InferFlags<C extends AbbyConfig> = NonNullable<C["flags"]>;
+export type InferRemoteConfig<C extends AbbyConfig> = NonNullable<C["remoteConfig"]>;
+export type InferRemoteConfigName<C extends AbbyConfig> = keyof NonNullable<C["remoteConfig"]>;
 
 type PossibleFlagName<FlagName extends string> = FlagName | `!${FlagName}`;
 
@@ -53,23 +59,31 @@ export class AbbyService<
   FlagName extends string = string,
   TestName extends string = string,
   Tests extends Record<TestName, ABConfig> = Record<TestName, ABConfig>,
-  Flags extends Record<FlagName, FlagValueString> = Record<FlagName, FlagValueString>,
+  RemoteConfig extends Record<RemoteConfigName, RemoteConfigValueString> = Record<
+    string,
+    RemoteConfigValueString
+  >,
+  RemoteConfigName extends Extract<keyof RemoteConfig, string> = Extract<
+    keyof RemoteConfig,
+    string
+  >,
 > {
-  private abby: Abby<FlagName, TestName, Tests, Flags>;
+  private abby: Abby<FlagName, TestName, Tests, RemoteConfig, RemoteConfigName>;
 
   private selectedVariants: { [key: string]: string } = {};
 
-  private config: F.Narrow<AbbyConfig<FlagName, Tests, Flags>>;
+  private config: F.Narrow<AbbyConfig<FlagName, Tests, string[], RemoteConfigName, RemoteConfig>>;
 
   private projectData$?: Observable<LocalData<FlagName, TestName>>;
 
   private cookieChanged$ = new Subject<void>();
 
   constructor(
-    @Inject(AbbyService) config: F.Narrow<AbbyConfig<FlagName, Tests, Flags>>,
+    @Inject(AbbyService)
+    config: F.Narrow<AbbyConfig<FlagName, Tests, string[], RemoteConfigName, RemoteConfig>>,
     private abbyLogger: AbbyLoggerService
   ) {
-    this.abby = new Abby<FlagName, TestName, Tests, Flags>(
+    this.abby = new Abby<FlagName, TestName, Tests, RemoteConfig, RemoteConfigName>(
       config,
       {
         get: (key: string) => {
@@ -90,6 +104,17 @@ export class AbbyService<
         set: (key: string, value: any) => {
           if (typeof window === "undefined") return;
           FlagStorageService.set(config.projectId, key, value);
+          this.cookieChanged$.next();
+        },
+      },
+      {
+        get: (key: string) => {
+          if (typeof window === "undefined") return null;
+          return RemoteConfigStorageService.get(config.projectId, key);
+        },
+        set: (key: string, value: any) => {
+          if (typeof window === "undefined") return;
+          RemoteConfigStorageService.set(config.projectId, key, value);
           this.cookieChanged$.next();
         },
       }
@@ -177,6 +202,15 @@ export class AbbyService<
     );
   }
 
+  public getRemoteConfig<T extends RemoteConfigName>(
+    name: T
+  ): Observable<RemoteConfigValueStringToType<RemoteConfig[T]>> {
+    return this.resolveData().pipe(
+      map(() => this.abby.getRemoteConfig(name)),
+      tap((value) => this.abbyLogger.log(`getRemoteConfig(${name}) => ${value}`))
+    );
+  }
+
   private resolveData(): Observable<LocalData<FlagName, TestName>> {
     this.projectData$ ??= from(this.abby.getProjectDataAsync()).pipe(
       switchMap((data) => {
@@ -192,7 +226,7 @@ export class AbbyService<
     return this.projectData$;
   }
 
-  public getAbbyInstance(): Abby<FlagName, TestName, Tests, Flags> {
+  public getAbbyInstance(): Abby<FlagName, TestName, Tests, RemoteConfig, RemoteConfigName> {
     return this.abby;
   }
 

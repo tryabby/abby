@@ -4,8 +4,9 @@
 
 ### Patch Changes
 
-- @tryabby/angular@1.2.1
-- @tryabby/devtools@4.1.0
+- Updated dependencies
+  - @tryabby/devtools@5.0.0
+  - @tryabby/angular@2.0.0
 
 ## 0.0.9
 

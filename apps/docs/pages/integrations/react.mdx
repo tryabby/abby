@@ -48,7 +48,10 @@ export default defineConfig({
     footer: { variants: ["dark", "orange", "green"] },
     // ... your tests
   },
-  flags: { darkMode: "Boolean", newFeature: "Boolean" },
+  flags: ["darkMode", "newFeature"],
+  remoteConfig: {
+    customButtonText: "String",
+  }
 });
 ```
 
@@ -61,7 +64,7 @@ Please copy the id of your project from the dashboard to get started.
 import { createAbby } from "@tryabby/react";
 import abbyConfig from "../abby.config";
 
-const { AbbyProvider, useAbby } = createAbby(abbyConfig);
+export const { AbbyProvider, useAbby, useFeatureFlag, useRemoteConfig } = createAbby(abbyConfig);
 ```
 
 ### Wrap your Application
@@ -149,3 +152,22 @@ function HomePage() {
   );
 }
 ```
+
+### useRemoteConfig
+
+The `useRemoteConfig` hook returns a value as specified in your `abby.config.ts`.
+The type of the returned value will automatically be inferred from your config.
+
+```tsx
+import { useRemoteConfig } from "./abby";
+
+function HomePage() {
+  const customButtonText = useRemoteConfig("customButtonText");
+
+  return (
+    <main className="p-6">
+      <h1>Welcome back, User</h1>
+      <button>{customButtonText}</button>
+    </main>
+  )
+}

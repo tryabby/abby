@@ -5,9 +5,9 @@
 ### Patch Changes
 
 - Updated dependencies
-  - @tryabby/core@4.3.0
-  - @tryabby/devtools@4.1.0
-  - @tryabby/next@4.1.2
+  - @tryabby/devtools@5.0.0
+  - @tryabby/core@5.0.0
+  - @tryabby/next@5.0.0
 
 ## 0.2.27
 

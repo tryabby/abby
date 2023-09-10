@@ -148,10 +148,7 @@ describe("useAbby", () => {
     const { AbbyProvider, useFeatureFlag } = createAbby({
       environments: [],
       projectId: "123",
-      flags: {
-        flag1: "Boolean",
-        flag2: "String",
-      },
+      flags: ["flag1", "flag2"],
     });
 
     const wrapper = ({ children }: PropsWithChildren) => <AbbyProvider>{children}</AbbyProvider>;
@@ -167,31 +164,29 @@ describe("useAbby", () => {
       wrapper,
     });
 
-    expect(flag2.current).toEqual("");
+    expect(flag2.current).toEqual(false);
 
     // wait for the flag to be fetched
-    waitFor(() => expect(flag2.current).toEqual("test"));
+    waitFor(() => expect(flag2.current).toEqual(false));
   });
 
   it("should respect the default values for feature flags", () => {
     const { AbbyProvider, useFeatureFlag } = createAbby({
       environments: [],
       projectId: "123",
-      flags: {
-        flag1: "Boolean",
-        flag2: "Boolean",
-      },
+      flags: ["flag1", "flag2"],
       currentEnvironment: "a",
     });
 
     const wrapper = ({ children }: PropsWithChildren) => <AbbyProvider>{children}</AbbyProvider>;
 
-    const { result: flag2 } = renderHook(() => useFeatureFlag("flag2"), {
+    const { result: flag1 } = renderHook(() => useFeatureFlag("flag1"), {
       wrapper,
     });
+    expect(flag1.current).toEqual(false);
 
     // wait for the flag to be fetched
-    waitFor(() => expect(flag2.current).toEqual(false));
+    waitFor(() => expect(flag1.current).toEqual(false));
   });
 
   it("uses the devOverrides", () => {
@@ -199,10 +194,7 @@ describe("useAbby", () => {
     const { AbbyProvider, useFeatureFlag } = createAbby({
       environments: [],
       projectId: "123",
-      flags: {
-        flag1: "Boolean",
-        flag2: "Boolean",
-      },
+      flags: ["flag1", "flag2"],
       currentEnvironment: "a",
       settings: {
         flags: {
@@ -239,10 +231,7 @@ describe("useAbby", () => {
     const { getFeatureFlagValue } = createAbby({
       environments: [],
       projectId: "123",
-      flags: {
-        flag1: "Boolean",
-        flag2: "Boolean",
-      },
+      flags: ["flag1", "flag2"],
       currentEnvironment: "a",
     });
 
@@ -335,6 +324,62 @@ describe("useAbby", () => {
 
     expectTypeOf(result.current.variant).toEqualTypeOf<"Hello" | "Bonjour" | "Hola">();
   });
+
+  it("returns correct remoteConfigValue", () => {
+    const { useRemoteConfig } = createAbby({
+      environments: [],
+      projectId: "123",
+      remoteConfig: {
+        remoteConfig1: "String",
+      },
+      currentEnvironment: "a",
+    });
+
+    // await server fetch
+    waitFor(() => expect(useRemoteConfig("remoteConfig1")).toEqual("FooBar"));
+  });
+
+  it("uses defaultValues when remoteConfig is not set", () => {
+    const { useRemoteConfig } = createAbby({
+      environments: [],
+      projectId: "123",
+      remoteConfig: {
+        unsetRemoteConfig: "String",
+      },
+      settings: {
+        remoteConfig: {
+          defaultValues: {
+            String: "defaultValue",
+          },
+        },
+      },
+      currentEnvironment: "a",
+    });
+
+    // await server fetch
+    waitFor(() => expect(useRemoteConfig("unsetRemoteConfig")).toEqual("defaultValue"));
+  });
+
+  it("uses devOverride for remoteConfig", () => {
+    const { useRemoteConfig } = createAbby({
+      environments: [],
+      projectId: "123",
+      remoteConfig: {
+        remoteConfig1: "String",
+      },
+      settings: {
+        remoteConfig: {
+          devOverrides: {
+            remoteConfig1: "overwrittenValue",
+          },
+        },
+      },
+      currentEnvironment: "a",
+    });
+
+    // await server fetch
+    waitFor(() => expect(useRemoteConfig("remoteConfig1")).toEqual("overwrittenValue"));
+  });
 });
 
 it("has the correct types", () => {
@@ -347,10 +392,7 @@ it("has the correct types", () => {
         variants: ["SimonsText", "MatthiasText", "TomsText", "TimsText"],
       },
     },
-    flags: {
-      flag1: "Boolean",
-      flag2: "String",
-    },
+    flags: ["flag1"],
   });
 
   const wrapper = ({ children }: PropsWithChildren) => <AbbyProvider>{children}</AbbyProvider>;
@@ -363,17 +405,11 @@ it("has the correct types", () => {
 
   expectTypeOf(result.current.variant).toEqualTypeOf<"OldFooter" | "NewFooter">();
 
-  expectTypeOf(useFeatureFlag).parameters.toEqualTypeOf<["flag1" | "flag2"]>();
+  expectTypeOf(useFeatureFlag).parameters.toEqualTypeOf<["flag1"]>();
 
   const { result: ffResult } = renderHook(() => useFeatureFlag("flag1"), {
     wrapper,
   });
 
   expectTypeOf(ffResult.current).toEqualTypeOf<boolean>();
-
-  const { result: ff2Result } = renderHook(() => useFeatureFlag("flag2"), {
-    wrapper,
-  });
-
-  expectTypeOf(ff2Result.current).toEqualTypeOf<string>();
 });

@@ -2,7 +2,7 @@ import { Tab, Tabs } from "nextra-theme-docs";
 
 # Using A/BBY with Next.js
 
-A/BBY was built to be the best solution for Feature Flags and A/B Testing in Next.js.
+A/BBY was built to be the best solution for Feature Flags, A/B Testing and Remote Configuration variables in Next.js.
 It deeply integrates with Next.js and provides a seamless developer experience.
 
 ## Installation
@@ -52,9 +52,10 @@ export default defineConfig({
       variants: ["light", "dark"],
     },
   },
-  flags: {
-    useDarkMode: "Boolean",
-  },
+  flags: ["useDarkMode"],
+  remoteConfig: {
+    customButtonText: "String",
+  }
 });
 ```
 
@@ -67,7 +68,7 @@ This file will contain all the code (e.g. the A/BBY hooks) that is needed to int
 import { createAbby } from "@tryabby/next";
 import config from "../abby.config";
 
-export const { withAbby, AbbyProvider, useFeatureFlag, useAbby, withAbbyApiHandler, withAbbyEdge } = createAbby(config);
+export const { withAbby, AbbyProvider, useFeatureFlag, useAbby, withAbbyApiHandler, withAbbyEdge, useRemoteConfig } = createAbby(config);
 
 ```
 
@@ -117,6 +118,26 @@ export function HomePage() {
 ```
 
 You can now go to the A/BBY dashboard and enable the `useDarkmode` flag for your project. You will see the text "Darkmode is enabled" on your homepage.
+
+#### Remote Configuration
+
+```tsx
+// index.tsx
+
+import { useRemoteConfig } from "lib/abby";
+
+export function HomePage() {
+  const customButtonText = useRemoteConfig("customButtonText");
+
+  return (
+    <>
+      <h1>My Homepage</h1>
+      <button>{customButtonText}</button>
+    </>
+  )
+}
+```
+You can now control the text, which the button is displaying, on the A/BBY dashboard.
 
 #### A/B Tests
 

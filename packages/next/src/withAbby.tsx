@@ -1,8 +1,4 @@
-import type {
-  AppContextType,
-  AppPropsType,
-  NextComponentType,
-} from "next/dist/shared/lib/utils";
+import type { AppContextType, AppPropsType, NextComponentType } from "next/dist/shared/lib/utils";
 import { AbbyConfig } from "@tryabby/react";
 import { NextRouter } from "next/router";
 import { HttpService } from "@tryabby/core";
@@ -13,10 +9,10 @@ import { PromiseCache } from "./cache";
 export const ABBY_DATA_KEY = "__ABBY_PROJECT_DATA__";
 
 export function withAbby<
-  Config extends Pick<AbbyConfig, "apiUrl" | "projectId" | "currentEnvironment">
+  Config extends Pick<AbbyConfig, "apiUrl" | "projectId" | "currentEnvironment">,
 >(
   { apiUrl, projectId, currentEnvironment }: Config,
-  abbyInstance: Abby<any, any, any, any>,
+  abbyInstance: Abby<any, any, any, any, any>,
   preloadAll = true
 ) {
   const promiseCache = new PromiseCache<AbbyDataResponse | null>();
@@ -48,18 +44,12 @@ export function withAbby<
         pageProps[ABBY_DATA_KEY] = abbyData;
       }
 
-      abbyInstance.setLocalOverrides(
-        appOrPageCtx.ctx.req?.headers.cookie ?? ""
-      );
+      abbyInstance.setLocalOverrides(appOrPageCtx.ctx.req?.headers.cookie ?? "");
 
       // Run the wrapped component's getInitialProps function.
       if (AppOrPage.getInitialProps) {
-        const originalProps = await AppOrPage.getInitialProps(
-          appOrPageCtx as any
-        );
-        const originalPageProps = isApp
-          ? originalProps.pageProps ?? {}
-          : originalProps;
+        const originalProps = await AppOrPage.getInitialProps(appOrPageCtx as any);
+        const originalPageProps = isApp ? originalProps.pageProps ?? {} : originalProps;
 
         pageProps = {
           ...originalPageProps,

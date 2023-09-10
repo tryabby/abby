@@ -14,7 +14,7 @@ const mockConfig = {
       variants: ["A", "B", "C", "D"],
     },
   },
-  flags: {},
+  flags: [],
   settings: {},
 } satisfies AbbyConfig;
 
@@ -26,15 +26,15 @@ const mockedData = {
     },
   ],
   flags: [],
+  remoteConfig: [],
 };
 
 describe("GetAbbyVariantPipe", () => {
   let pipe: GetAbbyVariantPipe<keyof (typeof mockConfig)["tests"], (typeof mockConfig)["tests"]>;
   let service: AbbyService<
-    keyof (typeof mockConfig)["flags"],
+    (typeof mockConfig)["flags"][number],
     keyof (typeof mockConfig)["tests"],
-    (typeof mockConfig)["tests"],
-    (typeof mockConfig)["flags"]
+    (typeof mockConfig)["tests"]
   >;
 
   let fetchSpy: any;
@@ -54,7 +54,7 @@ describe("GetAbbyVariantPipe", () => {
       imports: [AbbyModule.forRoot(mockConfig)],
     });
 
-    service = TestBed.inject(AbbyService);
+    service = TestBed.inject(AbbyService) as typeof service;
     pipe = TestBed.inject(GetAbbyVariantPipe);
   });
 

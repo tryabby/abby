@@ -4,6 +4,7 @@ import { getFlagCount } from "lib/flags";
 import { getProjectPaidPlan } from "lib/stripe";
 import { getLimitByPlan } from "server/common/plans";
 import { prisma } from "server/db/client";
+import { validateFlag } from "utils/validateFlags";
 
 export abstract class FlagService {
   static async createFlag({
@@ -43,6 +44,14 @@ export abstract class FlagService {
         message: `You have reached the limit of ${limits.flags} flags for your plan.`,
       });
     }
+
+    if (!validateFlag(type, value)) {
+      throw new TRPCError({
+        code: "INTERNAL_SERVER_ERROR",
+        message: `The value ${value} is not valid for the type ${type}`,
+      });
+    }
+
     const projectEnvs = await prisma.environment.findMany({
       where: {
         projectId: projectId,

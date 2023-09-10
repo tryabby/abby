@@ -41,7 +41,7 @@ describe("Abby", () => {
       },
     });
 
-    abby.init({ flags: [], tests: [{ name: "a", weights: [0, 1] }] });
+    abby.init({ flags: [], tests: [{ name: "a", weights: [0, 1] }], remoteConfig: [] });
     // const variant = abby.getTestVariant("a");
     expect(abby.getTestVariant("a")).toBe(variants[1]);
   });
@@ -50,25 +50,33 @@ describe("Abby", () => {
     const abby = new Abby({
       environments: [],
       projectId: "abc",
-      flags: {
-        flag1: "String",
-        flag2: "Boolean",
-      },
+      flags: ["flag1"],
     });
 
     await abby.loadProjectData();
 
     expect(abby.getFeatureFlag("flag1")).toBe(true);
+  });
 
-    expect(abby.getFeatureFlag("flag2")).toEqual("test");
+  it("gets a remote config", async () => {
+    const abby = new Abby({
+      environments: [],
+      projectId: "foo",
+      remoteConfig: { remoteConfig1: "String" },
+    });
+
+    await abby.loadProjectData();
+
+    expect(abby.getRemoteConfig("remoteConfig1")).toBe("asdf");
   });
 
   it("uses the devOverrides", () => {
     const abby = new Abby({
       environments: [],
       projectId: "",
-      flags: {
-        flag1: "Boolean",
+      flags: ["flag1"],
+      remoteConfig: {
+        remoteConfig1: "String",
       },
       settings: {
         flags: {
@@ -76,16 +84,27 @@ describe("Abby", () => {
             flag1: false,
           },
         },
+        remoteConfig: {
+          devOverrides: {
+            remoteConfig1: "foobar",
+          },
+        },
       },
     });
 
-    abby.init({ flags: [{ name: "flag1", value: true }], tests: [] });
+    abby.init({
+      flags: [{ name: "flag1", value: true }],
+      tests: [],
+      remoteConfig: [{ name: "remoteConfig1", value: "asdf" }],
+    });
 
     process.env.NODE_ENV = "development";
     expect(abby.getFeatureFlag("flag1")).toBe(false);
+    expect(abby.getRemoteConfig("remoteConfig1")).toBe("foobar");
 
     process.env.NODE_ENV = "production";
     expect(abby.getFeatureFlag("flag1")).toBe(true);
+    expect(abby.getRemoteConfig("remoteConfig1")).toBe("asdf");
   });
 
   it("uses fallbacks", () => {
@@ -140,19 +159,32 @@ describe("Abby", () => {
     const abby = new Abby({
       environments: [],
       projectId: "",
-      flags: {
-        flag1: "Boolean",
-        flag2: "String",
-      },
+      flags: ["flag1"],
     });
 
-    abby.init({ flags: [{ name: "flag1", value: true }], tests: [] });
+    abby.init({ flags: [{ name: "flag1", value: true }], tests: [], remoteConfig: [] });
 
     expect(abby.getFeatureFlag("flag1")).toBe(true);
 
     abby.updateFlag("flag1", false);
 
     expect(abby.getFeatureFlag("flag1")).toBe(false);
+  });
+
+  it("updates local remote config", () => {
+    const abby = new Abby({
+      environments: [],
+      projectId: "",
+      remoteConfig: { remoteConfig1: "String" },
+    });
+
+    abby.init({ flags: [], tests: [], remoteConfig: [{ name: "remoteConfig1", value: "foo" }] });
+
+    expect(abby.getRemoteConfig("remoteConfig1")).toBe("foo");
+
+    abby.updateRemoteConfig("remoteConfig1", "bar");
+
+    expect(abby.getRemoteConfig("remoteConfig1")).toBe("bar");
   });
 });
 

@@ -69,12 +69,22 @@ export default async function getWeightsHandler(
         name: test.name,
         weights: test.options.map((o) => o.chance.toNumber()),
       })),
-      flags: flags.map((flagValue) => {
-        return {
-          name: flagValue.flag.name,
-          value: transformFlagValue(flagValue.value, flagValue.flag.type),
-        };
-      }),
+      flags: flags
+        .filter(({ flag }) => flag.type === "BOOLEAN")
+        .map((flagValue) => {
+          return {
+            name: flagValue.flag.name,
+            value: transformFlagValue(flagValue.value, flagValue.flag.type),
+          };
+        }),
+      remoteConfig: flags
+        .filter(({ flag }) => flag.type !== "BOOLEAN")
+        .map((flagValue) => {
+          return {
+            name: flagValue.flag.name,
+            value: transformFlagValue(flagValue.value, flagValue.flag.type),
+          };
+        }),
     } satisfies AbbyDataResponse;
 
     const duration = performance.now() - now;

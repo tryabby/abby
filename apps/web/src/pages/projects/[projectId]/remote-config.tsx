@@ -7,24 +7,24 @@ import { trpc } from "utils/trpc";
 
 import { FeatureFlagPageContent } from "components/FlagPage";
 
-const FeatureFlagsPage: NextPageWithLayout = () => {
+const RemoteConfigPage: NextPageWithLayout = () => {
   const projectId = useProjectId();
 
   const { data, isLoading, isError } = trpc.flags.getFlags.useQuery({
     projectId,
-    types: ["BOOLEAN"],
+    types: ["JSON", "STRING", "NUMBER"],
   });
 
   if (isLoading || isError) return <FullPageLoadingSpinner />;
 
-  return <FeatureFlagPageContent data={data} type="Flags" />;
+  return <FeatureFlagPageContent data={data} type="Remote Config" />;
 };
 
-FeatureFlagsPage.getLayout = (page) => (
+RemoteConfigPage.getLayout = (page) => (
   <Layout>
-    <DashboardHeader title="Feature Flags" />
+    <DashboardHeader title="Remote Config" />
     {page}
   </Layout>
 );
 
-export default FeatureFlagsPage;
+export default RemoteConfigPage;

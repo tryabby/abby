@@ -53,6 +53,7 @@ describe("useAbby", () => {
               weights: [0.5, 0.5],
             },
           ],
+          remoteConfig: [],
         }}
       >
         <ComponentWithFF />
@@ -70,10 +71,7 @@ describe("useFeatureFlag", () => {
     const { AbbyProvider, useFeatureFlag } = createAbby({
       environments: [],
       projectId: "123",
-      flags: {
-        test: "Boolean",
-        test2: "Boolean",
-      },
+      flags: ["test", "test2"],
     });
 
     const ComponentWithFF = () => {
@@ -102,6 +100,7 @@ describe("useFeatureFlag", () => {
             },
           ],
           tests: [],
+          remoteConfig: [],
         }}
       >
         <ComponentWithFF />
@@ -110,5 +109,48 @@ describe("useFeatureFlag", () => {
 
     expect(serverSideDOM).toContain("Secret");
     expect(serverSideDOM).not.toContain("SUPER SECRET");
+  });
+});
+
+describe("getRemoteConfig", () => {
+  it("renders the correct remoteConfig value on the server", () => {
+    const { AbbyProvider, useRemoteConfig } = createAbby({
+      environments: [],
+      projectId: "123",
+      remoteConfig: { remoteConfig1: "String" },
+    });
+
+    const ComponentWithRC = () => {
+      const remoteConfig1 = useRemoteConfig("remoteConfig1");
+
+      return (
+        <>
+          <span data-testid="test">{remoteConfig1}</span>
+        </>
+      );
+    };
+
+    const serverSideDOM = renderToString(
+      <AbbyProvider
+        initialData={{
+          flags: [
+            {
+              value: true,
+              name: "test",
+            },
+            {
+              value: false,
+              name: "test2",
+            },
+          ],
+          tests: [],
+          remoteConfig: [{ name: "remoteConfig1", value: "FooBar" }],
+        }}
+      >
+        <ComponentWithRC />
+      </AbbyProvider>
+    );
+
+    expect(serverSideDOM).toContain("FooBar");
   });
 });

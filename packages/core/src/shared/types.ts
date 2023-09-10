@@ -1,6 +1,5 @@
 import { Key } from "ts-toolbelt/out/Any/Key";
-import { ABConfig } from "..";
-import { FlagValue } from "./schemas";
+import { ABConfig, RemoteConfigValue } from "..";
 
 export enum AbbyEventType {
   PING,
@@ -14,8 +13,9 @@ export type AbbyDataResponse = {
   }>;
   flags: Array<{
     name: string;
-    value: FlagValue;
+    value: boolean;
   }>;
+  remoteConfig: Array<{ name: string; value: RemoteConfigValue }>;
 };
 
 export type LegacyAbbyDataResponse = {
@@ -30,4 +30,3 @@ export type ExtractVariants<
   TestName extends Key,
   Tests extends Record<TestName, ABConfig>,
 > = Tests[TestName]["variants"][number];
-

@@ -1,6 +1,6 @@
 {
   "name": "@tryabby/react",
-  "version": "4.2.1",
+  "version": "5.0.0",
   "description": "",
   "main": "dist/index.js",
   "files": [

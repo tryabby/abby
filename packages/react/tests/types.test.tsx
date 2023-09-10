@@ -53,10 +53,7 @@ describe("useFeatureFlag", () => {
     const { AbbyProvider, useFeatureFlag } = createAbby({
       environments: [],
       projectId: "123",
-      flags: {
-        test: "Boolean",
-        test2: "String",
-      },
+      flags: ["test"],
     });
 
     const wrapper = ({ children }: PropsWithChildren) => <AbbyProvider>{children}</AbbyProvider>;
@@ -64,12 +61,9 @@ describe("useFeatureFlag", () => {
     const { result: testFlagResult } = renderHook(() => useFeatureFlag("test"), {
       wrapper,
     });
-    const { result: test2FlagResult } = renderHook(() => useFeatureFlag("test2"), {
-      wrapper,
-    });
 
     expectTypeOf(testFlagResult.current).toEqualTypeOf<boolean>();
-    expectTypeOf(test2FlagResult.current).toEqualTypeOf<string>();
+    expectTypeOf(useFeatureFlag).parameter(0).toEqualTypeOf<"test">();
   });
 
   // TODO: the types don't work for this yet
@@ -78,15 +72,11 @@ describe("useFeatureFlag", () => {
       environments: [],
       projectId: "123",
       currentEnvironment: "test",
-      flags: {
-        test: "Boolean",
-        test2: "String",
-      },
+      flags: ["test"],
       settings: {
         flags: {
           devOverrides: {
             test: true,
-            test2: "test",
           },
         },
       },
@@ -104,9 +94,7 @@ describe("useFeatureFlag", () => {
             variants: ["ONLY_ONE_VARIANT"],
           },
         },
-        flags: {
-          test: "Boolean",
-        },
+        flags: ["test"],
         settings: {
           flags: {
             devOverrides: {
@@ -117,5 +105,36 @@ describe("useFeatureFlag", () => {
       });
       expectTypeOf(getVariants("test")).toEqualTypeOf<["ONLY_ONE_VARIANT"]>();
     });
+  });
+});
+
+describe("useRemoteConfig", () => {
+  it("uses correct typings", () => {
+    const { AbbyProvider, useRemoteConfig } = createAbby({
+      environments: [],
+      projectId: "123",
+      remoteConfig: {
+        stringRc: "String",
+        numberRc: "Number",
+        jsonRc: "JSON",
+      },
+    });
+
+    expectTypeOf(useRemoteConfig).parameter(0).toEqualTypeOf<"stringRc" | "numberRc" | "jsonRc">();
+
+    const wrapper = ({ children }: PropsWithChildren) => <AbbyProvider>{children}</AbbyProvider>;
+    const { result: stringRcResult } = renderHook(() => useRemoteConfig("stringRc"), {
+      wrapper,
+    });
+    const { result: numberRcResult } = renderHook(() => useRemoteConfig("numberRc"), {
+      wrapper,
+    });
+    const { result: jsonRcResult } = renderHook(() => useRemoteConfig("jsonRc"), {
+      wrapper,
+    });
+
+    expectTypeOf(stringRcResult.current).toEqualTypeOf<string>();
+    expectTypeOf(numberRcResult.current).toEqualTypeOf<number>();
+    expectTypeOf(jsonRcResult.current).toEqualTypeOf<Record<string, unknown>>();
   });
 });

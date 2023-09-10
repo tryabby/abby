@@ -1,10 +1,15 @@
 # @tryabby/next
 
-## 4.1.2
+## 5.0.0
+
+### Major Changes
+
+- add remote config
 
 ### Patch Changes
 
-- @tryabby/react@4.2.1
+- Updated dependencies
+  - @tryabby/react@5.0.0
 
 ## 4.1.1
 

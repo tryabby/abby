@@ -34,10 +34,7 @@ describe("useAbby", () => {
           variants: ["SimonsText", "MatthiasText", "TomsText", "TimsText"],
         },
       },
-      flags: {
-        flag1: "Boolean",
-        flag2: "String",
-      },
+      flags: ["flag1"],
     });
 
     const wrapper = ({ children }: PropsWithChildren) => <AbbyProvider>{children}</AbbyProvider>;
@@ -50,19 +47,13 @@ describe("useAbby", () => {
 
     expectTypeOf(result.current.variant).toEqualTypeOf<"OldFooter" | "NewFooter">();
 
-    expectTypeOf(useFeatureFlag).parameters.toEqualTypeOf<["flag1" | "flag2"]>();
+    expectTypeOf(useFeatureFlag).parameters.toEqualTypeOf<["flag1"]>();
 
     const { result: ffResult } = renderHook(() => useFeatureFlag("flag1"), {
       wrapper,
     });
 
     expectTypeOf(ffResult.current).toEqualTypeOf<boolean>();
-
-    const { result: ff2Result } = renderHook(() => useFeatureFlag("flag2"), {
-      wrapper,
-    });
-
-    expectTypeOf(ff2Result.current).toEqualTypeOf<string>();
   });
 
   it("uses lookup object when retrieving AB test variant", () => {

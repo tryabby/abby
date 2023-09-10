@@ -55,10 +55,7 @@ describe("useFeatureFlag", () => {
     const { AbbyProvider, useFeatureFlag } = createAbby({
       environments: [],
       projectId: "123",
-      flags: {
-        test: "Boolean",
-        test1: "String",
-      },
+      flags: ["test"],
     });
 
     const wrapper = ({ children }: PropsWithChildren) => <AbbyProvider>{children}</AbbyProvider>;
@@ -74,10 +71,7 @@ describe("useFeatureFlag", () => {
       environments: [],
       projectId: "123",
       currentEnvironment: "test",
-      flags: {
-        test: "Boolean",
-        test1: "String",
-      },
+      flags: ["test"],
       tests: {
         a: {
           variants: ["a1", "a2"],
@@ -99,10 +93,7 @@ describe("useFeatureFlag", () => {
       environments: [],
       projectId: "123",
       currentEnvironment: "test",
-      flags: {
-        test: "Boolean",
-        test1: "String",
-      },
+      flags: ["test"],
       tests: {
         a: {
           variants: ["a1", "a2"],
@@ -147,5 +138,37 @@ describe("useFeatureFlag", () => {
     const apiHandler = withAbbyApiHandler((req, res) => {});
 
     expectTypeOf(apiHandler).parameters.toEqualTypeOf<[NextApiRequest, NextApiResponse]>();
+  });
+});
+
+describe("useRemoteConfig", () => {
+  it.skip("has the correct typings", () => {
+    const { AbbyProvider, useRemoteConfig } = createAbby({
+      environments: [],
+      projectId: "123",
+      remoteConfig: {
+        stringRc: "String",
+        numberRc: "Number",
+        jsonRc: "JSON",
+      },
+    });
+
+    expectTypeOf(useRemoteConfig).parameter(0).toEqualTypeOf<"stringRc" | "numberRc" | "jsonRc">();
+
+    const wrapper = ({ children }: PropsWithChildren) => <AbbyProvider>{children}</AbbyProvider>;
+
+    const { result: stringRcResult } = renderHook(() => useRemoteConfig("stringRc"), {
+      wrapper,
+    });
+    const { result: numberRcResult } = renderHook(() => useRemoteConfig("numberRc"), {
+      wrapper,
+    });
+    const { result: jsonRcResult } = renderHook(() => useRemoteConfig("jsonRc"), {
+      wrapper,
+    });
+
+    expectTypeOf(stringRcResult.current).toEqualTypeOf<string>();
+    expectTypeOf(numberRcResult.current).toEqualTypeOf<number>();
+    expectTypeOf(jsonRcResult.current).toEqualTypeOf<Record<string, unknown>>();
   });
 });

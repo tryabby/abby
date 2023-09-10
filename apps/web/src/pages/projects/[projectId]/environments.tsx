@@ -28,7 +28,7 @@ import {
   useSortable,
   verticalListSortingStrategy,
 } from "@dnd-kit/sortable";
-import { Environment } from "@prisma/client";
+import { Environment, FeatureFlagType } from "@prisma/client";
 import { CSS } from "@dnd-kit/utilities";
 import { MdDragIndicator } from "react-icons/md";
 
@@ -150,6 +150,7 @@ const EnvironmentPage: NextPageWithLayout = () => {
   const { data, isLoading, isError } = trpc.flags.getFlags.useQuery(
     {
       projectId,
+      types: Object.values(FeatureFlagType),
     },
     {
       onSuccess: (data) => {

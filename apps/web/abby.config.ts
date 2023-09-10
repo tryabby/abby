@@ -11,10 +11,8 @@ export default defineConfig({
       variants: ["A", "B"],
     },
   },
-  flags: {
-    AdvancedTestStats: "Boolean",
-    showFooter: "Boolean",
-    test: "Boolean",
+  flags: ["AdvancedTestStats", "showFooter", "test"],
+  remoteConfig: {
     abc: "JSON",
   },
 });

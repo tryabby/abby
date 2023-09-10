@@ -1,6 +1,7 @@
 import {
   getABStorageKey,
   getFFStorageKey,
+  getRCStorageKey,
   type IStorageService,
 } from "@tryabby/core";
 import Cookie from "js-cookie";
@@ -39,5 +40,19 @@ class FFStorageService implements IStorageService {
   }
 }
 
+class RCStorageService implements IStorageService {
+  get(projectId: string, key: string): string {
+    const retrievedValue = Cookie.get(getRCStorageKey(projectId, key));
+    return retrievedValue ?? null;
+  }
+  set(projectId: string, key: string, value: string): void {
+    Cookie.set(getRCStorageKey(projectId, key), value);
+  }
+  remove(projectId: string, key: string): void {
+    Cookie.remove(getRCStorageKey(projectId, key));
+  }
+}
+
 export const TestStorageService = new ABStorageService();
 export const FlagStorageService = new FFStorageService();
+export const RemoteConfigStorageService = new RCStorageService();

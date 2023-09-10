@@ -1,5 +1,11 @@
 # @tryabby/devtools
 
+## 5.0.0
+
+### Major Changes
+
+- add remote config
+
 ## 4.1.0
 
 ### Minor Changes
