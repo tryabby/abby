@@ -5,7 +5,7 @@ import Link from "next/link";
 import { DOCS_URL } from "@tryabby/core";
 
 const GITHUB_URL = "https://github.com/tryabby/abby";
-const LINKEDIN_URL = "https://www.linkedin.com/company/a-bby/";
+const LINKEDIN_URL = "https://www.linkedin.com/company/tryabby/";
 const TWITTER_URL = "https://twitter.com/tryabby";
 export const DISCORD_INVITE_URL = "https://discord.gg/nk7wKf7Pv2";
 
