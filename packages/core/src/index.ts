@@ -88,7 +88,7 @@ export type AbbyConfig<
   tests?: Tests;
   flags?: FlagName[];
   remoteConfig?: RemoteConfig;
-  settings?: Settings<F.NoInfer<FlagName>>;
+  settings?: Settings<F.NoInfer<FlagName>, F.NoInfer<RemoteConfigName>, F.NoInfer<RemoteConfig>>;
   debug?: boolean;
 };
 

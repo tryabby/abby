@@ -111,14 +111,14 @@ describe("Abby", () => {
     const abby = new Abby({
       environments: [],
       projectId: "",
-      flags: {
-        flag1: "String",
-        flag2: "String",
+      remoteConfig: {
+        config1: "String",
+        config2: "String",
       },
       settings: {
-        flags: {
+        remoteConfig: {
           fallbackValues: {
-            flag1: "fallback1",
+            config1: "fallback1",
           },
           defaultValues: {
             String: "default",
@@ -127,11 +127,11 @@ describe("Abby", () => {
       },
     });
 
-    abby.init({ flags: [], tests: [] });
+    abby.init({ flags: [], tests: [], remoteConfig: [] });
 
-    expect(abby.getFeatureFlag("flag1")).toBe("fallback1");
+    expect(abby.getRemoteConfig("config1")).toBe("fallback1");
 
-    expect(abby.getFeatureFlag("flag2")).toBe("default");
+    expect(abby.getRemoteConfig("config2")).toBe("default");
   });
 
   it("updates a local variant in dev mode", () => {
