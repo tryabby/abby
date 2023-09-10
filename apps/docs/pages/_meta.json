@@ -14,6 +14,7 @@
   },
   "a-b-testing": "A/B Tests",
   "feature-flags": "Feature Flags",
+  "remote-config": "Remote Configuration",
   "environments": "Environments",
   "config": "Configuration as Code",
   "-- More --": {

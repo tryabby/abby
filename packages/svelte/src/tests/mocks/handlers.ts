@@ -17,9 +17,11 @@ const returnData: AbbyDataResponse = {
       name: "flag1",
       value: true,
     },
+  ],
+  remoteConfig: [
     {
-      name: "flag2",
-      value: "someValue",
+      name: "remoteConfig1",
+      value: "FooBar",
     },
   ],
 };

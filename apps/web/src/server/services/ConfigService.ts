@@ -1,16 +1,19 @@
 import {
   AbbyConfigFile,
   PullAbbyConfigResponse,
-  getDefaultFlagValue,
-  stringifyFlagValue,
+  RemoteConfigValueString,
 } from "@tryabby/core";
 import {
+  getDefaultFlagValue,
+  stringifyFlagValue,
   transformClientFlagToDBType,
   transformDBFlagTypeToclient,
 } from "lib/flags";
 import { prisma } from "server/db/client";
 import { TestService } from "./TestService";
 import { FlagService } from "./FlagService";
+import { FeatureFlagType } from "@prisma/client";
+import { FlagValueString } from "types/flags";
 
 export async function handleGET({ projectId }: { projectId: string }) {
   const projectData = await prisma.project.findUnique({
@@ -40,10 +43,18 @@ export async function handleGET({ projectId }: { projectId: string }) {
       };
       return acc;
     }, {} as Record<string, any>),
-    flags: projectData.featureFlags.reduce((acc, flag) => {
-      acc[flag.name] = transformDBFlagTypeToclient(flag.type);
+    flags: projectData.featureFlags
+      .filter((flag) => flag.type === FeatureFlagType.BOOLEAN)
+      .map((flag) => flag.name),
+    remoteConfig: projectData.featureFlags.reduce((acc, flag) => {
+      if (flag.type !== FeatureFlagType.BOOLEAN) {
+        acc[flag.name] = transformDBFlagTypeToclient(flag.type) as Exclude<
+          FlagValueString,
+          "Boolean"
+        >;
+      }
       return acc;
-    }, {} as Record<string, any>),
+    }, {} as Record<string, RemoteConfigValueString>),
   } satisfies PullAbbyConfigResponse;
 
   return config;
@@ -111,31 +122,42 @@ export async function handlePUT({
     );
   }
 
-  if (config.flags) {
-    await Promise.all(
-      Object.entries(config.flags).map(async ([flagName, flagTypeAsString]) => {
-        const flagValue = getDefaultFlagValue(flagTypeAsString);
-        const flagData = await prisma.featureFlag.findUnique({
-          where: {
-            projectId_name: {
-              name: flagName,
-              projectId,
-            },
+  const featureFlags = (config.flags ?? []).map((flag) => ({
+    name: flag,
+    type: "Boolean" as const,
+  }));
+  const remoteConfig = Object.entries(config.remoteConfig ?? {}).map(
+    (config) => ({
+      name: config[0],
+      type: config[1],
+    })
+  );
+
+  const flags = [...featureFlags, ...remoteConfig];
+
+  await Promise.all(
+    flags.map(async ({ name, type }) => {
+      const flagValue = getDefaultFlagValue(type);
+      const flagData = await prisma.featureFlag.findUnique({
+        where: {
+          projectId_name: {
+            name,
+            projectId,
           },
-        });
+        },
+      });
 
-        if (flagData) {
-          return;
-        }
+      if (flagData) {
+        return;
+      }
 
-        return FlagService.createFlag({
-          projectId,
-          flagName,
-          userId,
-          type: transformClientFlagToDBType(flagTypeAsString),
-          value: stringifyFlagValue(flagValue),
-        });
-      })
-    );
-  }
+      return FlagService.createFlag({
+        projectId,
+        flagName: name,
+        userId,
+        type: transformClientFlagToDBType(type),
+        value: stringifyFlagValue(flagValue),
+      });
+    })
+  );
 }

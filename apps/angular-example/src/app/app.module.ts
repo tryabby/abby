@@ -25,6 +25,7 @@ import { ReactiveFormsModule } from "@angular/forms";
     BrowserModule,
     AppRoutingModule,
     AbbyModule.forRoot(abbyConfig),
+    ReactiveFormsModule,
   ],
   providers: [],
 

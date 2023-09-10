@@ -1,9 +1,9 @@
 <script lang="ts">
   import { abby } from "../abby";
   export let data: { __abby__data: any; __abby_cookie: any };
-  const { useFeatureFlag, AbbyProvider } = abby;
+  const { useFeatureFlag, AbbyProvider, useRemoteConfig } = abby;
   const flag1 = useFeatureFlag("flag1");
-  const flag2 = useFeatureFlag("flag2");
+  const remoteConfig1 = useRemoteConfig("remoteConfig1");
 </script>
 
 <body>
@@ -12,8 +12,8 @@
       <div id="flag1Enabled">my super secret feature 1</div>
     {/if}
 
-    {#if $flag2 !== "someValue"}
-      <div id="flag2Enabled">my super secret feature 2</div>
+    {#if $remoteConfig1 !== "FooBar"}
+      <div id="remoteConfig1">my remoteConfig1 value</div>
     {/if}
   </AbbyProvider>
 </body>

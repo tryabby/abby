@@ -6,22 +6,17 @@
 <button (click)="onAct()">OnAct</button>
 
 <h3>Simple Variant-Test Directive Demo with 4 options</h3>
-<ng-container *abbyTest="{testName: 'AngularTest', variant: 'A'}">AAAAAA</ng-container>
-<ng-container *abbyTest="{testName: 'AngularTest', variant: 'B'}">BBBBBB</ng-container>
-<ng-container *abbyTest="{testName: 'AngularTest', variant: 'C'}">CCCCCC</ng-container>
-<ng-container *abbyTest="{testName: 'AngularTest', variant: 'D'}">DDDDDD</ng-container>
+<ng-container *abbyTest="{ testName: 'AngularTest', variant: 'A' }">AAAAAA</ng-container>
+<ng-container *abbyTest="{ testName: 'AngularTest', variant: 'B' }">BBBBBB</ng-container>
+<ng-container *abbyTest="{ testName: 'AngularTest', variant: 'C' }">CCCCCC</ng-container>
+<ng-container *abbyTest="{ testName: 'AngularTest', variant: 'D' }">DDDDDD</ng-container>
 
-<h4
-  *ngIf="angularTest$ | async as angularTest"
-  [ngStyle]="{'color': headerColor$ | async }"
->
+<h4 *ngIf="angularTest$ | async as angularTest" [ngStyle]="{ color: headerColor$ | async }">
   Test
 </h4>
 <h4
   [ngStyle]="{
-    'color': 'AngularTest'
-      | getAbbyVariant: { A: 'blue', B: 'green', C: 'yellow', D: 'pink' }
-      | async
+    color: 'AngularTest' | getAbbyVariant: { A: 'blue', B: 'green', C: 'yellow', D: 'pink' } | async
   }"
 >
   Variants Pipe
@@ -39,17 +34,17 @@
 <div *abbyFlag="'!AngularFlag'">AngularFlag = OFF</div>
 
 <h3>Config UI Tool Demo</h3>
-<abby-devtools [props]="{dangerouslyForceShow: true}"></abby-devtools>
+<abby-devtools [props]="{ dangerouslyForceShow: true }"></abby-devtools>
 
 <h3>Default usage Demo</h3>
 <h4>Feature Flag</h4>
 <div *abbyFlag="'!NotExistingFlag'">AngularFlag = OFF</div>
 
 <h4>Variants</h4>
-<ng-container *abbyTest="{testName: 'NotExistingTest', variant: 'A'}">AAAAAA</ng-container>
-<ng-container *abbyTest="{testName: 'NotExistingTest', variant: 'B'}">BBBBBB</ng-container>
-<ng-container *abbyTest="{testName: 'NotExistingTest', variant: 'C'}">CCCCCC</ng-container>
-<ng-container *abbyTest="{testName: 'NotExistingTest', variant: 'D'}">DDDDDD</ng-container>
+<ng-container *abbyTest="{ testName: 'NotExistingTest', variant: 'A' }">AAAAAA</ng-container>
+<ng-container *abbyTest="{ testName: 'NotExistingTest', variant: 'B' }">BBBBBB</ng-container>
+<ng-container *abbyTest="{ testName: 'NotExistingTest', variant: 'C' }">CCCCCC</ng-container>
+<ng-container *abbyTest="{ testName: 'NotExistingTest', variant: 'D' }">DDDDDD</ng-container>
 
 <!-- todo -->
 
@@ -66,7 +61,7 @@
 <h3>Router A/B Test Demo</h3>
 <nav>
   <ul>
-    <li><a [routerLink]="[{outlets: {test: 'test'}}]">Test</a></li>
+    <li><a [routerLink]="[{ outlets: { test: 'test' } }]">Test</a></li>
   </ul>
 </nav>
 <router-outlet name="test"></router-outlet>
@@ -75,7 +70,7 @@
 <div *abbyFlag="'AngularFlag'">
   <nav>
     <ul>
-      <li><a [routerLink]="[{outlets: {flag: 'flag'}}]">Feature</a></li>
+      <li><a [routerLink]="[{ outlets: { flag: 'flag' } }]">Feature</a></li>
     </ul>
   </nav>
 </div>
@@ -84,10 +79,13 @@
 <h3>Lazy-loaded module Demo</h3>
 <nav>
   <ul>
-    <li><a [routerLink]="[{outlets: {lazy: 'lazy'}}]">Lazy</a></li>
+    <li><a [routerLink]="[{ outlets: { lazy: 'lazy' } }]">Lazy</a></li>
   </ul>
 </nav>
 <router-outlet name="lazy"></router-outlet>
+
+<h3>Remote Config</h3>
+<p>angularRemoteConfig: {{ "angularRemoteConfig" | getAbbyRemoteConfig | async }}</p>
 
 <h3>Angular Universal SSR Demo</h3>
 <!-- todo -->

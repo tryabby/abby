@@ -13,7 +13,10 @@ export default defineConfig({
       variants: ["A", "B"],
     },
   },
-  flags: { AngularFlag: "Boolean", AngularFlag2: "Boolean", NotExistingFlag: "Boolean" },
+  flags: ["AngularFlag", "AngularFlag2", "NotExistingFlag"],
+  remoteConfig: {
+    angularRemoteConfig: "String",
+  },
   apiUrl: "http://localhost:3000/",
   debug: true,
 });

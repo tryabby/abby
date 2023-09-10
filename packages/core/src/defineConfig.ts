@@ -1,10 +1,11 @@
 import { F } from "ts-toolbelt";
-import { ABConfig, AbbyConfig, FlagValueString } from ".";
+import { ABConfig, AbbyConfig, RemoteConfigValueString } from ".";
 
 export function defineConfig<
   FlagName extends string,
   Tests extends Record<string, ABConfig>,
-  Flags extends Record<FlagName, FlagValueString>,
->(config: F.Narrow<AbbyConfig<FlagName, Tests, Flags>>) {
+  RemoteConfig extends Record<RemoteConfigName, RemoteConfigValueString>,
+  RemoteConfigName extends Extract<keyof RemoteConfig, string>,
+>(config: F.Narrow<AbbyConfig<FlagName, Tests, string[], RemoteConfigName, RemoteConfig>>) {
   return config;
 }

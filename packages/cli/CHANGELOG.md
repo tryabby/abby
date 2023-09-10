@@ -1,5 +1,11 @@
 # @tryabby/cli
 
+## 1.0.0
+
+### Major Changes
+
+- add remote config
+
 ## 0.3.0
 
 ### Minor Changes

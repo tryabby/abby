@@ -10,16 +10,14 @@ export const abbyEventSchema = z.object({
 
 export type AbbyEvent = z.infer<typeof abbyEventSchema>;
 
-export const flagValue = z.union([
-  z.boolean(),
+export const remoteConfigValue = z.union([
   z.string(),
   z.number(),
   z.record(z.string(), z.unknown()),
 ]);
 
-export const flagValueStringSchema = z.union([
+export const remoteConfigValueStringSchema = z.union([
   z.literal("String"),
-  z.literal("Boolean"),
   z.literal("Number"),
   z.literal("JSON"),
 ]);
@@ -36,13 +34,26 @@ export const abbyConfigSchema = z.object({
       })
     )
     .optional(),
-  flags: z.record(flagValueStringSchema).optional(),
+  flags: z.array(z.string()).optional(),
+  remoteConfig: z.record(remoteConfigValueStringSchema).optional(),
   settings: z
     .object({
       flags: z
         .object({
-          defaultValues: z.record(z.string(), flagValue).optional(),
-          devOverrides: z.record(z.string(), flagValue).optional(),
+          defaultValue: z.boolean().optional(),
+          devOverrides: z.record(z.string(), z.boolean()).optional(),
+        })
+        .optional(),
+      remoteConfig: z
+        .object({
+          defaultValues: z
+            .object({
+              String: z.string(),
+              Number: z.number(),
+              JSON: z.record(z.string(), z.unknown()),
+            })
+            .partial(),
+          devOverrides: z.record(z.string(), remoteConfigValue).optional(),
         })
         .optional(),
     })
@@ -52,16 +63,17 @@ export const abbyConfigSchema = z.object({
 
 export type AbbyConfigFile = z.infer<typeof abbyConfigSchema>;
 
-export type PullAbbyConfigResponse = Pick<AbbyConfigFile, "environments" | "flags" | "tests">;
+export type PullAbbyConfigResponse = Pick<
+  AbbyConfigFile,
+  "environments" | "flags" | "tests" | "remoteConfig"
+>;
 
-export type FlagValue = z.infer<typeof flagValue>;
+export type RemoteConfigValue = z.infer<typeof remoteConfigValue>;
 
-export type FlagValueString = z.infer<typeof flagValueStringSchema>;
+export type RemoteConfigValueString = z.infer<typeof remoteConfigValueStringSchema>;
 
-export type FlagValueStringToType<T extends FlagValueString> = T extends "String"
+export type RemoteConfigValueStringToType<T extends RemoteConfigValueString> = T extends "String"
   ? string
-  : T extends "Boolean"
-  ? boolean
   : T extends "Number"
   ? number
   : T extends "JSON"

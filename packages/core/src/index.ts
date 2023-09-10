@@ -2,12 +2,14 @@ import {
   ABBY_AB_STORAGE_PREFIX,
   ABBY_FF_STORAGE_PREFIX,
   AbbyDataResponse,
-  FlagValue,
-  FlagValueString,
-  FlagValueStringToType,
-  flagStringToType,
-  getDefaultFlagValue,
-  stringifyFlagValue,
+  DEFAULT_FEATURE_FLAG_VALUE,
+  RemoteConfigValue,
+  stringifyRemoteConfigValue,
+  RemoteConfigValueString,
+  RemoteConfigValueStringToType,
+  getDefaultRemoteConfigValue,
+  ABBY_RC_STORAGE_PREFIX,
+  remoteConfigStringToType,
 } from "./shared/";
 import { HttpService } from "./shared";
 import { F } from "ts-toolbelt";
@@ -23,19 +25,33 @@ export type ABConfig<T extends string = string> = {
 
 type Settings<
   FlagName extends string,
-  Flags extends Record<FlagName, FlagValueString> = Record<FlagName, FlagValueString>,
+  RemoteConfigName extends string = string,
+  RemoteConfig extends Record<RemoteConfigName, RemoteConfigValueString> = Record<
+    RemoteConfigName,
+    RemoteConfigValueString
+  >,
 > = {
   flags?: {
+    defaultValue?: boolean;
+    devOverrides?: {
+      [K in FlagName]?: boolean;
+    };
+  };
+  remoteConfig?: {
     defaultValues?: {
-      [K in FlagValueString]?: FlagValueStringToType<K>;
+      [K in RemoteConfigValueString]?: RemoteConfigValueStringToType<K>;
     };
     devOverrides?: {
-      [K in keyof Flags]?: FlagValueStringToType<Flags[K]>;
+      [K in keyof RemoteConfig]: RemoteConfigValueStringToType<RemoteConfig[K]>;
     };
   };
 };
 
-type LocalData<FlagName extends string = string, TestName extends string = string> = {
+type LocalData<
+  FlagName extends string = string,
+  TestName extends string = string,
+  RemoteConfigName extends string = string,
+> = {
   tests: Record<
     TestName,
     ABConfig & {
@@ -43,7 +59,8 @@ type LocalData<FlagName extends string = string, TestName extends string = strin
       selectedVariant?: string;
     }
   >;
-  flags: Record<FlagName, FlagValue>;
+  flags: Record<FlagName, boolean>;
+  remoteConfig: Record<RemoteConfigName, RemoteConfigValue>;
 };
 
 interface PersistentStorage {
@@ -54,16 +71,21 @@ interface PersistentStorage {
 export type AbbyConfig<
   FlagName extends string = string,
   Tests extends Record<string, ABConfig> = Record<string, ABConfig>,
-  Flags extends Record<FlagName, FlagValueString> = Record<FlagName, FlagValueString>,
   Environments extends Array<string> = Array<string>,
+  RemoteConfigName extends string = string,
+  RemoteConfig extends Record<RemoteConfigName, RemoteConfigValueString> = Record<
+    RemoteConfigName,
+    RemoteConfigValueString
+  >,
 > = {
   projectId: string;
   apiUrl?: string;
   currentEnvironment?: Environments[number];
   environments: Environments;
   tests?: Tests;
-  flags?: Flags;
-  settings?: Settings<F.NoInfer<FlagName>, Flags>;
+  flags?: FlagName[];
+  remoteConfig?: RemoteConfig;
+  settings?: Settings<F.NoInfer<FlagName>>;
   debug?: boolean;
 };
 
@@ -71,44 +93,57 @@ export class Abby<
   FlagName extends string,
   TestName extends string,
   Tests extends Record<string, ABConfig>,
-  Flags extends Record<FlagName, FlagValueString>,
+  RemoteConfig extends Record<RemoteConfigName, RemoteConfigValueString>,
+  RemoteConfigName extends Extract<keyof RemoteConfig, string>,
   Environments extends Array<string> = Array<string>,
 > {
   private log = (...args: any[]) =>
     this.config.debug ? console.log(`core.Abby`, ...args) : () => {};
 
-  #data: LocalData<FlagName, TestName> = {
+  #data: LocalData<FlagName, TestName, RemoteConfigName> = {
     tests: {} as any,
     flags: {} as any,
+    remoteConfig: {} as any,
   };
 
   private listeners = new Set<(newData: LocalData<FlagName, TestName>) => void>();
 
-  private _cfg: AbbyConfig<FlagName, Tests, Flags>;
+  private _cfg: AbbyConfig<FlagName, Tests>;
 
   private dataInitialized: Boolean = false;
 
-  private flagOverrides = new Map<string, FlagValueStringToType<Flags[keyof Flags]>>();
-
+  private flagOverrides = new Map<string, boolean>();
   private testOverrides: Map<keyof Tests, Tests[keyof Tests]["variants"][number]> = new Map();
+  private remoteConfigOverrides = new Map<string, RemoteConfigValue>();
 
   constructor(
-    private config: F.Narrow<AbbyConfig<FlagName, Tests, Flags, Environments>>,
+    private config: F.Narrow<
+      AbbyConfig<FlagName, Tests, Environments, RemoteConfigName, RemoteConfig>
+    >,
     private persistantTestStorage?: PersistentStorage,
-    private persistantFlagStorage?: PersistentStorage
+    private persistantFlagStorage?: PersistentStorage,
+    private persistentRemoteConfigStorage?: PersistentStorage
   ) {
-    this._cfg = config as AbbyConfig<FlagName, Tests, Flags, Environments>;
-    this.#data.flags = Object.keys(config.flags ?? {}).reduce(
+    this._cfg = config as AbbyConfig<FlagName, Tests, Environments>;
+    this.#data.flags = Object.values(this._cfg.flags ?? {}).reduce(
       (acc, flagName) => {
-        acc[flagName as FlagName] = this.getDefaultFlagValue(
-          flagName as FlagName,
-          config.flags as any
-        );
+        acc[flagName as FlagName] = DEFAULT_FEATURE_FLAG_VALUE;
         return acc;
       },
-      {} as Record<FlagName, FlagValue>
+      {} as Record<FlagName, boolean>
     );
     this.#data.tests = config.tests ?? ({} as any);
+    this.#data.remoteConfig = Object.keys(config.remoteConfig ?? {}).reduce(
+      (acc, remoteConfigName) => {
+        acc[remoteConfigName as RemoteConfigName] = this.getDefaultRemoteConfigValue(
+          remoteConfigName,
+          config.remoteConfig as any
+        );
+
+        return acc;
+      },
+      {} as Record<RemoteConfigName, RemoteConfigValue>
+    );
   }
 
   /**
@@ -130,7 +165,7 @@ export class Abby<
     this.init(data);
   }
 
-  async getProjectDataAsync(): Promise<LocalData<FlagName, TestName>> {
+  async getProjectDataAsync(): Promise<LocalData<FlagName, TestName, RemoteConfigName>> {
     this.log(`getProjectDataAsync()`);
 
     if (!this.dataInitialized) {
@@ -168,17 +203,24 @@ export class Abby<
           acc[name] = value;
           return acc;
         },
-        {} as Record<string, FlagValue>
+        {} as Record<string, boolean>
+      ),
+      remoteConfig: (data.remoteConfig ?? []).reduce(
+        (acc, { name, value }) => {
+          acc[name] = value;
+          return acc;
+        },
+        {} as Record<string, RemoteConfigValue>
       ),
     };
   }
 
   /**
-   * Function to get the locally stored information about A/B tests and feature flags
+   * Function to get the locally stored information about A/B tests, feature flags and remote config
    * This also includes the overrides from the dev tools and the local overrides
    * @returns the local data
    */
-  getProjectData(): LocalData<FlagName, TestName> {
+  getProjectData(): LocalData<FlagName, TestName, RemoteConfigName> {
     this.log(`getProjectData()`);
 
     return {
@@ -193,6 +235,12 @@ export class Abby<
         acc[flagName as FlagName] = this.getFeatureFlag(flagName as FlagName);
         return acc;
       }, this.#data.flags),
+      remoteConfig: Object.keys(this.#data.remoteConfig).reduce((acc, remoteConfigName) => {
+        acc[remoteConfigName as RemoteConfigName] = this.getRemoteConfig(
+          remoteConfigName as RemoteConfigName
+        );
+        return acc;
+      }, this.#data.remoteConfig),
     };
   }
 
@@ -223,12 +271,10 @@ export class Abby<
    * @param key the name of the feature flag
    * @returns the value of the feature flag
    */
-  getFeatureFlag<T extends keyof Flags, CurrentFlag extends Flags[T] = Flags[T]>(
-    key: T
-  ): FlagValueStringToType<CurrentFlag> {
+  getFeatureFlag(key: FlagName): boolean {
     this.log(`getFeatureFlag()`, key);
 
-    const storedValue = this.#data.flags[key as unknown as FlagName];
+    const storedValue = this.#data.flags[key];
 
     const localOverride = this.flagOverrides?.get(key as unknown as FlagName);
 
@@ -250,16 +296,52 @@ export class Abby<
       }
     }
 
-    const flagType = this._cfg.flags?.[key];
-    const defaultValue = this._cfg.settings?.flags?.defaultValues?.[flagType!];
+    const defaultValue = this._cfg.settings?.flags?.defaultValue;
 
     // return the defaultValue if exists
-    if (!storedValue && defaultValue != null) {
+    if (storedValue === undefined && defaultValue != null) {
       return defaultValue;
     }
 
     this.log(`getFeatureFlag() => storedValue:`, storedValue);
-    return storedValue as FlagValueStringToType<CurrentFlag>;
+    return storedValue;
+  }
+
+  /**
+   * Function to get the value of a remote config. This includes
+   * the overrides from the dev tools and the local overrides if in development mode
+   * otherwise it will return the value retrieved from the server
+   * @param key the name of the remote config
+   * @returns the value of the remote config
+   */
+  getRemoteConfig<T extends RemoteConfigName, Curr extends RemoteConfig[T] = RemoteConfig[T]>(
+    key: T
+  ): RemoteConfigValueStringToType<Curr> {
+    this.log(`getRemoteConfig()`, key);
+
+    const storedValue = this.#data.remoteConfig[key];
+    const localOverride = this.remoteConfigOverrides?.get(key);
+
+    if (localOverride !== undefined) {
+      return localOverride as RemoteConfigValueStringToType<RemoteConfig[RemoteConfigName]>;
+    }
+
+    if (process.env.NODE_ENV === "development") {
+      const devOverride = (this.config.settings?.remoteConfig?.devOverrides as any)?.[key];
+      if (devOverride != null) {
+        return devOverride;
+      }
+    }
+
+    const defaultValue =
+      this._cfg.settings?.remoteConfig?.defaultValues?.[this._cfg.remoteConfig?.[key]!];
+
+    if (storedValue === undefined && defaultValue !== undefined) {
+      return defaultValue as RemoteConfigValueStringToType<RemoteConfig[RemoteConfigName]>;
+    }
+
+    this.log(`getRemoteConfig() => storedValue:`, storedValue);
+    return storedValue as RemoteConfigValueStringToType<RemoteConfig[RemoteConfigName]>;
   }
 
   /**
@@ -315,10 +397,26 @@ export class Abby<
    * @param name the name of the feature flag
    * @param value the value to override the feature flag with
    */
-  updateFlag<F extends FlagName>(name: F, value: FlagValueStringToType<Flags[F]>) {
+  updateFlag(name: FlagName, value: boolean) {
     this.flagOverrides.set(name, value);
     if (process.env.NODE_ENV === "development") {
-      this.persistantFlagStorage?.set(name, this.stringifiedFlagValue(value));
+      this.persistantFlagStorage?.set(name, this.stringifiedValue(value));
+    }
+    this.notifyListeners();
+  }
+
+  /**
+   * Helper function to update the locally stored value of a remote config
+   * @param name the name of the remote config
+   * @param value the value to override the remote config with
+   */
+  updateRemoteConfig<T extends RemoteConfigName>(
+    name: RemoteConfigName,
+    value: RemoteConfigValueStringToType<RemoteConfig[T]>
+  ) {
+    this.remoteConfigOverrides.set(name, value);
+    if (process.env.NODE_ENV === "development") {
+      this.persistentRemoteConfigStorage?.set(name, this.stringifiedValue(value));
     }
     this.notifyListeners();
   }
@@ -388,33 +486,44 @@ export class Abby<
           ""
         );
 
-        this.flagOverrides.set(flagName, this.flagStringToType(flagName, cookieValue) as any);
+        const flagValue = cookieValue === "true";
+        this.flagOverrides.set(flagName, flagValue);
+      }
+
+      if (cookieName.startsWith(ABBY_RC_STORAGE_PREFIX) && this._cfg.remoteConfig) {
+        const remoteConfigName = cookieName.replace(
+          `${ABBY_RC_STORAGE_PREFIX}${this.config.projectId}_`,
+          ""
+        );
+
+        const remoteConfigValue = remoteConfigStringToType({
+          remoteConfigType: this._cfg.remoteConfig[remoteConfigName],
+          stringifiedValue: cookieValue,
+        });
+        this.remoteConfigOverrides.set(remoteConfigName, remoteConfigValue);
       }
     });
   }
 
-  private getDefaultFlagValue<FlagName extends string>(flagName: FlagName, flags: Flags) {
-    const flagType = flags[flagName as unknown as keyof Flags];
+  private getDefaultRemoteConfigValue<RemoteConfigName extends string>(
+    remoteConfigName: RemoteConfigName,
+    remoteConfig: RemoteConfig
+  ): RemoteConfigValue {
+    const remoteConfigType = remoteConfig[remoteConfigName as unknown as keyof RemoteConfig];
 
-    const defaultValue = (this.config.settings?.flags?.defaultValues as any)?.[flagName] as
-      | FlagValue
-      | undefined;
+    const defaultValue = this.config.settings?.remoteConfig?.defaultValues?.[remoteConfigType];
 
-    if (defaultValue != null) return defaultValue;
+    if (defaultValue !== undefined) {
+      return defaultValue as RemoteConfigValue;
+    }
 
-    return getDefaultFlagValue(flagType);
+    return getDefaultRemoteConfigValue(remoteConfigType);
   }
 
-  private flagStringToType(flagName: string, stringifiedValue: string): FlagValue {
-    const flagType = this._cfg.flags?.[flagName as keyof Flags]!;
-
-    return flagStringToType({
-      stringifiedValue,
-      flagType,
-    });
-  }
-
-  private stringifiedFlagValue(value: FlagValue): string {
-    return stringifyFlagValue(value);
+  private stringifiedValue(value: RemoteConfigValue | boolean): string {
+    if (typeof value === "boolean") {
+      return value.toString();
+    }
+    return stringifyRemoteConfigValue(value);
   }
 }

@@ -19,6 +19,7 @@ type Props = {
   onClose: () => void;
   isOpen: boolean;
   projectId: string;
+  isRemoteConfig?: boolean;
 };
 
 export type FlagFormValues = {
@@ -32,11 +33,13 @@ export function ChangeFlagForm({
   onChange: onChangeHandler,
   errors,
   canChangeType = true,
+  isRemoteConfig,
 }: {
   initialValues: FlagFormValues;
   onChange: (values: FlagFormValues) => void;
   errors: Partial<FlagFormValues>;
   canChangeType?: boolean;
+  isRemoteConfig?: boolean;
 }) {
   const inputRef = useRef<HTMLInputElement>(null);
   const inputClassName =
@@ -73,42 +76,49 @@ export function ChangeFlagForm({
           type="text"
           defaultValue={initialValues.name}
           onChange={(e) => onChange({ name: e.target.value })}
-          placeholder="My new feature flag"
+          placeholder={isRemoteConfig ? "My Remote Config" : "My Feature Flag"}
           className={inputClassName}
         />
         {errors.name && (
           <p className="mt-1 text-sm text-red-500">{errors.name}</p>
         )}
       </div>
-      <div>
-        <label className="mb-1 block text-pink-50">Type</label>
-        <RadioSelect
-          isDisabled={!canChangeType}
-          options={Object.entries(FeatureFlagType).map(([key, flagType]) => ({
-            label: (
-              <div
-                className={cn(
-                  "flex items-center",
-                  getFlagTypeClassName(flagType)
-                )}
-              >
-                <FlagIcon type={flagType} className="mr-2 inline-block" />
-                <span>{transformDBFlagTypeToclient(flagType)}</span>
-              </div>
-            ),
-            value: flagType,
-          }))}
-          onChange={(value) => {
-            if (!canChangeType) return;
+      {isRemoteConfig && (
+        <div>
+          <label className="mb-1 block text-pink-50">Type</label>
+          <RadioSelect
+            isDisabled={!canChangeType}
+            options={Object.entries(FeatureFlagType)
+              // we omit boolean for remote config
+              .filter(
+                ([, flagType]) => isRemoteConfig && flagType !== "BOOLEAN"
+              )
+              .map(([key, flagType]) => ({
+                label: (
+                  <div
+                    className={cn(
+                      "flex items-center",
+                      getFlagTypeClassName(flagType)
+                    )}
+                  >
+                    <FlagIcon type={flagType} className="mr-2 inline-block" />
+                    <span>{transformDBFlagTypeToclient(flagType)}</span>
+                  </div>
+                ),
+                value: flagType,
+              }))}
+            onChange={(value) => {
+              if (!canChangeType) return;
 
-            onChange({
-              type: value,
-              value: value === "BOOLEAN" ? "false" : "",
-            });
-          }}
-          initialValue={initialValues.type}
-        />
-      </div>
+              onChange({
+                type: value,
+                value: value === "BOOLEAN" ? "false" : "",
+              });
+            }}
+            initialValue={initialValues.type}
+          />
+        </div>
+      )}
       <div>
         <label className="mb-1 block text-pink-50">Value</label>
         {state.type === "BOOLEAN" && (
@@ -123,7 +133,9 @@ export function ChangeFlagForm({
             type="text"
             value={state.value}
             onChange={(e) => onChange({ value: e.target.value })}
-            placeholder="My Flag Value"
+            placeholder={
+              isRemoteConfig ? "My Remote Config" : "My Feature Flag"
+            }
             className="form-input w-full rounded-md border border-gray-500 bg-gray-600 px-4 py-2 text-white placeholder-gray-400 shadow-sm focus:outline-none focus:ring-2 focus:ring-gray-400 focus:ring-offset-2"
           />
         )}
@@ -154,7 +166,12 @@ export function ChangeFlagForm({
   );
 }
 
-export const AddFeatureFlagModal = ({ onClose, isOpen, projectId }: Props) => {
+export const AddFeatureFlagModal = ({
+  onClose,
+  isOpen,
+  projectId,
+  isRemoteConfig,
+}: Props) => {
   const inputRef = useRef<HTMLInputElement>(null);
   const ctx = trpc.useContext();
   const stateRef = useRef<FlagFormValues>();
@@ -172,7 +189,9 @@ export const AddFeatureFlagModal = ({ onClose, isOpen, projectId }: Props) => {
     <Modal
       isOpen={isOpen}
       onClose={onClose}
-      title="Create new feature flag"
+      title={
+        isRemoteConfig ? "Create new remote config" : "Create new feature flag"
+      }
       confirmText="Create"
       initialFocusRef={inputRef}
       size="full"
@@ -218,11 +237,12 @@ export const AddFeatureFlagModal = ({ onClose, isOpen, projectId }: Props) => {
         errors={errors}
         initialValues={{
           name: "",
-          type: "BOOLEAN",
-          value: "false",
+          type: isRemoteConfig ? "STRING" : "BOOLEAN",
+          value: isRemoteConfig ? "" : "false",
         }}
         onChange={(newState) => (stateRef.current = newState)}
         canChangeType
+        isRemoteConfig={isRemoteConfig}
       />
     </Modal>
   );

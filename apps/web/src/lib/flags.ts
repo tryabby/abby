@@ -1,7 +1,14 @@
 import { FeatureFlag, FeatureFlagType } from "@prisma/client";
-import { assertUnreachable } from "@tryabby/core";
-import { FlagValueString } from "@tryabby/core";
+import {
+  assertUnreachable,
+  DEFAULT_FEATURE_FLAG_VALUE,
+  getDefaultRemoteConfigValue,
+  RemoteConfigValue,
+  RemoteConfigValueString,
+  stringifyRemoteConfigValue,
+} from "@tryabby/core";
 import { groupBy } from "lodash-es";
+import { FlagValueString } from "../types/flags";
 
 export function getFlagCount(flags: Array<FeatureFlag>) {
   return Object.keys(groupBy(flags, (f) => f.name)).length;
@@ -22,6 +29,25 @@ export function transformFlagValue(value: string, type: FeatureFlagType) {
       return value;
     default:
       assertUnreachable(type);
+  }
+}
+
+export function stringifyFlagValue(value: RemoteConfigValue | boolean): string {
+  if (typeof value === "boolean") {
+    return value.toString();
+  }
+
+  return stringifyRemoteConfigValue(value);
+}
+
+export function getDefaultFlagValue(type: RemoteConfigValueString | "Boolean") {
+  switch (type) {
+    case "JSON":
+    case "String":
+    case "Number":
+      return getDefaultRemoteConfigValue(type);
+    case "Boolean":
+      return DEFAULT_FEATURE_FLAG_VALUE;
   }
 }
 

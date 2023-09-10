@@ -3,17 +3,22 @@ import { FlagService } from "server/services/FlagService";
 import { z } from "zod";
 import { protectedProcedure, router } from "../trpc";
 import { FeatureFlagType } from "@prisma/client";
+import { validateFlag } from "utils/validateFlags";
 
 export const flagRouter = router({
   getFlags: protectedProcedure
     .input(
       z.object({
         projectId: z.string(),
+        types: z.array(z.nativeEnum(FeatureFlagType)),
       })
     )
     .query(async ({ ctx, input }) => {
       const flags = await ctx.prisma.featureFlag.findMany({
         where: {
+          type: {
+            in: input.types,
+          },
           project: {
             id: input.projectId,
             users: {
@@ -86,9 +91,19 @@ export const flagRouter = router({
             },
           },
         },
+        include: {
+          flag: { select: { type: true } },
+        },
       });
 
       if (!currentFlag) throw new TRPCError({ code: "UNAUTHORIZED" });
+
+      if (!validateFlag(currentFlag.flag.type, input.value)) {
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: `The value ${input.value} is not valid for the type ${currentFlag.flag.type}`,
+        });
+      }
 
       await ctx.prisma.$transaction([
         ctx.prisma.featureFlagValue.update({

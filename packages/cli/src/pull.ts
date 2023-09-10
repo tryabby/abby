@@ -28,7 +28,8 @@ export function mergeConfigs(localConfig: AbbyConfig, remoteConfig: PullAbbyConf
     ...localConfig,
     environments: Array.from(new Set([...localConfig.environments, ...remoteConfig.environments])),
     tests: deepmerge(localConfig.tests ?? {}, remoteConfig.tests ?? {}),
-    flags: deepmerge(localConfig.flags ?? {}, remoteConfig.flags ?? {}),
+    flags: deepmerge(localConfig.flags ?? [], remoteConfig.flags ?? []),
+    remoteConfig: deepmerge(localConfig.remoteConfig ?? {}, remoteConfig.remoteConfig ?? {}),
   } satisfies AbbyConfig;
 }
 

@@ -8,7 +8,6 @@ import { TestStorageService } from "./StorageService";
 import type { AbbyConfig } from "@tryabby/core";
 import { zip } from "rxjs";
 import { Routes } from "@angular/router";
-import { AbbyFlag } from "./flag.directive";
 
 const mockConfig = {
   projectId: "mock-project-id",
@@ -25,12 +24,10 @@ const mockConfig = {
       variants: ["A", "B"],
     },
   },
-  flags: {
-    flag1: "Boolean",
-    flag2: "Boolean",
-    overridedFlag1: "Boolean",
-    overridedFlag2: "Boolean",
-    defaultFlag: "Boolean",
+  flags: ["flag1", "flag2", "overridedFlag1", "overrideFlag2", "defaultFlag"],
+  remoteConfig: {
+    remoteConfig1: "String",
+    overwrittenRemoteConfig: "String",
   },
   settings: {
     flags: {
@@ -38,8 +35,11 @@ const mockConfig = {
         overridedFlag1: true,
         overridedFlag2: false,
       },
-      defaultValues: {
-        Boolean: false,
+      defaultValue: false,
+    },
+    remoteConfig: {
+      devOverrides: {
+        overwrittenRemoteConfig: "asdf",
       },
     },
   },
@@ -74,16 +74,20 @@ const mockedData = {
       value: true,
     },
   ],
+  remoteConfig: [
+    { name: "remoteConfig1", value: "foobar" },
+    { name: "overwrittenRemoteConfig", value: "foobar" },
+  ],
 };
 @Injectable({
   providedIn: "root",
   useExisting: AbbyService,
 })
 export class Abby extends AbbyService<
-  keyof (typeof mockConfig)["flags"],
+  (typeof mockConfig)["flags"][number],
   keyof (typeof mockConfig)["tests"],
   (typeof mockConfig)["tests"],
-  (typeof mockConfig)["flags"]
+  (typeof mockConfig)["remoteConfig"]
 > {}
 
 describe("AbbyService", () => {
@@ -110,7 +114,7 @@ describe("AbbyService", () => {
     `,
   })
   class TestComponent {
-    dynamicFlag = 'flag1';
+    dynamicFlag = "flag1";
   }
 
   beforeAll(async () => {
@@ -199,6 +203,18 @@ describe("AbbyService", () => {
     });
   });
 
+  it("returns correct value for remote config", () => {
+    service.getRemoteConfig("remoteConfig1").subscribe((value) => {
+      expect(value).toBe("foobar");
+    });
+  });
+
+  it("uses overwritten value for remote config", () => {
+    service.getRemoteConfig("overwrittenRemoteConfig").subscribe((value) => {
+      expect(value).toBe("asdf");
+    });
+  });
+
   it("should get the correct router variant", () => {
     @Component({})
     class ATestComponent {}
@@ -278,9 +294,9 @@ describe("AbbyService", () => {
     } else fail("querySelector is null");
   });
 
-  it('evaluates flag directives with property bound values', () => {
+  it("evaluates flag directives with property bound values", () => {
     const compiled = fixture.nativeElement as HTMLElement;
     let flagElement = compiled.querySelector("h4");
-    expect(flagElement?.textContent).toEqual('Dynamic Flag');
+    expect(flagElement?.textContent).toEqual("Dynamic Flag");
   });
 });

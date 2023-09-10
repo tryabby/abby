@@ -18,11 +18,7 @@ const { useAbby, AbbyProvider, useFeatureFlag, withDevtools, __abby__ } =
         variants: ["Dark", "Funky", "Light"],
       },
     },
-    flags: {
-      ToggleMeIfYoureExcited: "Boolean",
-      showEasterEgg: "Boolean",
-      showHeading: "Boolean",
-    },
+    flags: ["ToggleMeIfYoureExcited", "showEasterEgg", "showHeading"],
   });
 
 export const AbbyProdDevtools = withDevtools(abbyDevtools, {
