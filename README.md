@@ -1,4 +1,4 @@
-![Abby Banner](https://github.com/tryabby/abby/assets/20679094/dd415956-25b4-4528-95fb-f010b21011c9)
+![Abby Banner](./apps/web/public/og.png)
 
 # About Abby
 
