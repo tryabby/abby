@@ -51,7 +51,7 @@ const MyApp: AppType<{ session: Session | null }> = ({
                 <main className={`font-sans`}>
                   <DefaultSeo
                     defaultTitle="Abby - Open Source A/B Testing & Feature Flags"
-                    titleTemplate="%s | Abby"
+                    titleTemplate="%s"
                     description={seoDescription}
                     canonical={currentPageUrl}
                     openGraph={{
@@ -62,7 +62,9 @@ const MyApp: AppType<{ session: Session | null }> = ({
                       images: [
                         {
                           url: `${
-                            process.env.VERCEL_URL ?? "https://www.tryabby.com"
+                            process.env.VERCEL_URL
+                              ? `https://${process.env.VERCEL_URL}`
+                              : "https://www.tryabby.com"
                           }/og.png`,
                           width: 1200,
                           height: 630,
