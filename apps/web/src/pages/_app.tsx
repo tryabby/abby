@@ -61,7 +61,9 @@ const MyApp: AppType<{ session: Session | null }> = ({
                       description: seoDescription,
                       images: [
                         {
-                          url: "https://www.tryabby.com/og.png",
+                          url: `${
+                            process.env.VERCEL_URL ?? "https://www.tryabby.com"
+                          }/og.png`,
                           width: 1200,
                           height: 630,
                           alt: "Abby",
