@@ -1,5 +1,13 @@
 # @tryabby/react
 
+## 5.0.1
+
+### Patch Changes
+
+- add fallback values to remote config
+- Updated dependencies
+  - @tryabby/core@5.0.1
+
 ## 5.0.0
 
 ### Major Changes

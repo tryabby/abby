@@ -107,6 +107,33 @@ describe("Abby", () => {
     expect(abby.getRemoteConfig("remoteConfig1")).toBe("asdf");
   });
 
+  it("uses fallbacks", () => {
+    const abby = new Abby({
+      environments: [],
+      projectId: "",
+      remoteConfig: {
+        config1: "String",
+        config2: "String",
+      },
+      settings: {
+        remoteConfig: {
+          fallbackValues: {
+            config1: "fallback1",
+          },
+          defaultValues: {
+            String: "default",
+          },
+        },
+      },
+    });
+
+    abby.init({ flags: [], tests: [], remoteConfig: [] });
+
+    expect(abby.getRemoteConfig("config1")).toBe("fallback1");
+
+    expect(abby.getRemoteConfig("config2")).toBe("default");
+  });
+
   it("updates a local variant in dev mode", () => {
     process.env.NODE_ENV = "development";
 

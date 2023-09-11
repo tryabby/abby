@@ -44,6 +44,9 @@ type Settings<
     devOverrides?: {
       [K in keyof RemoteConfig]: RemoteConfigValueStringToType<RemoteConfig[K]>;
     };
+    fallbackValues?: {
+      [K in keyof RemoteConfig]?: RemoteConfigValueStringToType<RemoteConfig[K]>;
+    };
   };
 };
 
@@ -85,7 +88,7 @@ export type AbbyConfig<
   tests?: Tests;
   flags?: FlagName[];
   remoteConfig?: RemoteConfig;
-  settings?: Settings<F.NoInfer<FlagName>>;
+  settings?: Settings<F.NoInfer<FlagName>, F.NoInfer<RemoteConfigName>, F.NoInfer<RemoteConfig>>;
   debug?: boolean;
 };
 
@@ -336,8 +339,18 @@ export class Abby<
     const defaultValue =
       this._cfg.settings?.remoteConfig?.defaultValues?.[this._cfg.remoteConfig?.[key]!];
 
-    if (storedValue === undefined && defaultValue !== undefined) {
-      return defaultValue as RemoteConfigValueStringToType<RemoteConfig[RemoteConfigName]>;
+    if (storedValue === undefined) {
+      // before we return the default value we check if there is a fallback value set
+      const fallbackValue = key in (this._cfg.settings?.remoteConfig?.fallbackValues ?? {});
+      if (fallbackValue) {
+        return this._cfg.settings?.remoteConfig?.fallbackValues?.[
+          key
+        ] as RemoteConfigValueStringToType<RemoteConfig[RemoteConfigName]>;
+      }
+
+      if (defaultValue != null) {
+        return defaultValue as RemoteConfigValueStringToType<RemoteConfig[RemoteConfigName]>;
+      }
     }
 
     this.log(`getRemoteConfig() => storedValue:`, storedValue);
