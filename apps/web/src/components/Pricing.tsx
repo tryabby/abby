@@ -128,7 +128,7 @@ export function PricingTable() {
           features={[
             `${basePlan.eventsPerMonth.toLocaleString()} Events / month`,
             `${basePlan.tests} A/B Test`,
-            `${basePlan.flags} Feature Flags / Remote Config`,
+            `${basePlan.flags} Feature Flags / Remote Config Variables`,
             `${basePlan.environments} Environments`,
           ]}
         />
@@ -141,7 +141,7 @@ export function PricingTable() {
           features={[
             `${startupPlan.eventsPerMonth.toLocaleString()} Events / month`,
             `${startupPlan.tests} A/B Tests`,
-            `${startupPlan.flags} Feature Flags / Remote Config`,
+            `${startupPlan.flags} Feature Flags / Remote Config Variables`,
             `${startupPlan.environments} Environments`,
           ]}
           priceSuffix="/mo*"
@@ -156,7 +156,7 @@ export function PricingTable() {
           features={[
             `${proPlan.eventsPerMonth.toLocaleString()} Events / month`,
             `${proPlan.tests} A/B Tests`,
-            `${proPlan.flags} Feature Flags / Remote Config`,
+            `${proPlan.flags} Feature Flags / Remote Config Variables`,
             `${proPlan.environments} Environments`,
           ]}
           priceSuffix="/mo*"
@@ -171,7 +171,7 @@ export function PricingTable() {
           features={[
             "Unlimited Events / month",
             "Unlimited Tests",
-            "Unlimited Feature Flags",
+            "Unlimited Feature Flags / Remote Config Variables",
             "Unlimited Environments",
           ]}
         />

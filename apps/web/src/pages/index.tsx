@@ -127,6 +127,8 @@ const Home: NextPageWithLayout<
             src={abbyScreenshot}
             alt="Screenshot of Abby's Dashboard"
             className="mt-12 hidden w-10/12 rounded-xl border border-accent-background shadow-2xl md:block lg:max-w-5xl"
+            width={1920}
+            height={1080}
             priority
           />
         </div>
@@ -177,7 +179,7 @@ const Home: NextPageWithLayout<
             </Feature>
             <Feature
               icon={Shield}
-              title="The safe and reliable A/B testing tool"
+              title="The safe and reliable Feature Flagging tool"
               subtitle="Downtime Secure"
             >
               Abby ensures a stable testing environment. Abbys SDKs have built

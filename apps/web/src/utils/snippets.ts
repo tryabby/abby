@@ -62,12 +62,6 @@ export async function generateCodeSnippets({
     {
       projectId,
       currentEnvironment: "process.env.NODE_ENV",
-      tests: tests.reduce((acc, test) => {
-        acc[test.name] = {
-          variants: test.options.map((option) => option.identifier),
-        };
-        return acc;
-      }, {} as Record<string, any>),
       flags: flags
         .filter((flag) => flag.type === "BOOLEAN")
         .map((flag) => flag.name),
@@ -79,6 +73,12 @@ export async function generateCodeSnippets({
         }
         return acc;
       }, {} as Record<string, RemoteConfigValueString>),
+      tests: tests.reduce((acc, test) => {
+        acc[test.name] = {
+          variants: test.options.map((option) => option.identifier),
+        };
+        return acc;
+      }, {} as Record<string, any>),
     } as AbbyConfig,
     null,
     2
