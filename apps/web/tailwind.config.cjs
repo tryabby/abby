@@ -24,20 +24,21 @@ module.exports = {
         },
         accent: {
           foreground: {
-            DEFAULT:  "rgba(var(--color-accent-foreground), 1)",
+            DEFAULT: "rgba(var(--color-accent-foreground), 1)",
             hover: "rgba(var(--color-accent-foreground), 0.9)",
             muted: "rgba(var(--color-accent-foreground), 0.6)",
           },
-          background:{
+          background: {
             DEFAULT: "rgba(var(--color-accent-background), 1)",
             hover: "rgba(var(--color-accent-background), 0.85)",
             muted: "rgba(var(--color-accent-background), 0.6)",
-          }
+          },
         },
       },
       fontFamily: {
         sans: ["Mona Sans", ...fontFamily.sans],
         mono: ["Fragment Mono", ...fontFamily.mono],
+        logo: ["Martian Mono", ...fontFamily.mono],
       },
       keyframes: {
         slideUpAndFade: {

@@ -82,7 +82,7 @@
     style:--top={position === "top-left" || position === "top-right" ? "1rem" : "auto"}
   >
     <div class="header">
-      <h1>A/BBY Devtools</h1>
+      <h1 class="logo">Abby Devtools</h1>
       <button on:click={onToggleVisibility}>
         <CloseIcon />
       </button>
@@ -92,22 +92,6 @@
         >{abby.getConfig().currentEnvironment}</span
       ></small
     >
-    <hr />
-    <h2>A/B Tests:</h2>
-    {#each Object.entries(tests) as [testName, { selectedVariant, variants }]}
-      <Select
-        label={testName}
-        value={selectedVariant}
-        options={variants.map((v) => ({
-          label: v,
-          value: v,
-        }))}
-        onChange={(newValue) => {
-          window.postMessage({ type: "abby:select-variant", testName, newValue }, "*");
-          abby.updateLocalVariant(testName, newValue);
-        }}
-      />
-    {/each}
     <hr />
     <h2>Flags:</h2>
     {#each Object.entries(flags) as [flagName, flagValue]}
@@ -148,9 +132,26 @@
         </div>
       {/if}
     {/each}
+    <hr />
+    <h2>A/B Tests:</h2>
+    {#each Object.entries(tests) as [testName, { selectedVariant, variants }]}
+      <Select
+        label={testName}
+        value={selectedVariant}
+        options={variants.map((v) => ({
+          label: v,
+          value: v,
+        }))}
+        onChange={(newValue) => {
+          window.postMessage({ type: "abby:select-variant", testName, newValue }, "*");
+          abby.updateLocalVariant(testName, newValue);
+        }}
+      />
+    {/each}
   </div>
 {:else}
   <button
+    class="logo"
     in:send={{ key }}
     out:receive={{ key }}
     on:click={onToggleVisibility}
@@ -160,7 +161,7 @@
     style:--left={position === "top-left" || position === "bottom-left" ? "1rem" : "auto"}
     style:--top={position === "top-left" || position === "top-right" ? "1rem" : "auto"}
   >
-    A/B
+    Ab
   </button>
 {/if}
 
@@ -175,6 +176,7 @@
     position: fixed;
     color: var(--pink);
     font-weight: bold;
+    font-size: 20px;
     background: #121929;
     font-family: ui-monospace, "Cascadia Code", "Source Code Pro", Menlo, Consolas,
       "DejaVu Sans Mono", monospace;
@@ -207,6 +209,10 @@
     font-size: 14px;
     color: hsl(213 31% 91%);
     min-width: 300px;
+
+    .logo {
+      font-family: "Martian Mono", inherit;
+    }
 
     hr {
       margin: 1rem 0;

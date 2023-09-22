@@ -124,11 +124,11 @@ export function PricingTable() {
           price="Free"
           title="Hobby"
           planName="HOBBY"
-          subtitle="Good for IndieHackers that want to get started with A/B Testing & Feature Flags. No Credit card required"
+          subtitle="Good for IndieHackers that want to get started with Feature Flags & Remote Config. No Credit card required"
           features={[
             `${basePlan.eventsPerMonth.toLocaleString()} Events / month`,
             `${basePlan.tests} A/B Test`,
-            `${basePlan.flags} Feature Flags`,
+            `${basePlan.flags} Feature Flags / Remote Config Variables`,
             `${basePlan.environments} Environments`,
           ]}
         />
@@ -136,12 +136,12 @@ export function PricingTable() {
           href={session.status === "authenticated" ? "/projects" : "/login"}
           price="12€"
           title="Startup"
-          subtitle="Optimal for startups & small businesses that want to dive deeper with A/B Testing & Feature Flags"
+          subtitle="Optimal for startups & small businesses that want to dive deeper with Feature Flags & Remote Config"
           planName="STARTUP"
           features={[
             `${startupPlan.eventsPerMonth.toLocaleString()} Events / month`,
             `${startupPlan.tests} A/B Tests`,
-            `${startupPlan.flags} Feature Flags`,
+            `${startupPlan.flags} Feature Flags / Remote Config Variables`,
             `${startupPlan.environments} Environments`,
           ]}
           priceSuffix="/mo*"
@@ -152,11 +152,11 @@ export function PricingTable() {
           price="89€"
           title="Pro"
           planName="PRO"
-          subtitle="Perfect for growing companies that want to scale their A/B Testing & Feature Flags and get more insights"
+          subtitle="Perfect for growing companies that want to scale their Feature Flags & Remote Config and get more insights"
           features={[
             `${proPlan.eventsPerMonth.toLocaleString()} Events / month`,
             `${proPlan.tests} A/B Tests`,
-            `${proPlan.flags} Feature Flags`,
+            `${proPlan.flags} Feature Flags / Remote Config Variables`,
             `${proPlan.environments} Environments`,
           ]}
           priceSuffix="/mo*"
@@ -171,7 +171,7 @@ export function PricingTable() {
           features={[
             "Unlimited Events / month",
             "Unlimited Tests",
-            "Unlimited Feature Flags",
+            "Unlimited Feature Flags / Remote Config Variables",
             "Unlimited Environments",
           ]}
         />

@@ -88,18 +88,17 @@ const Home: NextPageWithLayout<
           <div className="relative">
             <AmpersandIcon className="absolute -right-48 -top-6 hidden h-48 w-48 lg:block" />
             <h1 className="text-center text-5xl font-extrabold">
-              Dead-Simple <span className="mark">A/B Testing</span> <br />
+              Dead-Simple <span className="mark">Feature Flags</span> <br />
               <span className="inline lg:hidden">&</span>
               <br />
-              Effortless <span className="mark">Feature Flags</span>
+              Effortless <span className="mark">Remote Config</span>
             </h1>
           </div>
           <h2 className="mx-auto mt-16 max-w-2xl text-center leading-relaxed">
-            A/BBY makes it easy to do feature testing to optimzie your website.
-            Forget about complex setups and complicated integrations. Find a
-            secure and reliable way to use feature toggles in different
-            environments for the best ab test experience. Built by developers
-            for developers
+            Abby enables modern teams to speed up their development cycles and
+            and release with confidence. <br />
+            With its first class developer experience, Abby is the perfect
+            solution for every software development team.
             <span className="mt-4 block font-semibold">
               Built by Developers for Developers.
             </span>
@@ -126,8 +125,10 @@ const Home: NextPageWithLayout<
           </div>
           <Image
             src={abbyScreenshot}
-            alt="Screenshot of A/BBY's Dashboard"
+            alt="Screenshot of Abby's Dashboard"
             className="mt-12 hidden w-10/12 rounded-xl border border-accent-background shadow-2xl md:block lg:max-w-5xl"
+            width={1920}
+            height={1080}
             priority
           />
         </div>
@@ -136,10 +137,10 @@ const Home: NextPageWithLayout<
       <section id="features" className="py-48">
         <div className="container px-6 md:px-16">
           <h1 className="mb-6 text-center text-4xl font-bold">
-            <span className="mark">Why</span> choose A/BBY?
+            <span className="mark">Why</span> choose Abby?
           </h1>
           <h2 className="mb-8 text-center text-lg">
-            Find out why A/BBY is the easiest and nicest solution out there.
+            Find out why Abby is the easiest and nicest solution out there.
           </h2>
 
           <div className="grid grid-cols-1 gap-8 md:grid-cols-2">
@@ -148,7 +149,7 @@ const Home: NextPageWithLayout<
               title="Privacy First"
               subtitle="Avoid big companies that track you and sell your data"
             >
-              A/BBY is all about privacy and transparency. We prove it by being
+              Abby is all about privacy and transparency. We prove it by being
               open source.
             </Feature>
             <Feature
@@ -156,7 +157,7 @@ const Home: NextPageWithLayout<
               title="Developer Friendly"
               subtitle="Enjoy a developer-friendly API and a great developer experience"
             >
-              A/BBY was created by developers that experienced the pain of
+              Abby was created by developers that experienced the pain of
               existing solutions.
             </Feature>
             <Feature
@@ -164,34 +165,35 @@ const Home: NextPageWithLayout<
               title="Simple Analytics"
               subtitle="Analytics that everyone can understand"
             >
-              A/BBY focuses on simple analytics and easy-to-read reports so that
+              Abby focuses on simple analytics and easy-to-read reports so that
               you don&apos;t have to be a data scientist to understand
               what&apos;s going on.
             </Feature>
             <Feature
               icon={Clock}
-              title="Test your components in minutes"
+              title="Integrate in minutes"
               subtitle="Fast Implementation"
             >
-              Start testing your components in under 5 minutes. Simply integrate
-              it in your code and you&apos;re ready to go.
+              Start using Abby in under 5 minutes. Simply integrate it in your
+              code and you&apos;re ready to go.
             </Feature>
             <Feature
               icon={Shield}
-              title="The safe and reliable A/B testing tool"
+              title="The safe and reliable Feature Flagging tool"
               subtitle="Downtime Secure"
             >
-              A/BBY ensures a stable testing environment. Optimise your website
-              feature testing throught split testing and feature flags without
-              worrying about downtime.
+              Abby ensures a stable testing environment. Abbys SDKs have built
+              in fallbacks to ensure that your users will never experience any
+              downtime.
             </Feature>
             <Feature
               icon={FlaskConical}
               title="Environments"
               subtitle="Test safely"
             >
-              Utilize different environments for each A/B test or feature flag.
-              Create various environments to test features before they go live.
+              Utilize different environments for each feature flag or remote
+              config variable. Create various environments to test features
+              before they go live.
             </Feature>
           </div>
         </div>
@@ -200,11 +202,11 @@ const Home: NextPageWithLayout<
       <section className="py-48" id="devtools">
         <div className="container px-6 md:px-16">
           <h1 className="mb-6 text-center text-4xl font-bold">
-            Painless Debugging with <span className="mark">A/BBY Devtools</span>
+            Painless Debugging with <span className="mark">Abby Devtools</span>
           </h1>
           <h2 className="mb-12 text-center text-lg ">
-            Debugging your tests & Feature Flags has never been easier. Simply
-            install the optional Devtools and get started.
+            Debugging your feature flags & remote config variables has never
+            been easier. Simply install the optional Devtools and get started.
             <br />
             <b>Simple.</b> <b>Framework Agnostic.</b>
           </h2>
@@ -290,8 +292,9 @@ const Home: NextPageWithLayout<
             <span className="mark">Simple</span> pricing, for everyone
           </h1>
           <h2 className="mb-8 text-center text-lg">
-            Start testing your components in under 5 minutes. Simply integrate
-            it in your code and you&apos; ready to go.
+            Start using feature flags & remote config variables in under 5
+            minutes. Simply integrate it in your code and you&apos;re ready to
+            go.
           </h2>
           <PricingTable />
         </div>

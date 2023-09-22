@@ -70,7 +70,7 @@ export function MarketingLayout({
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              className="fixed bottom-4 left-4 z-50 rounded-full bg-primary-background p-2 text-accent-background"
+              className="fixed bottom-4 left-4 z-50 hidden rounded-full bg-primary-background p-2 text-accent-background md:block"
               title="Scroll to top"
               onClick={() => {
                 window.scrollTo({ top: 0, behavior: "smooth" });

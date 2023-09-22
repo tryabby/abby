@@ -34,8 +34,8 @@ const navItemClass = (isActive: boolean) =>
   );
 
 const AbbyHeader = () => (
-  <Link href={"/"} className="text-4xl font-bold text-pink-400">
-    A/BBY
+  <Link href={"/"} className="font-logo text-3xl font-semibold text-pink-400">
+    Abby
   </Link>
 );
 

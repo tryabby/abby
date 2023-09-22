@@ -1,12 +1,12 @@
-![A/BBY Banner](https://github.com/tryabby/abby/assets/20679094/dd415956-25b4-4528-95fb-f010b21011c9)
+![Abby Banner](./apps/web/public/og.png)
 
-# About A/BBY
+# About Abby
 
-A/BBY is a open source feature management and A/B testing platform. It is designed to be easy to use and easy to integrate into your existing applications. It aims to improve the developer experience by providing a simple and statically typed API for feature management and A/B testing.
+Abby is a open source feature management and A/B testing platform. It is designed to be easy to use and easy to integrate into your existing applications. It aims to improve the developer experience by providing a simple and statically typed API for feature management and A/B testing.
 
 Besides its official SDKS it also offers a friendly and easy to understand Dashboard for the non-developers in your team.
 
-A/BBY focuses on privacy. This means it won't track any user data and uses no marketing cookies. It also doesn't use any third party services.
+Abby focuses on privacy. This means it won't track any user data and uses no marketing cookies. It also doesn't use any third party services.
 You can self host it or use the hosted version available at [tryabby.com](https://www.tryabby.com).
 
 ## Getting Started
@@ -32,11 +32,11 @@ This turborepo uses [pnpm](https://pnpm.io) as a package manager. It includes th
 
 - `docs`: a [Next.js](https://nextjs.org/) with [Nextra](https://nextra.site/)
 - `web`: another [Next.js](https://nextjs.org/) app using the [T3 Stack](https://create.t3.gg/)
-- `core`: The A/BBY core JavaScript SDK which all other JS SDKs are based on
-- `react`: The A/BBY React SDK
-- `next`: The A/BBY Next.js SDK
-- `angular`: The A/BBY Angular SDK
-- `svelte`: The A/BBY Svelte SDK
+- `core`: The Abby core JavaScript SDK which all other JS SDKs are based on
+- `react`: The Abby React SDK
+- `next`: The Abby Next.js SDK
+- `angular`: The Abby Angular SDK
+- `svelte`: The Abby Svelte SDK
 
 Each package/app is 100% [TypeScript](https://www.typescriptlang.org/).
 

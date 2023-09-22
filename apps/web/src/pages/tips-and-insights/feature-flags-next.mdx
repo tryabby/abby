@@ -82,7 +82,7 @@ which can lead to errors when having typos in either the name of the variable or
 
 ### Services
 
-The most flexible way of implementing Feature Flags is by using a Service such as [A/BBY](https://www.tryabby.com).
+The most flexible way of implementing Feature Flags is by using a Service such as [Abby](https://www.tryabby.com).
 This way of implementing Feature Flags is very similar to the environment variable way, but instead of using an environment variable, we will use a service:
 
 ```ts
@@ -105,24 +105,24 @@ function MyButton() {
 The pros of using a service for Feature Flags are that they are very flexible.
 It gives you the ability to change the value of the Feature Flag without having to re-deploy the application.
 You can also define different values for different environments, which can be useful if you want to test the Feature Flag in different environments.
-Toggling is Feature Flag in a Service like A/BBY is also a breeze, as you can just toggle it on or off in the dashboard which means that non-devs
+Toggling is Feature Flag in a Service like Abby is also a breeze, as you can just toggle it on or off in the dashboard which means that non-devs
 can also easily toggle the Feature Flag.
 
-The biggest benefit of using A/BBY is the developer experience and tight integration with Next.js.
-A/BBY is fully typed and provides a hook to easily use Feature Flags in your application. It also allows include your Feature Flags
+The biggest benefit of using Abby is the developer experience and tight integration with Next.js.
+Abby is fully typed and provides a hook to easily use Feature Flags in your application. It also allows include your Feature Flags
 on the Server whether you are using SSR or SSG.
 
 #### Cons
 
 The cons of using a service for Feature Flags are that it requires you to use a third-party service.
 It also means that you will need to pay for the service, which can be a problem if you are on a tight budget.
-A/BBY offers a generous free tier, but if you need more than that, you will need to pay for it.
+Abby offers a generous free tier, but if you need more than that, you will need to pay for it.
 
-Using Feature Flags with the `useFeatureFlag` hook from A/BBY is a great way to quickly and easily deploy changes and updates to a Next.js application.
+Using Feature Flags with the `useFeatureFlag` hook from Abby is a great way to quickly and easily deploy changes and updates to a Next.js application.
 With this hook, developers can easily toggle on or off different features and updates, allowing for easier testing and deployment of changes.
 
 export default ({ children }) => (
-  <BlogLayout seoTitle="A/BBY & Next.js" meta={meta}>
+  <BlogLayout seoTitle="Abby & Next.js" meta={meta}>
     {children}
   </BlogLayout>
 );

@@ -100,8 +100,8 @@ function Step1() {
       animate={{ opacity: 1, scale: 1 }}
       exit={{ opacity: 0, scale: 0.95 }}
     >
-      <h1 className="mb-1 text-3xl font-semibold">Welcome to A/BBY</h1>
-      <p>Thank you very much for signing up for A/BBY</p>
+      <h1 className="mb-1 text-3xl font-semibold">Welcome to Abby</h1>
+      <p>Thank you very much for signing up for Abby</p>
 
       <form className="mt-6 space-y-3">
         <label>
@@ -270,7 +270,7 @@ function Step4() {
       <h1 className="mb-1 text-3xl font-semibold">You&apos;re ready to go!</h1>
       <div className="mt-12 text-lg">
         <p>
-          Thank you very much for signing up to A/BBY
+          Thank you very much for signing up to Abby
           <br />
           <br />
           If you have any questions, feel free to join our{" "}
@@ -294,7 +294,7 @@ function Step4() {
         </p>
         <Link href="/projects">
           <Button className="w-[150px mx-auto mt-12 block bg-pink-500 font-semibold text-white hover:bg-pink-600">
-            Go to A/BBY
+            Go to Abby
           </Button>
         </Link>
       </div>

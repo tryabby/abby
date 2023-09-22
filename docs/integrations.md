@@ -1,4 +1,4 @@
-# A/BBY Integration Checklist
+# Abby Integration Checklist
 
 ## Philosophy
 
@@ -8,7 +8,7 @@ This means the following:
 - Everything is typesafe (if the language / framework allows this)
 - There should be as few boilerplate as possible
 - The code should be documented and verbose
-- It should be so simple to use that you never need to open the docs after setting A/BBY up once
+- It should be so simple to use that you never need to open the docs after setting Abby up once
 
 ## Features
 
@@ -20,7 +20,7 @@ This means the following:
 ### Client
 
 - By default Feature Flags & A/B Tests should be rendered on the client
-- If possible there should be a central way of fetching the values from the A/BBY API
+- If possible there should be a central way of fetching the values from the Abby API
 - If there is a central way (e.g. React Context) data should be consumed from there
 - If not data needs to be fetched when consuming
 - If possible (Next.js, Sveltekit) Feature Flags should be rendered on the Server (SEO)

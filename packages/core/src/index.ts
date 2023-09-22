@@ -150,7 +150,7 @@ export class Abby<
   }
 
   /**
-   * Helper function to load the projects data from the A/BBY API
+   * Helper function to load the projects data from the Abby API
    * and init the local data
    */
   async loadProjectData() {

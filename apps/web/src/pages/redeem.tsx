@@ -9,7 +9,7 @@ const RedemptionPage: NextPageWithLayout = () => {
         <h1>Hey there 👋</h1>
         <h2>You are awesome 🥳</h2>
         <p>
-          Thank you very much for believing in A/BBY and buying a Lifetime
+          Thank you very much for believing in Abby and buying a Lifetime
           License. In order to redeem your license, you need to create an
           account first.
         </p>

@@ -12,6 +12,7 @@ import { NextPage } from "next";
 import { AbbyProvider, withAbby, AbbyDevtools } from "lib/abby";
 import { useRouter } from "next/router";
 import { TooltipProvider } from "components/Tooltip";
+import "@fontsource/martian-mono/600.css";
 
 import "../styles/globals.css";
 import "@code-hike/mdx/dist/index.css";
@@ -25,7 +26,7 @@ type AppPropsWithLayout = AppProps & {
   Component: NextPageWithLayout;
 };
 
-const seoDescription = `Discover the benefits of using A/BBY, the open-source feature management and A/B testing SaaS. Increase transparency, collaboration, and trust. Try it now!`;
+const seoDescription = `Discover the benefits of using Abby, the open-source feature management and A/B testing SaaS. Increase transparency, collaboration, and trust. Try it now!`;
 
 const MyApp: AppType<{ session: Session | null }> = ({
   Component,
@@ -49,25 +50,29 @@ const MyApp: AppType<{ session: Session | null }> = ({
               >
                 <main className={`font-sans`}>
                   <DefaultSeo
-                    defaultTitle="A/BBY - Open Source A/B Testing & Feature Flags"
-                    titleTemplate="%s | A/BBY"
+                    defaultTitle="Abby - Open Source A/B Testing & Feature Flags"
+                    titleTemplate="%s"
                     description={seoDescription}
                     canonical={currentPageUrl}
                     openGraph={{
                       url: currentPageUrl,
-                      title: "A/BBY",
+                      title: "Abby",
                       type: "website",
                       description: seoDescription,
                       images: [
                         {
-                          url: "https://www.tryabby.com/og.png",
+                          url: `${
+                            process.env.VERCEL_URL
+                              ? `https://${process.env.VERCEL_URL}`
+                              : "https://www.tryabby.com"
+                          }/og.png`,
                           width: 1200,
                           height: 630,
-                          alt: "A/BBY",
+                          alt: "Abby",
                           type: "image/png",
                         },
                       ],
-                      siteName: "A/BBY",
+                      siteName: "Abby",
                     }}
                   />
                   <Toaster />

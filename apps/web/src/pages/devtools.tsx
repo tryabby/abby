@@ -45,7 +45,7 @@ const DevtoolsPage = () => {
                 Debugging is already hard, Debugging a Service is even harder 😮‍💨
               </h2>
               <h2 className="font-semibold">
-                A/BBY is here to help you with that
+                Abby is here to help you with that
               </h2>
             </div>
             <video
@@ -83,7 +83,7 @@ const DevtoolsPage = () => {
             </div>
             <div className="grid grid-cols-1 items-center gap-y-12 lg:grid-cols-[1fr,auto,1fr]">
               <div className="flex flex-col items-center space-y-3">
-                <h3 className="text-2xl font-bold">Before A/BBY Devtools</h3>
+                <h3 className="text-2xl font-bold">Before Abby Devtools</h3>
                 <img
                   loading="lazy"
                   height={200}
@@ -97,7 +97,7 @@ const DevtoolsPage = () => {
               </h3>
               <div className="flex flex-col items-center space-y-3">
                 <h3 className="text-2xl font-bold text-pink-500">
-                  After A/BBY Devtools
+                  After Abby Devtools
                 </h3>
                 <img
                   loading="lazy"
@@ -170,7 +170,7 @@ const DevtoolsPage = () => {
               Ready to dive in?
             </h2>
             <p className="text-base lg:text-lg">
-              Sign up for A/BBY for free and start to enjoy a Feature Flag & A/B
+              Sign up for Abby for free and start to enjoy a Feature Flag & A/B
               Testing solution that was made for developers
             </p>
             <SignupButton className="bg-white text-zinc-900" />
