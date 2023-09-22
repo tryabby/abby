@@ -20,13 +20,13 @@ export function getMarketingSeo(pageName: string): SeoProps {
   switch (normalizedKey) {
     case "/":
       return {
-        metaTitle: "Open Source Feature Flags and feature testing  | A/BBY ",
+        metaTitle: "Open Source Feature Flags and feature testing  | Abby ",
         metaDescription:
           "Looking for a free and easy-to-implement feature flag tool for developers? Check out our open-source software for fast and efficient feature testing. Start optimizing your website or application today!",
       };
     case "/login":
       return {
-        metaTitle: "Feature Flags and feature testing  | A/BBY Log in",
+        metaTitle: "Feature Flags and feature testing  | Abby Log in",
         metaDescription:
           "Log in to our free feature flagging tool designed specifically for developers. With open source software, it offers easy and fast implementation, allowing you to perform feature testing and utilize feature flags. Start optimizing your website or application with our free tool today.",
       };
@@ -35,19 +35,18 @@ export function getMarketingSeo(pageName: string): SeoProps {
         metaTitle:
           "Learn about A/B testing tools and feature flags | Abby Documentation",
         metaDescription:
-          "Learn about the implementation of A/BBYs, open-source software that is easy and fast to implement. Discover how feature flags can help you with feature testing and explore various developer tools.",
+          "Learn about the implementation of Abbys, open-source software that is easy and fast to implement. Discover how feature flags can help you with feature testing and explore various developer tools.",
       };
     case "/imprint":
       return {
         metaTitle:
-          "Feature Flags and feature testings | A/BBY Legal Information",
+          "Feature Flags and feature testings | Abby Legal Information",
         metaDescription:
-          "Official imprint of A/BBY, the open-source feature flagging  tool. Find our legal information and get in touch. We offer feature flagging and ab testing solutions with clear analytics.",
+          "Official imprint of Abby, the open-source feature flagging  tool. Find our legal information and get in touch. We offer feature flagging and ab testing solutions with clear analytics.",
       };
     case "/tips-and-insights":
       return {
-        metaTitle:
-          "Feature Flags & feature testing  | A/BBY Tips&Insights",
+        metaTitle: "Feature Flags & feature testing  | Abby Tips&Insights",
         metaDescription:
           "Discover tips and insights about open-source software, feature flags, Next.js, and A/B testing in React. Learn how to effectively use these dev tools for feature testing and optimizing your software development process.",
       };
@@ -61,7 +60,7 @@ export function getMarketingSeo(pageName: string): SeoProps {
       return {
         metaTitle: "Q&A regarding Abby | Abby Contact",
         metaDescription:
-          "Contact A/BBY, an open-source feature flagging tool, for all your questions and needs related to feature flags, and feature testing. Optimize your software with confidence.",
+          "Contact Abby, an open-source feature flagging tool, for all your questions and needs related to feature flags, and feature testing. Optimize your software with confidence.",
       };
     case "/docs/integrations/react":
       return {
