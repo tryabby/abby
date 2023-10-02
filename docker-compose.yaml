@@ -20,7 +20,7 @@ services:
       # Where our data will be persisted
     volumes:
       - my-db:/var/lib/mysql
-  redis: 
+  redis:
     image: redis
     restart: always
     ports:
@@ -29,6 +29,11 @@ services:
       - "6379"
     volumes:
       - my-redis:/data
+  mailhog:
+    image: mailhog/mailhog
+    ports:
+      - "1025:1025"
+      - "8025:8025"
 # Names our volume
 volumes:
   my-db:
