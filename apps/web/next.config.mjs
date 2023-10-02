@@ -1,5 +1,6 @@
 // @ts-check
 import bundleAnalzyer from "@next/bundle-analyzer";
+import { withPlausibleProxy } from "next-plausible";
 import mdx from "@next/mdx";
 import { remarkCodeHike } from "@code-hike/mdx";
 import theme from "shiki/themes/poimandres.json" assert { type: "json" };
@@ -41,4 +42,4 @@ const config = {
   },
 };
 
-export default withBundleAnalyzer(withMDX(config));
+export default withPlausibleProxy()(withBundleAnalyzer(withMDX(config)));
