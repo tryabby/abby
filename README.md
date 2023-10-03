@@ -6,7 +6,7 @@ Abby is a open source feature management and A/B testing platform. It is designe
 
 Besides its official SDKS it also offers a friendly and easy to understand Dashboard for the non-developers in your team.
 
-Abby focuses on privacy. This means it won't track any user data and uses no marketing cookies. It also doesn't use any third party services.
+Abby focuses on privacy. This means it won't track any personalized user data and uses no marketing cookies.
 You can self host it or use the hosted version available at [tryabby.com](https://www.tryabby.com).
 
 ## Getting Started
@@ -17,12 +17,14 @@ _TL;DR:_
 git clone git@github.com:tryabby/abby.git
 pnpm i
 pnpm db:start
-pnpm db:migrate
 cp apps/web/.env.example apps/web/.env
+pnpm db:migrate
 pnpm dev
 ```
 
 Now open your browser at http://localhost:3000 and have fun :)
+
+To create an account, you should choose the "Continue with Email" option. The docker-compose.yml includes a [MailHog](https://github.com/mailhog/MailHog) instance at `localhost:8025`, which intercepts the email, so you can get the one-time link from there.
 
 ## What's inside?
 
