@@ -7,7 +7,11 @@ import { getToken } from "./auth";
 import { push } from "./push";
 import { default as prompts } from "prompts";
 
-export async function addRemoteConfig(options: { host?: string; configPath?: string }) {
+export async function addRemoteConfig(options: {
+  apiKey: string;
+  host?: string;
+  configPath?: string;
+}) {
   const { config, configFilePath } = await loadLocalConfig(options.configPath);
   const configFileContents = await fs.readFile(configFilePath, "utf-8");
 
@@ -57,6 +61,5 @@ export async function addRemoteConfig(options: { host?: string; configPath?: str
   console.log(chalk.green("Local config updated successfully"));
 
   console.log(chalk.blue("Updating remote config..."));
-  const token = await getToken();
-  await push({ apiKey: token, configPath: options.configPath, apiUrl: options.host });
+  await push({ apiKey: options.apiKey, configPath: options.configPath, apiUrl: options.host });
 }

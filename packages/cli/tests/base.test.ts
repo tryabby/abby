@@ -1,9 +1,12 @@
 import { PullAbbyConfigResponse, defineConfig } from "@tryabby/core";
 import { HttpService } from "../src/http";
 import { writeFile } from "fs/promises";
+import * as prompts from "prompts";
 
 import { push } from "../src/push";
 import { pullAndMerge } from "../src/pull";
+import { addFlag } from "../src/add-flag";
+import { addRemoteConfig } from "../src/add-remote-config";
 
 // we don't want to actually write to the file system
 vi.mock("prettier", () => ({
@@ -103,5 +106,25 @@ describe("Abby CLI", () => {
       __dirname + "/abby.config.stub.ts",
       expect.stringContaining(`process.env["ABBY_PROJECT_ID"]`)
     );
+  });
+
+  it("adds a flag and pushes it", async () => {
+    prompts.inject(["newFlag"]);
+    const spy = vi.spyOn(HttpService, "updateConfigOnServer");
+
+    await addFlag({ apiKey: API_KEY });
+
+    expect(writeFile).toHaveBeenCalledWith("test-path", expect.stringContaining("newFlag"));
+    expect(spy).toHaveBeenCalledOnce();
+  });
+
+  it("adds a remote config and pushes it", async () => {
+    prompts.inject(["newRemoteConfig", "String"]);
+    const spy = vi.spyOn(HttpService, "updateConfigOnServer");
+
+    await addRemoteConfig({ apiKey: API_KEY });
+
+    expect(writeFile).toHaveBeenCalledWith("test-path", expect.stringContaining("newRemoteConfig"));
+    expect(spy).toHaveBeenCalledOnce();
   });
 });

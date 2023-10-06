@@ -107,12 +107,13 @@ program
     }
 
     try {
+      const token = await getToken();
       switch (parsedEntryType.data) {
         case "flag":
-          await addFlag(options);
+          await addFlag({ ...options, apiKey: token });
           break;
         case "config":
-          await addRemoteConfig(options);
+          await addRemoteConfig({ ...options, apiKey: token });
           break;
       }
     } catch (e) {

@@ -4,10 +4,9 @@ import { default as prompts } from "prompts";
 import { loadLocalConfig } from "./util";
 import chalk from "chalk";
 import { mergeConfigs, updateConfigFile } from "./pull";
-import { getToken } from "./auth";
 import { push } from "./push";
 
-export async function addFlag(options: { host?: string; configPath?: string }) {
+export async function addFlag(options: { apiKey: string; host?: string; configPath?: string }) {
   const { config, configFilePath } = await loadLocalConfig(options.configPath);
   const configFileContents = await fs.readFile(configFilePath, "utf-8");
 
@@ -36,6 +35,5 @@ export async function addFlag(options: { host?: string; configPath?: string }) {
   console.log(chalk.green("Local config updated successfully"));
 
   console.log(chalk.blue("Updating remote config..."));
-  const token = await getToken();
-  await push({ apiKey: token, configPath: options.configPath, apiUrl: options.host });
+  await push({ apiKey: options.apiKey, configPath: options.configPath, apiUrl: options.host });
 }
