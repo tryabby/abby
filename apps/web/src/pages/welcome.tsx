@@ -2,6 +2,8 @@ import { Button } from "components/Button";
 import { DISCORD_INVITE_URL } from "components/Footer";
 import { Input } from "components/Input";
 import { Select } from "components/Select";
+import { RadioGroup, RadioGroupItem } from "components/ui/radio-group";
+import { RadioGroupComponent } from "components/RadioGroup";
 import { AnimatePresence, motion } from "framer-motion";
 import { cn } from "lib/utils";
 import { GetServerSideProps, InferGetServerSidePropsType } from "next";
@@ -71,7 +73,15 @@ const useOnboardingStore = create<{
 }));
 
 function WizardFooter() {
-  const { previousStep, nextStep, isFirstStep, isLastStep } = useWizard();
+  const { previousStep, nextStep, isFirstStep, isLastStep, activeStep } =
+    useWizard();
+  const { name, technologies } = useOnboardingStore();
+
+  // Variable to check if next button should be disabled on current step
+  const nextDisabled =
+    (activeStep === 0 && name.length < 2) ||
+    (activeStep === 2 && technologies.length === 0);
+
   return (
     <div className="flex justify-between">
       <Button
@@ -82,7 +92,7 @@ function WizardFooter() {
         Back
       </Button>
       <Button
-        disabled={isLastStep}
+        disabled={nextDisabled}
         onClick={nextStep}
         className={cn(isLastStep && "invisible")}
       >
@@ -129,6 +139,7 @@ function Step2() {
     setExperienceLevelTests,
     setExperienceLevelFlags,
   } = useOnboardingStore();
+
   return (
     <motion.div
       initial={{ opacity: 0, scale: 0.95 }}
@@ -148,7 +159,7 @@ function Step2() {
         </label>
         <label>
           <span>How would you rate your experience with Feature Flags</span>
-          <Select
+          <RadioGroupComponent
             items={oneToFiveOptions}
             value={experienceLevelFlags.toString()}
             onChange={(value) => setExperienceLevelFlags(Number(value))}
@@ -159,7 +170,7 @@ function Step2() {
         </label>
         <label>
           <span>How would you rate your experience with A/B Testing</span>
-          <Select
+          <RadioGroupComponent
             items={oneToFiveOptions}
             value={experienceLevelTests.toString()}
             onChange={(value) => setExperienceLevelTests(Number(value))}
