@@ -82,6 +82,31 @@ You will then need to delete it manually from your local config. **We are workin
 | `-h`, `--host`   | The API URL for the Abby instance. | `https://www.tryabby.com`                      | ❌       |
 | `-c`, `--config` | The path to the config file.       | The nearest `abby.config.(ts,js,mjs,cjs)` file | ❌       |
 
+### `add flag`
+
+Creates a flag, puts it into your `abby.config.ts` (or specified config file) and pushes the changes to the cloud.
+If a flag with the name, which you have entered, already exists, this command will fail.
+
+#### Options
+
+| Flag             | Description                        | Default                                        | Required |
+| ---------------- | ---------------------------------- | ---------------------------------------------- | -------- |
+| `-h`, `--host`   | The API URL for the Abby instance. | `https://www.tryabby.com`                      | ❌       |
+| `-c`, `--config` | The path to the config file.       | The nearest `abby.config.(ts,js,mjs,cjs)` file | ❌       |
+
+
+### `add config`
+
+Creates a remote config value, puts it into your `abby.config.ts` (or specified config file) and pushes the changes to the cloud.
+If a remote config with the name, which you have entered, already exists, this command will fail.
+
+#### Options
+
+| Flag             | Description                        | Default                                        | Required |
+| ---------------- | ---------------------------------- | ---------------------------------------------- | -------- |
+| `-h`, `--host`   | The API URL for the Abby instance. | `https://www.tryabby.com`                      | ❌       |
+| `-c`, `--config` | The path to the config file.       | The nearest `abby.config.(ts,js,mjs,cjs)` file | ❌       |
+
 ### `pull`
 
 Pull the changes from the Abby API to your local config. It will merge the changes from the cloud with your local config.
