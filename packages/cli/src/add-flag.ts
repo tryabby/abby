@@ -1,6 +1,6 @@
-import { default as promptly } from "promptly";
 import * as fs from "fs/promises";
 import * as prettier from "prettier";
+import { default as prompts } from "prompts";
 import { loadLocalConfig } from "./util";
 import chalk from "chalk";
 import { mergeConfigs, updateConfigFile } from "./pull";
@@ -8,10 +8,14 @@ import { getToken } from "./auth";
 import { push } from "./push";
 
 export async function addFlag(options: { host?: string; configPath?: string }) {
-  const flagName = await promptly.prompt("Enter the name of the flag you want to create: ");
-
   const { config, configFilePath } = await loadLocalConfig(options.configPath);
   const configFileContents = await fs.readFile(configFilePath, "utf-8");
+
+  const { flagName } = await prompts({
+    type: "text",
+    name: "flagName",
+    message: "Type the name for your new flag: ",
+  });
 
   if (config.flags && config.flags.includes(flagName)) {
     console.log(chalk.red("A flag with that name already exists!"));

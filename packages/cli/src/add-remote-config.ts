@@ -1,4 +1,3 @@
-import { default as promptly } from "promptly";
 import * as fs from "fs/promises";
 import * as prettier from "prettier";
 import { loadLocalConfig } from "./util";
@@ -6,24 +5,43 @@ import chalk from "chalk";
 import { mergeConfigs, updateConfigFile } from "./pull";
 import { getToken } from "./auth";
 import { push } from "./push";
+import { default as prompts } from "prompts";
 
 export async function addRemoteConfig(options: { host?: string; configPath?: string }) {
-  const remoteConfigName = await promptly.prompt(
-    "Enter the name of the remote config you want to create: "
-  );
-
   const { config, configFilePath } = await loadLocalConfig(options.configPath);
   const configFileContents = await fs.readFile(configFilePath, "utf-8");
+
+  const { remoteConfigName, remoteConfigType } = await prompts([
+    {
+      type: "text",
+      name: "remoteConfigName",
+      message: "Type the name for your new remote config: ",
+    },
+    {
+      type: "select",
+      name: "remoteConfigType",
+      message: "Select the type for your new remote config: ",
+      choices: [
+        {
+          title: "String",
+          value: "String",
+        },
+        {
+          title: "Number",
+          value: "Number",
+        },
+        {
+          title: "JSON",
+          value: "JSON",
+        },
+      ],
+    },
+  ]);
 
   if (config.remoteConfig && remoteConfigName in config.remoteConfig) {
     console.log(chalk.red("A remote config with that name already exists!"));
     return;
   }
-
-  const remoteConfigType = (await promptly.choose(
-    "What type should your remote config have? (String, Number or JSON)",
-    ["String", "Number", "JSON"]
-  )) as "String" | "Number" | "JSON";
 
   const newConfig = mergeConfigs(config, {
     environments: config.environments,
