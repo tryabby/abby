@@ -35,7 +35,8 @@ const sampleLocalConfig = {
       variants: ["A", "B"],
     },
   },
-  flags: { flag1: "Boolean", flag2: "Number" },
+  flags: ["flag1"],
+  remoteConfig: { flag2: "Number" },
 } satisfies AbbyConfig;
 
 const sampleServerConfig = {
@@ -51,7 +52,8 @@ const sampleServerConfig = {
       variants: ["A", "B", "C", "D"],
     },
   },
-  flags: { flag1: "Boolean", flag2: "Number", flag3: "JSON" },
+  flags: ["flag1"],
+  remoteConfig: { flag2: "Number", flag3: "JSON" },
 } satisfies PullAbbyConfigResponse;
 
 describe("Abby CLI", () => {
