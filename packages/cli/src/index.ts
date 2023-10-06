@@ -12,6 +12,7 @@ import { multiLineLog, startServerAndGetToken } from "./util";
 import { initAbbyConfig } from "./init";
 import { addCommandTypeSchema } from "./schemas";
 import { addFlag } from "./add-flag";
+import { addRemoteConfig } from "./add-remote-config";
 
 const program = new Command();
 
@@ -111,6 +112,7 @@ program
           await addFlag(options);
           break;
         case "config":
+          await addRemoteConfig(options);
           break;
       }
     } catch (e) {
