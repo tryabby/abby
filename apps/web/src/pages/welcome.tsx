@@ -2,7 +2,6 @@ import { Button } from "components/Button";
 import { DISCORD_INVITE_URL } from "components/Footer";
 import { Input } from "components/Input";
 import { Select } from "components/Select";
-import { RadioGroup, RadioGroupItem } from "components/ui/radio-group";
 import { RadioGroupComponent } from "components/RadioGroup";
 import { AnimatePresence, motion } from "framer-motion";
 import { cn } from "lib/utils";
