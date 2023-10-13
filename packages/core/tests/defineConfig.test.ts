@@ -2,21 +2,23 @@ import { Abby } from "../src";
 import { defineConfig } from "../src/defineConfig";
 
 describe("defineConfig", () => {
-  const cfg = defineConfig({
-    projectId: "xd",
-    environments: ["development", "production"],
-    flags: ["a"],
-    remoteConfig: {
-      b: "String",
-      c: "Number",
-      d: "JSON",
-    },
-    tests: {
-      abTest: {
-        variants: ["true", "false"],
+  const cfg = defineConfig(
+    { projectId: "xd" },
+    {
+      environments: ["development", "production"],
+      flags: ["a"],
+      remoteConfig: {
+        b: "String",
+        c: "Number",
+        d: "JSON",
       },
-    },
-  });
+      tests: {
+        abTest: {
+          variants: ["true", "false"],
+        },
+      },
+    }
+  );
 
   const abby = new Abby(cfg);
 
