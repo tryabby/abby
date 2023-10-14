@@ -1,7 +1,7 @@
 import { PullAbbyConfigResponse, defineConfig } from "@tryabby/core";
 import { HttpService } from "../src/http";
 import { writeFile } from "fs/promises";
-import * as prompts from "prompts";
+import prompts from "prompts";
 
 import { push } from "../src/push";
 import { pullAndMerge } from "../src/pull";
@@ -59,6 +59,10 @@ const sampleServerConfig = {
 describe("Abby CLI", () => {
   beforeAll(() => {
     process.env["ABBY_PROJECT_ID"] = "test";
+  });
+
+  beforeEach(() => {
+    vi.resetAllMocks();
   });
 
   it("pushes the config properly", async () => {
@@ -132,5 +136,55 @@ describe("Abby CLI", () => {
       expect.stringContaining("newRemoteConfig")
     );
     expect(spy).toHaveBeenCalledOnce();
+  });
+
+  it("restores old config when push after adding flag fails", async () => {
+    prompts.inject(["newFlag"]);
+    const spy = vi.spyOn(HttpService, "updateConfigOnServer");
+    spy.mockImplementation(() => {
+      throw new Error("failed");
+    });
+
+    let errorCatched = false;
+    try {
+      await addFlag({ apiKey: API_KEY, configPath: __dirname + "/abby.config.stub.ts" });
+    } catch (error) {
+      expect(error).instanceof(Error);
+      expect((error as Error).message).toBe("failed");
+      errorCatched = true;
+    }
+
+    expect(errorCatched).toBe(true);
+
+    expect(writeFile).toHaveBeenCalledTimes(2);
+    expect(writeFile).toHaveBeenLastCalledWith(
+      __dirname + "/abby.config.stub.ts",
+      expect.not.stringContaining("newFlag")
+    );
+  });
+
+  it("restores old config when push after adding remote config fails", async () => {
+    prompts.inject(["newRemoteConfig", "String"]);
+    const spy = vi.spyOn(HttpService, "updateConfigOnServer");
+    spy.mockImplementation(() => {
+      throw new Error("failed");
+    });
+
+    let errorCatched = false;
+    try {
+      await addRemoteConfig({ apiKey: API_KEY, configPath: __dirname + "/abby.config.stub.ts" });
+    } catch (error) {
+      expect(error).instanceof(Error);
+      expect((error as Error).message).toBe("failed");
+      errorCatched = true;
+    }
+
+    expect(errorCatched).toBe(true);
+
+    expect(writeFile).toHaveBeenCalledTimes(2);
+    expect(writeFile).toHaveBeenLastCalledWith(
+      __dirname + "/abby.config.stub.ts",
+      expect.not.stringContaining("newRemoteConfig")
+    );
   });
 });
