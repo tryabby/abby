@@ -3,7 +3,7 @@ import * as prettier from "prettier";
 import { default as prompts } from "prompts";
 import { loadLocalConfig } from "./util";
 import chalk from "chalk";
-import { mergeConfigs, updateConfigFile } from "./pull";
+import { updateConfigFile } from "./pull";
 import { push } from "./push";
 
 export async function addFlag(options: { apiKey: string; host?: string; configPath?: string }) {
@@ -16,18 +16,19 @@ export async function addFlag(options: { apiKey: string; host?: string; configPa
     message: "Type the name for your new flag: ",
   });
 
-  if (config.flags && config.flags.includes(flagName)) {
+  if (!config.flags) {
+    config.flags = [];
+  }
+
+  if (config.flags.includes(flagName)) {
     console.log(chalk.red("A flag with that name already exists!"));
     return;
   }
 
-  const newConfig = mergeConfigs(config, {
-    environments: config.environments,
-    flags: [flagName],
-  });
+  config.flags.push(flagName);
 
   console.log(chalk.blue("Updating local config..."));
-  const updatedFileString = updateConfigFile(newConfig, configFileContents);
+  const updatedFileString = updateConfigFile(config, configFileContents);
   const formattedFile = await prettier.format(updatedFileString, {
     filepath: configFilePath,
   });

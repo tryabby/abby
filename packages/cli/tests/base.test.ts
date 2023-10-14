@@ -112,9 +112,12 @@ describe("Abby CLI", () => {
     prompts.inject(["newFlag"]);
     const spy = vi.spyOn(HttpService, "updateConfigOnServer");
 
-    await addFlag({ apiKey: API_KEY });
+    await addFlag({ apiKey: API_KEY, configPath: __dirname + "/abby.config.stub.ts" });
 
-    expect(writeFile).toHaveBeenCalledWith("test-path", expect.stringContaining("newFlag"));
+    expect(writeFile).toHaveBeenCalledWith(
+      __dirname + "/abby.config.stub.ts",
+      expect.stringContaining("newFlag")
+    );
     expect(spy).toHaveBeenCalledOnce();
   });
 
@@ -122,9 +125,12 @@ describe("Abby CLI", () => {
     prompts.inject(["newRemoteConfig", "String"]);
     const spy = vi.spyOn(HttpService, "updateConfigOnServer");
 
-    await addRemoteConfig({ apiKey: API_KEY });
+    await addRemoteConfig({ apiKey: API_KEY, configPath: __dirname + "/abby.config.stub.ts" });
 
-    expect(writeFile).toHaveBeenCalledWith("test-path", expect.stringContaining("newRemoteConfig"));
+    expect(writeFile).toHaveBeenCalledWith(
+      __dirname + "/abby.config.stub.ts",
+      expect.stringContaining("newRemoteConfig")
+    );
     expect(spy).toHaveBeenCalledOnce();
   });
 });

@@ -42,18 +42,19 @@ export async function addRemoteConfig(options: {
     },
   ]);
 
-  if (config.remoteConfig && remoteConfigName in config.remoteConfig) {
+  if (!config.remoteConfig) {
+    config.remoteConfig = {};
+  }
+
+  if (remoteConfigName in config.remoteConfig) {
     console.log(chalk.red("A remote config with that name already exists!"));
     return;
   }
 
-  const newConfig = mergeConfigs(config, {
-    environments: config.environments,
-    remoteConfig: { [remoteConfigName]: remoteConfigType },
-  });
+  config.remoteConfig[remoteConfigName] = remoteConfigType;
 
   console.log(chalk.blue("Updating local config..."));
-  const updatedFileString = updateConfigFile(newConfig, configFileContents);
+  const updatedFileString = updateConfigFile(config, configFileContents);
   const formattedFile = await prettier.format(updatedFileString, {
     filepath: configFilePath,
   });
