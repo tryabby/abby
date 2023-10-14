@@ -1,3 +1,5 @@
+import { Callout } from "nextra-theme-docs";
+
 # Configuration as Code
 
 ## Introduction
@@ -20,10 +22,21 @@ The config needs to be the default export of the file so that the CLI can find i
 import { defineConfig } from "@tryabby/core";
 // or import { defineConfig } from "@tryabby/<integration>";
 
-export default defineConfig({
-  // your config here
-});
+export default defineConfig(
+  {
+    // your projectId and other sensitive data here
+  },
+  {
+    // your flags, tests, etc. here
+  }
+);
 ```
+
+<Callout type="info" emoji="💡">
+  The first parameter includes all data that might be configured via environment variables.
+  You should not use environment variables in the second parameter, because the type inference
+  might suffer and the CLI could potentially resolve those environment variables!
+</Callout>
 
 ## Philosophy
 
@@ -47,47 +60,52 @@ any further configuration.
 import { defineConfig } from "@tryabby/core";
 // or import { defineConfig } from "@tryabby/<integration>";
 
-export default defineConfig({
-  projectId: "my-project-id",
-  currentEnvironment: "development",
-  environments: ["development", "production"],
-  tests: {
-    SignupButton: {
-      variants: ["A", "B"],
-    },
+export default defineConfig(
+  {
+    projectId: "my-project-id",
+    currentEnvironment: "development",
   },
-  flags: ["showFooter"],
-  remoteConfig: {
-    customButtonText: "String",
-    maxUserCount: "Number",
-    AdvancedTestStats: "JSON",
-  },
-  settings: {
-    flags: {
-      defaultValue: false,
-      devOverrides: {
-        showFooter: true,
+  {
+    environments: ["development", "production"],
+    tests: {
+      SignupButton: {
+        variants: ["A", "B"],
       },
     },
+    flags: ["showFooter"],
     remoteConfig: {
-      defaultValues: {
-        JSON: {},
-        Number: 0,
-        String: "",
+      customButtonText: "String",
+      maxUserCount: "Number",
+      AdvancedTestStats: "JSON",
+    },
+    settings: {
+      flags: {
+        defaultValue: false,
+        devOverrides: {
+          showFooter: true,
+        },
       },
-      devOverrides: {
-        maxUserCount: 40,
-        AdvancedTestStats: {},
-        customButtonText: "My cool button",
+      remoteConfig: {
+        defaultValues: {
+          JSON: {},
+          Number: 0,
+          String: "",
+        },
+        devOverrides: {
+          maxUserCount: 40,
+          AdvancedTestStats: {},
+          customButtonText: "My cool button",
+        },
       },
     },
-  },
-});
+  }
+);
 ```
 
 ## Config Reference
 
-The `defineCOnfig` function takes an object as a parameter. The object can contain the following properties:
+The `defineConfig` function takes two objects as a parameter, that will be merged together when read.
+The merged object can contain the following properties:
 
 | Name               | Type     | Required | Description                                              | details               |
 | ------------------ | -------- | :------: | -------------------------------------------------------- | --------------------- |

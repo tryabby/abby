@@ -17,7 +17,7 @@ import { getWeightedRandomVariant } from "./mathHelpers";
 import { parseCookies } from "./helpers";
 
 export * from "./shared/index";
-export { defineConfig } from "./defineConfig";
+export { defineConfig, type DynamicConfigKeys, DYNAMIC_ABBY_CONFIG_KEYS } from "./defineConfig";
 
 export type ABConfig<T extends string = string> = {
   variants: ReadonlyArray<T>;
