@@ -87,7 +87,7 @@ function PricingElement({
                   {feature}
                   {i === 0 && (
                     <Tooltip>
-                      <TooltipTrigger>
+                      <TooltipTrigger aria-label="Show more information">
                         <Info size={14} className="ml-1" />
                       </TooltipTrigger>
                       <TooltipContent>

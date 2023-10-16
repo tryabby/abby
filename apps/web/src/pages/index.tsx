@@ -226,7 +226,7 @@ const Home: NextPageWithLayout<
               href={`/devtools`}
               className="mx-auto mt-8 rounded-lg bg-accent-background px-4 py-2 font-semibold uppercase text-accent-foreground transition-transform duration-200 ease-in-out hover:scale-110"
             >
-              Learn More
+              Learn More about our Devtools
             </Link>
           </div>
         </div>
