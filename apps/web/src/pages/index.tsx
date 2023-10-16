@@ -31,6 +31,9 @@ const { useAbby, AbbyProvider, useFeatureFlag, __abby__, withDevtools } =
       SignupButton: {
         variants: ["A", "B", "C"],
       },
+      heroMedia: {
+        variants: ["Image", "Video"],
+      },
     },
     flags: ["ForceDarkTheme"],
   });
@@ -62,6 +65,8 @@ const Home: NextPageWithLayout<
 > = ({ codeSnippet }) => {
   const { setTheme } = useTheme();
   const { onAct, variant } = useAbby("SignupButton");
+  const { variant: heroMediaVariant, onAct: onHeroMediaAct } =
+    useAbby("heroMedia");
 
   const forceDarkTheme = useFeatureFlag("ForceDarkTheme");
 
@@ -110,6 +115,7 @@ const Home: NextPageWithLayout<
               onClick={() => {
                 trackEvent("Sign Up Clicked");
                 onAct();
+                onHeroMediaAct();
               }}
               className={twMerge(
                 "mt-12 rounded-xl bg-accent-background px-6 py-2 text-xl font-semibold text-accent-foreground no-underline transition-transform duration-150 ease-in-out hover:scale-110"
@@ -123,14 +129,28 @@ const Home: NextPageWithLayout<
               Free forever. No Credit Card required
             </span>
           </div>
-          <Image
-            src={abbyScreenshot}
-            alt="Screenshot of Abby's Dashboard"
-            className="mt-12 hidden w-10/12 rounded-xl border border-accent-background shadow-2xl md:block lg:max-w-5xl"
-            width={1920}
-            height={1080}
-            priority
-          />
+          {heroMediaVariant === "Image" && (
+            <Image
+              src={abbyScreenshot}
+              alt="Screenshot of Abby's Dashboard"
+              className="mt-12 hidden w-10/12 rounded-xl border border-accent-background shadow-2xl md:block lg:max-w-5xl"
+              width={1920}
+              height={1080}
+              priority
+            />
+          )}
+          {heroMediaVariant === "Video" && (
+            <video
+              className="mt-12 hidden w-10/12 rounded-xl border border-accent-background shadow-2xl md:block lg:max-w-5xl"
+              autoPlay
+              loop
+              muted
+              playsInline
+              preload="metadata"
+            >
+              <source src="/videos/hero.mp4" type="video/mp4" />
+            </video>
+          )}
         </div>
       </section>
       <Divider />
