@@ -34,8 +34,12 @@ function updateConfigFileContent(
     )
   ) as Omit<AbbyConfig, DynamicConfigKeys>;
 
-  // remove new lines
-  configFileString = configFileString.replace(/(?:\r\n|\r|\n)/g, "");
+  // replaces newlines inside the `defineConfig(...)` part of the config
+  const defineConfigRegex = /defineConfig\(\s*{([\s\S]*?)}[\s\S]*\)/;
+  configFileString = configFileString.replace(defineConfigRegex, (match) => {
+    const replacedParameters = match.replace(/(?:\r\n|\r|\n)/g, " ");
+    return replacedParameters;
+  });
 
   const configRegex = /defineConfig.*, *({.*})/g;
   const matchRegex = configRegex.exec(configFileString);
