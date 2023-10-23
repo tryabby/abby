@@ -1,4 +1,4 @@
-import * as Popover from "@radix-ui/react-popover";
+import { Popover, PopoverContent, PopoverTrigger } from "components/ui/popover";
 import dayjs from "dayjs";
 import { FaHistory } from "react-icons/fa";
 import { match, P } from "ts-pattern";
@@ -49,8 +49,8 @@ const HistoryButton = ({ flagValueId }: { flagValueId: string }) => {
       <TooltipContent>
         <span>Show History</span>
       </TooltipContent>
-      <Popover.Root>
-        <Popover.Trigger asChild>
+      <Popover>
+        <PopoverTrigger asChild>
           <TooltipTrigger asChild>
             <button
               onClick={() => loadHistory()}
@@ -59,44 +59,41 @@ const HistoryButton = ({ flagValueId }: { flagValueId: string }) => {
               <FaHistory />
             </button>
           </TooltipTrigger>
-        </Popover.Trigger>
-        <Popover.Portal>
-          <Popover.Content
-            className="max-w-lg select-none rounded-[4px] bg-gray-800 px-[15px] py-[10px] text-[15px] leading-none text-pink-50 shadow-md will-change-[transform,opacity] focus:shadow-md data-[state=open]:data-[side=bottom]:animate-slideUpAndFade data-[state=open]:data-[side=left]:animate-slideRightAndFade data-[state=open]:data-[side=right]:animate-slideLeftAndFade data-[state=open]:data-[side=top]:animate-slideDownAndFade"
-            sideOffset={5}
-          >
-            {isLoading && <LoadingSpinner />}
-            {data !== undefined && (
-              <>
-                <p className="text-xs">Edited {data.length} times</p>
-                <hr className="-mx-2 my-1 border-gray-700" />
-                <div className="space-y-4">
-                  {data.map((history) => (
-                    <div
-                      key={history.id}
-                      className="flex items-center space-x-3 "
-                    >
+        </PopoverTrigger>
+
+        <PopoverContent
+          className="w-full max-w-xl select-none text-sm"
+          sideOffset={5}
+        >
+          {isLoading && <LoadingSpinner />}
+          {data !== undefined && (
+            <>
+              <p className="text-xs">Edited {data.length} times</p>
+              <hr className="-mx-2 my-1 border-gray-700" />
+              <div className="max-h-48 space-y-4 overflow-y-auto py-2">
+                {data.map((history) => (
+                  <div key={history.id} className="flex items-center space-x-3">
+                    <div>
                       <Avatar
                         userName={
                           history.user.name ?? history.user.email ?? undefined
                         }
                         imageUrl={history.user.image ?? undefined}
-                        className="h-5 w-5 rounded-md text-[10px]"
+                        className="h-5 w-5 rounded-lg text-[10px]"
                       />
-                      <span>
-                        {history.user.name ?? history.user.email}{" "}
-                        {getHistoryEventDescription(history)} this flag{" "}
-                        {dayjs(history.createdAt).fromNow()}
-                      </span>
                     </div>
-                  ))}
-                </div>
-              </>
-            )}
-            <Popover.Arrow className="fill-gray-800" />
-          </Popover.Content>
-        </Popover.Portal>
-      </Popover.Root>
+                    <span>
+                      {history.user.name ?? history.user.email}{" "}
+                      {getHistoryEventDescription(history)} this flag{" "}
+                      {dayjs(history.createdAt).fromNow()}
+                    </span>
+                  </div>
+                ))}
+              </div>
+            </>
+          )}
+        </PopoverContent>
+      </Popover>
     </Tooltip>
   );
 };
@@ -211,13 +208,13 @@ export function FeatureFlag({
 
   return (
     <>
-      <span className="flex w-full items-center justify-between space-x-3 rounded-xl bg-gray-700 py-3 pl-3 pr-4 text-sm font-medium text-gray-300">
+      <span className="flex w-full items-center justify-between space-x-3 rounded-lg bg-card py-3 pl-3 pr-4 text-sm font-medium text-gray-300">
         <div className="flex items-center space-x-2">
           <p>{environmentName}</p>
           <code
             title={currentFlagValue}
             className={cn(
-              "max-w-[60px] overflow-hidden text-ellipsis whitespace-nowrap rounded-md bg-gray-600 p-1",
+              "max-w-[60px] overflow-hidden text-ellipsis whitespace-nowrap rounded-lg bg-accent p-1",
               type === "BOOLEAN" && currentFlagValue === "true"
                 ? "text-green-500"
                 : "text-red-500"

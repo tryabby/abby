@@ -40,7 +40,7 @@ function PricingElement({
   return (
     <div
       className={cn(
-        "rounded-2xl border border-accent-background px-4 py-16",
+        "rounded-2xl border border-ab_accent-background px-4 py-16",
         isFull && "lg:col-span-3 lg:grid lg:grid-cols-3 lg:border-solid lg:py-8"
       )}
     >
@@ -64,7 +64,7 @@ function PricingElement({
           href={href}
           className={cn(
             "my-6 w-full rounded-xl border px-4 py-2 transition-colors duration-200 ease-in-out",
-            "border-accent-background hover:bg-accent-background",
+            "border-ab_accent-background hover:bg-ab_accent-background",
             isFull && "lg:order-2 lg:w-64 lg:justify-self-center"
           )}
           onClick={() =>

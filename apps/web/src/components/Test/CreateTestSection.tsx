@@ -177,7 +177,7 @@ export function CreateTestSection({
 
                     {variants.filter((variant) => variant.name === name)
                       .length > 1 && (
-                      <p className="mt-1 pl-2 text-xs text-accent-background">
+                      <p className="mt-1 pl-2 text-xs text-ab_accent-background">
                         A variant with this name already exists
                       </p>
                     )}
@@ -197,7 +197,7 @@ export function CreateTestSection({
             <div className="grid grid-cols-[1fr_auto_1fr]">
               <span></span>
               {weightSum !== 100 ? (
-                <p className="text-center text-accent-background">
+                <p className="text-center text-ab_accent-background">
                   Your weights must add up to 100%. Your weights currently make
                   up {weightSum}%
                 </p>

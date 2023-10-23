@@ -10,8 +10,7 @@ import * as Popover from "@radix-ui/react-popover";
 import { AiOutlineDelete } from "react-icons/ai";
 import { trpc } from "utils/trpc";
 import { toast } from "react-hot-toast";
-import { IconButton } from "components/IconButton";
-import { Button } from "components/Button";
+import { Button } from "components/ui/button";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { useFeatureFlag } from "lib/abby";
@@ -96,11 +95,11 @@ export const Card = ({
   return (
     <div
       className={cn(
-        "my-4 flex flex-col rounded-md bg-gray-700/50 p-4 shadow-lg",
+        "my-4 flex flex-col rounded-md bg-card p-4 shadow-lg",
         className
       )}
     >
-      <div className="flex justify-between text-pink-50">
+      <div className="flex justify-between text-primary">
         <h4 className="mb-2 font-bold">{title}</h4>
         {tooltip && (
           <Popover.Root>
@@ -111,7 +110,7 @@ export const Card = ({
             </Popover.Trigger>
             <Popover.Portal>
               <Popover.Content
-                className="max-w-sm select-none rounded-[4px] bg-gray-800 px-[15px] py-[10px] text-[15px] leading-none text-pink-50 shadow-md will-change-[transform,opacity] data-[state=delayed-open]:data-[side=bottom]:animate-slideUpAndFade data-[state=delayed-open]:data-[side=left]:animate-slideRightAndFade data-[state=delayed-open]:data-[side=right]:animate-slideLeftAndFade data-[state=delayed-open]:data-[side=top]:animate-slideDownAndFade"
+                className="max-w-sm select-none rounded-[4px] bg-accent px-[15px] py-[10px] text-[15px] leading-none text-pink-50 shadow-md will-change-[transform,opacity] data-[state=delayed-open]:data-[side=bottom]:animate-slideUpAndFade data-[state=delayed-open]:data-[side=left]:animate-slideRightAndFade data-[state=delayed-open]:data-[side=right]:animate-slideLeftAndFade data-[state=delayed-open]:data-[side=top]:animate-slideDownAndFade"
                 sideOffset={5}
               >
                 {tooltip}
@@ -156,20 +155,22 @@ const Section = ({
   });
 
   return (
-    <section className="w-full rounded-md bg-gray-600/50 p-4">
+    <section className="w-full rounded-lg bg-secondary p-4">
       <div className="flex justify-between px-2">
         <TitleEdit
           title={name}
           onSave={(newName) => updateTestName({ name: newName, testId: id })}
         />
-        <IconButton
-          icon={<AiOutlineDelete />}
+        <Button
           title="Delete Test"
           onClick={() => {
             setIsDeleteModalOpen(true);
           }}
-          className="bg-gray-700 hover:bg-red-800"
-        />
+          size="icon"
+          variant="destructive"
+        >
+          <AiOutlineDelete />
+        </Button>
         <DeleteTestModal
           isOpen={isDeleteModalOpen}
           onClose={() => setIsDeleteModalOpen(false)}
@@ -234,13 +235,12 @@ const Section = ({
           </p>
         )}
         {showAdvancedTestStats && (
-          <Button
-            as={Link}
+          <Link
             href={`/projects/${router.query.projectId}/tests/${id}`}
-            className="ml-auto"
+            className="contents"
           >
-            See More
-          </Button>
+            <Button className="ml-auto">See More</Button>
+          </Link>
         )}
       </div>
     </section>

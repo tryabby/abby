@@ -15,7 +15,7 @@ const UserInfo = () => {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <button className="grid w-full grid-cols-[auto,1fr] space-x-2 rounded-md p-1 transition-colors duration-200 hover:bg-gray-800">
+        <button className="hover:bg-background grid w-full grid-cols-[auto,1fr] space-x-2 rounded-md p-1 transition-colors duration-200">
           <Avatar
             imageUrl={sessionData?.user?.image}
             userName={sessionData?.user?.name!}

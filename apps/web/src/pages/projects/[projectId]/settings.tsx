@@ -7,15 +7,17 @@ import {
   DashboardSectionTitle,
 } from "components/DashboardSection";
 import { DeleteProjectModal } from "components/DeleteProjectModal";
-import { IconButton } from "components/IconButton";
 import { Layout } from "components/Layout";
 import { FullPageLoadingSpinner } from "components/LoadingSpinner";
 import { Progress } from "components/Progress";
 import { RemoveUserModal } from "components/RemoveUserModal";
+import { Button } from "components/ui/button";
+import { Input } from "components/ui/input";
 import dayjs from "dayjs";
 import { getFlagCount } from "lib/flags";
 import { getProjectPaidPlan, useAbbyStripe } from "lib/stripe";
 import { useTracking } from "lib/tracking";
+import { GetStaticProps, GetStaticPaths } from "next";
 import { useSession } from "next-auth/react";
 import Link from "next/link";
 import { useRouter } from "next/router";
@@ -108,9 +110,9 @@ const SettingsPage: NextPageWithLayout = () => {
                 <label className="flex flex-col">
                   Name
                   <div className="col flex space-x-5">
-                    <input
+                    <Input
                       ref={projectNameRef}
-                      className="w-52 rounded-md bg-gray-700 px-3 py-2 text-pink-50/80"
+                      className="w-52 px-3 py-2"
                       type="text"
                       defaultValue={data.project.name}
                     />
@@ -130,48 +132,50 @@ const SettingsPage: NextPageWithLayout = () => {
                 </label>
               </div>
               <p>Current Plan:</p>
-              <div className="my-2 flex space-x-5">
-                <div className="flex w-52 items-center justify-center rounded-md border px-3 py-0.5">
+              <div className="flex flex-col space-y-5">
+                <div className="flex w-52 items-center justify-center rounded-lg border bg-background px-3 py-2">
                   <span>{projectPlan ?? "Free"}</span>
                 </div>
-                <DashboardButton
-                  className="px-3 py-2"
-                  onClick={async () => {
-                    trackEvent("Plan Upgrade Clicked", {
-                      props: { Plan: "STARTUP" },
-                    });
-                    redirectToCheckout(projectId, "STARTUP");
-                  }}
-                >
-                  Upgrade to Startup
-                </DashboardButton>
-                <DashboardButton
-                  className="px-3"
-                  onClick={async () => {
-                    trackEvent("Plan Upgrade Clicked", {
-                      props: { Plan: "PRO" },
-                    });
-                    redirectToCheckout(projectId, "PRO");
-                  }}
-                >
-                  Upgrade to Pro
-                </DashboardButton>
-                <Link href={`/projects/${projectId}/redeem`}>
-                  <DashboardButton className="px-3 py-2">
-                    Redeem Coupon
+                <div className="flex space-x-5">
+                  <DashboardButton
+                    className="px-3 py-2"
+                    onClick={async () => {
+                      trackEvent("Plan Upgrade Clicked", {
+                        props: { Plan: "STARTUP" },
+                      });
+                      redirectToCheckout(projectId, "STARTUP");
+                    }}
+                  >
+                    Upgrade to Startup
                   </DashboardButton>
-                </Link>
-                {data.project.stripeCustomerId !== null &&
-                  projectPlan !== null && (
-                    <button
-                      className="text- ml-4 mr-auto mt-4 rounded-sm bg-blue-300 px-3"
-                      onClick={async () => {
-                        redirectToBillingPortal(projectId);
-                      }}
-                    >
-                      Manage
-                    </button>
-                  )}
+                  <DashboardButton
+                    className="px-3"
+                    onClick={async () => {
+                      trackEvent("Plan Upgrade Clicked", {
+                        props: { Plan: "PRO" },
+                      });
+                      redirectToCheckout(projectId, "PRO");
+                    }}
+                  >
+                    Upgrade to Pro
+                  </DashboardButton>
+                  <Link href={`/projects/${projectId}/redeem`}>
+                    <DashboardButton className="px-3 py-2">
+                      Redeem Coupon
+                    </DashboardButton>
+                  </Link>
+                  {data.project.stripeCustomerId !== null &&
+                    projectPlan !== null && (
+                      <button
+                        className="text- ml-4 mr-auto mt-4 rounded-sm bg-blue-300 px-3"
+                        onClick={async () => {
+                          redirectToBillingPortal(projectId);
+                        }}
+                      >
+                        Manage
+                      </button>
+                    )}
+                </div>
               </div>
             </div>
           </DashboardSection>
@@ -182,28 +186,31 @@ const SettingsPage: NextPageWithLayout = () => {
             </DashboardSectionSubtitle>
             <div className="mt-8 divide-y divide-pink-50/20">
               {data.project.users.map(({ user, role }) => (
-                <div key={user.id} className="col flex  py-3">
-                  <div className="flex items-center space-x-2">
-                    <span>{user.email}</span>
+                <div key={user.id} className="py-3">
+                  <div className="flex items-center justify-between space-x-2">
+                    <div className="flex space-x-2">
+                      <span>{user.email}</span>
+                      <span
+                        className={clsx(
+                          "rounded-md px-2 py-0.5 text-sm capitalize",
+                          {
+                            "bg-green-400 text-black": role === ROLE.ADMIN,
+                            "bg-orange-200 text-black": role === ROLE.USER,
+                          }
+                        )}
+                      >
+                        {role.toLowerCase()}
+                      </span>
+                    </div>{" "}
                     {role !== ROLE.ADMIN && (
-                      <IconButton
-                        icon={<BsX />}
+                      <Button
+                        variant="link"
                         title="Remove User"
                         onClick={() => setUserToRemove(user)}
-                        className="bg-transparent text-2xl hover:bg-red-800/80"
-                      />
+                      >
+                        Remove User
+                      </Button>
                     )}
-                    <span
-                      className={clsx(
-                        "capitaliz rounded-md px-2 py-0.5 text-sm capitalize",
-                        {
-                          "bg-blue-300 text-black": role === ROLE.ADMIN,
-                          "bg-blue-300/40 text-black": role === ROLE.USER,
-                        }
-                      )}
-                    >
-                      {role.toLowerCase()}
-                    </span>
                   </div>
                 </div>
               ))}
@@ -212,11 +219,11 @@ const SettingsPage: NextPageWithLayout = () => {
                   Invite a new User:
                 </label>
                 <div className="mt-2 flex space-x-5">
-                  <input
+                  <Input
                     ref={inviteEmailRef}
                     id="newUserEmail"
                     type="email"
-                    className="w-80 max-w-full rounded-md bg-gray-700 px-3 py-2 pr-2 focus:outline-none"
+                    className="w-80 max-w-full"
                     placeholder="abby@tryabby.com"
                   />{" "}
                   <DashboardButton className="px-12">Invite</DashboardButton>
@@ -238,7 +245,7 @@ const SettingsPage: NextPageWithLayout = () => {
             </DashboardSectionSubtitle>
             <div className="flex flex-col space-y-4">
               <div>
-                <h3>A/B Tests:</h3>
+                <h3 className="mb-1">A/B Tests:</h3>
                 <Progress
                   currentValue={data.project.tests.length}
                   maxValue={limits?.tests ?? Infinity}
@@ -250,7 +257,7 @@ const SettingsPage: NextPageWithLayout = () => {
                 </p>
               </div>
               <div>
-                <h3>Flags:</h3>
+                <h3 className="mb-1">Flags:</h3>
                 <Progress
                   currentValue={getFlagCount(data.project.featureFlags ?? [])}
                   maxValue={limits?.flags ?? Infinity}
@@ -265,7 +272,7 @@ const SettingsPage: NextPageWithLayout = () => {
                 </p>
               </div>
               <div>
-                <h3>Environments:</h3>
+                <h3 className="mb-1">Environments:</h3>
                 <Progress
                   currentValue={data.project.environments.length}
                   maxValue={limits?.environments ?? Infinity}
@@ -280,7 +287,7 @@ const SettingsPage: NextPageWithLayout = () => {
                 </p>
               </div>
               <div>
-                <h3>Monthly Events:</h3>
+                <h3 className="mb-1">Monthly Events:</h3>
                 <Progress
                   currentValue={data.project.eventsThisPeriod}
                   maxValue={limits?.eventsPerMonth ?? Infinity}
@@ -301,7 +308,7 @@ const SettingsPage: NextPageWithLayout = () => {
               Delete this project and all of its data
             </DashboardSectionSubtitle>
 
-            <DashboardButton
+            <Button
               onClick={deleteProject}
               disabled={
                 isPlanWithStripe ||
@@ -310,10 +317,10 @@ const SettingsPage: NextPageWithLayout = () => {
                 session.data?.user?.projectIds === null ||
                 session.data?.user?.projectIds.length === 1
               }
-              className="bg-red-600 py-2 font-medium hover:bg-red-600"
+              variant="destructive"
             >
               Delete Project
-            </DashboardButton>
+            </Button>
             {isPlanWithStripe && (
               <p className="mt-2 text-sm text-gray-400">
                 You must downgrade to the free plan before deleting this
@@ -342,5 +349,18 @@ const SettingsPage: NextPageWithLayout = () => {
 };
 
 SettingsPage.getLayout = (page) => <Layout>{page}</Layout>;
+
+export const getStaticProps: GetStaticProps = async () => {
+  return {
+    props: {},
+  };
+};
+
+export const getStaticPaths: GetStaticPaths = async () => {
+  return {
+    paths: [],
+    fallback: true,
+  };
+};
 
 export default SettingsPage;

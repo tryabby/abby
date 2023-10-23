@@ -48,23 +48,23 @@ html {
   }
 
   input[type="range"]::-webkit-slider-runnable-track {
-    @apply rounded-full bg-black/25;
+    @apply rounded-full bg-background;
   }
 
   input[type="range"]::-moz-range-track {
-    @apply rounded-full bg-black/25;
+    @apply rounded-full bg-background;
   }
 
   input[type="range"]::-moz-range-thumb {
-    @apply bg-pink-500;
+    @apply bg-primary;
   }
 
   input[type="range"]::-webkit-slider-thumb {
-    @apply h-4 w-4 appearance-none rounded-full bg-pink-500;
+    @apply h-4 w-4 appearance-none rounded-full bg-primary;
   }
 
   input[type="range"]::-ms-track {
-    @apply rounded-full bg-black/25;
+    @apply rounded-full bg-background;
   }
 }
 
@@ -72,12 +72,12 @@ html {
   position: relative;
   display: inline-block;
   z-index: 0;
-  @apply text-accent-foreground;
+  @apply text-ab_accent-foreground;
 }
 
 .mark::before {
   /* Highlight color */
-  @apply bg-accent-background;
+  @apply bg-ab_accent-background;
 
   content: "";
   position: absolute;

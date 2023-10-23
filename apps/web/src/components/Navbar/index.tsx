@@ -100,7 +100,7 @@ function MobileNav() {
         <Menu.Items
           className={cn(
             "absolute right-6 top-[80px] z-10 flex w-[calc(100%-3rem)] flex-col space-y-4 rounded-lg p-4 shadow-xl",
-            "border border-accent-background bg-primary-background text-primary-foreground"
+            "border border-ab_accent-background bg-ab_primary-background text-ab_primary-foreground"
           )}
         >
           {NAV_ITEMS.flatMap((i) => ("subItems" in i ? i.subItems : i)).map(
@@ -110,7 +110,8 @@ function MobileNav() {
                   <Link
                     className={clsx(
                       "flex items-center space-x-2 rounded-lg p-2",
-                      active && "bg-accent-background text-accent-foreground"
+                      active &&
+                        "bg-ab_accent-background text-ab_accent-foreground"
                     )}
                     href={href ?? ""}
                   >
@@ -176,7 +177,7 @@ function NavItem({
         "mr-2 flex items-center space-x-2 rounded-lg px-4 py-2 font-medium transition-all duration-200 ease-in-out",
         className,
         isProminent
-          ? "bg-accent-background text-accent-foreground hover:opacity-90"
+          ? "bg-ab_accent-background text-ab_accent-foreground hover:opacity-90"
           : "hover:bg-pink-300/40"
       )}
     >
@@ -196,7 +197,7 @@ const ListItem = React.forwardRef<
       <Link
         ref={ref}
         className={cn(
-          "block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-primary-background-hover hover:text-primary-foreground focus:bg-primary-background-hover focus:text-primary-foreground",
+          "block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-ab_primary-background-hover hover:text-ab_primary-foreground focus:bg-ab_primary-background-hover focus:text-ab_primary-foreground",
           className
         )}
         {...props}
@@ -222,7 +223,7 @@ export function Navbar({ isInverted }: { isInverted?: boolean }) {
     trpc.misc.getStars.useQuery();
 
   return (
-    <nav className="container relative flex items-center justify-between border-b border-b-accent-background px-6 py-6 md:px-16">
+    <nav className="container relative flex items-center justify-between border-b border-b-ab_accent-background px-6 py-6 md:px-16">
       <div className="flex items-center space-x-4">
         <Link href="/" className="mr-12">
           <Logo />
@@ -267,7 +268,7 @@ export function Navbar({ isInverted }: { isInverted?: boolean }) {
       <div className="flex items-center space-x-3">
         <Link
           href="https://github.com/tryabby/abby"
-          className="flex h-full items-center justify-center space-x-2 rounded-lg border-2 border-primary-foreground px-4 py-2 font-medium transition-colors duration-200 ease-out hover:bg-pink-300/50"
+          className="flex h-full items-center justify-center space-x-2 rounded-lg border-2 border-ab_primary-foreground px-4 py-2 font-medium transition-colors duration-200 ease-out hover:bg-pink-300/50"
         >
           <Star className="h-5 w-5" />
           <span>{isStarsLoading ? "0" : `${starsCount}`}</span>

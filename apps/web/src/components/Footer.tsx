@@ -11,7 +11,7 @@ export const DISCORD_INVITE_URL = "https://discord.gg/nk7wKf7Pv2";
 
 export function Footer() {
   return (
-    <footer className="bg-accent-background text-accent-foreground">
+    <footer className="bg-ab_accent-background text-ab_accent-foreground">
       <div className="container px-6 py-6 md:px-16 md:py-12">
         <div className="grid grid-cols-1 gap-8 md:grid-cols-4">
           <div>

@@ -5,7 +5,7 @@ import { Toaster } from "react-hot-toast";
 import { trpc } from "../utils/trpc";
 import { ThemeProvider } from "next-themes";
 import { DefaultSeo } from "next-seo";
-import Script from "next/script";
+
 import { env } from "env/client.mjs";
 import { ReactElement, ReactNode } from "react";
 import { NextPage } from "next";
@@ -15,6 +15,7 @@ import { TooltipProvider } from "components/Tooltip";
 import "@fontsource/martian-mono/600.css";
 
 import "../styles/globals.css";
+import "../styles/shadcn.css";
 import "@code-hike/mdx/dist/index.css";
 import PlausibleProvider from "next-plausible";
 

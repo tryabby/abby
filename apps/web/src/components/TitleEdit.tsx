@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { AiOutlineEdit, AiOutlineSave } from "react-icons/ai";
-import { IconButton } from "./IconButton";
+import { Button } from "./ui/button";
 
 type Props = {
   title: string;
@@ -21,7 +21,7 @@ export function TitleEdit({ onSave, title }: Props) {
         <>
           <input
             type="text"
-            className="rounded-md bg-gray-700/50 p-2"
+            className="rounded-lg border-border bg-background"
             value={value}
             onChange={(e) => {
               setValue(e.target.value);
@@ -32,22 +32,26 @@ export function TitleEdit({ onSave, title }: Props) {
               }
             }}
           />
-          <IconButton
+          <Button
             title="Save"
             className="bg-transparent"
-            icon={<AiOutlineSave />}
             onClick={updateTitle}
-          />
+            variant="ghost"
+          >
+            <AiOutlineSave />
+          </Button>
         </>
       ) : (
         <>
-          <h2 className="font-bold text-pink-200">{value}</h2>
-          <IconButton
-            title="Edit"
-            className="bg-transparent"
-            icon={<AiOutlineEdit />}
+          <h2 className="font-bold text-primary">{value}</h2>
+          <Button
+            size="icon"
+            title="Save"
+            variant="ghost"
             onClick={() => setIsTitleInEdit(true)}
-          />
+          >
+            <AiOutlineEdit />
+          </Button>
         </>
       )}
     </div>
