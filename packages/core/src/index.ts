@@ -36,6 +36,9 @@ type Settings<
     devOverrides?: {
       [K in FlagName]?: boolean;
     };
+    fallbackValues?: {
+      [K in FlagName]?: boolean;
+    };
   };
   remoteConfig?: {
     defaultValues?: {
@@ -301,13 +304,32 @@ export class Abby<
 
     const defaultValue = this._cfg.settings?.flags?.defaultValue;
 
-    // return the defaultValue if exists
-    if (storedValue === undefined && defaultValue != null) {
-      return defaultValue;
+    if (storedValue !== undefined) {
+      this.log(`getFeatureFlag() => storedValue:`, storedValue);
+      return storedValue;
+    }
+    // before we return the default value we check if there is a fallback value set
+    const hasFallbackValue = key in (this._cfg.settings?.flags?.fallbackValues ?? {});
+
+    if (hasFallbackValue) {
+      const fallbackValue = this._cfg.settings?.flags?.fallbackValues?.[key as FlagName];
+      if (fallbackValue !== undefined) {
+        if (typeof fallbackValue === "boolean") {
+          this.log(`getFeatureFlag() => fallbackValue:`, fallbackValue);
+          return fallbackValue;
+        } else {
+          const envFallbackValue = fallbackValue[this._cfg.currentEnvironment as string];
+
+          if (envFallbackValue !== undefined) {
+            this.log(`getFeatureFlag() => envFallbackValue:`, envFallbackValue);
+            return envFallbackValue;
+          }
+        }
+      }
     }
 
-    this.log(`getFeatureFlag() => storedValue:`, storedValue);
-    return storedValue;
+    this.log(`getFeatureFlag() => defaultValue:`, defaultValue ?? false);
+    return defaultValue ?? false;
   }
 
   /**

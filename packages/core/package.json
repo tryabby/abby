@@ -1,6 +1,6 @@
 {
   "name": "@tryabby/core",
-  "version": "5.0.1",
+  "version": "5.1.0",
   "description": "",
   "main": "dist/index.js",
   "files": [

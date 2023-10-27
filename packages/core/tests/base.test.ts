@@ -115,7 +115,14 @@ describe("Abby", () => {
         config1: "String",
         config2: "String",
       },
+      flags: ["flag1", "flag2"],
       settings: {
+        flags: {
+          fallbackValues: {
+            flag1: false,
+            flag2: true,
+          },
+        },
         remoteConfig: {
           fallbackValues: {
             config1: "fallback1",
@@ -132,6 +139,83 @@ describe("Abby", () => {
     expect(abby.getRemoteConfig("config1")).toBe("fallback1");
 
     expect(abby.getRemoteConfig("config2")).toBe("default");
+
+    expect(abby.getFeatureFlag("flag1")).toBe(false);
+
+    expect(abby.getFeatureFlag("flag2")).toBe(true);
+  });
+
+  it("uses env specific fallbacks", () => {
+    let abby = new Abby({
+      environments: ["development", "test"],
+      projectId: "",
+      currentEnvironment: "development",
+      remoteConfig: {
+        config1: "String",
+        config2: "String",
+      },
+      flags: ["flag1", "flag2"],
+      settings: {
+        flags: {
+          fallbackValues: {
+            flag1: false,
+            flag2: {
+              test: true,
+            },
+          },
+        },
+        remoteConfig: {
+          fallbackValues: {
+            config1: "fallback1",
+          },
+          defaultValues: {
+            String: "default",
+          },
+        },
+      },
+    });
+
+    abby.init({ flags: [], tests: [], remoteConfig: [] });
+
+    expect(abby.getRemoteConfig("config1")).toBe("fallback1");
+
+    expect(abby.getRemoteConfig("config2")).toBe("default");
+
+    expect(abby.getFeatureFlag("flag1")).toBe(false);
+
+    expect(abby.getFeatureFlag("flag2")).toBe(false);
+
+    abby = new Abby({
+      environments: ["development", "test"],
+      projectId: "",
+      currentEnvironment: "test",
+      remoteConfig: {
+        config1: "String",
+        config2: "String",
+      },
+      flags: ["flag1", "flag2"],
+      settings: {
+        flags: {
+          fallbackValues: {
+            flag1: false,
+            flag2: {
+              test: true,
+            },
+          },
+        },
+        remoteConfig: {
+          fallbackValues: {
+            config1: "fallback1",
+          },
+          defaultValues: {
+            String: "default",
+          },
+        },
+      },
+    });
+    abby.init({ flags: [], tests: [], remoteConfig: [] });
+
+    expect(abby.getFeatureFlag("flag2")).toBe(true);
   });
 
   it("updates a local variant in dev mode", () => {
