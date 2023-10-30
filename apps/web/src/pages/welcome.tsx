@@ -320,8 +320,8 @@ export default function WelcomePage(
   }, [props.user.name]);
 
   return (
-    <main className="flex min-h-screen items-center justify-center bg-primary-background text-primary-foreground">
-      <div className="flex h-[500px] w-full max-w-2xl flex-col rounded-md border border-accent-background-muted bg-primary-background p-8 text-primary-foreground shadow-md shadow-accent-background">
+    <main className="flex min-h-screen items-center justify-center bg-ab_primary-background text-ab_primary-foreground">
+      <div className="flex h-[500px] w-full max-w-2xl flex-col rounded-md border border-ab_accent-background-muted bg-ab_primary-background p-8 text-ab_primary-foreground shadow-md shadow-ab_accent-background">
         <Wizard
           footer={<WizardFooter />}
           wrapper={

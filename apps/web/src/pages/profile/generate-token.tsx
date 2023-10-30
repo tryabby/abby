@@ -32,7 +32,7 @@ const GenerateTokenPage: NextPageWithLayout<
   );
 };
 
-GenerateTokenPage.getLayout = (page) => <Layout hideSidebar>{page}</Layout>;
+GenerateTokenPage.getLayout = (page) => <Layout>{page}</Layout>;
 
 export const getServerSideProps = (async (ctx) => {
   const trpc = appRouter.createCaller(await createContext(ctx as any));

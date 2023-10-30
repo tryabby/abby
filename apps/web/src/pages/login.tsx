@@ -1,4 +1,6 @@
 import Logo from "components/Logo";
+import { Button } from "components/ui/button";
+import { Input } from "components/ui/input";
 import { signIn } from "next-auth/react";
 import Link from "next/link";
 import { useRouter } from "next/router";
@@ -10,7 +12,7 @@ import { twMerge } from "tailwind-merge";
 const DEFAULT_CALLBACK_URL = "/projects";
 
 const baseSocialButtonStyles =
-  "flex items-center rounded-md px-6 py-3 text-lg text-white transition-colors duration-200 ease-in-out";
+  "flex items-center justify-center rounded-md px-6 py-3 text-lg text-white transition-colors duration-200 ease-in-out";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -22,8 +24,8 @@ export default function LoginPage() {
 
   const { register, handleSubmit, formState } = useForm<{ email: string }>();
   return (
-    <main className="flex min-h-screen items-center justify-center bg-primary-background text-primary-foreground">
-      <div className="max-w-2xl rounded-md border border-accent-background-muted bg-primary-background p-8 text-primary-foreground shadow-2xl shadow-accent-background">
+    <main className="flex min-h-screen items-center justify-center bg-background text-foreground">
+      <div className="w-full max-w-md rounded-lg border border-card-foreground bg-secondary p-8 text-ab_primary-foreground shadow-2xl">
         <Link href="/" className="mb-12 block text-center">
           <Logo as="h1" />
         </Link>
@@ -65,12 +67,12 @@ export default function LoginPage() {
               });
             })}
           >
-            <input
+            <Input
               {...register("email", {
                 required: "Please enter an email",
               })}
               className={twMerge(
-                "mb-3 w-full rounded-md border bg-transparent px-6 py-3 text-primary-foreground outline-none focus:border-accent-background focus:ring-0",
+                "mb-3",
                 formState.errors.email ? "border-red-500" : "border-gray-400"
               )}
               placeholder="Email Address"
@@ -82,16 +84,10 @@ export default function LoginPage() {
                 {formState.errors.email.message}
               </p>
             )}
-            <button
-              type="submit"
-              className={twMerge(
-                baseSocialButtonStyles,
-                "bg-accent-background text-accent-foreground hover:bg-accent-background-hover"
-              )}
-            >
+            <Button type="submit" className="text-primary-foreground">
               <MdOutlineEmail className="mr-2" size={24} />
               Continue with Email
-            </button>
+            </Button>
           </form>
         </div>
       </div>

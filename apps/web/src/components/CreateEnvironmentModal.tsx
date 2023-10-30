@@ -6,6 +6,7 @@ import { PlausibleEvents } from "types/plausible-events";
 import { trpc } from "utils/trpc";
 import { Modal } from "./Modal";
 import { useTracking } from "lib/tracking";
+import { Input } from "./ui/input";
 
 type Props = {
   onClose: () => void;
@@ -35,7 +36,6 @@ export const CreateEnvironmentModal = ({
       onClose={onClose}
       title="Create new Environment"
       confirmText="Create"
-      initialFocusRef={inputRef}
       onConfirm={async () => {
         if (!trimmedName) {
           toast.error("Name is required");
@@ -61,13 +61,12 @@ export const CreateEnvironmentModal = ({
       }}
     >
       <label className="mb-1 block text-pink-50">Name</label>
-      <input
+      <Input
         ref={inputRef}
         value={name}
         onChange={(e) => setName(e.target.value)}
         type="text"
         placeholder="production"
-        className="form-input rounded-md border border-gray-500 bg-gray-600 px-4 py-2 text-white placeholder-gray-400 shadow-sm focus:outline-none focus:ring-2 focus:ring-gray-400 focus:ring-offset-2"
       />
     </Modal>
   );

@@ -15,10 +15,10 @@ export function Feature({ children, icon: Icon, subtitle, title }: Props) {
         <Icon />
       </div>
       <h3 className="mt-4 text-sm font-semibold text-pink-500">{title}</h3>
-      <h2 className="my-2 text-xl font-semibold text-accent-foreground">
+      <h2 className="my-2 text-xl font-semibold text-ab_accent-foreground">
         {subtitle}
       </h2>
-      <p className="text-accent-foreground">{children}</p>
+      <p className="text-ab_accent-foreground">{children}</p>
     </div>
   );
 }

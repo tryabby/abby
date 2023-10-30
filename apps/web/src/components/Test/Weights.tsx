@@ -1,8 +1,7 @@
-import { Option } from "@prisma/client";
-import { Button } from "components/Button";
+import { Button } from "components/ui/button";
 import { getUpdatedWeights } from "lib/helper";
 import { useRouter } from "next/router";
-import { ChangeEvent, ChangeEventHandler, useEffect, useState } from "react";
+import { ChangeEvent, useState } from "react";
 import { toast } from "react-hot-toast";
 import type { ClientOption } from "server/trpc/router/project";
 import { trpc } from "utils/trpc";
@@ -99,7 +98,7 @@ const Weights = ({ options }: { options: ClientOption[] }) => {
       ))}
       <div className="flex justify-between">
         {weightsSum !== 100 ? (
-          <p className="text-center text-xs text-accent-background">
+          <p className="text-center text-xs text-ab_accent-background">
             Your weights must add up to 100%. Your weights currently make up{" "}
             {weightsSum}%
           </p>

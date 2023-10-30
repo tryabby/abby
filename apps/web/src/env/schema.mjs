@@ -31,7 +31,7 @@ export const serverSchema = z.object({
   GOOGLE_CLIENT_ID: z.string().optional(),
   GOOGLE_CLIENT_SECRET: z.string().optional(),
   HASHING_SECRET: z.string().min(1),
-  USE_PLANETSCALE: z.boolean().default(true),
+  USE_PLANETSCALE: z.enum(["true", "false"]).default("true"),
 });
 
 /**

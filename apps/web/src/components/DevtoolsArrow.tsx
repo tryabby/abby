@@ -103,7 +103,7 @@ export function DevtoolsArrow() {
           initial={{ opacity: 0, scale: 0.5 }}
           animate={{ opacity: 1, scale: 1 }}
           exit={{ opacity: 0, scale: 0.5 }}
-          className="flex items-center rounded-md bg-primary-background p-1 font-mono text-xl text-accent-background"
+          className="flex items-center rounded-md bg-ab_primary-background p-1 font-mono text-xl text-ab_accent-background"
           style={{
             zIndex: 9999,
             position: "fixed",

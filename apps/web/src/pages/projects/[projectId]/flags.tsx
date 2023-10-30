@@ -6,6 +6,7 @@ import { NextPageWithLayout } from "pages/_app";
 import { trpc } from "utils/trpc";
 
 import { FeatureFlagPageContent } from "components/FlagPage";
+import { GetStaticPaths, GetStaticProps } from "next";
 
 const FeatureFlagsPage: NextPageWithLayout = () => {
   const projectId = useProjectId();
@@ -26,5 +27,18 @@ FeatureFlagsPage.getLayout = (page) => (
     {page}
   </Layout>
 );
+
+export const getStaticProps: GetStaticProps = async () => {
+  return {
+    props: {},
+  };
+};
+
+export const getStaticPaths: GetStaticPaths = async () => {
+  return {
+    paths: [],
+    fallback: true,
+  };
+};
 
 export default FeatureFlagsPage;

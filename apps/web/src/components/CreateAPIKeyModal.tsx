@@ -4,6 +4,7 @@ import { useRef, useState } from "react";
 import { toast } from "react-hot-toast";
 import { trpc } from "utils/trpc";
 import { Modal } from "./Modal";
+import { Input } from "./ui/input";
 
 type Props = {
   onClose: () => void;
@@ -29,7 +30,6 @@ export const CreateAPIKeyModal = ({ onClose, isOpen, projectId }: Props) => {
       onClose={onClose}
       title="Create new API Key"
       confirmText="Create"
-      initialFocusRef={inputRef}
       onConfirm={async () => {
         if (!trimmedName) {
           toast.error("Name is required");
@@ -50,13 +50,12 @@ export const CreateAPIKeyModal = ({ onClose, isOpen, projectId }: Props) => {
       }}
     >
       <label className="mb-1 block text-pink-50">Name</label>
-      <input
+      <Input
         ref={inputRef}
         type="text"
         value={name}
         onChange={(e) => setName(e.target.value)}
         placeholder="Name of the Application"
-        className="form-input rounded-md border border-gray-500 bg-gray-600 px-4 py-2 text-white placeholder-gray-400 shadow-sm focus:outline-none focus:ring-2 focus:ring-gray-400 focus:ring-offset-2"
       />
     </Modal>
   );

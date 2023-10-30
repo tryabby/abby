@@ -1,31 +1,28 @@
-import { Tooltip, TooltipContent, TooltipTrigger } from "components/Tooltip";
+import { FeatureFlagType } from "@prisma/client";
+import { InferQueryResult } from "@trpc/react-query/dist/utils/inferReactQueryProcedure";
 import { AddFeatureFlagModal } from "components/AddFeatureFlagModal";
 import { CreateEnvironmentModal } from "components/CreateEnvironmentModal";
-import { DashboardHeader } from "components/DashboardHeader";
-import { Editor } from "components/Editor";
-import { FeatureFlag } from "components/FeatureFlag";
-import { Layout } from "components/Layout";
-import { FullPageLoadingSpinner } from "components/LoadingSpinner";
-import { Modal } from "components/Modal";
-import { useProjectId } from "lib/hooks/useProjectId";
-import { NextPageWithLayout } from "pages/_app";
-import { useState } from "react";
-import { toast } from "react-hot-toast";
-import { AiOutlinePlus } from "react-icons/ai";
-import { BiInfoCircle } from "react-icons/bi";
-import { trpc } from "utils/trpc";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "components/DropdownMenu";
-import { BsThreeDotsVertical } from "react-icons/bs";
+import { Editor } from "components/Editor";
+import { FeatureFlag } from "components/FeatureFlag";
+import { Input } from "components/ui/input";
+import { Modal } from "components/Modal";
+import { Tooltip, TooltipContent, TooltipTrigger } from "components/Tooltip";
+import { useProjectId } from "lib/hooks/useProjectId";
 import { EditIcon, FileEditIcon, TrashIcon } from "lucide-react";
-import { Input } from "components/Input";
-import { InferQueryResult } from "@trpc/react-query/dist/utils/inferReactQueryProcedure";
+import { useState } from "react";
+import { toast } from "react-hot-toast";
+import { AiOutlinePlus } from "react-icons/ai";
+import { BiInfoCircle } from "react-icons/bi";
+import { BsThreeDotsVertical } from "react-icons/bs";
 import { appRouter } from "server/trpc/router/_app";
-import { FeatureFlagType } from "@prisma/client";
+import { trpc } from "utils/trpc";
+import { Button } from "./ui/button";
 
 const EditTitleModal = ({
   flagId,
@@ -57,8 +54,13 @@ const EditTitleModal = ({
       onConfirm={() => updateTitle({ flagId, title: newTitle })}
       isOpen={isOpen}
       onClose={onClose}
+      subtitle="The title is used to identify the flag in the UI."
     >
-      <Input value={newTitle} onChange={(e) => setNewTitle(e.target.value)} />
+      <Input
+        value={newTitle}
+        onChange={(e) => setNewTitle(e.target.value)}
+        placeholder="MyFlag"
+      />
     </Modal>
   );
 };
@@ -183,12 +185,12 @@ export const FeatureFlagPageContent = ({
           You need to have at least one environment to set up{" "}
           {type === "Flags" ? "feature flags" : "remote config"}
         </h2>
-        <button
-          className="mt-4 rounded-md bg-pink-600 px-4 py-2 font-semibold text-white transition-colors duration-200 hover:bg-pink-700"
+        <Button
+          className="mt-4"
           onClick={() => setIsCreateEnvironmentModalOpen(true)}
         >
           Create Environment
-        </button>
+        </Button>
         <CreateEnvironmentModal
           isOpen={isCreateEnvironmentModalOpen}
           onClose={() => setIsCreateEnvironmentModalOpen(false)}
@@ -201,19 +203,20 @@ export const FeatureFlagPageContent = ({
     <>
       <div>
         <div className="flex justify-end space-x-2">
-          <button
-            className="mb-4 flex items-center space-x-2 rounded-md bg-gray-600 px-4 py-2 text-white"
+          <Button
+            className="mb-4 flex items-center space-x-2"
             onClick={() => setIsCreateEnvironmentModalOpen(true)}
+            variant="secondary"
           >
             <AiOutlinePlus /> <span>Add Env</span>
-          </button>
-          <button
-            className="mb-4 flex items-center space-x-2 rounded-md bg-pink-600 px-4 py-2 text-white"
+          </Button>
+          <Button
+            className="mb-4 flex items-center space-x-2 text-primary-foreground"
             onClick={() => setIsCreateFlagModalOpen(true)}
           >
             <AiOutlinePlus />{" "}
             <span>Add {type === "Flags" ? "Flag" : "Config"}</span>
-          </button>
+          </Button>
           <AddFeatureFlagModal
             isOpen={isCreateFlagModalOpen}
             onClose={() => setIsCreateFlagModalOpen(false)}
@@ -232,7 +235,7 @@ export const FeatureFlagPageContent = ({
             return (
               <section
                 key={currentFlag.id}
-                className="w-full rounded-md bg-gray-600/50 p-4"
+                className="w-full rounded-md bg-secondary p-4"
               >
                 <div className="flex justify-between">
                   <div className="flex items-center space-x-3">
@@ -266,10 +269,8 @@ export const FeatureFlagPageContent = ({
                     </Tooltip>
                   </div>
                   <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
-                      <button className="inline-flex h-[35px] w-[35px] items-center justify-center rounded-md bg-transparent text-pink-50 outline-none hover:bg-gray-800 focus:bg-gray-800 ">
-                        <BsThreeDotsVertical />
-                      </button>
+                    <DropdownMenuTrigger>
+                      <BsThreeDotsVertical />
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align="end">
                       <DropdownMenuItem

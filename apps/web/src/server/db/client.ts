@@ -12,7 +12,7 @@ declare global {
 export const prisma =
   global.prisma ||
   // enable planetscale adapter in production if enabled
-  (env.NODE_ENV === "production" && env.USE_PLANETSCALE
+  (env.NODE_ENV === "production" && env.USE_PLANETSCALE === "true"
     ? (() => {
         const connection = connect({ url: env.DATABASE_URL });
         const adapter = new PrismaPlanetScale(connection);
