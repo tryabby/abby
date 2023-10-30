@@ -45,7 +45,7 @@ export function MarketingLayout({
       <NextSeo title={seoTitle ?? metaTitle} description={metaDescription} />
       <main
         className={cn(
-          "max-w-screen flex min-h-screen flex-col overflow-x-hidden bg-primary-background text-primary-foreground"
+          "max-w-screen flex min-h-screen flex-col overflow-x-hidden bg-ab_primary-background text-ab_primary-foreground"
         )}
       >
         <Navbar />
@@ -70,7 +70,7 @@ export function MarketingLayout({
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              className="fixed bottom-4 left-4 z-50 hidden rounded-full bg-primary-background p-2 text-accent-background md:block"
+              className="fixed bottom-4 left-4 z-50 hidden rounded-full bg-ab_primary-background p-2 text-ab_accent-background md:block"
               title="Scroll to top"
               onClick={() => {
                 window.scrollTo({ top: 0, behavior: "smooth" });

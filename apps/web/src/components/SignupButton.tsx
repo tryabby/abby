@@ -10,7 +10,7 @@ export function SignupButton({ className }: { className?: string }) {
         href="/login"
         onClick={() => onAct()}
         className={twMerge(
-          "mt-12 rounded-xl bg-accent-background px-6 py-2 text-xl font-semibold text-accent-foreground no-underline transition-transform duration-150 ease-in-out hover:scale-110",
+          "mt-12 rounded-xl bg-ab_accent-background px-6 py-2 text-xl font-semibold text-ab_accent-foreground no-underline transition-transform duration-150 ease-in-out hover:scale-110",
           className
         )}
       >

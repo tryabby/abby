@@ -1,6 +1,5 @@
 import { CreateEnvironmentModal } from "components/CreateEnvironmentModal";
 import { DashboardHeader } from "components/DashboardHeader";
-import { IconButton } from "components/IconButton";
 import { Layout } from "components/Layout";
 import { Modal } from "components/Modal";
 import {
@@ -31,6 +30,8 @@ import {
 import { Environment, FeatureFlagType } from "@prisma/client";
 import { CSS } from "@dnd-kit/utilities";
 import { MdDragIndicator } from "react-icons/md";
+import { Button } from "components/ui/button";
+import { GetStaticProps, GetStaticPaths } from "next";
 
 function EnvironmentItem({
   environment,
@@ -66,7 +67,7 @@ function EnvironmentItem({
   return (
     <div
       key={environment.id}
-      className="col flex items-center justify-between rounded-xl bg-gray-800 px-4 py-3"
+      className="flex items-center justify-between rounded-lg bg-secondary px-4 py-3"
       ref={setNodeRef}
       style={style}
       {...attributes}
@@ -86,12 +87,14 @@ function EnvironmentItem({
           }
         />
       </div>
-      <IconButton
-        icon={<AiOutlineDelete />}
+      <Button
+        size="icon"
+        variant="ghost"
         title="Delete Environment"
         onClick={() => setDeleteState()}
-        className="hover:bg-red-800"
-      />
+      >
+        <AiOutlineDelete />
+      </Button>
     </div>
   );
 }
@@ -202,12 +205,12 @@ const EnvironmentPage: NextPageWithLayout = () => {
         <h1 className="text-2xl font-semibold">
           You don&apos;t have any environments set up!
         </h1>
-        <button
-          className="mt-4 rounded-md bg-pink-600 px-4 py-2 font-semibold text-white transition-colors duration-200 hover:bg-pink-700"
+        <Button
+          className="mt-4"
           onClick={() => setIsCreateEnvironmentModalOpen(true)}
         >
           Create Environment
-        </button>
+        </Button>
         <CreateEnvironmentModal
           isOpen={isCreateEnvironmentModalOpen}
           onClose={() => setIsCreateEnvironmentModalOpen(false)}
@@ -219,12 +222,12 @@ const EnvironmentPage: NextPageWithLayout = () => {
   return (
     <>
       <div className="flex justify-end space-x-2">
-        <button
-          className="mb-4 flex items-center space-x-2 rounded-md bg-pink-600 px-4 py-2 text-white"
+        <Button
+          className="mb-4 flex items-center space-x-2 text-primary-foreground"
           onClick={() => setIsCreateEnvironmentModalOpen(true)}
         >
           <AiOutlinePlus /> <span>Add Environment</span>
-        </button>
+        </Button>
 
         <CreateEnvironmentModal
           isOpen={isCreateEnvironmentModalOpen}
@@ -281,6 +284,19 @@ EnvironmentPage.getLayout = (page) => {
       {page}
     </Layout>
   );
+};
+
+export const getStaticProps: GetStaticProps = async () => {
+  return {
+    props: {},
+  };
+};
+
+export const getStaticPaths: GetStaticPaths = async () => {
+  return {
+    paths: [],
+    fallback: true,
+  };
 };
 
 export default EnvironmentPage;

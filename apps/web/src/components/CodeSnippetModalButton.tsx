@@ -3,7 +3,6 @@ import { useRouter } from "next/router";
 import { useState } from "react";
 import { BsCodeSlash } from "react-icons/bs";
 import { CodeSnippet } from "./CodeSnippet";
-import { IconButton } from "./IconButton";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -14,6 +13,7 @@ import { Code, Copy } from "lucide-react";
 import { useProjectId } from "lib/hooks/useProjectId";
 import { toast } from "react-hot-toast";
 import { useTracking } from "lib/tracking";
+import { Button } from "./ui/button";
 
 function CodeSnippetModal({
   isOpen,
@@ -56,12 +56,15 @@ export function CodeSnippetModalButton() {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger
+        asChild
         // all other events are prevented by radix :(
         onPointerDown={() => {
           trackEvent("Dashboard Code Clicked");
         }}
       >
-        <IconButton as="div" icon={<BsCodeSlash />} title="" />
+        <Button size="icon" variant="secondary" title="">
+          <BsCodeSlash size={20} />
+        </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent side="bottom" align="end">
         <DropdownMenuItem onClick={onCopyProjectId}>

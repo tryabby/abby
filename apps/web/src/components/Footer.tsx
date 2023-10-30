@@ -11,7 +11,7 @@ export const DISCORD_INVITE_URL = "https://discord.gg/nk7wKf7Pv2";
 
 export function Footer() {
   return (
-    <footer className="bg-accent-background text-accent-foreground">
+    <footer className="bg-ab_accent-background text-ab_accent-foreground">
       <div className="container px-6 py-6 md:px-16 md:py-12">
         <div className="grid grid-cols-1 gap-8 md:grid-cols-4">
           <div>
@@ -47,16 +47,16 @@ export function Footer() {
         <div className="flex flex-col justify-between gap-y-4 border-t border-gray-600 px-6 py-6  sm:flex-row md:px-16">
           <p>© {new Date().getFullYear()} Abby. All rights reserved.</p>
           <div className="flex items-center space-x-4">
-            <a href={GITHUB_URL}>
+            <a href={GITHUB_URL} aria-label="Github">
               <Github />
             </a>
             <a href={LINKEDIN_URL}>
-              <BsLinkedin size={24} />
+              <BsLinkedin size={24} aria-label="LinkedIn" />
             </a>
             <a href={TWITTER_URL}>
-              <RiTwitterXLine size={24} />
+              <RiTwitterXLine size={24} aria-label="Twitter / X" />
             </a>
-            <a href={DISCORD_INVITE_URL}>
+            <a href={DISCORD_INVITE_URL} aria-label="Discord">
               <BsDiscord size={24} />
             </a>
           </div>

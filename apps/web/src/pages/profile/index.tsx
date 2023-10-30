@@ -6,7 +6,6 @@ import {
   DashboardSectionSubtitle,
   DashboardSectionTitle,
 } from "components/DashboardSection";
-import { IconButton } from "components/IconButton";
 import { Input } from "components/Input";
 import { Layout } from "components/Layout";
 import { FullPageLoadingSpinner } from "components/LoadingSpinner";
@@ -20,6 +19,7 @@ import { BsX } from "react-icons/bs";
 import { getSSRTrpc } from "server/trpc/helpers";
 import { trpc } from "utils/trpc";
 import { NextPageWithLayout } from "../_app";
+import { Button } from "components/ui/button";
 
 const CreateApiKeyModal = ({
   isOpen,
@@ -229,15 +229,17 @@ const ProfilePage: NextPageWithLayout = () => {
                         className="col flex justify-between py-3"
                       >
                         <div className="flex items-center">{apiKeyName}</div>
-                        <IconButton
-                          icon={<BsX />}
+                        <Button
                           title="Revoke API Key"
                           onClick={() => {
                             setIsRevokeApiKeyModalOpen(true);
                             setApiKeyToRevoke(apiKeyId);
                           }}
-                          className="bg-transparent text-2xl hover:bg-red-800/80"
-                        />
+                          size="icon"
+                          variant="destructive"
+                        >
+                          <BsX />
+                        </Button>
                       </div>
                     )
                   )}
@@ -306,7 +308,7 @@ const ProfilePage: NextPageWithLayout = () => {
   );
 };
 
-ProfilePage.getLayout = (page) => <Layout hideSidebar>{page}</Layout>;
+ProfilePage.getLayout = (page) => <Layout>{page}</Layout>;
 
 export const getServerSideProps: GetServerSideProps = async (ctx) => {
   const trpc = await getSSRTrpc(ctx as unknown as CreateNextContextOptions);

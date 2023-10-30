@@ -7,10 +7,14 @@ module.exports = {
   theme: {
     container: {
       center: true,
+      padding: "2rem",
+      screens: {
+        "2xl": "1400px",
+      },
     },
     extend: {
       colors: {
-        primary: {
+        ab_primary: {
           foreground: {
             DEFAULT: "rgba(var(--color-primary-foreground), 1)",
             hover: "rgba(var(--color-primary-foreground), 0.9)",
@@ -22,7 +26,7 @@ module.exports = {
             muted: "rgba(var(--color-primary-background), 0.6)",
           },
         },
-        accent: {
+        ab_accent: {
           foreground: {
             DEFAULT: "rgba(var(--color-accent-foreground), 1)",
             hover: "rgba(var(--color-accent-foreground), 0.9)",
@@ -34,11 +38,49 @@ module.exports = {
             muted: "rgba(var(--color-accent-background), 0.6)",
           },
         },
+        border: "hsl(var(--border))",
+        input: "hsl(var(--input))",
+        ring: "rgba(var(--color-accent-background), 1)",
+        background: "hsl(var(--background))",
+        foreground: "hsl(var(--foreground))",
+        primary: {
+          DEFAULT: "rgba(var(--color-accent-background), 1)",
+          foreground: "hsl(var(--background))",
+        },
+        secondary: {
+          DEFAULT: "hsl(var(--secondary))",
+          foreground: "hsl(var(--secondary-foreground))",
+        },
+        destructive: {
+          DEFAULT: "hsl(var(--destructive))",
+          foreground: "hsl(var(--destructive-foreground))",
+        },
+        muted: {
+          DEFAULT: "hsl(var(--muted))",
+          foreground: "hsl(var(--muted-foreground))",
+        },
+        accent: {
+          DEFAULT: "hsl(var(--accent))",
+          foreground: "hsl(var(--accent-foreground))",
+        },
+        popover: {
+          DEFAULT: "hsl(var(--popover))",
+          foreground: "hsl(var(--popover-foreground))",
+        },
+        card: {
+          DEFAULT: "hsl(var(--card))",
+          foreground: "hsl(var(--card-foreground))",
+        },
       },
       fontFamily: {
         sans: ["Mona Sans", ...fontFamily.sans],
         mono: ["Fragment Mono", ...fontFamily.mono],
         logo: ["Martian Mono", ...fontFamily.mono],
+      },
+      borderRadius: {
+        lg: "var(--radius)",
+        md: "calc(var(--radius) - 2px)",
+        sm: "calc(var(--radius) - 4px)",
       },
       keyframes: {
         slideUpAndFade: {

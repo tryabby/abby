@@ -1,5 +1,4 @@
 import { DashboardHeader } from "components/DashboardHeader";
-import { IconButton } from "components/IconButton";
 import { Layout } from "components/Layout";
 import { LoadingSpinner } from "components/LoadingSpinner";
 import { Select, SelectItem } from "components/Select";
@@ -35,6 +34,7 @@ import colors from "tailwindcss/colors";
 import { useMemo } from "react";
 import { getColorByIndex } from "lib/graphs";
 import { AbbyEventType } from "@tryabby/core";
+import { Button } from "components/ui/button";
 
 const INTERVAL_PARAM_NAME = "interval";
 
@@ -182,12 +182,11 @@ const TestDetailPage: NextPageWithLayout = () => {
   return (
     <div>
       <div className="grid grid-cols-[auto,1fr] items-center gap-x-4 gap-y-2 md:grid-cols-[auto,1fr,auto]">
-        <IconButton
-          as={Link}
-          href={`/projects/${projectId}`}
-          icon={<BiArrowBack />}
-          title="Back to Tests"
-        />
+        <Link href={`/projects/${projectId}`} className="contents">
+          <Button size="icon" variant="secondary" title="Back to Tests">
+            <BiArrowBack />
+          </Button>
+        </Link>
         <h1 className="justify-self-end text-2xl font-bold text-pink-100 md:justify-self-auto">
           {test.name}
         </h1>

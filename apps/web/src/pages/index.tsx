@@ -31,6 +31,9 @@ const { useAbby, AbbyProvider, useFeatureFlag, __abby__, withDevtools } =
       SignupButton: {
         variants: ["A", "B", "C"],
       },
+      heroMedia: {
+        variants: ["Image", "Video"],
+      },
     },
     flags: ["ForceDarkTheme"],
   });
@@ -62,6 +65,8 @@ const Home: NextPageWithLayout<
 > = ({ codeSnippet }) => {
   const { setTheme } = useTheme();
   const { onAct, variant } = useAbby("SignupButton");
+  const { variant: heroMediaVariant, onAct: onHeroMediaAct } =
+    useAbby("heroMedia");
 
   const forceDarkTheme = useFeatureFlag("ForceDarkTheme");
 
@@ -80,7 +85,7 @@ const Home: NextPageWithLayout<
       <Devtools />
       <section
         className={twMerge(
-          "min-h-screen bg-primary-background text-primary-foreground",
+          "min-h-screen bg-ab_primary-background text-ab_primary-foreground",
           forceDarkTheme && "dark"
         )}
       >
@@ -110,9 +115,10 @@ const Home: NextPageWithLayout<
               onClick={() => {
                 trackEvent("Sign Up Clicked");
                 onAct();
+                onHeroMediaAct();
               }}
               className={twMerge(
-                "mt-12 rounded-xl bg-accent-background px-6 py-2 text-xl font-semibold text-accent-foreground no-underline transition-transform duration-150 ease-in-out hover:scale-110"
+                "mt-12 rounded-xl bg-ab_accent-background px-6 py-2 text-xl font-semibold text-ab_accent-foreground no-underline transition-transform duration-150 ease-in-out hover:scale-110"
               )}
             >
               {variant === "A" && "Test Now"}
@@ -123,14 +129,28 @@ const Home: NextPageWithLayout<
               Free forever. No Credit Card required
             </span>
           </div>
-          <Image
-            src={abbyScreenshot}
-            alt="Screenshot of Abby's Dashboard"
-            className="mt-12 hidden w-10/12 rounded-xl border border-accent-background shadow-2xl md:block lg:max-w-5xl"
-            width={1920}
-            height={1080}
-            priority
-          />
+          {heroMediaVariant === "Image" && (
+            <Image
+              src={abbyScreenshot}
+              alt="Screenshot of Abby's Dashboard"
+              className="mt-12 hidden w-10/12 rounded-xl border border-ab_accent-background shadow-2xl md:block lg:max-w-5xl"
+              width={1920}
+              height={1080}
+              priority
+            />
+          )}
+          {heroMediaVariant === "Video" && (
+            <video
+              className="mt-12 hidden w-10/12 rounded-xl border border-ab_accent-background shadow-2xl md:block lg:max-w-5xl"
+              autoPlay
+              loop
+              muted
+              playsInline
+              preload="metadata"
+            >
+              <source src="/videos/hero.mp4" type="video/mp4" />
+            </video>
+          )}
         </div>
       </section>
       <Divider />
@@ -224,9 +244,9 @@ const Home: NextPageWithLayout<
           <div className="flex items-center">
             <Link
               href={`/devtools`}
-              className="mx-auto mt-8 rounded-lg bg-accent-background px-4 py-2 font-semibold uppercase text-accent-foreground transition-transform duration-200 ease-in-out hover:scale-110"
+              className="mx-auto mt-8 rounded-lg bg-ab_accent-background px-4 py-2 font-semibold uppercase text-ab_accent-foreground transition-transform duration-200 ease-in-out hover:scale-110"
             >
-              Learn More
+              Learn More about our Devtools
             </Link>
           </div>
         </div>
@@ -244,14 +264,14 @@ const Home: NextPageWithLayout<
           </h2>
           <div className="mx-auto max-w-4xl shadow-2xl">
             <BaseCodeSnippet
-              className="rounded-md border border-accent-background"
+              className="rounded-md border border-ab_accent-background"
               {...codeSnippet}
             />
           </div>
           <div className="flex items-center">
             <Link
               href={DOCS_URL}
-              className="mx-auto mt-8 flex items-center space-x-2 rounded-lg bg-primary-foreground px-4 py-2 font-semibold uppercase text-primary-background transition-transform duration-200 ease-in-out hover:scale-110"
+              className="mx-auto mt-8 flex items-center space-x-2 rounded-lg bg-ab_primary-foreground px-4 py-2 font-semibold uppercase text-ab_primary-background transition-transform duration-200 ease-in-out hover:scale-110"
             >
               <span>Read the Docs</span>{" "}
               <ExternalLink className="-mt-1 h-5 w-5 stroke-2" />
@@ -263,7 +283,7 @@ const Home: NextPageWithLayout<
       <section className="py-48">
         <div className="container relative px-6 md:px-16">
           <div className="relative mb-6 ">
-            <div className="absolute -top-24 right-0 z-0 hidden text-accent-background md:block">
+            <div className="absolute -top-24 right-0 z-0 hidden text-ab_accent-background md:block">
               <FaQuestion className="h-36 w-36 fill-none stroke-[6px]" />
             </div>
             <h1 className="z-10 text-center text-4xl font-bold">
@@ -278,7 +298,7 @@ const Home: NextPageWithLayout<
           <div className="flex items-center">
             <Link
               href={`/tips-and-insights`}
-              className="mx-auto mt-8 rounded-lg bg-accent-background px-4 py-2 font-semibold uppercase text-accent-foreground transition-transform duration-200 ease-in-out hover:scale-110"
+              className="mx-auto mt-8 rounded-lg bg-ab_accent-background px-4 py-2 font-semibold uppercase text-ab_accent-foreground transition-transform duration-200 ease-in-out hover:scale-110"
             >
               Discover Tips & Insights
             </Link>
@@ -303,7 +323,7 @@ const Home: NextPageWithLayout<
       <section className="py-48">
         <div className="container relative px-6 md:px-16">
           <div className="relative mb-6 ">
-            <div className="absolute -top-24 right-0 z-0 hidden text-accent-background md:block">
+            <div className="absolute -top-24 right-0 z-0 hidden text-ab_accent-background md:block">
               <FaQuestion className="h-36 w-36 fill-none stroke-[6px]" />
             </div>
             <h1 className="z-10 text-center text-4xl font-bold">
@@ -316,7 +336,7 @@ const Home: NextPageWithLayout<
           <div className="flex items-center">
             <Link
               href={`/contact`}
-              className="mx-auto mt-8 rounded-lg bg-accent-background px-4 py-2 font-semibold text-accent-foreground transition-transform duration-200 ease-in-out hover:scale-110"
+              className="mx-auto mt-8 rounded-lg bg-ab_accent-background px-4 py-2 font-semibold text-ab_accent-foreground transition-transform duration-200 ease-in-out hover:scale-110"
             >
               Contact us
             </Link>

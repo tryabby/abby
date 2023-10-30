@@ -8,7 +8,9 @@ export function DashboardSection({
   className?: string;
 }) {
   return (
-    <section className={twMerge("rounded-xl bg-gray-800 px-6 py-3", className)}>
+    <section
+      className={twMerge("rounded-lg bg-secondary px-6 py-3", className)}
+    >
       {children}
     </section>
   );

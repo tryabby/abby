@@ -7,7 +7,6 @@ import { EventService } from "server/services/EventService";
 import { trackPlanOverage } from "lib/logsnag";
 import { RequestCache } from "server/services/RequestCache";
 import { transformFlagValue } from "lib/flags";
-import { PlausibleService } from "server/services/PlausibleService";
 import { RequestService } from "server/services/RequestService";
 
 const incomingQuerySchema = z.object({
@@ -26,6 +25,7 @@ export default async function getWeightsHandler(
     origin: "*",
     optionsSuccessStatus: 200,
   });
+
   const querySchemaResult = incomingQuerySchema.safeParse(req.query);
   if (!querySchemaResult.success) {
     res.status(400).json({ error: "Invalid query" });

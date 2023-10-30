@@ -5,6 +5,7 @@ import { trpc } from "utils/trpc";
 import { Modal } from "./Modal";
 import { useSession } from "next-auth/react";
 import { useTracking } from "lib/tracking";
+import { Input } from "./ui/input";
 
 type Props = {
   onClose: () => void;
@@ -61,12 +62,11 @@ export const CreateProjectModal = ({ onClose }: Props) => {
       confirmText="Create"
       size="full"
     >
-      <input
+      <Input
         type="text"
         placeholder="Project Name"
         required
         onChange={handleChange}
-        className="form-input rounded-md border border-gray-500 bg-gray-600 px-8 py-2 text-white placeholder-gray-400 shadow-sm focus:outline-none focus:ring-2 focus:ring-gray-400 focus:ring-offset-2"
       />
       {!isValidName && (
         <div className="pt-4 text-red-600">

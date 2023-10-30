@@ -14,6 +14,7 @@ import { RadioSelect } from "./RadioSelect";
 import { Toggle } from "./Toggle";
 
 import { useTracking } from "lib/tracking";
+import { Input } from "./ui/input";
 
 type Props = {
   onClose: () => void;
@@ -42,8 +43,6 @@ export function ChangeFlagForm({
   isRemoteConfig?: boolean;
 }) {
   const inputRef = useRef<HTMLInputElement>(null);
-  const inputClassName =
-    "form-input w-full rounded-md border border-gray-500 bg-gray-600 px-4 py-2 text-white placeholder-gray-400 shadow-sm focus:outline-none focus:ring-2 focus:ring-gray-400 focus:ring-offset-2";
 
   const [state, setState] = useState<FlagFormValues>(initialValues);
 
@@ -71,13 +70,12 @@ export function ChangeFlagForm({
     <div className="flex flex-col space-y-5">
       <div>
         <label className="mb-1 block text-pink-50">Name</label>
-        <input
+        <Input
           ref={inputRef}
           type="text"
           defaultValue={initialValues.name}
           onChange={(e) => onChange({ name: e.target.value })}
           placeholder={isRemoteConfig ? "My Remote Config" : "My Feature Flag"}
-          className={inputClassName}
         />
         {errors.name && (
           <p className="mt-1 text-sm text-red-500">{errors.name}</p>
@@ -129,18 +127,17 @@ export function ChangeFlagForm({
           />
         )}
         {state.type === "STRING" && (
-          <input
+          <Input
             type="text"
             value={state.value}
             onChange={(e) => onChange({ value: e.target.value })}
             placeholder={
               isRemoteConfig ? "My Remote Config" : "My Feature Flag"
             }
-            className="form-input w-full rounded-md border border-gray-500 bg-gray-600 px-4 py-2 text-white placeholder-gray-400 shadow-sm focus:outline-none focus:ring-2 focus:ring-gray-400 focus:ring-offset-2"
           />
         )}
         {state.type === "NUMBER" && (
-          <input
+          <Input
             type="number"
             value={state.value}
             onChange={(e) => onChange({ value: e.target.value })}
@@ -149,7 +146,6 @@ export function ChangeFlagForm({
               ["e", "E", "+", "-"].includes(e.key) && e.preventDefault();
             }}
             placeholder="123"
-            className="form-input w-full rounded-md border border-gray-500 bg-gray-600 px-4 py-2 text-white placeholder-gray-400 shadow-sm focus:outline-none focus:ring-2 focus:ring-gray-400 focus:ring-offset-2"
           />
         )}
         {state.type === "JSON" && (
@@ -193,7 +189,6 @@ export const AddFeatureFlagModal = ({
         isRemoteConfig ? "Create new remote config" : "Create new feature flag"
       }
       confirmText="Create"
-      initialFocusRef={inputRef}
       size="full"
       onConfirm={async () => {
         const errors: Partial<FlagFormValues> = {};

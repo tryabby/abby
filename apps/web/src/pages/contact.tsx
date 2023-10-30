@@ -36,7 +36,7 @@ export default function ContactPage() {
   return (
     <>
       <MarketingLayout>
-        <main className=" mx-auto flex h-full w-full min-w-min flex-col items-center justify-center bg-primary-background pb-20 text-primary-foreground sm:mt-5 sm:h-4/5">
+        <main className=" mx-auto flex h-full w-full min-w-min flex-col items-center justify-center bg-ab_primary-background pb-20 text-ab_primary-foreground sm:mt-5 sm:h-4/5">
           <div className="mb-10  flex w-full flex-col  md:my-auto md:w-8/12">
             <div className="mx-auto mb-10 flex self-center">
               <h2 className="mark self-center font-bold sm:text-xl md:text-4xl ">
@@ -73,7 +73,7 @@ export default function ContactPage() {
                   inputFieldStyle,
                   formState.errors.name
                     ? "border-red-500"
-                    : "border-accent-background"
+                    : "border-ab_accent-background"
                 )}
                 placeholder="Name"
               ></input>
@@ -93,7 +93,7 @@ export default function ContactPage() {
                   inputFieldStyle,
                   formState.errors.surname
                     ? "border-red-500"
-                    : "border-accent-background"
+                    : "border-ab_accent-background"
                 )}
                 placeholder="Surname"
               ></input>
@@ -115,7 +115,7 @@ export default function ContactPage() {
                   inputFieldStyle,
                   formState.errors.mailadress
                     ? "border-red-500"
-                    : "border-accent-background"
+                    : "border-ab_accent-background"
                 )}
                 autoComplete="email"
                 placeholder="your@mailadress.com"
@@ -135,10 +135,10 @@ export default function ContactPage() {
                   required: "Please enter a message",
                 })}
                 className={clsx(
-                  "h-32 min-h-max w-full rounded border-2 border-solid border-accent-background bg-inherit",
+                  "h-32 min-h-max w-full rounded border-2 border-solid border-ab_accent-background bg-inherit",
                   formState.errors.message
                     ? "border-red-500"
-                    : "border-accent-background"
+                    : "border-ab_accent-background"
                 )}
                 placeholder="Your message text here"
               ></textarea>
@@ -149,13 +149,13 @@ export default function ContactPage() {
               )}
             </div>
             <button
-              className="border-1 mb-4 mt-5 w-24 self-center rounded-md border-accent-foreground bg-accent-background text-accent-foreground"
+              className="border-1 mb-4 mt-5 w-24 self-center rounded-md border-ab_accent-foreground bg-ab_accent-background text-ab_accent-foreground"
               type="submit"
             >
               Submit
             </button>
           </form>
-          <span className="max-auto inline max-w-sm text-xs text-primary-foreground">
+          <span className="max-auto inline max-w-sm text-xs text-ab_primary-foreground">
             By submitting this form you agree to our{" "}
             <a className="text-pink-300">Terms of use</a> and{" "}
             <a className="text-pink-300">Privacy Policy</a>
