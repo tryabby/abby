@@ -14,7 +14,7 @@ export const miscRouter = router({
       auth: env.GITHUB_OAUTH_TOKEN,
     });
     const stars = await octokit.request(
-      "GET /repos/{owner}/{repo}/stargazers",
+      "GET /repos/{owner}/{repo}",
       {
         owner: "tryabby",
         repo: "abby",
@@ -23,7 +23,7 @@ export const miscRouter = router({
         },
       }
     );
-    return stars.data.length;
+    return stars.data.stargazers_count;
   }),
   contactPageEmail: publicProcedure
     .input(
