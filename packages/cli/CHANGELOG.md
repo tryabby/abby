@@ -1,5 +1,11 @@
 # @tryabby/cli
 
+## 1.1.0
+
+### Minor Changes
+
+- introduce new add commands
+
 ## 1.0.1
 
 ### Patch Changes

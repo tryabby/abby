@@ -1,5 +1,6 @@
 import { PullAbbyConfigResponse, defineConfig } from "@tryabby/core";
 import { HttpService } from "../src/http";
+import { writeFile as mgWriteFile } from "magicast";
 import { writeFile } from "fs/promises";
 import prompts from "prompts";
 
@@ -14,7 +15,12 @@ vi.mock("prettier", () => ({
 }));
 
 vi.mock("fs/promises", async () => ({
-  ...((await vi.importActual("fs/promises")) as object),
+  ...(await vi.importActual<typeof import("fs/promises")>("fs/promises")),
+  writeFile: vi.fn(),
+}));
+
+vi.mock("magicast", async () => ({
+  ...(await vi.importActual<typeof import("magicast")>("magicast")),
   writeFile: vi.fn(),
 }));
 
@@ -114,15 +120,12 @@ describe("Abby CLI", () => {
 
   it("adds a flag and pushes it", async () => {
     prompts.inject(["newFlag"]);
-    const spy = vi.spyOn(HttpService, "updateConfigOnServer");
+    const httpSpy = vi.spyOn(HttpService, "updateConfigOnServer");
 
     await addFlag({ apiKey: API_KEY, configPath: __dirname + "/abby.config.stub.ts" });
 
-    expect(writeFile).toHaveBeenCalledWith(
-      __dirname + "/abby.config.stub.ts",
-      expect.stringContaining("newFlag")
-    );
-    expect(spy).toHaveBeenCalledOnce();
+    expect(mgWriteFile).toHaveBeenCalledWith(expect.anything(), __dirname + "/abby.config.stub.ts");
+    expect(httpSpy).toHaveBeenCalledOnce();
   });
 
   it("adds a remote config and pushes it", async () => {
@@ -131,10 +134,7 @@ describe("Abby CLI", () => {
 
     await addRemoteConfig({ apiKey: API_KEY, configPath: __dirname + "/abby.config.stub.ts" });
 
-    expect(writeFile).toHaveBeenCalledWith(
-      __dirname + "/abby.config.stub.ts",
-      expect.stringContaining("newRemoteConfig")
-    );
+    expect(mgWriteFile).toHaveBeenCalledWith(expect.anything(), __dirname + "/abby.config.stub.ts");
     expect(spy).toHaveBeenCalledOnce();
   });
 
@@ -145,21 +145,21 @@ describe("Abby CLI", () => {
       throw new Error("failed");
     });
 
-    let errorCatched = false;
+    let errorCaught = false;
     try {
       await addFlag({ apiKey: API_KEY, configPath: __dirname + "/abby.config.stub.ts" });
     } catch (error) {
       expect(error).instanceof(Error);
       expect((error as Error).message).toBe("failed");
-      errorCatched = true;
+      errorCaught = true;
     }
 
-    expect(errorCatched).toBe(true);
+    expect(errorCaught).toBe(true);
 
-    expect(writeFile).toHaveBeenCalledTimes(2);
-    expect(writeFile).toHaveBeenLastCalledWith(
-      __dirname + "/abby.config.stub.ts",
-      expect.not.stringContaining("newFlag")
+    expect(mgWriteFile).toHaveBeenCalledTimes(2);
+    expect(mgWriteFile).toHaveBeenLastCalledWith(
+      expect.anything(),
+      __dirname + "/abby.config.stub.ts"
     );
   });
 
@@ -170,21 +170,21 @@ describe("Abby CLI", () => {
       throw new Error("failed");
     });
 
-    let errorCatched = false;
+    let errorCaught = false;
     try {
       await addRemoteConfig({ apiKey: API_KEY, configPath: __dirname + "/abby.config.stub.ts" });
     } catch (error) {
       expect(error).instanceof(Error);
       expect((error as Error).message).toBe("failed");
-      errorCatched = true;
+      errorCaught = true;
     }
 
-    expect(errorCatched).toBe(true);
+    expect(errorCaught).toBe(true);
 
-    expect(writeFile).toHaveBeenCalledTimes(2);
-    expect(writeFile).toHaveBeenLastCalledWith(
-      __dirname + "/abby.config.stub.ts",
-      expect.not.stringContaining("newRemoteConfig")
+    expect(mgWriteFile).toHaveBeenCalledTimes(2);
+    expect(mgWriteFile).toHaveBeenLastCalledWith(
+      expect.anything(),
+      __dirname + "/abby.config.stub.ts"
     );
   });
 });

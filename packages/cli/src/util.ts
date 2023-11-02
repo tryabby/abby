@@ -6,6 +6,8 @@ import portFinder from "portfinder";
 import polka from "polka";
 import { ABBY_BASE_URL } from "./consts";
 import cors from "cors";
+import fs from "fs/promises";
+import { writeFile, loadFile, parseModule } from "magicast";
 
 export async function loadLocalConfig(configPath?: string) {
   loadEnv();
@@ -40,7 +42,20 @@ export async function loadLocalConfig(configPath?: string) {
     console.error(result.error);
     throw new Error("Invalid config file");
   }
-  return { config: result.data, configFilePath: sources[0] };
+  const originalConfig = await fs.readFile(sources[0], "utf-8");
+  const mod = await loadFile(sources[0]);
+  if (mod.exports.default.$type !== "function-call") throw new Error("Invalid config file");
+
+  return {
+    config: result.data,
+    configFilePath: sources[0],
+    mutableConfig: mod.exports.default.$args[1],
+    saveMutableConfig: () => writeFile(mod, sources[0]),
+    restoreConfig: () => {
+      const mod = parseModule(originalConfig);
+      return writeFile(mod, sources[0]);
+    },
+  };
 }
 
 export function multiLineLog(...args: any[]) {

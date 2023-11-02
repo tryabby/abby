@@ -6,10 +6,9 @@ import { push } from "./push";
 import { updateConfigFile } from "./update-config-file";
 
 export async function addFlag(options: { apiKey: string; host?: string; configPath?: string }) {
-  const { config, configFilePath } = await loadLocalConfig(options.configPath);
-  const configFileContents = await fs.readFile(configFilePath, "utf-8");
-
-  const oldConfig = JSON.parse(JSON.stringify(config));
+  const { mutableConfig, saveMutableConfig, restoreConfig } = await loadLocalConfig(
+    options.configPath
+  );
 
   const { flagName } = await prompts({
     type: "text",
@@ -17,32 +16,30 @@ export async function addFlag(options: { apiKey: string; host?: string; configPa
     message: "Type the name for your new flag: ",
   });
 
-  if (!config.flags) {
-    config.flags = [];
+  if (!mutableConfig.flags) {
+    mutableConfig.flags = [];
   }
 
-  if (config.flags.includes(flagName)) {
+  if (mutableConfig.flags.includes(flagName)) {
     console.log(chalk.red("A flag with that name already exists!"));
     return;
   }
 
-  config.flags.push(flagName);
-
-  console.log(chalk.blue("Updating local config..."));
-  await updateConfigFile(config, configFileContents, configFilePath);
-  console.log(chalk.green("Local config updated successfully"));
-
-  console.log(chalk.blue("Updating remote config..."));
+  mutableConfig.flags.push(flagName);
 
   try {
+    console.log(chalk.blue("Updating local config..."));
+    await saveMutableConfig();
+    console.log(chalk.green("Local config updated successfully"));
+
+    console.log(chalk.blue("Updating remote config..."));
     await push({ apiKey: options.apiKey, configPath: options.configPath, apiUrl: options.host });
   } catch (error) {
     console.log(chalk.red("Pushing flag failed, restoring old config file..."));
 
-    await updateConfigFile(oldConfig, configFileContents, configFilePath);
+    await restoreConfig();
 
     console.log(chalk.green("Restored old config file"));
-
     // pass error to command handler
     throw error;
   }

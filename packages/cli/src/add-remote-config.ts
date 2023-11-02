@@ -1,19 +1,17 @@
-import * as fs from "fs/promises";
 import { loadLocalConfig } from "./util";
 import chalk from "chalk";
 import { push } from "./push";
 import { default as prompts } from "prompts";
-import { updateConfigFile } from "./update-config-file";
+import { builders } from "magicast";
 
 export async function addRemoteConfig(options: {
   apiKey: string;
   host?: string;
   configPath?: string;
 }) {
-  const { config, configFilePath } = await loadLocalConfig(options.configPath);
-  const configFileContents = await fs.readFile(configFilePath, "utf-8");
-
-  const oldConfig = JSON.parse(JSON.stringify(config));
+  const { mutableConfig, saveMutableConfig, restoreConfig } = await loadLocalConfig(
+    options.configPath
+  );
 
   const { remoteConfigName, remoteConfigType } = await prompts([
     {
@@ -42,27 +40,28 @@ export async function addRemoteConfig(options: {
     },
   ]);
 
-  if (!config.remoteConfig) {
-    config.remoteConfig = {};
+  if (!mutableConfig.remoteConfig) {
+    mutableConfig.remoteConfig = builders.literal({});
   }
 
-  if (remoteConfigName in config.remoteConfig) {
+  if (remoteConfigName in mutableConfig.remoteConfig!) {
     console.log(chalk.red("A remote config with that name already exists!"));
     return;
   }
 
-  config.remoteConfig[remoteConfigName] = remoteConfigType;
+  mutableConfig.remoteConfig![remoteConfigName] = remoteConfigType;
 
-  console.log(chalk.blue("Updating local config..."));
-  await updateConfigFile(config, configFileContents, configFilePath);
-  console.log(chalk.green("Local config updated successfully"));
-
-  console.log(chalk.blue("Updating remote config..."));
   try {
+    console.log(chalk.blue("Updating local config..."));
+    await saveMutableConfig();
+    console.log(chalk.green("Local config updated successfully"));
+
+    console.log(chalk.blue("Updating remote config..."));
     await push({ apiKey: options.apiKey, configPath: options.configPath, apiUrl: options.host });
+    console.log(chalk.green("Remote config updated successfully"));
   } catch (error) {
     console.log(chalk.red("Pushing the configuration failed. Restoring old config file..."));
-    await updateConfigFile(oldConfig, configFileContents, configFilePath);
+    await restoreConfig();
     console.log(chalk.green("Old config restored."));
 
     // pass error to command handler
