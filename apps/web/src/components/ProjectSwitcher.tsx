@@ -44,19 +44,41 @@ interface ProjectSwitcherProps extends PopoverTriggerProps {}
 
 export default function ProjectSwitcher({ className }: ProjectSwitcherProps) {
   const currentProjectId = useProjectId();
-  const { data: projects, isLoading } = trpc.user.getProjects.useQuery();
+  const [projectName, setProjectName] = React.useState("");
+  const { data: projects } = trpc.user.getProjects.useQuery();
+  const trpcContext = trpc.useContext();
 
   const currentProject = projects?.projects.find(
     ({ project }) => project.id === currentProjectId
   );
 
-  const { update: sessionUpdate } = useSession();
+  const createProject = trpc.project.createProject.useMutation({
+    onSuccess: () => {
+      trpcContext.user.getProjects.invalidate();
+    },
+  });
+
+  const { update: sessionUpdate, data } = useSession();
   const router = useRouter();
   const [open, setOpen] = React.useState(false);
-  const [showNewTeamDialog, setShowNewTeamDialog] = React.useState(false);
+  const [showNewProjectDialog, setShowNewProjectDialog] = React.useState(false);
+
+  const onCreateProject = async () => {
+    if (!projectName) return;
+    const newProject = await createProject.mutateAsync({ projectName });
+    await sessionUpdate({
+      lastOpenProjectId: newProject.id,
+      projectIds: (data?.user?.projectIds ?? []).concat(newProject.id),
+    });
+    setShowNewProjectDialog(false);
+    router.push({
+      ...router,
+      query: { ...router.query, projectId: newProject.id },
+    });
+  };
 
   return (
-    <Dialog open={showNewTeamDialog} onOpenChange={setShowNewTeamDialog}>
+    <Dialog open={showNewProjectDialog} onOpenChange={setShowNewProjectDialog}>
       <Popover open={open} onOpenChange={setOpen}>
         <PopoverTrigger asChild>
           <Button
@@ -73,7 +95,7 @@ export default function ProjectSwitcher({ className }: ProjectSwitcherProps) {
               />
               <AvatarFallback>SC</AvatarFallback>
             </Avatar>
-            {currentProject?.project.name}
+            <p className="truncate">{currentProject?.project.name}</p>
             <CaretSortIcon className="ml-auto h-4 w-4 shrink-0 opacity-50" />
           </Button>
         </PopoverTrigger>
@@ -131,11 +153,11 @@ export default function ProjectSwitcher({ className }: ProjectSwitcherProps) {
                   <CommandItem
                     onSelect={() => {
                       setOpen(false);
-                      setShowNewTeamDialog(true);
+                      setShowNewProjectDialog(true);
                     }}
                   >
                     <PlusCircledIcon className="mr-2 h-5 w-5" />
-                    Create Team
+                    Create Project
                   </CommandItem>
                 </DialogTrigger>
               </CommandGroup>
@@ -145,24 +167,38 @@ export default function ProjectSwitcher({ className }: ProjectSwitcherProps) {
       </Popover>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Create team</DialogTitle>
+          <DialogTitle>Create Project</DialogTitle>
           <DialogDescription>
-            Add a new team to manage products and customers.
+            Add a new project to your account.
           </DialogDescription>
         </DialogHeader>
         <div>
           <div className="space-y-4 py-2 pb-4">
             <div className="space-y-2">
-              <Label htmlFor="name">Team name</Label>
-              <Input id="name" placeholder="Acme Inc." />
+              <Label htmlFor="name">Project name</Label>
+              <Input
+                id="name"
+                placeholder="Acme Inc."
+                value={projectName}
+                onChange={(e) => setProjectName(e.target.value)}
+              />
             </div>
           </div>
         </div>
         <DialogFooter>
-          <Button variant="outline" onClick={() => setShowNewTeamDialog(false)}>
+          <Button
+            variant="outline"
+            onClick={() => setShowNewProjectDialog(false)}
+          >
             Cancel
           </Button>
-          <Button type="submit">Continue</Button>
+          <Button
+            type="submit"
+            disabled={!projectName}
+            onClick={onCreateProject}
+          >
+            Continue
+          </Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>
