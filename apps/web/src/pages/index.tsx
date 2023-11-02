@@ -21,6 +21,8 @@ import abbyScreenshot from "../../public/screenshot.png";
 import { NextPageWithLayout } from "./_app";
 import { DevtoolsArrow } from "components/DevtoolsArrow";
 import { useTracking } from "lib/tracking";
+import { Integrations } from "components/Integrations";
+import { UsedBy } from "components/UsedBy";
 
 const { useAbby, AbbyProvider, useFeatureFlag, __abby__, withDevtools } =
   createAbby({
@@ -152,6 +154,13 @@ const Home: NextPageWithLayout<
             </video>
           )}
         </div>
+      </section>
+      <section id="integrations" className="py-24">
+        <Integrations />
+      </section>
+      <Divider />
+      <section id="usedBy" className="py-24">
+        <UsedBy />
       </section>
       <Divider />
       <section id="features" className="py-48">
