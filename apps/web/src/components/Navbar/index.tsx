@@ -197,7 +197,7 @@ const ListItem = React.forwardRef<
       <Link
         ref={ref}
         className={cn(
-          "block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-ab_primary-background-hover hover:text-ab_primary-foreground focus:bg-ab_primary-background-hover focus:text-ab_primary-foreground",
+          "block select-none space-y-1 rounded-md bg-ab_primary-background p-3 leading-none text-ab_primary-foreground no-underline outline-none transition-colors hover:bg-gray-800 hover:text-ab_primary-foreground focus:bg-gray-800 focus:text-ab_primary-foreground",
           className
         )}
         {...props}
@@ -208,7 +208,7 @@ const ListItem = React.forwardRef<
             <ExternalLink width={14} height={14} className="-mt-1" />
           )}
         </div>
-        <p className="text-primary-muted line-clamp-2 text-sm leading-snug">
+        <p className="line-clamp-2 text-sm leading-snug text-ab_primary-foreground-muted">
           {children}
         </p>
       </Link>
@@ -235,15 +235,15 @@ export function Navbar({ isInverted }: { isInverted?: boolean }) {
               <NavigationMenuItem key={item.title}>
                 {!("subItems" in item) ? (
                   <Link href={item.href} legacyBehavior passHref>
-                    <NavigationMenuLink
-                      className={navigationMenuTriggerStyle()}
-                    >
+                    <NavigationMenuLink className="group inline-flex h-10 w-max items-center justify-center rounded-md bg-transparent px-4 py-2 text-sm font-medium transition-colors hover:bg-ab_primary-background-hover hover:text-ab_primary-foreground focus:bg-ab_primary-background-hover focus:text-ab_primary-foreground focus:outline-none disabled:pointer-events-none disabled:opacity-50 data-[active]:bg-ab_primary-background-hover data-[state=open]:bg-ab_primary-background-hover">
                       {item.title}
                     </NavigationMenuLink>
                   </Link>
                 ) : (
                   <>
-                    <NavigationMenuTrigger>{item.title}</NavigationMenuTrigger>
+                    <NavigationMenuTrigger className="group inline-flex h-10 w-max items-center justify-center rounded-md bg-transparent px-4 py-2 text-sm font-medium transition-colors hover:bg-ab_primary-background-hover hover:text-ab_primary-foreground focus:bg-ab_primary-background-hover focus:text-ab_primary-foreground focus:outline-none disabled:pointer-events-none disabled:opacity-50 data-[active]:bg-ab_primary-background-hover data-[state=open]:bg-ab_primary-background-hover">
+                      {item.title}
+                    </NavigationMenuTrigger>
                     <NavigationMenuContent className="min-w-[400px]">
                       {item.subItems.map(
                         ({ href, title, subTitle, isExternal }) => (
