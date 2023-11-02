@@ -1,65 +1,65 @@
 {
-	"name": "@tryabby/svelte",
-	"version": "2.0.1",
-	"main": "dist/index.umd.cjs",
-	"homepage": "https://docs.tryabby.dev",
-	"type": "module",
-	"files": [
-		"dist"
-	],
-	"module": "dist/index.js",
-	"types": "dist/index.d.ts",
-	"exports": {
-		".": {
-			"types": "./dist/index.d.ts",
-			"svelte": "./dist/index,js",
-			"import": "./dist/index.js",
-			"require": "./dist/index.umd.cjs"
-		}
-	},
-	"scripts": {
-		"dev": "vite dev",
-		"build": "vite build",
-		"preview": "vite preview",
-		"check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
-		"check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch",
-		"test": "vitest"
-	},
-	"peerDependencies": {
-		"svelte": "^3.54.0"
-	},
-	"devDependencies": {
-		"@sveltejs/adapter-auto": "^2.0.1",
-		"@sveltejs/kit": "^1.15.8",
-		"@sveltejs/package": "^2.0.2",
-		"@sveltejs/vite-plugin-svelte": "^2.0.3",
-		"@testing-library/dom": "^9.2.0",
-		"@testing-library/jest-dom": "^5.16.5",
-		"@testing-library/svelte": "^3.2.2",
-		"@testing-library/user-event": "^14.4.3",
-		"@tryabby/devtools": "workspace:*",
-		"@tsconfig/svelte": "^3.0.0",
-		"@types/jest": "^29.5.1",
-		"@types/js-cookie": "^3.0.3",
-		"@types/testing-library__jest-dom": "^5.14.5",
-		"@vitest/coverage-c8": "^0.31.0",
-		"jsdom": "^20.0.3",
-		"msw": "^0.49.3",
-		"node-fetch": "^3.3.1",
-		"prettier": "^2.8.8",
-		"prettier-plugin-svelte": "^2.10.0",
-		"publint": "^0.1.11",
-		"svelte": "^3.55.1",
-		"svelte-check": "^2.10.3",
-		"tslib": "^2.5.0",
-		"typescript": "^4.9.3",
-		"vite": "^4.4.8",
-		"vite-plugin-dts": "2.3.0",
-		"vitest": "^0.33.0"
-	},
-	"dependencies": {
-		"@tryabby/core": "workspace:*",
-		"js-cookie": "^3.0.5",
-		"ts-toolbelt": "^9.6.0"
-	}
+  "name": "@tryabby/svelte",
+  "version": "2.1.0",
+  "main": "dist/index.umd.cjs",
+  "homepage": "https://docs.tryabby.dev",
+  "type": "module",
+  "files": [
+    "dist"
+  ],
+  "module": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "svelte": "./dist/index,js",
+      "import": "./dist/index.js",
+      "require": "./dist/index.umd.cjs"
+    }
+  },
+  "scripts": {
+    "dev": "vite dev",
+    "build": "vite build",
+    "preview": "vite preview",
+    "check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
+    "check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch",
+    "test": "vitest"
+  },
+  "peerDependencies": {
+    "svelte": "^3.54.0"
+  },
+  "devDependencies": {
+    "@sveltejs/adapter-auto": "^2.0.1",
+    "@sveltejs/kit": "^1.15.8",
+    "@sveltejs/package": "^2.0.2",
+    "@sveltejs/vite-plugin-svelte": "^2.0.3",
+    "@testing-library/dom": "^9.2.0",
+    "@testing-library/jest-dom": "^5.16.5",
+    "@testing-library/svelte": "^3.2.2",
+    "@testing-library/user-event": "^14.4.3",
+    "@tryabby/devtools": "workspace:*",
+    "@tsconfig/svelte": "^3.0.0",
+    "@types/jest": "^29.5.1",
+    "@types/js-cookie": "^3.0.3",
+    "@types/testing-library__jest-dom": "^5.14.5",
+    "@vitest/coverage-c8": "^0.31.0",
+    "jsdom": "^20.0.3",
+    "msw": "^0.49.3",
+    "node-fetch": "^3.3.1",
+    "prettier": "^2.8.8",
+    "prettier-plugin-svelte": "^2.10.0",
+    "publint": "^0.1.11",
+    "svelte": "^3.55.1",
+    "svelte-check": "^2.10.3",
+    "tslib": "^2.5.0",
+    "typescript": "^4.9.3",
+    "vite": "^4.4.8",
+    "vite-plugin-dts": "2.3.0",
+    "vitest": "^0.33.0"
+  },
+  "dependencies": {
+    "@tryabby/core": "workspace:*",
+    "js-cookie": "^3.0.5",
+    "ts-toolbelt": "^9.6.0"
+  }
 }
