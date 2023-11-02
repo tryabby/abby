@@ -9,6 +9,7 @@ module.exports = {
     "/invites",
     "/marketing/*",
     "/redeem",
+    "/profile",
     "/profile/*",
     "/welcome",
   ],
