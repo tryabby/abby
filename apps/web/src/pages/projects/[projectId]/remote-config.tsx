@@ -10,10 +10,15 @@ import { FeatureFlagPageContent } from "components/FlagPage";
 const RemoteConfigPage: NextPageWithLayout = () => {
   const projectId = useProjectId();
 
-  const { data, isLoading, isError } = trpc.flags.getFlags.useQuery({
-    projectId,
-    types: ["JSON", "STRING", "NUMBER"],
-  });
+  const { data, isLoading, isError } = trpc.flags.getFlags.useQuery(
+    {
+      projectId,
+      types: ["JSON", "STRING", "NUMBER"],
+    },
+    {
+      enabled: !!projectId,
+    }
+  );
 
   if (isLoading || isError) return <FullPageLoadingSpinner />;
 

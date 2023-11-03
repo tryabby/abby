@@ -11,10 +11,15 @@ import { GetStaticPaths, GetStaticProps } from "next";
 const FeatureFlagsPage: NextPageWithLayout = () => {
   const projectId = useProjectId();
 
-  const { data, isLoading, isError } = trpc.flags.getFlags.useQuery({
-    projectId,
-    types: ["BOOLEAN"],
-  });
+  const { data, isLoading, isError } = trpc.flags.getFlags.useQuery(
+    {
+      projectId,
+      types: ["BOOLEAN"],
+    },
+    {
+      enabled: !!projectId,
+    }
+  );
 
   if (isLoading || isError) return <FullPageLoadingSpinner />;
 
