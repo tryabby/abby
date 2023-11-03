@@ -1,5 +1,11 @@
 # @tryabby/devtools
 
+## 5.0.1
+
+### Patch Changes
+
+- reduce bundle size
+
 ## 5.0.0
 
 ### Major Changes
