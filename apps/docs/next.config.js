@@ -4,6 +4,8 @@ const withNextra = require("nextra")({
   defaultShowCopyCode: true,
 });
 
+const { withPlausibleProxy } = require("next-plausible");
+
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
@@ -15,4 +17,4 @@ const nextConfig = {
   },
 };
 
-module.exports = withNextra(nextConfig);
+module.exports = withPlausibleProxy()(withNextra(nextConfig));
