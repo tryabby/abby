@@ -37,7 +37,7 @@ export function UsedBy() {
     <div className="container px-6 md:px-16">
       <h1 className="text-center text-4xl font-bold">Used by engineers at:</h1>
 
-      <div className="mx-auto mt-24 flex items-center justify-between">
+      <div className="mx-auto mt-24 grid grid-cols-2 items-center justify-between md:grid-cols-4 ">
         {COMPANIES.map((company, index) => (
           <Link
             href={company.companyUrl}

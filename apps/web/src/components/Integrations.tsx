@@ -58,7 +58,7 @@ export const Integrations = () => {
 
   return (
     <div className="container px-6 md:px-16">
-      <div className="flex justify-center space-x-3 text-center text-4xl font-bold">
+      <div className="flex flex-col items-center justify-center space-x-3 text-center text-4xl font-bold md:flex-row md:items-start">
         <h2>Feature Flags for </h2>
         <div className="relative w-32">
           <AnimatePresence>
@@ -102,8 +102,8 @@ export const Integrations = () => {
       </div>
       <div className="flex items-center">
         <Link
-          href={`${DOCS_URL}/integrations/${currentIntegration.docsUrlSlug}`}
-          className="mx-auto min-w-[200px] rounded-lg bg-accent-background px-4 py-2 text-center font-semibold uppercase text-accent-foreground transition-transform duration-200 ease-in-out hover:scale-110"
+          href={`${DOCS_URL}integrations/${currentIntegration.docsUrlSlug}`}
+          className="bg-accent-background mx-auto min-w-[200px] rounded-lg px-4 py-2 text-center font-semibold uppercase text-accent-foreground transition-transform duration-200 ease-in-out hover:scale-110"
         >
           {currentIntegration.name} Docs
         </Link>
