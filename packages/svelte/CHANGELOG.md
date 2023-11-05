@@ -5,6 +5,12 @@
 ### Minor Changes
 
 - fix build
+## 2.0.2
+
+### Patch Changes
+
+- Updated dependencies
+  - @tryabby/core@5.1.0
 
 ## 2.0.1
 

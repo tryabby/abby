@@ -1,5 +1,11 @@
 # @tryabby/core
 
+## 5.1.0
+
+### Minor Changes
+
+- add fallbackvalues to flags
+
 ## 5.0.1
 
 ### Patch Changes
