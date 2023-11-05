@@ -14,7 +14,6 @@ import { useRouter } from "next/router";
 import { TooltipProvider } from "components/Tooltip";
 import "@fontsource/martian-mono/600.css";
 
-import "../styles/globals.css";
 import "../styles/shadcn.css";
 import "@code-hike/mdx/dist/index.css";
 import PlausibleProvider from "next-plausible";
