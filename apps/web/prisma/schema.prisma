@@ -147,14 +147,29 @@ model Test {
   project   Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
   projectId String
 
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  name      String
-  options   Option[]
-  events    Event[]
+  createdAt   DateTime         @default(now())
+  updatedAt   DateTime         @updatedAt
+  name        String
+  options     Option[]
+  conversions TestConversion[]
+  goals       TestGoal[]
+
+  version Int @default(1)
 
   @@unique([projectId, name])
   @@index([projectId])
+}
+
+model TestGoal {
+  id   String @id @default(cuid())
+  name String
+
+  testId         String
+  test           Test             @relation(fields: [testId], references: [id], onDelete: Cascade)
+  TestConversion TestConversion[]
+
+  @@unique([testId, name])
+  @@index([testId])
 }
 
 model Option {
@@ -168,7 +183,7 @@ model Option {
   @@unique([testId, identifier])
 }
 
-model Event {
+model TestConversion {
   id String @id @default(cuid())
 
   test   Test   @relation(fields: [testId], references: [id], onDelete: Cascade)
@@ -178,9 +193,16 @@ model Event {
   selectedVariant String
   createdAt       DateTime @default(now())
 
+  testVersion Int @default(1)
+
+  testGoalId String?
+  testGoal   TestGoal? @relation(fields: [testGoalId], references: [id], onDelete: Cascade)
+
   @@index([testId])
   @@index([type])
   @@index([selectedVariant])
+  @@index([testGoalId])
+  @@map("Event")
 }
 
 model FeatureFlag {

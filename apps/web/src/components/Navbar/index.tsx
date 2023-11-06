@@ -53,6 +53,11 @@ const NAV_ITEMS: Array<NavItem> = [
         href: "/devtools",
       },
       {
+        title: "Integrations",
+        subTitle: "SDKs for your favorite frameworks",
+        href: "/integrations",
+      },
+      {
         title: "Documentation",
         subTitle: "Developers API Reference",
         href: DOCS_URL,

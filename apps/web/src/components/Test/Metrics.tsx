@@ -1,4 +1,4 @@
-import { Prisma, Event } from "@prisma/client";
+import { TestConversion } from "@prisma/client";
 import {
   Chart as ChartJS,
   BarElement,
@@ -45,7 +45,7 @@ const Metrics = ({
   pingEvents,
   options,
 }: {
-  pingEvents: Event[];
+  pingEvents: TestConversion[];
   options: ClientOption[];
 }) => {
   const labels = options.map((option) => option.identifier);

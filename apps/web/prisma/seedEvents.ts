@@ -71,9 +71,9 @@ async function main() {
     ],
   });
 
-  await prisma.event.createMany({
+  await prisma.testConversion.createMany({
     data: [
-      ...Array.from<Prisma.EventCreateManyInput>({
+      ...Array.from<Prisma.TestConversionCreateManyInput>({
         length: Math.floor(Math.random() * 200),
       }).map(
         () =>
@@ -81,9 +81,9 @@ async function main() {
             selectedVariant: "oldFooter",
             testId: footerTest.id,
             type: AbbyEventType.PING,
-          } as Prisma.EventCreateManyInput)
+          } as Prisma.TestConversionCreateManyInput)
       ),
-      ...Array.from<Prisma.EventCreateManyInput>({
+      ...Array.from<Prisma.TestConversionCreateManyInput>({
         length: Math.floor(Math.random() * 200),
       }).map(
         () =>
@@ -91,9 +91,9 @@ async function main() {
             selectedVariant: "newFooter",
             testId: footerTest.id,
             type: AbbyEventType.PING,
-          } as Prisma.EventCreateManyInput)
+          } as Prisma.TestConversionCreateManyInput)
       ),
-      ...Array.from<Prisma.EventCreateManyInput>({
+      ...Array.from<Prisma.TestConversionCreateManyInput>({
         length: Math.floor(Math.random() * 200),
       }).map(
         () =>
@@ -101,9 +101,9 @@ async function main() {
             selectedVariant: "oldFooter",
             testId: footerTest.id,
             type: AbbyEventType.ACT,
-          } as Prisma.EventCreateManyInput)
+          } as Prisma.TestConversionCreateManyInput)
       ),
-      ...Array.from<Prisma.EventCreateManyInput>({
+      ...Array.from<Prisma.TestConversionCreateManyInput>({
         length: Math.floor(Math.random() * 200),
       }).map(
         () =>
@@ -111,7 +111,7 @@ async function main() {
             selectedVariant: "newFooter",
             testId: footerTest.id,
             type: AbbyEventType.ACT,
-          } as Prisma.EventCreateManyInput)
+          } as Prisma.TestConversionCreateManyInput)
       ),
     ],
   });

@@ -1,5 +1,4 @@
 import { prisma } from "server/db/client";
-import { AbbyEvent } from "@tryabby/core";
 
 export abstract class InviteService {
   static async acceptInvite(inviteId: string, userId: string) {
@@ -37,16 +36,6 @@ export abstract class InviteService {
     await prisma.projectInvite.delete({
       where: {
         id: inviteId,
-      },
-    });
-  }
-
-  static async getEventsByProjectId(projectId: string) {
-    return prisma.event.findMany({
-      where: {
-        test: {
-          projectId,
-        },
       },
     });
   }

@@ -23,10 +23,10 @@ export function Footer() {
           </div>
           <div className="flex flex-col gap-y-4 md:gap-0">
             <h1 className="mb-2 text-2xl font-bold md:mb-3">Integrations</h1>
-            <Link href={`${DOCS_URL}integrations/react`}>React</Link>
-            <Link href={`/nextjs`}>Next.js</Link>
-            <Link href={`${DOCS_URL}integrations/svelte`}>Svelte</Link>
-            <Link href={`${DOCS_URL}integrations/angular`}>Angular</Link>
+            <Link href={`/integrations/react`}>React</Link>
+            <Link href={`/integrations/nextjs`}>Next.js</Link>
+            <Link href={`/integrations/svelte`}>Svelte</Link>
+            <Link href={`/integrations/angular`}>Angular</Link>
           </div>
           <div className="flex flex-col gap-y-4 md:gap-0">
             <h1 className="mb-2 text-2xl font-bold md:mb-3">Links</h1>

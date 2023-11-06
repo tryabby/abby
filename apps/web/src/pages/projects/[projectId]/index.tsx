@@ -59,7 +59,7 @@ const Projects: NextPageWithLayout = () => {
       </div>
       <div className="space-y-8">
         {data?.project?.tests.map((test) => (
-          <Section key={test.id} {...test} events={test.events}></Section>
+          <Section key={test.id} {...test} events={test.conversions}></Section>
         ))}
       </div>
     </>

@@ -5,36 +5,55 @@ import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import { SiAngular, SiNextdotjs, SiReact, SiSvelte } from "react-icons/si";
 
-const INTEGRATIONS = [
+export const INTEGRATIONS = [
   {
     name: "Next.js",
     logo: <SiNextdotjs />,
     docsUrlSlug: "nextjs",
     logoFill: "#fff",
+    description: "Feature Flags, Remote Config, and A/B Testing for Next.js",
+    npmPackage: "next",
+    additionalFeatures: [
+      "Server Side Rendering",
+      "Incremental Static Regeneration",
+      "Easy to use Hooks",
+    ],
   },
   {
     name: "React",
     logo: <SiReact />,
     docsUrlSlug: "react",
     logoFill: "#61DAFB",
+    description: "Feature Flags, Remote Config, and A/B Testing for React",
+    npmPackage: "react",
+    additionalFeatures: ["Easy to use Hooks"],
   },
   {
     name: "Svelte",
     logo: <SiSvelte />,
     docsUrlSlug: "svelte",
     logoFill: "#FF3E00",
+    description:
+      "Feature Flags, Remote Config, and A/B Testing for Svelte & Sveltekit",
+    npmPackage: "svelte",
+    additionalFeatures: ["Sveltekit Support"],
   },
   {
     name: "Angular",
     logo: <SiAngular />,
     docsUrlSlug: "angular",
     logoFill: "#DD0031",
+    description: "Feature Flags, Remote Config, and A/B Testing for Angular",
+    npmPackage: "angular",
   },
 ] satisfies Array<{
   name: string;
   logo: React.ReactNode;
   logoFill: string;
   docsUrlSlug: string;
+  description: string;
+  npmPackage: string;
+  additionalFeatures?: Array<string>;
 }>;
 
 export const Integrations = () => {

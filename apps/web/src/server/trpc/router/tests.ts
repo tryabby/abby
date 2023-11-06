@@ -1,12 +1,8 @@
 import { TRPCError } from "@trpc/server";
-import { ProjectService } from "server/services/ProjectService";
+import { prisma } from "server/db/client";
+import { TestService } from "server/services/TestService";
 import { z } from "zod";
 import { protectedProcedure, router } from "../trpc";
-import { prisma } from "server/db/client";
-import { getLimitByPlan } from "server/common/plans";
-import { getProjectPaidPlan } from "lib/stripe";
-import { EventService } from "server/services/EventService";
-import { TestService } from "server/services/TestService";
 
 export const testRouter = router({
   createTest: protectedProcedure
@@ -94,7 +90,15 @@ export const testRouter = router({
         throw new TRPCError({ code: "UNAUTHORIZED" });
       }
 
-      await Promise.all(
+      await Promise.all([
+        prisma.test.update({
+          where: {
+            id: input.testId,
+          },
+          data: {
+            version: { increment: 1 },
+          },
+        }),
         input.weights.map((w) =>
           prisma.option.update({
             where: {
@@ -104,8 +108,8 @@ export const testRouter = router({
               chance: w.weight,
             },
           })
-        )
-      );
+        ),
+      ]);
     }),
   getById: protectedProcedure
     .input(

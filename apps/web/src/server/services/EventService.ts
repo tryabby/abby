@@ -17,7 +17,18 @@ export abstract class EventService {
     testName,
     type,
   }: AbbyEvent) {
-    return prisma.event.create({
+    const currentTestVersion = await prisma.test.findUnique({
+      where: {
+        projectId_name: {
+          projectId,
+          name: testName,
+        },
+      },
+      select: {
+        version: true,
+      },
+    });
+    return prisma.testConversion.create({
       data: {
         selectedVariant,
         type,
@@ -29,28 +40,28 @@ export abstract class EventService {
             },
           },
         },
+        testVersion: currentTestVersion?.version,
       },
     });
   }
 
-  static async getEventsByProjectId(projectId: string) {
-    return prisma.event.findMany({
-      where: {
-        test: {
-          projectId,
-        },
-      },
-    });
-  }
-
-  static async getEventsByTestId(testId: string, timeInterval: string) {
+  static async getEventsByTestId({
+    testId,
+    timeInterval,
+    testVersion = 1,
+  }: {
+    testId: string;
+    timeInterval: string;
+    testVersion?: number;
+  }) {
     const now = new Date().getTime();
 
     if (isSpecialTimeInterval(timeInterval)) {
       const specialIntervalInMs = getMSFromSpecialTimeInterval(timeInterval);
-      return prisma.event.findMany({
+      return prisma.testConversion.findMany({
         where: {
           testId,
+          testVersion,
           ...(specialIntervalInMs !== Infinity &&
             timeInterval !== SpecialTimeInterval.DAY && {
               createdAt: {
@@ -73,7 +84,7 @@ export abstract class EventService {
       throw new Error("Invalid time interval");
     }
 
-    return prisma.event.findMany({
+    return prisma.testConversion.findMany({
       where: {
         testId,
         createdAt: {
