@@ -75,6 +75,9 @@ export abstract class EventService {
             },
           }),
         },
+        orderBy: {
+          createdAt: "asc",
+        },
       });
     }
 
@@ -90,6 +93,9 @@ export abstract class EventService {
         createdAt: {
           gte: new Date(now - ms(timeInterval)),
         },
+      },
+      orderBy: {
+        createdAt: "asc",
       },
     });
   }

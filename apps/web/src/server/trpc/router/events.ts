@@ -24,18 +24,23 @@ export const eventRouter = router({
             },
           },
         },
+        include: { options: true },
       });
 
       if (!currentTest) {
         throw new TRPCError({ code: "UNAUTHORIZED" });
       }
 
-      const tests = await EventService.getEventsByTestId({
+      const events = await EventService.getEventsByTestId({
         testId: input.testId,
         timeInterval: input.interval,
         testVersion: currentTest.version,
       });
 
-      return tests;
+      return {
+        events,
+        testName: currentTest.name,
+        variants: currentTest.options.map((option) => option.identifier),
+      };
     }),
 });
