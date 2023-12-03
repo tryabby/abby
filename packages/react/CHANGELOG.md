@@ -1,5 +1,12 @@
 # @tryabby/react
 
+## 5.0.3
+
+### Patch Changes
+
+- Updated dependencies
+  - @tryabby/core@5.1.1
+
 ## 5.0.2
 
 ### Patch Changes

@@ -1,5 +1,12 @@
 # @tryabby/angular
 
+## 2.0.3
+
+### Patch Changes
+
+- Updated dependencies
+  - @tryabby/core@5.1.1
+
 ## 2.0.2
 
 ### Patch Changes

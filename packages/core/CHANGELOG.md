@@ -1,5 +1,11 @@
 # @tryabby/core
 
+## 5.1.1
+
+### Patch Changes
+
+- add option to use abby window data
+
 ## 5.1.0
 
 ### Minor Changes
