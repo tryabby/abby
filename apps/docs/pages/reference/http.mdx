@@ -3,6 +3,7 @@
 ## Endpoints
 
 - [GET `/api/v1/data/:projectId`](#get-apiv1dataprojectid)
+- [GET `/api/v1/data/:projectId.js`](#get-apiv1dataprojectidjs)
 - [POST `/api/v1/track`](#post-apiv1track)
 
 ### GET `/api/v1/data/:projectId`
@@ -11,7 +12,7 @@ Returns the data for the given project.
 
 #### Query Parameters
 
-- `environment` (optional): The environment to filter by. If not provided, all environments will be returned.
+- `environment`: The environment to filter by
 
 #### Path Parameters
 
@@ -40,6 +41,46 @@ Returns the data for the given project.
     }
   ]
 }
+```
+
+### GET `/api/v1/data/:projectId.js`
+
+Gives the same response as `/api/v1/data/:projectId`, but in JavaScript format.
+You can use this endpoint to load the data in the browser using a `<script>` tag.
+This is useful if you want to load the data in the browser without having to
+wait for the UI framework to load and hydrate. This is mostly the case for SPAs
+
+#### Query Parameters
+
+- `environment`: The environment to filter by.
+
+#### Path Parameters
+
+- `projectId`: The project ID.
+
+#### Response
+
+```js
+window.__abby_data__ = {
+  tests: [
+    {
+      name: "Test 1",
+      weights: [0.5, 0.5],
+    },
+  ],
+  flags: [
+    {
+      name: "Flag 1",
+      value: true,
+    },
+  ],
+  remoteConfig: [
+    {
+      name: "Remote Config 1",
+      value: "Foobar",
+    },
+  ],
+};
 ```
 
 ### POST `/api/v1/track`

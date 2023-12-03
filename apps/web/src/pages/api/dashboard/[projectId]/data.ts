@@ -7,7 +7,6 @@ import { trackPlanOverage } from "lib/logsnag";
 import { RequestCache } from "server/services/RequestCache";
 import { transformFlagValue } from "lib/flags";
 import { LegacyAbbyDataResponse } from "@tryabby/core";
-import { PlausibleService } from "server/services/PlausibleService";
 import { RequestService } from "server/services/RequestService";
 
 const incomingQuerySchema = z.object({

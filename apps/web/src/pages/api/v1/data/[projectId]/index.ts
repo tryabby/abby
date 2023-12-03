@@ -2,7 +2,7 @@ import { NextApiRequest, NextApiResponse } from "next";
 import { z } from "zod";
 import { prisma } from "server/db/client";
 import NextCors from "nextjs-cors";
-import { AbbyDataResponse } from "@tryabby/core";
+import { ABBY_WINDOW_KEY, AbbyDataResponse } from "@tryabby/core";
 import { EventService } from "server/services/EventService";
 import { trackPlanOverage } from "lib/logsnag";
 import { RequestCache } from "server/services/RequestCache";
@@ -10,8 +10,8 @@ import { transformFlagValue } from "lib/flags";
 import { RequestService } from "server/services/RequestService";
 
 const incomingQuerySchema = z.object({
-  projectId: z.string(),
-  environment: z.string().optional(),
+  projectId: z.string().transform((v) => v.replace(/.js$/, "")),
+  environment: z.string(),
 });
 
 export default async function getWeightsHandler(
@@ -88,6 +88,19 @@ export default async function getWeightsHandler(
     } satisfies AbbyDataResponse;
 
     const duration = performance.now() - now;
+
+    if (
+      typeof req.query.projectId === "string" &&
+      req.query.projectId.endsWith(".js")
+    ) {
+      const jsContent = `window.${ABBY_WINDOW_KEY} = ${JSON.stringify(
+        response
+      )}`;
+
+      res.setHeader("Content-Type", "application/javascript");
+
+      res.send(jsContent);
+    }
 
     res.json(response);
 
