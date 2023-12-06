@@ -17,7 +17,7 @@ export const incomingQuerySchema = z.object({
 
 const configCache = createCache<string, AbbyDataResponse>({
   name: "configCache",
-  expireAfterMilliseconds: 1000,
+  expireAfterMilliseconds: 1000 * 10,
 });
 
 export async function getAbbyResponseWithCache({
