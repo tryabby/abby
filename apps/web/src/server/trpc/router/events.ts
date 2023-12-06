@@ -5,20 +5,6 @@ import { z } from "zod";
 import { protectedProcedure, router } from "../trpc";
 
 export const eventRouter = router({
-  getEvents: protectedProcedure
-    .input(z.object({ projectId: z.string() }))
-    .query(async ({ ctx, input }) => {
-      const hasAccess = await ProjectService.hasProjectAccess(
-        input.projectId,
-        ctx.session.user.id
-      );
-
-      if (!hasAccess) {
-        throw new TRPCError({ code: "UNAUTHORIZED" });
-      }
-
-      return EventService.getEventsByProjectId(input.projectId);
-    }),
   getEventsByTestId: protectedProcedure
     .input(
       z.object({
@@ -27,7 +13,7 @@ export const eventRouter = router({
       })
     )
     .query(async ({ ctx, input }) => {
-      const currentTest = await ctx.prisma.test.count({
+      const currentTest = await ctx.prisma.test.findFirst({
         where: {
           id: input.testId,
           project: {
@@ -38,17 +24,23 @@ export const eventRouter = router({
             },
           },
         },
+        include: { options: true },
       });
 
       if (!currentTest) {
         throw new TRPCError({ code: "UNAUTHORIZED" });
       }
 
-      const tests = await EventService.getEventsByTestId(
-        input.testId,
-        input.interval
-      );
+      const events = await EventService.getEventsByTestId({
+        testId: input.testId,
+        timeInterval: input.interval,
+        testVersion: currentTest.version,
+      });
 
-      return tests;
+      return {
+        events,
+        testName: currentTest.name,
+        variants: currentTest.options.map((option) => option.identifier),
+      };
     }),
 });

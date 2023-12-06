@@ -1,7 +1,22 @@
 import { PrismaClient, Prisma } from "@prisma/client";
 import { AbbyEventType } from "@tryabby/core";
+import crypto from "crypto";
 
 const prisma = new PrismaClient();
+
+function trueRandomNumber(min: number, max: number) {
+  const cryptoArray = new Uint32Array(1);
+  crypto.getRandomValues(cryptoArray);
+  const randomValue = cryptoArray![0]! / (0xffffffff + 1);
+  return Math.floor(min + randomValue * (max - min + 1));
+}
+
+function randomDate(start: Date, end: Date) {
+  const startTime = start.getTime();
+  const endTime = end.getTime();
+  const randomTime = trueRandomNumber(startTime, endTime);
+  return new Date(randomTime);
+}
 
 async function main() {
   const user = await prisma.user.findFirst({
@@ -42,6 +57,7 @@ async function main() {
   });
 
   await prisma.option.createMany({
+    skipDuplicates: true,
     data: [
       {
         identifier: "oldFooter",
@@ -71,9 +87,9 @@ async function main() {
     ],
   });
 
-  await prisma.event.createMany({
+  await prisma.testConversion.createMany({
     data: [
-      ...Array.from<Prisma.EventCreateManyInput>({
+      ...Array.from<Prisma.TestConversionCreateManyInput>({
         length: Math.floor(Math.random() * 200),
       }).map(
         () =>
@@ -81,9 +97,10 @@ async function main() {
             selectedVariant: "oldFooter",
             testId: footerTest.id,
             type: AbbyEventType.PING,
-          } as Prisma.EventCreateManyInput)
+            createdAt: randomDate(new Date(2021, 0, 1), new Date()),
+          } as Prisma.TestConversionCreateManyInput)
       ),
-      ...Array.from<Prisma.EventCreateManyInput>({
+      ...Array.from<Prisma.TestConversionCreateManyInput>({
         length: Math.floor(Math.random() * 200),
       }).map(
         () =>
@@ -91,9 +108,10 @@ async function main() {
             selectedVariant: "newFooter",
             testId: footerTest.id,
             type: AbbyEventType.PING,
-          } as Prisma.EventCreateManyInput)
+            createdAt: randomDate(new Date(2021, 0, 1), new Date()),
+          } as Prisma.TestConversionCreateManyInput)
       ),
-      ...Array.from<Prisma.EventCreateManyInput>({
+      ...Array.from<Prisma.TestConversionCreateManyInput>({
         length: Math.floor(Math.random() * 200),
       }).map(
         () =>
@@ -101,9 +119,10 @@ async function main() {
             selectedVariant: "oldFooter",
             testId: footerTest.id,
             type: AbbyEventType.ACT,
-          } as Prisma.EventCreateManyInput)
+            createdAt: randomDate(new Date(2021, 0, 1), new Date()),
+          } as Prisma.TestConversionCreateManyInput)
       ),
-      ...Array.from<Prisma.EventCreateManyInput>({
+      ...Array.from<Prisma.TestConversionCreateManyInput>({
         length: Math.floor(Math.random() * 200),
       }).map(
         () =>
@@ -111,7 +130,8 @@ async function main() {
             selectedVariant: "newFooter",
             testId: footerTest.id,
             type: AbbyEventType.ACT,
-          } as Prisma.EventCreateManyInput)
+            createdAt: randomDate(new Date(2021, 0, 1), new Date()),
+          } as Prisma.TestConversionCreateManyInput)
       ),
     ],
   });

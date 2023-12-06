@@ -62,6 +62,7 @@
     "@tiptap/pm": "2.0.4",
     "@tiptap/react": "2.0.4",
     "@tiptap/starter-kit": "2.0.4",
+    "@tremor/react": "^3.11.0",
     "@trpc/client": "^10.19.1",
     "@trpc/next": "^10.19.1",
     "@trpc/react-query": "^10.19.1",

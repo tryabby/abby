@@ -1,7 +1,6 @@
 import { DashboardHeader } from "components/DashboardHeader";
 import { Layout } from "components/Layout";
 import { LoadingSpinner } from "components/LoadingSpinner";
-import { Select, SelectItem } from "components/Select";
 import {
   getFormattingByInterval,
   getLabelsByInterval,
@@ -18,54 +17,30 @@ import { BiArrowBack } from "react-icons/bi";
 import { trpc } from "utils/trpc";
 import { groupBy, minBy } from "lodash-es";
 import dayjs from "dayjs";
-import {
-  Chart as ChartJS,
-  CategoryScale,
-  LinearScale,
-  PointElement,
-  LineElement,
-  Title,
-  Tooltip,
-  Legend,
-  Filler,
-  ChartOptions,
-} from "chart.js";
+
 import colors from "tailwindcss/colors";
 import { useMemo } from "react";
 import { getColorByIndex } from "lib/graphs";
 import { AbbyEventType } from "@tryabby/core";
 import { Button } from "components/ui/button";
+import {
+  AreaChart,
+  Card,
+  Divider,
+  Metric,
+  Text,
+  ValueFormatter,
+  Title,
+} from "@tremor/react";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "components/ui/select";
 
 const INTERVAL_PARAM_NAME = "interval";
-
-ChartJS.register(
-  CategoryScale,
-  LinearScale,
-  PointElement,
-  LineElement,
-  Title,
-  Tooltip,
-  Legend,
-  Filler
-);
-
-ChartJS.defaults.color = "white";
-ChartJS.defaults.font.family = "'Fragment Mono', monospace";
-ChartJS.defaults.borderColor = `${colors.gray[800]}33`;
-
-const CHART_OPTIONS: ChartOptions<"line"> = {
-  responsive: true,
-  scales: {
-    y: {
-      min: 0,
-    },
-  },
-  plugins: {
-    legend: {
-      position: "top" as const,
-    },
-  },
-};
 
 const getChartOptions = (index: number, variant: string) => {
   const color = getColorByIndex(index);
@@ -76,6 +51,28 @@ const getChartOptions = (index: number, variant: string) => {
     fill: true,
   };
 };
+
+const data = [
+  {
+    Month: "Jan 21",
+    "Gross Volume": 2890,
+    "Successful Payments": 2400,
+    Customers: 4938,
+  },
+  {
+    Month: "Feb 21",
+    "Gross Volume": 1890,
+    "Successful Payments": 1398,
+    Customers: 2938,
+  },
+  // ...
+  {
+    Month: "Jan 22",
+    "Gross Volume": 3890,
+    "Successful Payments": 2980,
+    Customers: 2645,
+  },
+];
 
 const TestDetailPage: NextPageWithLayout = () => {
   const router = useRouter();
@@ -88,20 +85,7 @@ const TestDetailPage: NextPageWithLayout = () => {
       ? intervalParam
       : INTERVALS[1].value;
 
-  const {
-    data: test,
-    isLoading: isTestLoading,
-    isError: isTestError,
-  } = trpc.tests.getById.useQuery(
-    {
-      testId,
-    },
-    {
-      enabled: !!testId,
-    }
-  );
-
-  const { data: events } = trpc.events.getEventsByTestId.useQuery(
+  const { data, isLoading, isError } = trpc.events.getEventsByTestId.useQuery(
     {
       testId,
       interval,
@@ -111,71 +95,65 @@ const TestDetailPage: NextPageWithLayout = () => {
     }
   );
 
-  const eventsByVariant = useMemo(() => {
-    const eventsByVariant = groupBy(events, (e) => e.selectedVariant);
-    // make sure all variants are present
-    test?.options.map((option) => {
-      eventsByVariant[option.identifier] ??= [];
-    });
-    return eventsByVariant;
-  }, [events, test?.options]);
-
-  const labels = getLabelsByInterval(
-    interval,
-    minBy(events, "createdAt")?.createdAt!
-  );
-
-  const formattedEvents = useMemo(() => {
-    return Object.entries(eventsByVariant).map(([variant, events], i) => {
-      const eventsByDate = groupBy(events, (e) => {
-        const date = dayjs(e.createdAt);
-        // round by 3 hours
-        const hour = Math.floor(date.hour() / 3) * 3;
-
-        return date
-          .set("hour", hour)
-          .set("minute", 0)
-          .format(getFormattingByInterval(interval));
-      });
-      return { eventsByDate, variant };
-    });
-  }, [eventsByVariant, interval]);
-
   const viewEvents = useMemo(
-    () => ({
-      labels,
-      datasets: formattedEvents.map(({ eventsByDate, variant }, i) => {
-        return {
-          data: labels.map(
-            (label) =>
-              eventsByDate[label]?.filter((e) => e.type === AbbyEventType.PING)
-                ?.length ?? 0
-          ),
-          ...getChartOptions(i, variant),
-        };
-      }),
-    }),
-    [formattedEvents, labels]
+    () => data?.events?.filter((e) => e.type === AbbyEventType.PING),
+    [data?.events]
   );
 
   const actEvents = useMemo(
-    () => ({
-      labels,
-      datasets: formattedEvents.map(({ eventsByDate, variant }, i) => {
-        return {
-          data: labels.map(
-            (label) =>
-              eventsByDate[label]?.filter((e) => e.type === AbbyEventType.ACT)
-                ?.length ?? 0
-          ),
-          ...getChartOptions(i, variant),
-        };
-      }),
-    }),
-    [formattedEvents, labels]
+    () => data?.events?.filter((e) => e.type === AbbyEventType.ACT),
+    [data?.events]
   );
 
-  if (isTestLoading || isTestError) {
+  const viewEventsByDay = useMemo(() => {
+    const eventsByDay = groupBy(viewEvents, (e) => {
+      const date = dayjs(e.createdAt);
+      // round by 3 hours
+      const hour = Math.floor(date.hour() / 3) * 3;
+
+      return date
+        .set("hour", hour)
+        .set("minute", 0)
+        .format(getFormattingByInterval(interval));
+    });
+    return Object.entries(eventsByDay).map(([day, events]) => {
+      return {
+        day,
+        ...data?.variants.reduce<Record<string, number>>((acc, variant) => {
+          acc[variant] = events.filter(
+            (e) => e.selectedVariant === variant
+          ).length;
+          return acc;
+        }, {}),
+      };
+    });
+  }, [data?.variants, interval, viewEvents]);
+
+  const actEventsByDay = useMemo(() => {
+    const eventsByDay = groupBy(actEvents, (e) => {
+      const date = dayjs(e.createdAt);
+      // round by 3 hours
+      const hour = Math.floor(date.hour() / 3) * 3;
+
+      return date
+        .set("hour", hour)
+        .set("minute", 0)
+        .format(getFormattingByInterval(interval));
+    });
+    return Object.entries(eventsByDay).map(([day, events]) => {
+      return {
+        day,
+        ...data?.variants.reduce<Record<string, number>>((acc, variant) => {
+          acc[variant] = events.filter(
+            (e) => e.selectedVariant === variant
+          ).length;
+          return acc;
+        }, {}),
+      };
+    });
+  }, [data?.variants, interval, actEvents]);
+
+  if (isLoading || isError) {
     return <LoadingSpinner />;
   }
 
@@ -188,13 +166,12 @@ const TestDetailPage: NextPageWithLayout = () => {
           </Button>
         </Link>
         <h1 className="justify-self-end text-2xl font-bold text-pink-100 md:justify-self-auto">
-          {test.name}
+          {data.testName}
         </h1>
         <div className="col-span-2 w-48 justify-self-end md:col-span-1">
           <Select
-            items={INTERVALS}
             value={interval}
-            onChange={(newInterval) =>
+            onValueChange={(newInterval) =>
               router.push(
                 {
                   ...router,
@@ -207,26 +184,55 @@ const TestDetailPage: NextPageWithLayout = () => {
                 { shallow: true }
               )
             }
-          />
+          >
+            <SelectTrigger>
+              <SelectValue placeholder="Select an interval" />
+            </SelectTrigger>
+            <SelectContent>
+              {INTERVALS.map((interval) => (
+                <SelectItem key={interval.value} value={interval.value}>
+                  {interval.label}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
         </div>
       </div>
 
-      {events?.length === 0 ? (
+      {data.events == null || data.events.length === 0 ? (
         <p className="mt-48 text-center text-lg text-gray-400">
           No events yet :(
         </p>
       ) : (
-        <div>
-          <div>
-            <h2 className="mt-3 text-xl font-bold">Views</h2>
-            <Line options={CHART_OPTIONS} data={viewEvents} />
-          </div>
-          <hr className="my-16 border-pink-50/20" />
-          <div>
-            <h2 className="mt-3 text-xl font-bold">Interactions</h2>
-            <Line options={CHART_OPTIONS} data={actEvents} />
-          </div>
-        </div>
+        <Card className="mx-auto mt-12">
+          <Title>Views</Title>
+          <Text>Amount of times your A/B Test has been viewed</Text>
+          <AreaChart
+            className="mt-8 h-60"
+            data={viewEventsByDay ?? []}
+            categories={data?.variants ?? []}
+            index="day"
+            colors={["pink", "indigo"]}
+            onValueChange={() => {}}
+            connectNulls
+          />
+
+          <Divider className="py-24" />
+
+          <Title>Conversions</Title>
+          <Text>Conversions are your predefined goals</Text>
+          <AreaChart
+            className="mt-8 h-60"
+            data={actEventsByDay ?? []}
+            categories={data?.variants ?? []}
+            index="day"
+            colors={["pink", "indigo"]}
+            onValueChange={() => {}}
+            connectNulls
+          />
+
+          <Divider />
+        </Card>
       )}
     </div>
   );

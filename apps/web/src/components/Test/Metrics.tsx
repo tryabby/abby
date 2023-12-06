@@ -1,4 +1,5 @@
-import { Prisma, Event } from "@prisma/client";
+import { TestConversion } from "@prisma/client";
+import { DonutChart, Text } from "@tremor/react";
 import {
   Chart as ChartJS,
   BarElement,
@@ -45,46 +46,51 @@ const Metrics = ({
   pingEvents,
   options,
 }: {
-  pingEvents: Event[];
+  pingEvents: TestConversion[];
   options: ClientOption[];
 }) => {
-  const labels = options.map((option) => option.identifier);
   const actualData = useMemo(() => {
     return options.map((option) => {
       return {
-        pings: pingEvents.filter(
+        name: option.identifier,
+        count: pingEvents.filter(
           (event) => event.selectedVariant === option.identifier
         ).length,
-        weight: option.chance,
       };
     });
   }, [options, pingEvents]);
 
   const absPings = actualData.reduce((accumulator, value) => {
-    return accumulator + value.pings;
+    return accumulator + value.count;
   }, 0);
 
+  const expectedData = useMemo(() => {
+    return options.map((option) => ({
+      name: option.identifier,
+      count: absPings * option.chance,
+    }));
+  }, [absPings, options]);
+
   return (
-    <div className="relative mb-6 h-full w-full">
-      <Bar
-        className="self-end"
-        options={OPTIONS}
-        data={{
-          labels,
-          datasets: [
-            {
-              label: "Actual",
-              data: actualData.map((d) => d.pings),
-              backgroundColor: "#A9E4EF",
-            },
-            {
-              label: "Expected",
-              data: actualData.map((data) => absPings * data.weight),
-              backgroundColor: "#f472b6",
-            },
-          ],
-        }}
-      />
+    <div className="relative grid h-full w-full gap-y-4 md:grid-cols-2">
+      <div className="flex flex-col items-center space-y-3">
+        <Text>Conversions</Text>
+        <DonutChart
+          data={actualData}
+          category="count"
+          index="name"
+          colors={["pink", "indigo"]}
+        />
+      </div>
+      <div className="flex flex-col items-center space-y-3">
+        <Text>Expected</Text>
+        <DonutChart
+          data={expectedData}
+          category="count"
+          index="name"
+          colors={["pink", "indigo"]}
+        />
+      </div>
     </div>
   );
 };

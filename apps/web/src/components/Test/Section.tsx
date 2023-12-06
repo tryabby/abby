@@ -1,4 +1,4 @@
-import { Event, Test } from "@prisma/client";
+import { TestConversion, Test } from "@prisma/client";
 import { ReactNode, useId, useState } from "react";
 import { AbbyEventType } from "@tryabby/core";
 import { Serves } from "./Serves";
@@ -7,7 +7,7 @@ import Weights from "./Weights";
 import type { ClientOption } from "server/trpc/router/project";
 import { BiInfoCircle } from "react-icons/bi";
 import * as Popover from "@radix-ui/react-popover";
-import { AiOutlineDelete } from "react-icons/ai";
+
 import { trpc } from "utils/trpc";
 import { toast } from "react-hot-toast";
 import { Button } from "components/ui/button";
@@ -17,6 +17,14 @@ import { useFeatureFlag } from "lib/abby";
 import { TitleEdit } from "components/TitleEdit";
 import { Modal } from "components/Modal";
 import { cn } from "lib/utils";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "components/DropdownMenu";
+import { BsThreeDotsVertical } from "react-icons/bs";
+import { EditIcon, TrashIcon } from "lucide-react";
 
 function getBestVariant({
   absPings,
@@ -132,7 +140,7 @@ const Section = ({
   id,
 }: Test & {
   options: ClientOption[];
-  events: Event[];
+  events: TestConversion[];
 }) => {
   const router = useRouter();
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
@@ -161,16 +169,24 @@ const Section = ({
           title={name}
           onSave={(newName) => updateTestName({ name: newName, testId: id })}
         />
-        <Button
-          title="Delete Test"
-          onClick={() => {
-            setIsDeleteModalOpen(true);
-          }}
-          size="icon"
-          variant="destructive"
-        >
-          <AiOutlineDelete />
-        </Button>
+        <DropdownMenu>
+          <DropdownMenuTrigger>
+            <BsThreeDotsVertical />
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end">
+            <DropdownMenuItem className="cursor-pointer" onClick={() => {}}>
+              <EditIcon className="mr-4 h-4 w-4" />
+              Edit Name
+            </DropdownMenuItem>
+            <DropdownMenuItem
+              className="cursor-pointer focus:!bg-red-700 focus:!text-white"
+              onClick={() => {}}
+            >
+              <TrashIcon className="mr-4 h-4 w-4" />
+              Delete Test
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
         <DeleteTestModal
           isOpen={isDeleteModalOpen}
           onClose={() => setIsDeleteModalOpen(false)}
@@ -209,10 +225,10 @@ const Section = ({
           />
         </Card>
         <Card
-          title="Interactions"
+          title="Conversions"
           tooltip={
             <p>
-              An interaction is triggered when the
+              A conversion is triggered when the
               <code className="mx-1 rounded-md bg-gray-600 px-1 py-0.5">
                 onAct
               </code>
