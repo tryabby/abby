@@ -6,6 +6,7 @@ export default defineConfig({
   // it's hacky :)
   noExternal: ["shared/src/types"],
   clean: true,
+  format: ["cjs", "esm"],
   sourcemap: true,
   treeshake: true,
 });

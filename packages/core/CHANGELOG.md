@@ -1,5 +1,11 @@
 # @tryabby/core
 
+## 5.1.2
+
+### Patch Changes
+
+- add esm packages
+
 ## 5.1.1
 
 ### Patch Changes

@@ -1,5 +1,13 @@
 # @tryabby/react
 
+## 5.0.4
+
+### Patch Changes
+
+- add esm packages
+- Updated dependencies
+  - @tryabby/core@5.1.2
+
 ## 5.0.3
 
 ### Patch Changes

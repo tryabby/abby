@@ -285,6 +285,7 @@ model ApiKey {
 
 enum ApiRequestType {
   GET_CONFIG
+  GET_CONFIG_SCRIPT
   TRACK_VIEW
 }
 

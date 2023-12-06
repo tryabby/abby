@@ -26,8 +26,8 @@ export type withDevtoolsFunction = (
 export type ABTestReturnValue<Lookup, TestVariant> = Lookup extends undefined
   ? TestVariant
   : TestVariant extends keyof Lookup
-  ? Lookup[TestVariant]
-  : never;
+    ? Lookup[TestVariant]
+    : never;
 
 export function createAbby<
   FlagName extends string,
@@ -196,7 +196,12 @@ export function createAbby<
     useEffect(() => {
       if (initialData || isMountedRef.current) return;
       isMountedRef.current = true;
-      abby.loadProjectData();
+
+      // seed the data with the initial data
+      abby.loadProjectData().then((data) => {
+        if (!data) return;
+        setData(data);
+      });
       // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 

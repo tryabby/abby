@@ -1,5 +1,13 @@
 # @tryabby/next
 
+## 5.0.4
+
+### Patch Changes
+
+- add esm packages
+- Updated dependencies
+  - @tryabby/react@5.0.4
+
 ## 5.0.3
 
 ### Patch Changes

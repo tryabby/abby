@@ -8,11 +8,72 @@ import { trackPlanOverage } from "lib/logsnag";
 import { RequestCache } from "server/services/RequestCache";
 import { transformFlagValue } from "lib/flags";
 import { RequestService } from "server/services/RequestService";
+import createCache from "server/common/memory-cache";
 
-const incomingQuerySchema = z.object({
+export const incomingQuerySchema = z.object({
   projectId: z.string().transform((v) => v.replace(/.js$/, "")),
   environment: z.string(),
 });
+
+const configCache = createCache<string, AbbyDataResponse>({
+  name: "configCache",
+  expireAfterMilliseconds: 1000,
+});
+
+export async function getAbbyResponseWithCache({
+  environment,
+  projectId,
+}: z.infer<typeof incomingQuerySchema>) {
+  const cachedConfig = configCache.get(projectId);
+
+  if (cachedConfig) {
+    return cachedConfig;
+  }
+
+  const [tests, flags] = await Promise.all([
+    prisma.test.findMany({
+      where: {
+        projectId,
+      },
+      include: { options: true },
+    }),
+    prisma.featureFlagValue.findMany({
+      where: {
+        environment: {
+          name: environment,
+          projectId,
+        },
+      },
+      include: { flag: { select: { name: true, type: true } } },
+    }),
+  ]);
+
+  const response = {
+    tests: tests.map((test) => ({
+      name: test.name,
+      weights: test.options.map((o) => o.chance.toNumber()),
+    })),
+    flags: flags
+      .filter(({ flag }) => flag.type === "BOOLEAN")
+      .map((flagValue) => {
+        return {
+          name: flagValue.flag.name,
+          value: transformFlagValue(flagValue.value, flagValue.flag.type),
+        };
+      }),
+    remoteConfig: flags
+      .filter(({ flag }) => flag.type !== "BOOLEAN")
+      .map((flagValue) => {
+        return {
+          name: flagValue.flag.name,
+          value: transformFlagValue(flagValue.value, flagValue.flag.type),
+        };
+      }),
+  } satisfies AbbyDataResponse;
+
+  configCache.set(projectId, response);
+  return response;
+}
 
 export default async function getWeightsHandler(
   req: NextApiRequest,
@@ -35,6 +96,10 @@ export default async function getWeightsHandler(
   const { projectId, environment } = querySchemaResult.data;
 
   try {
+    const response = await getAbbyResponseWithCache({ projectId, environment });
+
+    res.send(response);
+
     const { events, planLimits, plan, is80PercentOfLimit } =
       await EventService.getEventsForCurrentPeriod(projectId);
 
@@ -46,69 +111,13 @@ export default async function getWeightsHandler(
       return;
     }
 
-    const [tests, flags] = await Promise.all([
-      prisma.test.findMany({
-        where: {
-          projectId,
-        },
-        include: { options: true },
-      }),
-      prisma.featureFlagValue.findMany({
-        where: {
-          environment: {
-            name: environment,
-            projectId,
-          },
-        },
-        include: { flag: { select: { name: true, type: true } } },
-      }),
-    ]);
-
-    const response = {
-      tests: tests.map((test) => ({
-        name: test.name,
-        weights: test.options.map((o) => o.chance.toNumber()),
-      })),
-      flags: flags
-        .filter(({ flag }) => flag.type === "BOOLEAN")
-        .map((flagValue) => {
-          return {
-            name: flagValue.flag.name,
-            value: transformFlagValue(flagValue.value, flagValue.flag.type),
-          };
-        }),
-      remoteConfig: flags
-        .filter(({ flag }) => flag.type !== "BOOLEAN")
-        .map((flagValue) => {
-          return {
-            name: flagValue.flag.name,
-            value: transformFlagValue(flagValue.value, flagValue.flag.type),
-          };
-        }),
-    } satisfies AbbyDataResponse;
-
-    const duration = performance.now() - now;
-
-    if (
-      typeof req.query.projectId === "string" &&
-      req.query.projectId.endsWith(".js")
-    ) {
-      const jsContent = `window.${ABBY_WINDOW_KEY} = ${JSON.stringify(
-        response
-      )}`;
-
-      res.setHeader("Content-Type", "application/javascript");
-
-      res.send(jsContent);
-    }
-
-    res.json(response);
-
     if (is80PercentOfLimit) {
       await trackPlanOverage(projectId, plan, is80PercentOfLimit);
     }
 
     await RequestCache.increment(projectId);
+
+    const duration = performance.now() - now;
 
     RequestService.storeRequest({
       projectId,

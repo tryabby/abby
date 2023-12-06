@@ -168,8 +168,7 @@ export class Abby<
       window[ABBY_WINDOW_KEY] != null
     ) {
       this.log(`loadProjectData() => using window data`);
-      this.init(window[ABBY_WINDOW_KEY] as AbbyDataResponse);
-      return;
+      return this.init(window[ABBY_WINDOW_KEY] as AbbyDataResponse);
     }
 
     const data = await HttpService.getProjectData({
@@ -181,7 +180,7 @@ export class Abby<
       this.log(`loadProjectData() => no data`);
       return;
     }
-    this.init(data);
+    return this.init(data);
   }
 
   async getProjectDataAsync(): Promise<LocalData<FlagName, TestName, RemoteConfigName>> {
