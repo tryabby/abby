@@ -6,11 +6,17 @@
   "files": [
     "dist"
   ],
+  "module": "dist/index.mjs",
+  "types": "dist/index.d.ts",
+  ".": {
+    "types": "./dist/index.d.ts",
+    "import": "./dist/index.mjs",
+    "require": "./dist/index.js"
+  },
   "scripts": {
     "build": "tsup src/",
     "dev": "pnpm run build --watch",
-    "test": "vitest",
-    "prepare": "pnpm run build"
+    "test": "vitest"
   },
   "homepage": "https://docs.tryabby.com",
   "keywords": [],

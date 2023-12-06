@@ -26,8 +26,7 @@
   "scripts": {
     "build": "tsup src/",
     "dev": "pnpm run build --watch",
-    "test": "vitest",
-    "prepare": "pnpm run build"
+    "test": "vitest"
   },
   "keywords": [],
   "author": "",

@@ -20,8 +20,7 @@
     "build": "vite build",
     "check": "svelte-check --tsconfig ./tsconfig.json",
     "storybook": "STORYBOOK=1 storybook dev -p 6006",
-    "build-storybook": "storybook build",
-    "prepare": "pnpm run build"
+    "build-storybook": "storybook build"
   },
   "devDependencies": {
     "@storybook/addon-essentials": "^7.0.5",

@@ -16,6 +16,7 @@ _TL;DR:_
 ```
 git clone git@github.com:tryabby/abby.git
 pnpm i
+pnpm build:packages
 pnpm db:start
 cp apps/web/.env.example apps/web/.env
 pnpm db:migrate

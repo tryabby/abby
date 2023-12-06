@@ -6,8 +6,7 @@
     "start": "ng serve",
     "build": "ng-packagr -p ng-package.json",
     "watch": "ng build --watch --configuration development",
-    "test": "ng test --no-watch --no-progress",
-    "prepare": "pnpm run build"
+    "test": "ng test --no-watch --no-progress"
   },
   "peerDependencies": {
     "@angular/common": "^15.2.0",
