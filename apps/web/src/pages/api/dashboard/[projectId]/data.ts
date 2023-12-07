@@ -8,10 +8,16 @@ import { RequestCache } from "server/services/RequestCache";
 import { transformFlagValue } from "lib/flags";
 import { LegacyAbbyDataResponse } from "@tryabby/core";
 import { RequestService } from "server/services/RequestService";
+import createCache from "server/common/memory-cache";
 
 const incomingQuerySchema = z.object({
   projectId: z.string(),
   environment: z.string().optional(),
+});
+
+const configCache = createCache<string, LegacyAbbyDataResponse>({
+  name: "legacyConfigCache",
+  expireAfterMilliseconds: 1000 * 10,
 });
 
 export default async function getWeightsHandler(
@@ -42,6 +48,12 @@ export default async function getWeightsHandler(
       // TODO: send email
       // TODO: send email if 80% of limit reached
       await trackPlanOverage(projectId, plan);
+      return;
+    }
+
+    const cachedData = configCache.get(projectId + environment);
+    if (cachedData) {
+      res.json(cachedData);
       return;
     }
 
@@ -82,6 +94,8 @@ export default async function getWeightsHandler(
 
     res.json(response);
 
+    configCache.set(projectId + environment, response);
+
     if (is80PercentOfLimit) {
       await trackPlanOverage(projectId, plan, is80PercentOfLimit);
     }
@@ -92,6 +106,7 @@ export default async function getWeightsHandler(
       projectId,
       type: "GET_CONFIG",
       durationInMs: duration,
+      apiVersion: "V0",
     }).catch((e) => {
       console.error("Unable to store request", e);
     });

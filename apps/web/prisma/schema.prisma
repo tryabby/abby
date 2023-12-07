@@ -289,11 +289,18 @@ enum ApiRequestType {
   TRACK_VIEW
 }
 
+enum ApiVersion {
+  V0
+  V1
+}
+
 model ApiRequest {
   id           String         @id @default(cuid())
   createdAt    DateTime       @default(now())
   type         ApiRequestType
   durationInMs Int
+
+  apiVersion ApiVersion @default(V0)
 
   projectId String
   project   Project @relation(fields: [projectId], references: [id], onDelete: Cascade)

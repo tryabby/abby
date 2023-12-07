@@ -24,7 +24,7 @@ export async function getAbbyResponseWithCache({
   environment,
   projectId,
 }: z.infer<typeof incomingQuerySchema>) {
-  const cachedConfig = configCache.get(projectId);
+  const cachedConfig = configCache.get(projectId + environment);
 
   if (cachedConfig) {
     return cachedConfig;
@@ -71,7 +71,7 @@ export async function getAbbyResponseWithCache({
       }),
   } satisfies AbbyDataResponse;
 
-  configCache.set(projectId, response);
+  configCache.set(projectId + environment, response);
   return response;
 }
 
@@ -100,6 +100,8 @@ export default async function getWeightsHandler(
 
     res.send(response);
 
+    const duration = performance.now() - now;
+
     const { events, planLimits, plan, is80PercentOfLimit } =
       await EventService.getEventsForCurrentPeriod(projectId);
 
@@ -117,12 +119,11 @@ export default async function getWeightsHandler(
 
     await RequestCache.increment(projectId);
 
-    const duration = performance.now() - now;
-
     RequestService.storeRequest({
       projectId,
       type: "GET_CONFIG",
       durationInMs: duration,
+      apiVersion: "V1",
     }).catch((e) => {
       console.error("Unable to store request", e);
     });
