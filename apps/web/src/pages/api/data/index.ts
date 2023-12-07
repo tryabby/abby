@@ -83,6 +83,7 @@ export default async function incomingDataHandler(
       projectId: event.projectId,
       type: "TRACK_VIEW",
       durationInMs: duration,
+      apiVersion: "V0",
     }).catch((e) => {
       console.error("Unable to store request", e);
     });
