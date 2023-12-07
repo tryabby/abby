@@ -57,8 +57,9 @@ export default async function getScriptHandler(
 
     RequestService.storeRequest({
       projectId,
-      type: "GET_CONFIG",
+      type: "GET_CONFIG_SCRIPT",
       durationInMs: duration,
+      apiVersion: "V1",
     }).catch((e) => {
       console.error("Unable to store request", e);
     });
