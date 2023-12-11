@@ -6,30 +6,21 @@
     "$NODE_ENV",
     "$VERCEL",
     "$VERCEL_ENV",
-    "$NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY"
+    "$NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY",
+    "$ANALYZE",
+    "$SKIP_ENV_VALIDATION"
   ],
   "pipeline": {
     "build": {
-      "dependsOn": [
-        "^build"
-      ],
-      "outputs": [
-        "dist/**",
-        ".next/**"
-      ]
+      "dependsOn": ["^build"],
+      "outputs": ["dist/**", ".next/**"]
     },
     "build:prod": {
-      "dependsOn": [
-        "^build"
-      ],
-      "outputs": [
-        ".next/**"
-      ]
+      "dependsOn": ["^build"],
+      "outputs": [".next/**"]
     },
     "test": {
-      "outputs": [
-        "coverage/**"
-      ]
+      "outputs": ["coverage/**"]
     },
     "lint": {
       "outputs": []

@@ -42,4 +42,9 @@ const config = {
   },
 };
 
-export default withPlausibleProxy()(withBundleAnalyzer(withMDX(config)));
+export default withPlausibleProxy()(
+  withBundleAnalyzer(
+    // @ts-ignore
+    withMDX(config)
+  )
+);
