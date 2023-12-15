@@ -14,10 +14,10 @@
     "@types/react-dom": "^18.0.5",
     "eslint": "8.29.0",
     "eslint-config-next": "13.0.6",
-    "next": "13.4.8",
+    "next": "14.0.4",
     "next-plausible": "^3.11.3",
-    "nextra": "2.2.18",
-    "nextra-theme-docs": "2.2.18",
+    "nextra": "2.13.2",
+    "nextra-theme-docs": "2.13.2",
     "react": "18.2.0",
     "react-dom": "18.2.0",
     "typescript": "4.9.3"
