@@ -525,6 +525,7 @@ export class Abby<
         );
 
         this.testOverrides.set(testName as TestName, cookieValue);
+        this.persistantTestStorage?.set(testName as TestName, cookieValue);
       }
       // FF testing cookie
       if (cookieName.startsWith(ABBY_FF_STORAGE_PREFIX)) {
