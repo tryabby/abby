@@ -1,14 +1,17 @@
 import { ABBY_BASE_URL } from "./constants";
 import type { AbbyEventType, AbbyEvent, AbbyDataResponse } from "./index";
+
 export abstract class HttpService {
   static async getProjectData({
     projectId,
     environment,
     url,
+    fetch = globalThis.fetch,
   }: {
     projectId: string;
     environment?: string;
     url?: string;
+    fetch?: (typeof globalThis)["fetch"];
   }) {
     try {
       const res = await fetch(

@@ -25,9 +25,7 @@ const { middleware, abby } = createAbbyMiddleWare({
   flags: ["flag1", "flag2"],
 });
 
-app.use(middleware);
-
-app.get("/", (req, res) => {
+app.get("/", middleware, (req, res) => {
   const flag1 = abby.getFeatureFlag("flag1");
   const flag2 = abby.getFeatureFlag("flag2");
   res.json({
@@ -36,7 +34,16 @@ app.get("/", (req, res) => {
   });
 });
 
-app.get("/test", (req, res) => {
+app.get("/fail", (req, res) => {
+  const flag1 = abby.getFeatureFlag("flag1");
+  const flag2 = abby.getFeatureFlag("flag2");
+  res.json({
+    flag1,
+    flag2,
+  });
+});
+
+app.get("/test", middleware, (req, res) => {
   const test = abby.getTestVariant("test");
   const test2 = abby.getTestVariant("test2");
   res.json({

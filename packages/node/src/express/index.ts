@@ -1,9 +1,10 @@
 import type { NextFunction, Request, Response } from "express";
 import { ABConfig, Abby, AbbyConfig, RemoteConfigValueString } from "@tryabby/core";
 import { F } from "ts-toolbelt";
-import { InMemoryStorageService } from "../utils/MemoryStorage";
+import { createAbby } from "../index";
 
-const instanceMap = new WeakMap<any, Abby<any, any, any, any, any>>();
+const instanceMap = new Map<string, Abby<any, any, any, any, any>>();
+const initializedProjects = new Set<string>();
 
 export function createAbbyMiddleWare<
   FlagName extends string,
@@ -12,12 +13,11 @@ export function createAbbyMiddleWare<
   RemoteConfig extends Record<RemoteConfigName, RemoteConfigValueString>,
   RemoteConfigName extends Extract<keyof RemoteConfig, string>,
 >(config: F.Narrow<AbbyConfig<FlagName, Tests, string[], RemoteConfigName, RemoteConfig>>) {
-  let abbyInstance = instanceMap.get(config);
+  let abbyInstance = instanceMap.get(config.projectId);
 
   if (!abbyInstance) {
-    const testStorage = new InMemoryStorageService();
-    abbyInstance = new Abby(config, testStorage);
-    instanceMap.set(config, abbyInstance);
+    abbyInstance = createAbby(config);
+    instanceMap.set(config.projectId, abbyInstance);
   }
 
   const middleware = async (req: Request, _res: Response, next: NextFunction) => {
@@ -28,7 +28,7 @@ export function createAbbyMiddleWare<
     if (req.headers.cookie) {
       abbyInstance.setLocalOverrides(req.headers.cookie);
     }
-
+    initializedProjects.add(config.projectId);
     next();
   };
 

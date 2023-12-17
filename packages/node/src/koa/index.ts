@@ -1,7 +1,7 @@
 import type { Next, Context } from "koa";
 import { ABConfig, Abby, AbbyConfig, RemoteConfigValueString } from "@tryabby/core";
 import { F } from "ts-toolbelt";
-import { InMemoryStorageService } from "../utils/MemoryStorage";
+import { createAbby } from "../index";
 
 const instanceMap = new WeakMap<any, Abby<any, any, any, any, any>>();
 
@@ -15,8 +15,7 @@ export function createAbbyMiddleWare<
   let abbyInstance = instanceMap.get(config);
 
   if (!abbyInstance) {
-    const testStorage = new InMemoryStorageService();
-    abbyInstance = new Abby(config, testStorage);
+    abbyInstance = createAbby(config);
     instanceMap.set(config, abbyInstance);
   }
 
