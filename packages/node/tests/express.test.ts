@@ -1,14 +1,9 @@
 import express from "express";
-import { Server } from "http";
 import { createAbbyMiddleWare } from "../src/express";
 import { ABBY_AB_STORAGE_PREFIX } from "@tryabby/core";
-import fetch from "node-fetch";
+import request from "supertest";
 
 const app = express();
-const PORT = 5555;
-const SERVER_URL = `http://localhost:${PORT}`;
-
-let server: Server | undefined = undefined;
 
 const testVariants = ["OldFooter", "NewFooter"] as const;
 const test2Variants = ["SimonsText", "MatthiasText", "TomsText", "TimsText"] as const;
@@ -52,44 +47,30 @@ app.get("/test", middleware, (req, res) => {
   });
 });
 
-beforeAll(async () => {
-  server = app.listen(PORT);
-});
-
-afterAll(() => {
-  server?.close();
-});
-
 it("should work with feature flags", async () => {
-  const data = await fetch(`${SERVER_URL}`).then((r) => r.json());
-  expect(data).toEqual({
+  const res = await request(app).get("/");
+  expect(res.body).toEqual({
     flag1: true,
     flag2: false,
   });
 });
 
 it("should work with A/B tests", async () => {
-  const data = (await fetch(`${SERVER_URL}/test`).then((r) => r.json())) as {
-    test: string;
-    test2: string;
-  };
-
-  expect(data.test).to.be.oneOf(testVariants);
-  expect(data.test2).to.be.oneOf(test2Variants);
+  const res = await request(app).get("/test");
+  expect(res.body.test).to.be.oneOf(testVariants);
+  expect(res.body.test2).to.be.oneOf(test2Variants);
 });
 
 it("should work with a cookie seed", async () => {
-  const data = (await fetch(`${SERVER_URL}/test`, {
-    headers: {
-      cookie: `${ABBY_AB_STORAGE_PREFIX}${abby.getConfig().projectId}_test=${
+  const res = await request(app)
+    .get("/test")
+    .set(
+      "Cookie",
+      `${ABBY_AB_STORAGE_PREFIX}${abby.getConfig().projectId}_test=${
         testVariants[0]
-      };${ABBY_AB_STORAGE_PREFIX}${abby.getConfig().projectId}_test2=${test2Variants[2]}`,
-    },
-  }).then((r) => r.json())) as {
-    test: string;
-    test2: string;
-  };
+      };${ABBY_AB_STORAGE_PREFIX}${abby.getConfig().projectId}_test2=${test2Variants[2]}`
+    );
 
-  expect(data.test).toEqual(testVariants[0]);
-  expect(data.test2).toEqual(test2Variants[2]);
+  expect(res.body.test).toEqual(testVariants[0]);
+  expect(res.body.test2).toEqual(test2Variants[2]);
 });
