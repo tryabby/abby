@@ -94,6 +94,7 @@ export type AbbyConfig<
   remoteConfig?: RemoteConfig;
   settings?: Settings<F.NoInfer<FlagName>, F.NoInfer<RemoteConfigName>, F.NoInfer<RemoteConfig>>;
   debug?: boolean;
+  fetch?: (typeof globalThis)["fetch"];
 };
 
 export class Abby<
@@ -175,6 +176,7 @@ export class Abby<
       projectId: this.config.projectId,
       environment: this.config.currentEnvironment as string,
       url: this.config.apiUrl,
+      fetch: this._cfg.fetch,
     });
     if (!data) {
       this.log(`loadProjectData() => no data`);
@@ -525,6 +527,7 @@ export class Abby<
         );
 
         this.testOverrides.set(testName as TestName, cookieValue);
+        this.persistantTestStorage?.set(testName as TestName, cookieValue);
       }
       // FF testing cookie
       if (cookieName.startsWith(ABBY_FF_STORAGE_PREFIX)) {

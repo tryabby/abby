@@ -1,5 +1,11 @@
 # @tryabby/core
 
+## 5.1.3
+
+### Patch Changes
+
+- add memory storage for tests
+
 ## 5.1.2
 
 ### Patch Changes

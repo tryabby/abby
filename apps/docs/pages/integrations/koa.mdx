@@ -1,0 +1,132 @@
+import { Tab, Tabs, Callout } from "nextra-theme-docs";
+
+# Koa
+
+Our Koa package allows you to use Abby within all server-side applications.
+If you're using Node < 18 you will need to also install any fetch polyfill.
+
+## Installation
+
+To get started make sure to install the packages using your favorite package manager.
+
+<Tabs items={["npm", "yarn", "pnpm"]}>
+  <Tab>
+    ```bash
+    npm i @tryabby/koa
+    ```
+    </Tab>
+
+  <Tab>
+    ```bash
+    yarn add @tryabby/koa
+    ```
+</Tab>
+  <Tab>
+    ```bash
+    pnpm i @tryabby/koa
+    ```
+    </Tab>
+</Tabs>
+
+## Usage
+
+### Create your config
+
+To use Abby you need to create your config first. You can do this by creating a file called `abby.config.ts` in your root folder. This file will be used to configure your project.
+
+```ts
+// abby.config.ts
+import { defineConfig } from "@tryabby/node";
+
+export default defineConfig({
+  projectId: "<YOUR_PROJECT_ID>",
+  currentEnvironment: environment.production ? "production" : "development",
+  environments: ["production", "development"],
+  tests: {
+    test: { variants: ["A", "B"] },
+    footer: { variants: ["dark", "orange", "green"] },
+    // ... your tests
+  },
+  flags: ["darkMode", "newFeature"],
+  remoteConfig: {
+    customButtonText: "String",
+    maxSessionCount: "Number",
+  },
+});
+```
+
+### Create your Abby instance
+
+To use Abby in your code you need to call the `createAbby` function
+
+```ts
+import { createAbby } from "@tryabby/koa";
+import abbyConfig from "../abby.config";
+
+const { abby, middleware } = createAbby(abbyConfig);
+```
+
+### Using Abby in your code
+
+You can now use Abby in your code. Before you can use Abby inside of your route handlers you will need to add the middleware to your Koa app.
+
+#### Middleware
+
+```ts
+import Koa from "Koa";
+import { createAbby } from "@tryabby/koa";
+import abbyConfig from "../abby.config";
+
+const { abby, middleware } = createAbby(abbyConfig);
+
+const app = new Koa();
+
+app.use(middleware);
+
+// ... your routes
+
+app.listen(3000, () => {
+  console.log("Server listening on port 3000");
+});
+```
+
+#### Feature Flags
+
+You can call the `getFeatureFlag` function to get the value of a feature flag.
+Since you loaded all the information from our API this is a synchronous function.
+
+```ts
+if (abby.getFeatureFlag("newFeature")) {
+  // use new algorithm
+} else {
+  // use old algorithm
+}
+```
+
+#### Remote Configs
+
+You can call the `getRemoteConfig` function to get the value of a remote config.
+
+```ts
+const maxSessionCount = abby.getRemoteConfig("maxSessionCount");
+
+if (sessionCount < maxSessionCount) {
+  // show session
+} else {
+  // show error
+}
+```
+
+#### A/B Tests
+
+You can call the `getTestVariant` function to get the variant of a test.
+
+```ts
+const testVariant = abby.getTestVariant("test");
+
+if (testVariant === "A") {
+  // show variant A
+} else {
+  // show variant B
+}
+```

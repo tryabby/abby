@@ -33,9 +33,9 @@ export default defineConfig(
 ```
 
 <Callout type="info" emoji="💡">
-  The first parameter includes all data that might be configured via environment variables.
-  You should not use environment variables in the second parameter, because the type inference
-  might suffer and the CLI could potentially resolve those environment variables!
+  The first parameter includes all data that might be configured via environment variables. You
+  should not use environment variables in the second parameter, because the type inference might
+  suffer and the CLI could potentially resolve those environment variables!
 </Callout>
 
 ## Philosophy
@@ -107,15 +107,17 @@ export default defineConfig(
 The `defineConfig` function takes two objects as a parameter, that will be merged together when read.
 The merged object can contain the following properties:
 
-| Name               | Type     | Required | Description                                              | details               |
-| ------------------ | -------- | :------: | -------------------------------------------------------- | --------------------- |
-| projectId          | `string` |    ✅    | The ID of your project in Abby                           | -                     |
-| apiUrl             | `string` |          | The URL of the Abby API. Defaults to the hosted version  | -                     |
-| currentEnvironment | `string` |    ✅    | The current environment of your application              | [link](/environments) |
-| tests              | `object` |          | An object containing your defined A/B Tests              | -                     |
-| flags              | `array`  |          | An array containing your defined Feature Flag names      | -                     |
-| remoteConfig       | `object` |          | An object containing your Remote Configuration variables | -                     |
-| settings           | `object` |          | An object with additional settings for Abby              | -                     |
+| Name               | Type      | Required | Description                                                             | details               |
+| ------------------ | --------- | :------: | ----------------------------------------------------------------------- | --------------------- |
+| projectId          | `string`  |    ✅    | The ID of your project in Abby                                          | -                     |
+| apiUrl             | `string`  |          | The URL of the Abby API. Defaults to the hosted version                 | -                     |
+| currentEnvironment | `string`  |    ✅    | The current environment of your application                             | [link](/environments) |
+| tests              | `object`  |          | An object containing your defined A/B Tests                             | -                     |
+| flags              | `array`   |          | An array containing your defined Feature Flag names                     | -                     |
+| remoteConfig       | `object`  |          | An object containing your Remote Configuration variables                | -                     |
+| settings           | `object`  |          | An object with additional settings for Abby                             | -                     |
+| debug              | `boolean` |          | A boolean to show additional debug information                          | -                     |
+| fetch              | `fetch`   |          | You can pass in a custom fetch function. Defaults to `globalThis.fetch` | -                     |
 
 #### tests
 
@@ -217,3 +219,12 @@ The settings property is an object containing additional settings for Abby. The 
     },
   },
   ```
+
+#### debug
+
+A boolean that you can toggle on to get debug information logged to the console. Mostly useful in development to see where something potentially goes wrong.
+
+#### fetch
+
+You can pass a custom fetch function in here. This defaults to the global fetch function. This is mostly needed for older versions of Node.js which
+don't have a global fetch function.
