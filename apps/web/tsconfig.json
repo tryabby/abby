@@ -21,7 +21,8 @@
       "server/*": ["server/*"],
       "pages/*": ["pages/*"],
       "components/*": ["components/*"]
-    }
+    },
+    "types": ["vitest/globals"]
   },
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", "**/*.cjs", "**/*.mjs"],
   "exclude": ["node_modules"]

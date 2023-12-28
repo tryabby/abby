@@ -84,14 +84,15 @@ export abstract class EventService {
   }
 
   static async getEventsForCurrentPeriod(projectId: string) {
-    const project = await prisma.project.findUnique({
-      where: { id: projectId },
-      select: { currentPeriodEnd: true, stripePriceId: true },
-    });
+    const [project, eventCount] = await Promise.all([
+      prisma.project.findUnique({
+        where: { id: projectId },
+        select: { stripePriceId: true },
+      }),
+      RequestCache.get(projectId),
+    ]);
 
     if (!project) throw new Error("Project not found");
-
-    const eventCount = await RequestCache.get(projectId);
 
     const plan = Object.keys(PLANS).find(
       (plan) => PLANS[plan as PlanName] === project.stripePriceId
