@@ -101,18 +101,6 @@ export function makeLegacyProjectDataRoute() {
       const now = performance.now();
 
       try {
-        const { events, planLimits, plan, is80PercentOfLimit } =
-          await EventService.getEventsForCurrentPeriod(projectId);
-
-        startTime(c, "validatePlan");
-        if (events > planLimits.eventsPerMonth) {
-          // TODO: send email
-          // TODO: send email if 80% of limit reached
-          await trackPlanOverage(projectId, plan);
-          return c.json({ error: "Plan limit reached" }, { status: 429 });
-        }
-        endTime(c, "validatePlan");
-
         startTime(c, "getAbbyResponseWithCache");
         const response = await getAbbyResponseWithCache({
           projectId,
@@ -125,8 +113,6 @@ export function makeLegacyProjectDataRoute() {
           projectId,
           apiVersion: "V0",
           functionDuration: performance.now() - now,
-          is80PercentOfLimit,
-          plan,
         });
 
         return c.json(response);

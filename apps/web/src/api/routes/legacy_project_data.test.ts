@@ -1,37 +1,11 @@
 import { testClient } from "hono/testing";
 import { makeLegacyProjectDataRoute } from "./legacy_project_data";
-import { EventService } from "server/services/EventService";
 import { jobManager } from "server/queue/Manager";
 import { FeatureFlag, FeatureFlagValue, Option, Test } from "@prisma/client";
 import { Decimal } from "@prisma/client/runtime/library";
-import { trackPlanOverage } from "lib/logsnag";
-
-vi.mock("server/services/EventService", () => ({
-  EventService: {
-    getEventsForCurrentPeriod: vi.fn(() => {
-      return {
-        events: 0,
-        is80PercentOfLimit: false,
-        plan: "PRO",
-        planLimits: {
-          eventsPerMonth: 100000,
-          environments: 100,
-          flags: 100,
-          tests: 100,
-        },
-      } satisfies Awaited<
-        ReturnType<typeof EventService.getEventsForCurrentPeriod>
-      >;
-    }),
-  },
-}));
 
 vi.mock("../../env/server.mjs", () => ({
   env: {},
-}));
-
-vi.mock("lib/logsnag", () => ({
-  trackPlanOverage: vi.fn(),
 }));
 
 vi.mock("server/queue/Manager", () => ({
@@ -133,32 +107,5 @@ describe("Get Config", () => {
       "after-data-request",
       expect.objectContaining({})
     );
-  });
-
-  it("should not return data if the plan limit is reached", async () => {
-    vi.mocked(EventService.getEventsForCurrentPeriod).mockResolvedValueOnce({
-      events: 5,
-      is80PercentOfLimit: false,
-      plan: "PRO",
-      planLimits: {
-        eventsPerMonth: 1,
-        environments: 100,
-        flags: 100,
-        tests: 100,
-      },
-    } satisfies Awaited<ReturnType<typeof EventService.getEventsForCurrentPeriod>>);
-
-    const app = makeLegacyProjectDataRoute();
-
-    const res = await testClient(app)[":projectId"].data.$get({
-      param: {
-        projectId: "test",
-      },
-      query: {
-        environment: "test",
-      },
-    });
-    expect(res.status).toBe(429);
-    expect(trackPlanOverage).toHaveBeenCalledTimes(1);
   });
 });

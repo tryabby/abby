@@ -1,5 +1,5 @@
 import { AfterDataRequest } from "./AfterDataRequest";
-import { BaseJob, Job, JobType } from "./types";
+import { Job } from "./types";
 
 type JobTypeMapping = {
   "after-data-request": AfterDataRequest;

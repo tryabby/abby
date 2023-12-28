@@ -1,37 +1,11 @@
 import { testClient } from "hono/testing";
 import { makeProjectDataRoute } from "./v1_project_data";
-import { EventService } from "server/services/EventService";
 import { jobManager } from "server/queue/Manager";
 import { FeatureFlag, FeatureFlagValue, Option, Test } from "@prisma/client";
 import { Decimal } from "@prisma/client/runtime/library";
-import { trackPlanOverage } from "lib/logsnag";
-
-vi.mock("server/services/EventService", () => ({
-  EventService: {
-    getEventsForCurrentPeriod: vi.fn(() => {
-      return {
-        events: 0,
-        is80PercentOfLimit: false,
-        plan: "PRO",
-        planLimits: {
-          eventsPerMonth: 100000,
-          environments: 100,
-          flags: 100,
-          tests: 100,
-        },
-      } satisfies Awaited<
-        ReturnType<typeof EventService.getEventsForCurrentPeriod>
-      >;
-    }),
-  },
-}));
 
 vi.mock("../../env/server.mjs", () => ({
   env: {},
-}));
-
-vi.mock("lib/logsnag", () => ({
-  trackPlanOverage: vi.fn(),
 }));
 
 vi.mock("server/queue/Manager", () => ({
@@ -148,33 +122,6 @@ describe("Get Config", () => {
       expect.objectContaining({})
     );
   });
-
-  it("should not return data if the plan limit is reached", async () => {
-    vi.mocked(EventService.getEventsForCurrentPeriod).mockResolvedValueOnce({
-      events: 5,
-      is80PercentOfLimit: false,
-      plan: "PRO",
-      planLimits: {
-        eventsPerMonth: 1,
-        environments: 100,
-        flags: 100,
-        tests: 100,
-      },
-    } satisfies Awaited<ReturnType<typeof EventService.getEventsForCurrentPeriod>>);
-
-    const app = makeProjectDataRoute();
-
-    const res = await testClient(app)[":projectId"].$get({
-      param: {
-        projectId: "test",
-      },
-      query: {
-        environment: "test",
-      },
-    });
-    expect(res.status).toBe(429);
-    expect(trackPlanOverage).toHaveBeenCalledTimes(1);
-  });
 });
 
 describe("Get Config Script", () => {
@@ -192,39 +139,14 @@ describe("Get Config Script", () => {
     expect(res.status).toBe(200);
     const data = await res.text();
 
-    expect(data).toMatchInlineSnapshot('"window.__abby_data__ = {\\"tests\\":[{\\"name\\":\\"First Test\\",\\"weights\\":[0.25,0.25,0.25,0.25]}],\\"flags\\":[{\\"name\\":\\"First Flag\\",\\"value\\":true}],\\"remoteConfig\\":[{\\"name\\":\\"First Config\\",\\"value\\":2}]}"');
+    expect(data).toMatchInlineSnapshot(
+      '"window.__abby_data__ = {\\"tests\\":[{\\"name\\":\\"First Test\\",\\"weights\\":[0.25,0.25,0.25,0.25]}],\\"flags\\":[{\\"name\\":\\"First Flag\\",\\"value\\":true}],\\"remoteConfig\\":[{\\"name\\":\\"First Config\\",\\"value\\":2}]}"'
+    );
 
     expect(vi.mocked(jobManager.emit)).toHaveBeenCalledTimes(1);
     expect(vi.mocked(jobManager.emit)).toHaveBeenCalledWith(
       "after-data-request",
       expect.objectContaining({})
     );
-  });
-
-  it("should not return data if the plan limit is reached", async () => {
-    vi.mocked(EventService.getEventsForCurrentPeriod).mockResolvedValueOnce({
-      events: 5,
-      is80PercentOfLimit: false,
-      plan: "PRO",
-      planLimits: {
-        eventsPerMonth: 1,
-        environments: 100,
-        flags: 100,
-        tests: 100,
-      },
-    } satisfies Awaited<ReturnType<typeof EventService.getEventsForCurrentPeriod>>);
-
-    const app = makeProjectDataRoute();
-
-    const res = await testClient(app)[":projectId"]["script.js"].$get({
-      param: {
-        projectId: "test",
-      },
-      query: {
-        environment: "test",
-      },
-    });
-    expect(res.status).toBe(429);
-    expect(trackPlanOverage).toHaveBeenCalledTimes(1);
   });
 });

@@ -1,16 +1,12 @@
 import { Context, Hono } from "hono";
 import { timing, startTime, endTime } from "hono/timing";
-
 import { cors } from "hono/cors";
 import { zValidator } from "@hono/zod-validator";
 import { prisma } from "server/db/client";
-
 import { ABBY_WINDOW_KEY, AbbyDataResponse } from "@tryabby/core";
 import { z } from "zod";
 import createCache from "server/common/memory-cache";
 import { transformFlagValue } from "lib/flags";
-import { EventService } from "server/services/EventService";
-import { trackPlanOverage } from "lib/logsnag";
 import { jobManager } from "server/queue/Manager";
 
 export const X_ABBY_CACHE_HEADER = "X-Abby-Cache";
@@ -107,18 +103,6 @@ export function makeProjectDataRoute() {
         const now = performance.now();
 
         try {
-          const { events, planLimits, plan, is80PercentOfLimit } =
-            await EventService.getEventsForCurrentPeriod(projectId);
-
-          startTime(c, "validatePlan");
-          if (events > planLimits.eventsPerMonth) {
-            // TODO: send email
-            // TODO: send email if 80% of limit reached
-            await trackPlanOverage(projectId, plan);
-            return c.json({ error: "Plan limit reached" }, { status: 429 });
-          }
-          endTime(c, "validatePlan");
-
           startTime(c, "getAbbyResponseWithCache");
           const response = await getAbbyResponseWithCache({
             projectId,
@@ -132,8 +116,6 @@ export function makeProjectDataRoute() {
           jobManager.emit("after-data-request", {
             apiVersion: "V1",
             functionDuration: duration,
-            is80PercentOfLimit,
-            plan,
             projectId,
           });
 
@@ -164,20 +146,7 @@ export function makeProjectDataRoute() {
         const now = performance.now();
 
         try {
-          const { events, planLimits, plan, is80PercentOfLimit } =
-            await EventService.getEventsForCurrentPeriod(projectId);
-
-          startTime(c, "validatePlan");
-          if (events > planLimits.eventsPerMonth) {
-            // TODO: send email
-            // TODO: send email if 80% of limit reached
-            await trackPlanOverage(projectId, plan);
-            return c.json({ error: "Plan limit reached" }, { status: 429 });
-          }
-          endTime(c, "validatePlan");
-
           startTime(c, "getAbbyResponseWithCache");
-
           const response = await getAbbyResponseWithCache({
             projectId,
             environment,
@@ -189,15 +158,11 @@ export function makeProjectDataRoute() {
             response
           )}`;
 
-          endTime(c, "getAbbyResponseWithCache");
-
           const duration = performance.now() - now;
 
           jobManager.emit("after-data-request", {
             apiVersion: "V1",
             functionDuration: duration,
-            is80PercentOfLimit,
-            plan,
             projectId,
           });
 
