@@ -19,7 +19,7 @@ export const PLANS: Record<PlanName, string> = {
   BETA: "BETA",
 };
 
-type Limit = {
+export type Limit = {
   tests: number;
   eventsPerMonth: number;
   environments: number;
