@@ -18,3 +18,4 @@ export default defineConfig(
     remoteConfig: { flag2: "Number" },
   }
 );
+

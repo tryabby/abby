@@ -10,6 +10,9 @@ import { push } from "./push";
 import { ConfigOption, HostOption } from "./sharedOptions";
 import { multiLineLog, startServerAndGetToken } from "./util";
 import { initAbbyConfig } from "./init";
+import { addCommandTypeSchema } from "./schemas";
+import { addFlag } from "./add-flag";
+import { addRemoteConfig } from "./add-remote-config";
 
 const program = new Command();
 
@@ -74,6 +77,45 @@ program
     try {
       const token = await getToken();
       await push({ apiKey: token, apiUrl: options.host, configPath: options.config });
+    } catch (e) {
+      console.log(
+        chalk.red(
+          multiLineLog(
+            e instanceof Error
+              ? e.message
+              : "Something went wrong. Please check your internet connection"
+          )
+        )
+      );
+    }
+  });
+
+program
+  .command("add")
+  .description("create a new flag or remote config both locally and remotely")
+  .argument("<entryType>", "Whether you want to create a `flag` or `config`")
+  .addOption(HostOption)
+  .addOption(ConfigOption)
+  .action(async (entryType, options: { configPath?: string; host?: string }) => {
+    let parsedEntryType = addCommandTypeSchema.safeParse(entryType);
+
+    if (!parsedEntryType.success) {
+      console.log(
+        chalk.red("Invalid type. Only `flag` or `config` are possible or leave the option empty")
+      );
+      return;
+    }
+
+    try {
+      const token = await getToken();
+      switch (parsedEntryType.data) {
+        case "flag":
+          await addFlag({ ...options, apiKey: token });
+          break;
+        case "config":
+          await addRemoteConfig({ ...options, apiKey: token });
+          break;
+      }
     } catch (e) {
       console.log(
         chalk.red(

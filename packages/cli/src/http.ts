@@ -55,17 +55,18 @@ export abstract class HttpService {
 
       const status = response.status;
 
-      if (status == 200) {
+      if (status === 200) {
         console.log(chalk.green("Config was pushed successfully"));
-      } else if (status == 500) {
-        console.log(chalk.red(multiLineLog("Push failed", "Please try again later")));
-      } else if (status == 401) {
-        console.log(chalk.red(multiLineLog("Push failed", "Please check your API key")));
+      } else if (status === 500) {
+        throw new Error("Internal server error while pushing config");
+      } else if (status === 401) {
+        throw new Error("Invalid API Key");
       } else {
-        console.log(chalk.red(multiLineLog("Push failed")));
+        throw new Error("Push failed");
       }
     } catch (e) {
-      console.log("Error: " + e);
+      console.log(chalk.red(multiLineLog("Error: " + e)));
+      throw e;
     }
   }
 }
