@@ -93,7 +93,7 @@ const Home: NextPageWithLayout<
       >
         <div className="flex flex-col items-center px-6 pb-12 pt-24 md:px-16">
           <div className="relative">
-            <AmpersandIcon className="absolute -right-48 -top-6 hidden h-48 w-48 lg:block" />
+            <AmpersandIcon className="absolute -right-36 -top-0 hidden h-36 w-36 rotate-3 lg:block" />
             <h1 className="text-center text-5xl font-extrabold">
               Dead-Simple <span className="mark">Feature Flags</span> <br />
               <span className="inline lg:hidden">&</span>
@@ -101,11 +101,11 @@ const Home: NextPageWithLayout<
               Effortless <span className="mark">Remote Config</span>
             </h1>
           </div>
-          <h2 className="mx-auto mt-16 max-w-2xl text-center leading-relaxed">
-            Abby enables modern teams to speed up their development cycles and
-            and release with confidence. <br />
-            With its first class developer experience, Abby is the perfect
-            solution for every software development team.
+          <h2 className="mx-auto mt-16 max-w-2xl text-center text-lg leading-relaxed">
+            Abby is <b>Open Source</b> and <b>fully typed</b>. <br />
+            Abby cuts all the complexity and lets you focus on what matters:{" "}
+            <br />
+            Amazing Developer Experience and easy to use UIs
             <span className="mt-4 block font-semibold">
               Built by Developers for Developers.
             </span>
@@ -157,10 +157,6 @@ const Home: NextPageWithLayout<
       </section>
       <section id="integrations" className="py-24">
         <Integrations />
-      </section>
-      <Divider />
-      <section id="usedBy" className="py-24">
-        <UsedBy />
       </section>
       <Divider />
       <section id="features" className="py-48">
@@ -327,6 +323,10 @@ const Home: NextPageWithLayout<
           </h2>
           <PricingTable />
         </div>
+      </section>
+      <Divider />
+      <section id="usedBy" className="py-24">
+        <UsedBy />
       </section>
       <Divider />
       <section className="py-48">

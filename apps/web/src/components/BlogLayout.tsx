@@ -26,13 +26,16 @@ export function BlogLayout({ children, seoTitle, meta }: Props) {
           ],
         }}
       />
-      <MarketingLayout seoTitle={seoTitle}>
+      <MarketingLayout
+        seoTitle={seoTitle ?? meta.title}
+        seoDescription={meta.excerpt}
+      >
         <main className="container px-6 pb-8 md:px-16">
-          <p className="text-md mb-2 text-gray-500">
+          <p className="text-md mb-4 text-gray-500">
             Published on {dayjs(meta.publishedAt).format("MMMM DD, YYYY")}
           </p>
-          <h1 className="text-5xl font-bold">{meta.title}</h1>
-          <div className="relative my-6 aspect-video max-h-[500px] w-full">
+          <h1 className="text-4xl font-bold">{meta.title}</h1>
+          <div className="relative my-12 aspect-video max-h-[400px] w-full">
             <Image
               src={meta.imageUrl}
               alt={meta.title}
@@ -40,7 +43,7 @@ export function BlogLayout({ children, seoTitle, meta }: Props) {
               fill
             />
           </div>
-          <section className="prose mx-auto w-full max-w-full dark:prose-invert lg:prose-lg">
+          <section className="prose mx-auto w-full max-w-4xl dark:prose-invert lg:prose-lg">
             {children}
           </section>
           <Divider className="my-12" />

@@ -1,0 +1,67 @@
+import { BlogLayout } from "components/BlogLayout";
+
+export const meta = {
+  title: "Honest Marketing: Why you should or should not use Abby",
+  imageUrl: "/img/cut-the-bs.png",
+  publishedAt: "2023-12-17",
+  excerpt:
+    "Abby's Founder Tim shares his honest thoughts about Abby and why you should or should not use it.",
+};
+
+# My Honest Thoughts about Abby
+
+This might sound weird to you since being brutally honest probably isn’t the most common marketing strategy, but it’s a strategy I like and want to have for my product.
+
+## Abby's Core Features
+
+### Feature Flags
+
+I think feature flags are amazing. They help me to feel sane when developing features within teams I’ve worked in. The fact that you can merge a feature into your main branch and release it without being blocked is just amazing. It makes me feel good and also helps to keep the team’s velocity up. Your QA engineer is happy since he can test features safely without any pressure since they can just test whenever there is time and toggle that feature on or off. It also helps you with testing out features in prod and when something goes wrong (which obviously never happens) you could just toggle that flag off again and go back to the old behavior. Using feature flags made me feel better and made me feel better when it was my time on-call. It’s like a little safety net.
+
+However, adding feature flags will add a little complexity to your process and code as well. You will need to:
+
+1. identify that a feature will be behind a feature flag when creating the ticket
+2. add the feature flag into your code and maybe even keep the old code around
+3. remove the feature flag at some point (I feel like this needs more awareness)
+
+I personally think that you will need to think about the effort-to-value ratio here. Adding feature flags can be extremely useful but also feel like a lot of overhead. I would say choose wisely but choose feature flags!
+
+### Remote Config
+
+The Remote Config is kinda like the Feature Flags’s sibling. They’re similar but different. They both provide you with a way of remotely altering parts of your code. While feature flags are just simple booleans, remote config variables allow you to have Strings, Numbers, and also JSON objects.
+
+I personally found this to be a more niche feature. Remote Config Variables are more powerful but with great power comes great complexity. Remote Config Variables shift the focus more towards Abby. Rather than two values (true/false) you can now have potentially unlimited values (Note: There are so many limitations such as a maximum integer size, but there are way more than two potential values). They are almost like a super rudimentary CMS. They obviously lack features you might expect from a CMS but they come with simplicity and if you have feature flags enabled it’s quite easy to understand Remote Config Variables. I like to think about them as Environment Variables on Steroids with a small runtime overhead but type safety!
+
+### A/B Tests
+
+Fun Fact: A/B Tests were the main thing when I first started Abby. Back then it was called A/BBY including the A/B wordplay.
+
+I think A/B tests are truly amazing in theory. The fact that you can use them to make data-driven decisions is quite cool and can potentially eliminate a lot of time arguing what to do and what’s the best way of doing that. But: There are some caveats with A/B testing. First of all: You will need a certain amount of users to get significant results. There is some fancy math in this but just ask yourself: Do you fully trust the ratings on Amazon if there are only 10 of them with 5 stars overall? I wouldn’t!
+
+But that’s a general issue with A/B Testing. It’s not something Abby has. But Abby offers you something that most tools don’t. Abby has a radical approach. We don’t have a fancy WYSIWYG editor where non-technical people can implement A/B Tests by altering the content on your landing page. With Abby you can define an A/B test and then it’s part of the development process to implement them. Right in the code. You can programmatically change what you want to get displayed based on the current variant.
+
+This approach will cost you a little more developer time upfront but it has two main benefits:
+
+- Your tests are more robust: Since those are actually part of your code you’re not reliant on some funky selectors which are often used tools
+- Happy Developers: I haven’t met a single developer to that day who likes any external script that alters their code in production. It’s hell to debug as well
+
+### Open Source & Privacy
+
+I really don’t like putting my personal information in someone else’s tool not knowing what will happen to that data. Getting the next unwanted newsletter. And because I don’t like that I tried to be as open and respectful as possible with Abby. Abby’s code is fully open-source. It means you can just go ahead and have a look into the repo and see my code. This can help to ensure that your data and your user’s data will be safe. It can also make your day by having a good laugh when you see my code.
+
+Abby’s license gives you the option to self-host it as well. While I personally think that self-hosting isn’t worth it for most people, there are definitely some cases where it makes sense and I’m super happy to help you with that :)
+
+## Conclusion
+
+I built Abby and will always continue building it because I think it provides value. I’ve built feature flags in-house for multiple projects and the repetitive work was draining and expensive. I was unsatisfied with the way A/B tests work but I think the idea behind them is cool. Therefore I integrated them in Abby to make them cool.
+
+When you decide to use Abby professionally you will probably need a paid plan at some point. But I hope that the value it provides is higher than the cost.
+
+Abby is a SaaS. Like every one SaaS it means that you are reliant on another service. Even though Abby has an integrated client-side fallback system which means that your application will never crash if Abby is ever down (even though it hasn’t since we launched). But your application will behave differently as if Abby was running.
+
+Best,
+Tim
+
+export default ({ children }) => (
+  <BlogLayout meta={meta}>{children}</BlogLayout>
+);

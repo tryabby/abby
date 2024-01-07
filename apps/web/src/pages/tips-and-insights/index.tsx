@@ -12,6 +12,7 @@ export type PostMeta = {
   imageUrl: string;
   publishedAt: string;
   slug: string;
+  excerpt?: string;
 };
 
 type Props = {
@@ -22,24 +23,28 @@ const BlogPage: NextPageWithLayout<Props> = ({ posts }) => {
   return (
     <div className="container px-6 pb-8 md:px-16">
       <h1 className="mb-4 text-5xl font-bold">Abby Blog</h1>
-      <h2 className="mb-4 text-xl text-gray-500">
+      <h2 className="mb-4 text-xl text-muted-foreground">
         Stay up to date with the latest news and updates
       </h2>
-      <section className="grid grid-cols-1 gap-8 gap-x-12 md:grid-cols-2">
+      <section className="grid grid-cols-1 gap-12 md:grid-cols-2">
         {posts.map((p) => (
-          <Link href={`/tips-and-insights/${p.slug}`}>
+          <Link
+            key={p.slug}
+            href={`/tips-and-insights/${p.slug}`}
+            className="group"
+          >
             <div className="relative aspect-video w-full">
               <Image
                 src={p.imageUrl}
                 alt={p.title}
-                className="rounded-md object-cover"
+                className="rounded-md object-cover transition-all duration-300 group-hover:scale-105"
                 fill
               />
             </div>
-            <span className="my-2 block text-gray-600">
+            <span className="mb-2  mt-4 block text-muted-foreground">
               {dayjs(p.publishedAt).format("MMMM, DD, YYYY")}
             </span>
-            <h3 className="text-2xl font-semibold">{p.title}</h3>
+            <h3 className="text-xl font-medium">{p.title}</h3>
           </Link>
         ))}
       </section>

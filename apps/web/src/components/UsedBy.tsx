@@ -37,12 +37,12 @@ export function UsedBy() {
     <div className="container px-6 md:px-16">
       <h1 className="text-center text-4xl font-bold">Used by engineers at:</h1>
 
-      <div className="mx-auto mt-24 grid grid-cols-2 items-center justify-between md:grid-cols-4 ">
+      <div className="mx-auto mt-24 grid grid-cols-1 items-center justify-between sm:grid-cols-2 md:grid-cols-4 ">
         {COMPANIES.map((company, index) => (
           <Link
             href={company.companyUrl}
             className={
-              "aspect-video h-20 cursor-pointer opacity-50 grayscale transition-all duration-300 ease-in-out hover:opacity-100 hover:grayscale-0"
+              "aspect-video h-20 cursor-pointer justify-self-center opacity-50 grayscale transition-all duration-300 ease-in-out hover:opacity-100 hover:grayscale-0"
             }
           >
             <Image

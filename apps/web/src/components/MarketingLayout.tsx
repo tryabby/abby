@@ -12,12 +12,14 @@ import { AnimatePresence, motion } from "framer-motion";
 export type MarketingLayoutProps = PropsWithChildren<{
   isMarkdown?: boolean;
   seoTitle?: string;
+  seoDescription?: string;
 }>;
 
 export function MarketingLayout({
   children,
   isMarkdown,
   seoTitle,
+  seoDescription,
 }: MarketingLayoutProps) {
   const router = useRouter();
   const pageName = router.asPath;
@@ -42,7 +44,10 @@ export function MarketingLayout({
 
   return (
     <>
-      <NextSeo title={seoTitle ?? metaTitle} description={metaDescription} />
+      <NextSeo
+        title={seoTitle ?? metaTitle}
+        description={seoDescription ?? metaDescription}
+      />
       <main
         className={cn(
           "max-w-screen flex min-h-screen flex-col overflow-x-hidden bg-ab_primary-background text-ab_primary-foreground"

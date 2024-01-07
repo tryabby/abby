@@ -122,7 +122,7 @@ export const Integrations = () => {
       <div className="flex items-center">
         <Link
           href={`${DOCS_URL}integrations/${currentIntegration.docsUrlSlug}`}
-          className="bg-accent-background mx-auto min-w-[200px] rounded-lg px-4 py-2 text-center font-semibold uppercase text-accent-foreground transition-transform duration-200 ease-in-out hover:scale-110"
+          className="mx-auto block min-w-[200px] rounded-lg bg-accent px-4 py-2 text-center font-semibold uppercase text-accent-foreground transition-transform duration-200 ease-in-out hover:scale-110"
         >
           {currentIntegration.name} Docs
         </Link>

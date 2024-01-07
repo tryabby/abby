@@ -22,7 +22,12 @@ export function Footer() {
             </h2>
           </div>
           <div className="flex flex-col gap-y-4 md:gap-0">
-            <h1 className="mb-2 text-2xl font-bold md:mb-3">Integrations</h1>
+            <Link
+              href="/integrations"
+              className="mb-2 text-2xl font-bold md:mb-3"
+            >
+              Integrations
+            </Link>
             <Link href={`/integrations/react`}>React</Link>
             <Link href={`/integrations/nextjs`}>Next.js</Link>
             <Link href={`/integrations/svelte`}>Svelte</Link>
@@ -30,7 +35,7 @@ export function Footer() {
           </div>
           <div className="flex flex-col gap-y-4 md:gap-0">
             <h1 className="mb-2 text-2xl font-bold md:mb-3">Links</h1>
-            <Link href={`/tips-and-insights`}>Tips & Insights</Link>
+            <Link href={`/tips-and-insights`}>Blog</Link>
             <Link href={DOCS_URL}>Documentation</Link>
             <Link href={GITHUB_URL}>Github</Link>
             <Link href={DISCORD_INVITE_URL}>Discord</Link>

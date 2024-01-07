@@ -1,0 +1,72 @@
+import { BlogLayout } from "components/BlogLayout";
+
+export const meta = {
+  title: "Why you as a Project Manager should know about Feature Flags",
+  imageUrl: "/img/featureflags-for-pms.png",
+  publishedAt: "2023-10-06",
+  excerpt:
+    "Discover the power of Feature Flags and Remote Config for agile software development. Control feature releases, toggle functionalities, and enhance collaboration between Devs and PMs. Find the perfect solution for your team's needs and make your developers happy with Feature Flags. Try Abby, the Open Source Feature Flagging Tool, at tryabby.com.",
+};
+
+## Prologue
+
+Your team is a modern, agile software development team that develops an online shop for furniture. You work in sprints and release a new version at the end of a two-week sprint. Your team is working hard to finish all the new features within this sprint so it can be released in time. You've set up a staging environment besides your production deployment so that you can safely test features before the release that you can be sure that there will never be bugs on production (obviously your team never produces bugs either way 😉)
+
+This sprint your team worked on two major things along smaller bugs & features. The first one being a new payment provider which users can use to buy products and the second one is a new suggestion algorithm for products which hopefully highly increases your sales.
+
+The first week passes and both features are implemented in a breeze. The code is written, approved, and merged which means you can check it out on the staging environment. It's Wednesday and you're checking out a couple of bugs that have been fixed as well as the new big features. The bugs seem to be fixed, some of them were bugging you for quite some time so you're happy to release them to production tomorrow.
+
+You start to test the new suggestion algorithm and it quite frankly doesn't seem right. Are we sure that people that bought a dining room table also bought another dining room table as well as a sofa? I thought we should recommend chairs here along the table. You also try to pay with the new payment provider which just gives you a "something went wrong, please try again later." Bummer! "We can't release this," you think. "But we really need to deploy the bugfixes; we're dropping paying customers with them!"
+
+And so you mentally prepare yourself to either ask the devs to roll back the new features or postpone the release.
+
+Both options don't feel right you think. What if there would be only one way that I can have the power of what is released and what not. And then you remember that you read a blog post about "Why you as a Project Manager should know about Feature Flags & Remote Config."
+
+## Introducing Feature Flags
+
+There aren't many things that both Devs and PMs like equally as much. Feature Flags might be one of them. And they're pretty simple. Just like the name suggests, they are pretty much just a toggle to turn a feature on or off. The easiest version of that would just adding a block in your code which then does exactly this. This is the easiest version of Feature Flags and has been around for quite some time. This gives the developers (and unfortunately only the developers) the chance to quickly toggle between different implementations of their code and enable or disable features and test out new algorithms. Even though this approach is super easy and doesn't require any additional services, it has some downsides:
+
+- You need a new release to enable or disable features
+- It requires a dev to toggle it
+- You can't easily get an overview of what feature is enabled or disabled
+- The flag is turned on / off for every environment
+
+But I wouldn't be writing about this if this was the only solution since this solution probably doesn't make you happy and doesn't fully satisfy your needs.
+
+## Feature Flags, but better
+
+Because you're not the first one not to be satisfied with this approach, there have been many people thinking how you can solve this and the solution to this problem is quite simple:
+
+An online dashboard which allows you to easily see what features are enabled or disabled but also gives you the opportunity to remote toggle each flag by yourself!
+
+Some tools even give you the option to define and model your environments in their dashboard. So you can go ahead and add Staging and Production in there and toggle the features on or off for each environment. Doesn't that sound lovely? Let's have a look at the downsides of the old solution:
+
+- You need a new release to enable or disable features → Nope!
+- It requires a dev to toggle it → Nope, You can do it!
+- You can't easily get an overview of what feature is enabled or disabled → Oh, you can now!
+- The flag is turned on / off for every environment → Nope, you decide!
+
+So this could have been the end of the blog post since it's the perfect solution, right? But there is actually more to it. The service obviously has some downsides to it as well
+
+- Costs money 🤑
+- You devs might not like it
+
+## Better Feature Flags, but better
+
+The first downside is undeniable. Someone will charge for their service and if they are not charging you, you will probably pay with your data. So I guess we just need to swallow that pill to enjoy the improvements that a service like this gives us. And also consider the dev time you saved 😉
+
+But the other downside is in fact optional since this problem can be solved. But first of all let me explain why your devs might not like it:
+
+Every time you integrate a new service or a new tool you will need to install some kind of SDK (Software Development Kit) in your code to use it. This is always a bit tricky since you're adding a "blackbox" to your code because you're essentially putting someone else's code into yours. The other downside is that the SDK might just be bad at all (Fun exercise: Ask your devs about some third party SDKs they have to use and if they like them)
+
+So you know that you will need to find a service which makes your devs happy as well since I've claimed the following at the beginning of this post:
+
+> There aren't many things that both Devs and PMs like equally as much. Feature Flags might be one of them.
+
+And I'm sure that you will find a nice solution together which will fully satisfy your needs and makes the devs happy. Because happy devs means happy life (doesn't rhyme, but still true)
+
+And if you can't find anything or just want to see a tool which checks all those marks, you should check out my Open Source Feature Flagging Tool Abby. It is built for developers and PMs like you by combining an amazing SDK that Devs love as well as a super simple interface with just the features you need and nothing more that clutters it and makes you less productive. You can try it out for free at [http://www.tryabby.com](http://www.tryabby.com).
+
+export default ({ children }) => (
+  <BlogLayout meta={meta}>{children}</BlogLayout>
+);
