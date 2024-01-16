@@ -22,7 +22,7 @@ export function getMarketingSeo(pageName: string): SeoProps {
       return {
         metaTitle: "Open Source Feature Flags and feature testing  | Abby ",
         metaDescription:
-          "Looking for a free and easy-to-implement feature flag tool for developers? Check out our open-source software for fast and efficient feature testing. Start optimizing your website or application today!",
+          "Unlock Agile Development with Abby: The Ultimate Open Source Feature Flagging Solution. Elevate Your Coding with Privacy-Centric, User-Friendly Tools & Advanced APIs!",
       };
     case "/login":
       return {
