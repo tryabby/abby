@@ -297,7 +297,7 @@ function Step4() {
           get you started. Feel free to pick a time that works for you{" "}
           <a
             className="text-pink-500"
-            href="https://cal.com/tim-raderschad/a-bby-onboarding"
+            href="https://cal.com/cstrnt/abby-feedback"
           >
             here
           </a>
