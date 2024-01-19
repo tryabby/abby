@@ -73,7 +73,7 @@ export const Layout = ({ children }: { children: ReactNode }) => {
                       Send a Mail
                     </DropdownMenuItem>
                   </Link>
-                  <Link href="https://cal.com/tim-raderschad/abby-help">
+                  <Link href="https://cal.com/cstrnt/abby-help">
                     <DropdownMenuItem>
                       <Video className="mr-2 h-4 w-4" />
                       Book a free Call
