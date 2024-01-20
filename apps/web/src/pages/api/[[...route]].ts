@@ -1,12 +1,10 @@
 import { handle } from "@hono/node-server/vercel";
-import { bootstrapApi } from "api";
-
-const app = bootstrapApi();
+import { app } from "api";
 
 export default handle(app);
 
 export const config = {
-    api: {
-        bodyParser: false,
-    },
-}
+  api: {
+    bodyParser: false,
+  },
+};
