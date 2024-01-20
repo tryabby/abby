@@ -1,5 +1,5 @@
 import { makeConfigRoute } from "api/routes/v1_config";
-import { projectDataRoute } from "api/routes/v1_project_data";
+import { makeProjectDataRoute } from "api/routes/v1_project_data";
 import { Hono } from "hono";
 import { cors } from "hono/cors";
 import { logger } from "hono/logger";
@@ -18,5 +18,5 @@ export const app = new Hono()
   .route("/dashboard", makeLegacyProjectDataRoute())
   // v1 routes
   .route("/v1/config", makeConfigRoute())
-  .route("/v1/data", projectDataRoute)
+  .route("/v1/data", makeProjectDataRoute())
   .route("/v1/track", makeEventRoute());
