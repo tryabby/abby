@@ -1,5 +1,11 @@
 # @tryabby/core
 
+## 5.1.4
+
+### Patch Changes
+
+- add experimentalCDN flag
+
 ## 5.1.3
 
 ### Patch Changes

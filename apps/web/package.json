@@ -1,6 +1,6 @@
 {
   "name": "web",
-  "version": "0.2.33",
+  "version": "0.2.34",
   "private": true,
   "scripts": {
     "build": "next build",
@@ -82,7 +82,7 @@
     "csstype": "^3.1.2",
     "dayjs": "^1.11.7",
     "framer-motion": "^10.12.7",
-    "hono": "^3.11.8",
+    "hono": "^3.12.6",
     "immer": "^9.0.21",
     "ioredis": "^5.3.1",
     "isbot": "^3.6.8",

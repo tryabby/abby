@@ -6,6 +6,7 @@ export const DYNAMIC_ABBY_CONFIG_KEYS = [
   "currentEnvironment",
   "debug",
   "apiUrl",
+  "__experimentalCdnUrl",
 ] as const satisfies readonly (keyof AbbyConfig)[];
 
 export type DynamicConfigKeys = (typeof DYNAMIC_ABBY_CONFIG_KEYS)[number];

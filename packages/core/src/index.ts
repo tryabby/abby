@@ -87,7 +87,7 @@ export type AbbyConfig<
 > = {
   projectId: string;
   apiUrl?: string;
-  currentEnvironment?: Environments[number];
+  currentEnvironment: Environments[number];
   environments: Environments;
   tests?: Tests;
   flags?: FlagName[];
@@ -95,6 +95,7 @@ export type AbbyConfig<
   settings?: Settings<F.NoInfer<FlagName>, F.NoInfer<RemoteConfigName>, F.NoInfer<RemoteConfig>>;
   debug?: boolean;
   fetch?: (typeof globalThis)["fetch"];
+  __experimentalCdnUrl?: string;
 };
 
 export class Abby<
@@ -160,6 +161,7 @@ export class Abby<
    */
   async loadProjectData() {
     this.log(`loadProjectData()`);
+    const start = Date.now();
 
     // browser environments can load the abby data from the window object
     // when the script is loaded from the server
@@ -171,17 +173,20 @@ export class Abby<
       this.log(`loadProjectData() => using window data`);
       return this.init(window[ABBY_WINDOW_KEY] as AbbyDataResponse);
     }
-
     const data = await HttpService.getProjectData({
       projectId: this.config.projectId,
       environment: this.config.currentEnvironment as string,
       url: this.config.apiUrl,
       fetch: this._cfg.fetch,
+      __experimentalCdnUrl: this._cfg.__experimentalCdnUrl
+        ? `${this._cfg.__experimentalCdnUrl}/${this.config.projectId}/${this.config.currentEnvironment}`
+        : undefined,
     });
     if (!data) {
       this.log(`loadProjectData() => no data`);
       return;
     }
+    this.log(`loadProjectData() => finished. Elapsed: `, Date.now() - start);
     return this.init(data);
   }
 

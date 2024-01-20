@@ -1,0 +1,16 @@
+{
+  "name": "@tryabby/cdn",
+  "private": true,
+  "scripts": {
+    "dev": "wrangler dev src/index.ts",
+    "deploy": "wrangler deploy --minify src/index.ts"
+  },
+  "dependencies": {
+    "hono": "^3.12.6"
+  },
+  "devDependencies": {
+    "@tryabby/core": "workspace:*",
+    "@cloudflare/workers-types": "^4.20231218.0",
+    "wrangler": "^3.22.0"
+  }
+}

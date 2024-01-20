@@ -7,17 +7,20 @@ export abstract class HttpService {
     environment,
     url,
     fetch = globalThis.fetch,
+    __experimentalCdnUrl,
   }: {
     projectId: string;
     environment?: string;
     url?: string;
+    __experimentalCdnUrl?: string;
     fetch?: (typeof globalThis)["fetch"];
   }) {
     try {
       const res = await fetch(
-        `${url ?? ABBY_BASE_URL}api/v1/data/${projectId}${
-          environment ? `?environment=${environment}` : ""
-        }`
+        __experimentalCdnUrl ??
+          `${url ?? ABBY_BASE_URL}api/v1/data/${projectId}${
+            environment ? `?environment=${environment}` : ""
+          }`
       );
 
       if (!res.ok) return null;
