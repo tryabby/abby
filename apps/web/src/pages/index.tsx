@@ -249,7 +249,7 @@ const Home: NextPageWithLayout<
             playsInline
             preload="metadata"
           >
-            <source src="/videos/devtools.mp4" type="video/mp4" />
+            <source src="/videos/devtools_new.mp4" type="video/mp4" />
           </video>
 
           <div className="flex items-center">
