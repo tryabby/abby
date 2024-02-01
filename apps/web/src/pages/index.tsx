@@ -6,7 +6,15 @@ import { Divider } from "components/Divider";
 import { Feature } from "components/Feature";
 import { MarketingLayout } from "components/MarketingLayout";
 import { PricingTable } from "components/Pricing";
-import { Clock, ExternalLink, FlaskConical, Shield } from "lucide-react";
+import {
+  Clock,
+  ExternalLink,
+  FlaskConical,
+  Shield,
+  Blocks,
+  Server,
+  Code2,
+} from "lucide-react";
 import { InferGetStaticPropsType } from "next";
 import { useTheme } from "next-themes";
 import Image from "next/image";
@@ -95,20 +103,18 @@ const Home: NextPageWithLayout<
           <div className="relative">
             <AmpersandIcon className="absolute -right-36 -top-0 hidden h-36 w-36 rotate-3 lg:block" />
             <h1 className="text-center text-5xl font-extrabold">
-              Dead-Simple <span className="mark">Feature Flags</span> <br />
+              Type-Safe <span className="mark">Feature Flags</span> <br />
               <span className="inline lg:hidden">&</span>
               <br />
-              Effortless <span className="mark">Remote Config</span>
+              Flexible <span className="mark">Remote Config</span>
             </h1>
           </div>
           <h2 className="mx-auto mt-16 max-w-2xl text-center text-lg leading-relaxed">
-            Abby is <b>Open Source</b> and <b>fully typed</b>. <br />
-            Abby cuts all the complexity and lets you focus on what matters:{" "}
-            <br />
-            Amazing Developer Experience and easy to use UIs
-            <span className="mt-4 block font-semibold">
-              Built by Developers for Developers.
-            </span>
+            Abby is <b>Open Source</b> and <b>fully typed</b> with SDKs for{" "}
+            <b>React</b> and <b>Next.js</b>. <br />
+            Test in different environments, debug with devtools
+            <br /> Cut through feature deployment complexity with one service,
+            built for developers.
           </h2>
 
           <div className="flex flex-col items-center">
@@ -128,7 +134,7 @@ const Home: NextPageWithLayout<
               {variant === "C" && "Get Started"}
             </Link>
             <span className="mt-4 text-xs">
-              Free forever. No Credit Card required
+              Start free, scale at a fair price.
             </span>
           </div>
           {heroMediaVariant === "Image" && (
@@ -165,51 +171,27 @@ const Home: NextPageWithLayout<
             <span className="mark">Why</span> choose Abby?
           </h1>
           <h2 className="mb-8 text-center text-lg">
-            Find out why Abby is the easiest and nicest solution out there.
+            Born out of an engineer&apos;s frustration internally, and now
+            adopted by engineering teams at fast-growing startups and
+            enterprises.
           </h2>
 
           <div className="grid grid-cols-1 gap-8 md:grid-cols-2">
             <Feature
-              icon={GiPadlock}
-              title="Privacy First"
-              subtitle="Avoid big companies that track you and sell your data"
+              icon={Blocks}
+              title="Tightly Integrated"
+              subtitle="Built for a modern tech stack"
             >
-              Abby is all about privacy and transparency. We prove it by being
-              open source.
+              Built for a modern tech stack SDKs for different frameworks,
+              including React and Next.js. All of them fully type-safe.
             </Feature>
             <Feature
-              icon={BsCodeSlash}
-              title="Developer Friendly"
-              subtitle="Enjoy a developer-friendly API and a great developer experience"
+              icon={Server}
+              title="Backend Coverage"
+              subtitle="Optimized for server-side"
             >
-              Abby was created by developers that experienced the pain of
-              existing solutions.
-            </Feature>
-            <Feature
-              icon={BsBarChartFill}
-              title="Simple Analytics"
-              subtitle="Analytics that everyone can understand"
-            >
-              Abby focuses on simple analytics and easy-to-read reports so that
-              you don&apos;t have to be a data scientist to understand
-              what&apos;s going on.
-            </Feature>
-            <Feature
-              icon={Clock}
-              title="Integrate in minutes"
-              subtitle="Fast Implementation"
-            >
-              Start using Abby in under 5 minutes. Simply integrate it in your
-              code and you&apos;re ready to go.
-            </Feature>
-            <Feature
-              icon={Shield}
-              title="The safe and reliable Feature Flagging tool"
-              subtitle="Downtime Secure"
-            >
-              Abby ensures a stable testing environment. Abbys SDKs have built
-              in fallbacks to ensure that your users will never experience any
-              downtime.
+              Support for SSR or SSG included out of the box for a snappy user
+              experience.
             </Feature>
             <Feature
               icon={FlaskConical}
@@ -219,6 +201,30 @@ const Home: NextPageWithLayout<
               Utilize different environments for each feature flag or remote
               config variable. Create various environments to test features
               before they go live.
+            </Feature>
+            <Feature
+              icon={Clock}
+              title="Reliability First"
+              subtitle="Reduce downtime risk"
+            >
+              SDKs with built in fallbacks to reduce the risk of downtime and
+              ensure a stable testing environment.
+            </Feature>
+            <Feature
+              icon={Shield}
+              title="Privacy and Transparency"
+              subtitle="Ethically made for humanity"
+            >
+              Fully open source, anonymized data, with the option to self-host
+              (if you really wanted to).
+            </Feature>
+            <Feature
+              icon={Code2}
+              title="DevTools Included"
+              subtitle="Contextual debugging"
+            >
+              Install Abby&apos;s devtools to debug feature flags and remote
+              config variables on the fly. First-Party CLI in Beta.
             </Feature>
           </div>
         </div>

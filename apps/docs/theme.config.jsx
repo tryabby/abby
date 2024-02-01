@@ -1,9 +1,9 @@
+/* eslint-disable import/no-anonymous-default-export */
 import { useRouter } from "next/router";
 
 export default {
   useNextSeoProps() {
     const router = useRouter();
-
     const currentPageUrl = `https://docs.tryabby.com${router.asPath}`;
     return {
       titleTemplate: "%s – Abby Docs",
@@ -28,6 +28,10 @@ export default {
       },
     };
   },
+  search: {
+    loading: "Loading...",
+    placeholder: "Search...",
+  },
   head: (
     <>
       <link rel="icon" href="https://www.tryabby.com/favicon.png" />
@@ -42,12 +46,11 @@ export default {
     content: null,
   },
   editLink: {
-    component: null,
+    component: () => <></>,
   },
   sidebar: {
     toggleButton: true,
   },
-  defaultShowCopyCode: true,
   footer: {
     component: null,
   },

@@ -10,6 +10,9 @@ import { getLimitByPlan } from "server/common/plans";
 import { Plan } from "types/plausible-events";
 import { Tooltip, TooltipContent, TooltipTrigger } from "./Tooltip";
 import { useTracking } from "lib/tracking";
+import { useState } from "react";
+import { Switch } from "./ui/switch";
+import { Label } from "./ui/label";
 
 type PricingElementProps = {
   price: string;
@@ -110,14 +113,25 @@ function PricingElement({
 }
 
 export function PricingTable() {
-  const router = useRouter();
+  const [useEuro, setUseEuro] = useState(false);
   const session = useSession();
   const basePlan = getLimitByPlan(null);
   const startupPlan = getLimitByPlan("STARTUP");
   const proPlan = getLimitByPlan("PRO");
 
   return (
-    <>
+    <div>
+      <div className="my-6 flex items-center justify-center">
+        <div className="flex items-center space-x-2">
+          <Label htmlFor="airplane-mode">Dollar ($)</Label>
+          <Switch
+            id="airplane-mode"
+            checked={useEuro}
+            onCheckedChange={setUseEuro}
+          />
+          <Label htmlFor="airplane-mode">Euro (€)</Label>
+        </div>
+      </div>
       <div className="mx-auto grid max-w-md grid-cols-1 gap-y-4 md:gap-x-4 md:gap-y-12 lg:max-w-none lg:grid-cols-4">
         <PricingElement
           href={session.status === "authenticated" ? "/projects" : "/login"}
@@ -128,20 +142,20 @@ export function PricingTable() {
           features={[
             `${basePlan.eventsPerMonth.toLocaleString()} Events / month`,
             `${basePlan.tests} A/B Test`,
-            `${basePlan.flags} Feature Flags / Remote Config Variables`,
+            `${basePlan.flags} Feature Flags / Remote Configs`,
             `${basePlan.environments} Environments`,
           ]}
         />
         <PricingElement
           href={session.status === "authenticated" ? "/projects" : "/login"}
-          price="12€"
+          price={`12${useEuro ? "€" : "$"}`}
           title="Startup"
           subtitle="Optimal for startups & small businesses that want to dive deeper with Feature Flags & Remote Config"
           planName="STARTUP"
           features={[
             `${startupPlan.eventsPerMonth.toLocaleString()} Events / month`,
             `${startupPlan.tests} A/B Tests`,
-            `${startupPlan.flags} Feature Flags / Remote Config Variables`,
+            `${startupPlan.flags} Feature Flags / Remote Configs`,
             `${startupPlan.environments} Environments`,
           ]}
           priceSuffix="/mo*"
@@ -149,14 +163,14 @@ export function PricingTable() {
         />
         <PricingElement
           href={session.status === "authenticated" ? "/projects" : "/login"}
-          price="89€"
+          price={`89${useEuro ? "€" : "$"}`}
           title="Pro"
           planName="PRO"
           subtitle="Perfect for growing companies that want to scale their Feature Flags & Remote Config and get more insights"
           features={[
             `${proPlan.eventsPerMonth.toLocaleString()} Events / month`,
             `${proPlan.tests} A/B Tests`,
-            `${proPlan.flags} Feature Flags / Remote Config Variables`,
+            `${proPlan.flags} Feature Flags / Remote Configs`,
             `${proPlan.environments} Environments`,
           ]}
           priceSuffix="/mo*"
@@ -171,12 +185,12 @@ export function PricingTable() {
           features={[
             "Unlimited Events / month",
             "Unlimited Tests",
-            "Unlimited Feature Flags / Remote Config Variables",
+            "Unlimited Feature Flags / Remote Configs",
             "Unlimited Environments",
           ]}
         />
       </div>
       <p className="mt-8 text-center">*Those prices are per Project</p>
-    </>
+    </div>
   );
 }
