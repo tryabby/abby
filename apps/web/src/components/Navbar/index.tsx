@@ -54,7 +54,7 @@ const NAV_ITEMS: Array<NavItem> = [
       },
       {
         title: "Integrations",
-        subTitle: "SDKs for your favorite frameworks",
+        subTitle: "SDKs for React, Next.js, and More",
         href: "/integrations",
       },
       {

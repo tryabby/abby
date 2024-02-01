@@ -35,7 +35,9 @@ const COMPANIES = [
 export function UsedBy() {
   return (
     <div className="container px-6 md:px-16">
-      <h1 className="text-center text-4xl font-bold">Used by engineers at:</h1>
+      <h1 className="text-center text-4xl font-bold">
+        Beloved by engineering teams at:
+      </h1>
 
       <div className="mx-auto mt-24 grid grid-cols-1 items-center justify-between sm:grid-cols-2 md:grid-cols-4 ">
         {COMPANIES.map((company, index) => (

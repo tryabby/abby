@@ -10,7 +10,7 @@ import { getLimitByPlan } from "server/common/plans";
 import { Plan } from "types/plausible-events";
 import { Tooltip, TooltipContent, TooltipTrigger } from "./Tooltip";
 import { useTracking } from "lib/tracking";
-import { useState } from "react";
+import { Fragment, useState } from "react";
 import { Switch } from "./ui/switch";
 import { Label } from "./ui/label";
 
@@ -51,10 +51,12 @@ function PricingElement({
         <p className="text-4xl font-extrabold">
           {price} <span className="text-sm font-normal">{priceSuffix}</span>
         </p>
-        <h2 className={cn("my-6 text-xl font-semibold", isFull && "lg:my-3")}>
+        <h2
+          className={cn("mb-3 mt-6 text-xl font-semibold", isFull && "lg:my-3")}
+        >
           {title}
         </h2>
-        <p className={cn("te h-32", isFull && "lg:h-auto")}>{subtitle}</p>
+        {/* <p className={cn("te h-32", isFull && "lg:h-auto")}>{subtitle}</p> */}
       </div>
       <div
         className={cn(
@@ -76,10 +78,10 @@ function PricingElement({
         >
           {ctaText ?? `Choose ${title}`}
         </Link>
-        <ul className="space-y-2 lg:order-1">
+        <ul className="grid grid-cols-[auto,1fr] gap-2">
           {features.map((feature, i) => {
             return (
-              <li key={feature} className="flex items-center space-x-2">
+              <Fragment key={feature}>
                 <AiOutlineCheckCircle className={clsx("text-xl")} />
                 <span
                   className={clsx(
@@ -103,7 +105,7 @@ function PricingElement({
                     </Tooltip>
                   )}
                 </span>
-              </li>
+              </Fragment>
             );
           })}
         </ul>
@@ -123,20 +125,20 @@ export function PricingTable() {
     <div>
       <div className="my-6 flex items-center justify-center">
         <div className="flex items-center space-x-2">
-          <Label htmlFor="airplane-mode">Dollar ($)</Label>
+          <Label htmlFor="currency">USD ($)</Label>
           <Switch
-            id="airplane-mode"
+            id="currency"
             checked={useEuro}
             onCheckedChange={setUseEuro}
           />
-          <Label htmlFor="airplane-mode">Euro (€)</Label>
+          <Label htmlFor="currency">Euro (€)</Label>
         </div>
       </div>
-      <div className="mx-auto grid max-w-md grid-cols-1 gap-y-4 md:gap-x-4 md:gap-y-12 lg:max-w-none lg:grid-cols-4">
+      <div className="mx-auto grid max-w-md grid-cols-1 gap-y-4 md:max-w-3xl md:grid-cols-2 md:gap-x-4 md:gap-y-12 xl:max-w-none xl:grid-cols-4">
         <PricingElement
           href={session.status === "authenticated" ? "/projects" : "/login"}
           price="Free"
-          title="Hobby"
+          title="Starter"
           planName="HOBBY"
           subtitle="Good for IndieHackers that want to get started with Feature Flags & Remote Config. No Credit card required"
           features={[
@@ -148,7 +150,7 @@ export function PricingTable() {
         />
         <PricingElement
           href={session.status === "authenticated" ? "/projects" : "/login"}
-          price={`12${useEuro ? "€" : "$"}`}
+          price={`${useEuro ? "" : "$"}12${useEuro ? "€" : ""}`}
           title="Startup"
           subtitle="Optimal for startups & small businesses that want to dive deeper with Feature Flags & Remote Config"
           planName="STARTUP"
@@ -158,12 +160,12 @@ export function PricingTable() {
             `${startupPlan.flags} Feature Flags / Remote Configs`,
             `${startupPlan.environments} Environments`,
           ]}
-          priceSuffix="/mo*"
+          priceSuffix="/mo per Project"
           isFeatured
         />
         <PricingElement
           href={session.status === "authenticated" ? "/projects" : "/login"}
-          price={`89${useEuro ? "€" : "$"}`}
+          price={`${useEuro ? "" : "$"}89${useEuro ? "€" : ""}`}
           title="Pro"
           planName="PRO"
           subtitle="Perfect for growing companies that want to scale their Feature Flags & Remote Config and get more insights"
@@ -173,7 +175,7 @@ export function PricingTable() {
             `${proPlan.flags} Feature Flags / Remote Configs`,
             `${proPlan.environments} Environments`,
           ]}
-          priceSuffix="/mo*"
+          priceSuffix="/mo per Project"
         />
         <PricingElement
           href={"/contact"}
@@ -190,7 +192,6 @@ export function PricingTable() {
           ]}
         />
       </div>
-      <p className="mt-8 text-center">*Those prices are per Project</p>
     </div>
   );
 }
