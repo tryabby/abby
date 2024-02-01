@@ -119,7 +119,7 @@ const Home: NextPageWithLayout<
 
           <div className="flex flex-col items-center">
             <Link
-              href="/login"
+              href="/signup"
               onClick={() => {
                 trackEvent("Sign Up Clicked");
                 onAct();

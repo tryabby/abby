@@ -136,7 +136,7 @@ export function PricingTable() {
       </div>
       <div className="mx-auto grid max-w-md grid-cols-1 gap-y-4 md:max-w-3xl md:grid-cols-2 md:gap-x-4 md:gap-y-12 xl:max-w-none xl:grid-cols-4">
         <PricingElement
-          href={session.status === "authenticated" ? "/projects" : "/login"}
+          href={session.status === "authenticated" ? "/projects" : "/signup"}
           price="Free"
           title="Starter"
           planName="HOBBY"
@@ -149,7 +149,7 @@ export function PricingTable() {
           ]}
         />
         <PricingElement
-          href={session.status === "authenticated" ? "/projects" : "/login"}
+          href={session.status === "authenticated" ? "/projects" : "/signup"}
           price={`${useEuro ? "" : "$"}12${useEuro ? "€" : ""}`}
           title="Startup"
           subtitle="Optimal for startups & small businesses that want to dive deeper with Feature Flags & Remote Config"
@@ -164,7 +164,7 @@ export function PricingTable() {
           isFeatured
         />
         <PricingElement
-          href={session.status === "authenticated" ? "/projects" : "/login"}
+          href={session.status === "authenticated" ? "/projects" : "/signup"}
           price={`${useEuro ? "" : "$"}89${useEuro ? "€" : ""}`}
           title="Pro"
           planName="PRO"

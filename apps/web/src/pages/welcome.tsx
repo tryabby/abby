@@ -297,13 +297,13 @@ function Step4() {
           get you started. Feel free to pick a time that works for you{" "}
           <a
             className="text-pink-500"
-            href="https://cal.com/cstrnt/abby-feedback"
+            href="https://cal.com/cstrnt/abby-onboarding"
           >
             here
           </a>
         </p>
         <Link href="/projects">
-          <Button className="w-[150px mx-auto mt-12 block bg-pink-500 font-semibold text-white hover:bg-pink-600">
+          <Button className="mx-auto mt-12 block w-[150px] bg-pink-500 font-semibold text-white hover:bg-pink-600">
             Go to Abby
           </Button>
         </Link>

@@ -10,23 +10,17 @@ import Logo from "components/Logo";
 const DEFAULT_CALLBACK_URL = "/projects";
 
 export default function AuthenticationPage() {
-  const router = useRouter();
-
-  const callbackUrl =
-    typeof router.query.callbackUrl === "string"
-      ? router.query.callbackUrl
-      : DEFAULT_CALLBACK_URL;
   return (
     <>
       <div className="container relative flex h-screen flex-col items-center justify-center bg-background md:grid lg:max-w-none lg:grid-cols-2 lg:px-0">
         <Link
-          href="/signup"
+          href="/login"
           className={cn(
             buttonVariants({ variant: "ghost" }),
             "absolute right-4 top-4 md:right-8 md:top-8"
           )}
         >
-          Sign Up
+          Login
         </Link>
         <div className="relative hidden h-full flex-col bg-accent p-10 text-white dark:border-r lg:flex">
           <div className="absolute inset-0 bg-accent" />
@@ -50,13 +44,13 @@ export default function AuthenticationPage() {
             </div>
             <div className="flex flex-col space-y-2 text-center">
               <h1 className="text-2xl font-semibold tracking-tight">
-                Login to your account
+                Create an account
               </h1>
               <p className="text-sm text-muted-foreground">
-                Enter your email below to login
+                Enter your email below to create your account
               </p>
             </div>
-            <UserAuthForm callbackUrl={callbackUrl} />
+            <UserAuthForm callbackUrl={DEFAULT_CALLBACK_URL} />
             <p className="px-8 text-center text-sm text-muted-foreground">
               By clicking continue, you agree to our{" "}
               <Link
