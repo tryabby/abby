@@ -13,11 +13,13 @@ import { FaGithub, FaGoogle } from "react-icons/fa";
 
 interface UserAuthFormProps extends React.HTMLAttributes<HTMLDivElement> {
   callbackUrl?: string;
+  customButtonText?: string;
 }
 
 export function UserAuthForm({
   className,
   callbackUrl,
+  customButtonText,
   ...props
 }: UserAuthFormProps) {
   const { register, handleSubmit, formState } = useForm<{ email: string }>();
@@ -54,7 +56,7 @@ export function UserAuthForm({
               </p>
             )}
           </div>
-          <Button>Sign In with Email</Button>
+          <Button>{customButtonText ?? "Sign In with Email"}</Button>
         </div>
       </form>
       <div className="relative">
