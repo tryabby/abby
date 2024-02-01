@@ -112,7 +112,7 @@ const Home: NextPageWithLayout<
           <h2 className="mx-auto mt-16 max-w-2xl text-center text-lg leading-relaxed">
             Abby is <b>Open Source</b> and <b>fully typed</b> with SDKs for{" "}
             <b>React</b> and <b>Next.js</b>. <br />
-            Test in different environments, debug with devtools
+            Test in different environments, debug with devtools.
             <br /> Cut through feature deployment complexity with one service,
             built for developers.
           </h2>
@@ -182,8 +182,8 @@ const Home: NextPageWithLayout<
               title="Tightly Integrated"
               subtitle="Built for a modern tech stack"
             >
-              Built for a modern tech stack SDKs for different frameworks,
-              including React and Next.js. All of them fully type-safe.
+              SDKs for different frameworks, including React and Next.js. All of
+              them fully type-safe.
             </Feature>
             <Feature
               icon={Server}
@@ -230,6 +230,10 @@ const Home: NextPageWithLayout<
         </div>
       </section>
       <Divider />
+      <section id="usedBy" className="py-24">
+        <UsedBy />
+      </section>
+      <Divider />
       <section className="py-48" id="devtools">
         <div className="container px-6 md:px-16">
           <h1 className="mb-6 text-center text-4xl font-bold">
@@ -269,8 +273,8 @@ const Home: NextPageWithLayout<
             Can&apos;t wait to <span className="mark">try it</span> out?
           </h1>
           <h2 className="mb-8 text-center text-lg">
-            Skip the Docs and get right into the code. Simply define your tests
-            and enjoy the magic. <br />
+            Skip the Docs and get right into the code. Define your tests and
+            enjoy the magic. <br />
             <b>Fully typed.</b> <b>Easy to use.</b>
           </h2>
           <div className="mx-auto max-w-4xl shadow-2xl">
@@ -286,6 +290,46 @@ const Home: NextPageWithLayout<
             >
               <span>Read the Docs</span>{" "}
               <ExternalLink className="-mt-1 h-5 w-5 stroke-2" />
+            </Link>
+          </div>
+        </div>
+      </section>
+      <Divider />
+      <section id="pricing" className="py-48">
+        <div className="container px-6 md:px-16">
+          <h1 className="mb-6 text-center text-4xl font-bold">
+            <span className="mark">Fair pricing</span> that scales with usage,
+            not seats.
+          </h1>
+          <h2 className="mb-8 text-center text-lg">
+            Start using feature flags and remote config variables for free.
+            Scale up at reasonable pricing for small engineering teams and
+            enterprises.
+          </h2>
+          <PricingTable />
+        </div>
+      </section>
+      <Divider />
+      <section className="py-48">
+        <div className="container relative px-6 md:px-16">
+          <div className="relative mb-6 ">
+            <div className="absolute -top-24 right-0 z-0 hidden text-ab_accent-background md:block">
+              <FaQuestion className="h-36 w-36 fill-none stroke-[6px]" />
+            </div>
+            <h1 className="z-10 text-center text-4xl font-bold">
+              Still have questions?
+            </h1>
+          </div>
+          <h2 className="mb-8 text-center text-lg">
+            Integrations, pricing, programming memes. Our engineers respond
+            pretty quickly.
+          </h2>
+          <div className="flex items-center">
+            <Link
+              href={`/contact`}
+              className="mx-auto mt-8 rounded-lg bg-ab_accent-background px-4 py-2 font-semibold text-ab_accent-foreground transition-transform duration-200 ease-in-out hover:scale-110"
+            >
+              Contact us
             </Link>
           </div>
         </div>
@@ -312,48 +356,6 @@ const Home: NextPageWithLayout<
               className="mx-auto mt-8 rounded-lg bg-ab_accent-background px-4 py-2 font-semibold uppercase text-ab_accent-foreground transition-transform duration-200 ease-in-out hover:scale-110"
             >
               Discover Tips & Insights
-            </Link>
-          </div>
-        </div>
-      </section>
-      <Divider />
-      <section id="pricing" className="py-48">
-        <div className="container px-6 md:px-16">
-          <h1 className="mb-6 text-center text-4xl font-bold">
-            <span className="mark">Simple</span> pricing, for everyone
-          </h1>
-          <h2 className="mb-8 text-center text-lg">
-            Start using feature flags & remote config variables in under 5
-            minutes. Simply integrate it in your code and you&apos;re ready to
-            go.
-          </h2>
-          <PricingTable />
-        </div>
-      </section>
-      <Divider />
-      <section id="usedBy" className="py-24">
-        <UsedBy />
-      </section>
-      <Divider />
-      <section className="py-48">
-        <div className="container relative px-6 md:px-16">
-          <div className="relative mb-6 ">
-            <div className="absolute -top-24 right-0 z-0 hidden text-ab_accent-background md:block">
-              <FaQuestion className="h-36 w-36 fill-none stroke-[6px]" />
-            </div>
-            <h1 className="z-10 text-center text-4xl font-bold">
-              Still open questions?
-            </h1>
-          </div>
-          <h2 className="mb-8 text-center text-lg">
-            Do not hesitate to reach out to us. We are happy to help you out.
-          </h2>
-          <div className="flex items-center">
-            <Link
-              href={`/contact`}
-              className="mx-auto mt-8 rounded-lg bg-ab_accent-background px-4 py-2 font-semibold text-ab_accent-foreground transition-transform duration-200 ease-in-out hover:scale-110"
-            >
-              Contact us
             </Link>
           </div>
         </div>

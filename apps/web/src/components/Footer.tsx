@@ -17,8 +17,8 @@ export function Footer() {
           <div>
             <h1 className="mb-3 text-2xl font-bold">Abby</h1>
             <h2 className="mb-8">
-              A simple and easy to use Open-Source Feature Flagging & Remote
-              Config tool for developers.
+              Feature Flagging and Remote Config for developers. Fully type-safe
+              and open source.
             </h2>
           </div>
           <div className="flex flex-col gap-y-4 md:gap-0">

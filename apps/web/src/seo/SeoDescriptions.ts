@@ -20,13 +20,14 @@ export function getMarketingSeo(pageName: string): SeoProps {
   switch (normalizedKey) {
     case "/":
       return {
-        metaTitle: "Open Source Feature Flags and feature testing  | Abby ",
+        metaTitle: "Type-Safe Feature Flags and Flexible Remote Config | Abby ",
         metaDescription:
           "Unlock Agile Development with Abby: The Ultimate Open Source Feature Flagging Solution. Elevate Your Coding with Privacy-Centric, User-Friendly Tools & Advanced APIs!",
       };
     case "/login":
       return {
-        metaTitle: "Feature Flags and feature testing  | Abby Log in",
+        metaTitle:
+          "Type-Safe Feature Flags and Flexible Remote Config| Abby Log in",
         metaDescription:
           "Log in to our free feature flagging tool designed specifically for developers. With open source software, it offers easy and fast implementation, allowing you to perform feature testing and utilize feature flags. Start optimizing your website or application with our free tool today.",
       };
@@ -40,13 +41,14 @@ export function getMarketingSeo(pageName: string): SeoProps {
     case "/imprint":
       return {
         metaTitle:
-          "Feature Flags and feature testings | Abby Legal Information",
+          "Type-Safe Feature Flags and Flexible Remote Config | Abby Legal Information",
         metaDescription:
           "Official imprint of Abby, the open-source feature flagging  tool. Find our legal information and get in touch. We offer feature flagging and ab testing solutions with clear analytics.",
       };
     case "/tips-and-insights":
       return {
-        metaTitle: "Feature Flags & feature testing  | Abby Tips&Insights",
+        metaTitle:
+          "Type-Safe Feature Flags and Flexible Remote Config| Abby Tips&Insights",
         metaDescription:
           "Discover tips and insights about open-source software, feature flags, Next.js, and A/B testing in React. Learn how to effectively use these dev tools for feature testing and optimizing your software development process.",
       };

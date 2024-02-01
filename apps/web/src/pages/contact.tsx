@@ -3,6 +3,9 @@ import { useForm } from "react-hook-form";
 import clsx from "clsx";
 import { trpc } from "utils/trpc";
 import { toast } from "react-hot-toast";
+import { Label } from "components/ui/label";
+import { Input } from "components/ui/input";
+import { Button } from "components/ui/button";
 
 export default function ContactPage() {
   const { register, handleSubmit, formState } = useForm<{
@@ -55,8 +58,7 @@ export default function ContactPage() {
               </svg>
             </div>
             <div className="mx-auto max-w-xs text-center">
-              Do you have any questions, comments or suggestions?
-              <div>Do not hesitate to contact us.</div>
+              Drop your email and we&apos;ll get back to you soon.
             </div>
           </div>
           <form
@@ -64,19 +66,14 @@ export default function ContactPage() {
             onSubmit={onSubmit}
           >
             <div className="mb-4 flex w-full flex-grow flex-col ">
-              <label className="mb-1 ">Name</label>
-              <input
+              <Label className="mb-1 ">First Name</Label>
+              <Input
                 {...register("name", {
-                  required: "Please enter your name",
+                  required: "Please enter your first name",
                 })}
-                className={clsx(
-                  inputFieldStyle,
-                  formState.errors.name
-                    ? "border-red-500"
-                    : "border-ab_accent-background"
-                )}
-                placeholder="Name"
-              ></input>
+                className={clsx(formState.errors.name && "border-red-500")}
+                placeholder="First Name"
+              ></Input>
               {formState.errors.name && (
                 <p className="mb-3 text-center text-xs text-red-500">
                   {formState.errors.name.message}
@@ -84,19 +81,14 @@ export default function ContactPage() {
               )}
             </div>
             <div className="mb-4 flex w-full flex-grow flex-col">
-              <label className="mb-1">Surname</label>
-              <input
+              <Label className="mb-1">Last Name</Label>
+              <Input
                 {...register("surname", {
-                  required: "Please enter your Surname",
+                  required: "Please enter your last name",
                 })}
-                className={clsx(
-                  inputFieldStyle,
-                  formState.errors.surname
-                    ? "border-red-500"
-                    : "border-ab_accent-background"
-                )}
-                placeholder="Surname"
-              ></input>
+                className={clsx(formState.errors.surname && "border-red-500")}
+                placeholder="Last Name"
+              ></Input>
               {formState.errors.surname && (
                 <p className="mb-3 text-center text-xs text-red-500">
                   {formState.errors.surname.message}
@@ -104,22 +96,19 @@ export default function ContactPage() {
               )}
             </div>
             <div className=" mb-4 flex w-full flex-grow flex-col">
-              <label className="mb-1" htmlFor="mail adress">
-                Mail address
-              </label>
-              <input
+              <Label className="mb-1" htmlFor="mail adress">
+                Email
+              </Label>
+              <Input
                 {...register("mailadress", {
                   required: "Please enter an email",
                 })}
                 className={clsx(
-                  inputFieldStyle,
-                  formState.errors.mailadress
-                    ? "border-red-500"
-                    : "border-ab_accent-background"
+                  formState.errors.mailadress && "border-red-500"
                 )}
                 autoComplete="email"
                 placeholder="your@mailadress.com"
-              ></input>
+              ></Input>
               {formState.errors.mailadress && (
                 <p className="mb-3 text-center text-xs text-red-500">
                   {formState.errors.mailadress.message}
@@ -127,18 +116,17 @@ export default function ContactPage() {
               )}
             </div>
             <div className="mb-4 flex w-full flex-grow flex-col">
-              <label className="1" htmlFor="your message">
+              <Label className="mb-1" htmlFor="your message">
                 Your message
-              </label>
+              </Label>
               <textarea
                 {...register("message", {
                   required: "Please enter a message",
                 })}
+                rows={5}
                 className={clsx(
-                  "h-32 min-h-max w-full rounded border-2 border-solid border-ab_accent-background bg-inherit",
-                  formState.errors.message
-                    ? "border-red-500"
-                    : "border-ab_accent-background"
+                  "min-h-max w-full rounded border-solid border-muted bg-inherit",
+                  formState.errors.message && "border-red-500"
                 )}
                 placeholder="Your message text here"
               ></textarea>
@@ -148,12 +136,9 @@ export default function ContactPage() {
                 </p>
               )}
             </div>
-            <button
-              className="border-1 mb-4 mt-5 w-24 self-center rounded-md border-ab_accent-foreground bg-ab_accent-background text-ab_accent-foreground"
-              type="submit"
-            >
+            <Button className="mb-4 mt-5 w-24 self-center" type="submit">
               Submit
-            </button>
+            </Button>
           </form>
           <span className="max-auto inline max-w-sm text-xs text-ab_primary-foreground">
             By submitting this form you agree to our{" "}
