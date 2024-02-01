@@ -31,6 +31,12 @@ export function getMarketingSeo(pageName: string): SeoProps {
         metaDescription:
           "Log in to our free feature flagging tool designed specifically for developers. With open source software, it offers easy and fast implementation, allowing you to perform feature testing and utilize feature flags. Start optimizing your website or application with our free tool today.",
       };
+    case "/signup":
+      return {
+        metaTitle: "Feature Flags and feature testing  | Abby Log in",
+        metaDescription:
+          "Sign Up to our free feature flagging tool designed specifically for developers. With open source software, it offers easy and fast implementation, allowing you to perform feature testing and utilize feature flags. Start optimizing your website or application with our free tool today.",
+      };
     case "/devtools":
       return {
         metaTitle:
