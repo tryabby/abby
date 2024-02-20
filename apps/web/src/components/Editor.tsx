@@ -9,7 +9,11 @@ type Props = {
   onUpdate?: (html: string) => void;
 };
 
-export const Editor = ({ className, content, onUpdate }: Props) => {
+export const Editor = ({
+  className,
+  content,
+  onUpdate,
+}: Props & { showBubbleMenu?: boolean }) => {
   const editor = useEditor({
     extensions: [
       StarterKit.configure({
