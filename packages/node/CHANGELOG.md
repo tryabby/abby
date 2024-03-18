@@ -1,5 +1,12 @@
 # @tryabby/node
 
+## 5.1.5
+
+### Patch Changes
+
+- Updated dependencies
+  - @tryabby/core@5.2.0
+
 ## 5.1.4
 
 ### Patch Changes

@@ -41,6 +41,8 @@ export function createAbby<
     __abby__,
     getVariants,
     withDevtools,
+    useFeatureFlags,
+    useRemoteConfigVariables,
   } = baseCreateAbby<FlagName, TestName, Tests, RemoteConfig, RemoteConfigName, ConfigType>(config);
 
   const abbyApiHandler =
@@ -78,6 +80,8 @@ export function createAbby<
     withAbby: withAbby(config as AbbyConfig<FlagName, Tests>, __abby__),
     getFeatureFlagValue,
     useRemoteConfig,
+    useFeatureFlags,
+    useRemoteConfigVariables,
     getRemoteConfig,
     __abby__,
     getVariants,
@@ -101,8 +105,8 @@ export function createAbby<
       ResponseType extends NextResponse | NextApiResponse = RequestType extends NextRequest
         ? NextResponse
         : RequestType extends NextApiRequest
-        ? NextApiResponse
-        : never,
+          ? NextApiResponse
+          : never,
     >(
       name: T,
       req?: RequestType,
@@ -111,8 +115,8 @@ export function createAbby<
       Lookup extends undefined
         ? TestVariant
         : TestVariant extends keyof Lookup
-        ? Lookup[TestVariant]
-        : never,
+          ? Lookup[TestVariant]
+          : never,
       RequestType extends NextRequest | NextApiRequest ? (res: ResponseType) => void : () => void,
     ] {
       const cookies = getIsomorphicCookies(req);
@@ -170,8 +174,8 @@ export function createAbby<
       ResponseType extends NextResponse | NextApiResponse = RequestType extends NextRequest
         ? NextResponse
         : RequestType extends NextApiRequest
-        ? NextApiResponse
-        : never,
+          ? NextApiResponse
+          : never,
     >(
       name: T,
       req?: RequestType

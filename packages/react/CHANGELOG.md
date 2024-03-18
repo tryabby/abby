@@ -1,5 +1,16 @@
 # @tryabby/react
 
+## 5.1.0
+
+### Minor Changes
+
+- add helper to retrieve all flags/config variables
+
+### Patch Changes
+
+- Updated dependencies
+  - @tryabby/core@5.2.0
+
 ## 5.0.6
 
 ### Patch Changes

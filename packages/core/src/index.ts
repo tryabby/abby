@@ -13,7 +13,7 @@ import {
   ABBY_WINDOW_KEY,
 } from "./shared/";
 import { HttpService } from "./shared";
-import { F } from "ts-toolbelt";
+import { F, O } from "ts-toolbelt";
 import { getWeightedRandomVariant } from "./mathHelpers";
 import { parseCookies } from "./helpers";
 
@@ -580,5 +580,28 @@ export class Abby<
       return value.toString();
     }
     return stringifyRemoteConfigValue(value);
+  }
+
+  /**
+   * Retruns an Array of all flags with their name and value
+   */
+  getFeatureFlags() {
+    return (Object.keys(this.#data.flags) as Array<FlagName>).map((flagName) => ({
+      name: flagName,
+      value: this.getFeatureFlag(flagName),
+    }));
+  }
+
+  /**
+   * Retruns an Array of all remote config variables with their name and value
+   */
+  getRemoteConfigVariables() {
+    return (Object.keys(this.#data.remoteConfig) as Array<RemoteConfigName>).map((configName) => ({
+      name: configName,
+      value: this.getRemoteConfig(configName),
+    })) as Array<{
+      name: RemoteConfigName;
+      value: RemoteConfigValueStringToType<RemoteConfig[RemoteConfigName]>;
+    }>;
   }
 }

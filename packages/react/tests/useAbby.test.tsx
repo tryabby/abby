@@ -413,3 +413,77 @@ it("has the correct types", () => {
 
   expectTypeOf(ffResult.current).toEqualTypeOf<boolean>();
 });
+
+describe("useFeatureFlags()", () => {
+  it("returns the correct list of feature flags", () => {
+    const { AbbyProvider, useFeatureFlags } = createAbby({
+      environments: [],
+      currentEnvironment: "test",
+      projectId: "123",
+      tests: {
+        test: { variants: ["OldFooter", "NewFooter"] },
+        test2: {
+          variants: ["SimonsText", "MatthiasText", "TomsText", "TimsText"],
+        },
+      },
+      flags: ["flag1"],
+    });
+
+    const wrapper = ({ children }: PropsWithChildren) => <AbbyProvider>{children}</AbbyProvider>;
+    expectTypeOf(useFeatureFlags).parameter(0).toEqualTypeOf<undefined>();
+
+    const { result } = renderHook(() => useFeatureFlags(), {
+      wrapper,
+    });
+
+    expectTypeOf(result.current).toEqualTypeOf<
+      Array<{
+        name: "flag1";
+        value: boolean;
+      }>
+    >();
+
+    expect(result.current).toHaveLength(1);
+    // wait for the fetch + render to go through
+    waitFor(() =>
+      expect(result.current.at(0)).toEqual({
+        name: "flag1",
+        value: true,
+      })
+    );
+  });
+});
+describe("useRemoteConfigVariables()", () => {
+  it("returns the correct list of remote config variables", () => {
+    const { AbbyProvider, useRemoteConfigVariables } = createAbby({
+      environments: [],
+      currentEnvironment: "test",
+      projectId: "123",
+      remoteConfig: {
+        remoteConfig1: "String",
+      },
+    });
+
+    const wrapper = ({ children }: PropsWithChildren) => <AbbyProvider>{children}</AbbyProvider>;
+    expectTypeOf(useRemoteConfigVariables).parameter(0).toEqualTypeOf<undefined>();
+
+    const { result } = renderHook(() => useRemoteConfigVariables(), {
+      wrapper,
+    });
+
+    expectTypeOf(result.current).toEqualTypeOf<
+      Array<{
+        name: "remoteConfig1";
+        value: string;
+      }>
+    >();
+
+    expect(result.current).toHaveLength(1);
+    // wait for the fetch + render to go through
+
+    expect(result.current.at(0)).toEqual({
+      name: "remoteConfig1",
+      value: expect.any(String),
+    });
+  });
+});

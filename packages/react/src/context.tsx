@@ -180,6 +180,31 @@ export function createAbby<
     return data.flags[name];
   };
 
+  /**
+   * Retruns an Array of all flags with their name and value
+   */
+  const useFeatureFlags = () => {
+    const data = useAbbyData();
+    return (Object.keys(data.flags) as Array<FlagName>).map((flagName) => ({
+      name: flagName,
+      value: data.flags[flagName],
+    }));
+  };
+
+  /**
+   * Retruns an Array of all rmeote config variables with their name and value
+   */
+  const useRemoteConfigVariables = () => {
+    const data = useAbbyData();
+    return (Object.keys(data.remoteConfig) as Array<RemoteConfigName>).map((configName) => ({
+      name: configName,
+      value: data.remoteConfig[configName],
+    })) as Array<{
+      name: RemoteConfigName;
+      value: RemoteConfigValueStringToType<RemoteConfig[RemoteConfigName]>;
+    }>;
+  };
+
   const AbbyProvider = ({
     children,
     initialData,
@@ -311,5 +336,7 @@ export function createAbby<
     withDevtools,
     getABResetFunction,
     getVariants,
+    useFeatureFlags,
+    useRemoteConfigVariables,
   };
 }

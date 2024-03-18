@@ -1,5 +1,11 @@
 # @tryabby/core
 
+## 5.2.0
+
+### Minor Changes
+
+- add helper to retrieve all flags/config variables
+
 ## 5.1.4
 
 ### Patch Changes
