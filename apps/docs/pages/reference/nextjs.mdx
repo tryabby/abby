@@ -111,6 +111,18 @@ The name of the flag, needs to be one of the defined flags.
 
 The value of the flag _Type: `boolean`_
 
+#### useFeatureFlags
+
+`useFeatureFlags` is a React hook that is used to access all existing feature flags.
+
+##### Parameters
+
+The name of the flag, needs to be one of the defined flags.
+
+##### Return Value
+
+An Array of all feature flags. Includes the name and the value. The value will be a boolean.
+
 #### useRemoteConfig
 
 `useRemotConfig` is a React hook that is used to access the value of a Remote Configuration variable.
@@ -122,6 +134,18 @@ The name of the Remote Configuration variable, which needs to be one of the keys
 ##### Return Value
 
 The current value of the Remote Configuration variable. The type will be according to the specified type in the `abby.config.ts`
+
+#### useRemoteConfigVariables
+
+`useRemoteConfigVariables` is a React hook that is used to access all existing Remote Configuration variables.
+
+##### Parameters
+
+None
+
+##### Return Value
+
+An Array of all remote config variables. Includes the name and the value. The type will be according to the specified type in the `abby.config.ts`
 
 #### AbbyProvider
 

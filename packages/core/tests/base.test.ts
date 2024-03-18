@@ -270,6 +270,72 @@ describe("Abby", () => {
 
     expect(abby.getRemoteConfig("remoteConfig1")).toBe("bar");
   });
+
+  it("returns the correct list of all flags", () => {
+    const flagInit = [
+      {
+        name: "a",
+        value: true,
+      },
+      {
+        name: "b",
+        value: true,
+      },
+      {
+        name: "c",
+        value: false,
+      },
+    ];
+    const abby = new Abby({
+      environments: ["test"],
+      currentEnvironment: "test",
+      projectId: "",
+      flags: ["a", "b", "c"],
+    });
+
+    abby.init({
+      flags: flagInit,
+      tests: [],
+      remoteConfig: [],
+    });
+    expect(abby.getFeatureFlags()).toEqual(flagInit);
+  });
+
+  it("returns the correct list of all remote config variables", () => {
+    const configInit = [
+      {
+        name: "a",
+        value: "test",
+      },
+      {
+        name: "b",
+        value: 123,
+      },
+      {
+        name: "c",
+        value: { a: true },
+      },
+    ];
+    const abby = new Abby({
+      environments: ["test"],
+      currentEnvironment: "test",
+      projectId: "",
+      remoteConfig: {
+        a: "String",
+        b: "Number",
+        c: "JSON",
+      },
+    });
+
+    abby.init({
+      flags: [],
+      tests: [],
+      remoteConfig: configInit,
+    });
+    expect(abby.getRemoteConfigVariables()).toEqual(configInit);
+
+    const d = abby.getRemoteConfigVariables();
+  });
 });
 
 describe("Math helpers", () => {
