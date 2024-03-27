@@ -166,14 +166,14 @@ const SettingsPage: NextPageWithLayout = () => {
                   </Link>
                   {data.project.stripeCustomerId !== null &&
                     projectPlan !== null && (
-                      <button
-                        className="text- ml-4 mr-auto mt-4 rounded-sm bg-blue-300 px-3"
+                      <DashboardButton
+                        className="px-3"
                         onClick={async () => {
                           redirectToBillingPortal(projectId);
                         }}
                       >
                         Manage
-                      </button>
+                      </DashboardButton>
                     )}
                 </div>
               </div>

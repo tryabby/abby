@@ -1,4 +1,4 @@
-import { Button } from "components/Button";
+import { Button } from "components/ui/Button";
 import { DashboardHeader } from "components/DashboardHeader";
 import { Layout } from "components/Layout";
 import { Input } from "components/ui/input";
