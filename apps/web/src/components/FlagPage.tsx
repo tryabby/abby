@@ -106,9 +106,6 @@ const EditDescriptionModal = ({
         content={newDescription}
         onUpdate={setNewDescription}
       />
-      <small className="text-pink-50/80">
-        <i>__Markdown__</i> is <b>**supported**</b>
-      </small>
     </Modal>
   );
 };
