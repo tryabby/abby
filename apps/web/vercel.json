@@ -2,7 +2,7 @@
   "crons": [
     {
       "path": "/api/invalidate-limits?secretKey=yfMWV3TC0xyLvEKoHjslTp8GeKFEFRDtfVckg3Y2LHA=",
-      "schedule": "0 0,12 * * *"
+      "schedule": "0 0 * * *"
     }
   ]
 }
