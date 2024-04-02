@@ -105,6 +105,7 @@ const EditDescriptionModal = ({
         className="w-full"
         content={newDescription}
         onUpdate={setNewDescription}
+        showBubbleMenu
       />
       <small className="text-pink-50/80">
         <i>__Markdown__</i> is <b>**supported**</b>
