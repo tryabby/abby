@@ -1,4 +1,4 @@
-import { Button } from "components/Button";
+import { Button } from "components/ui/button";
 import { DISCORD_INVITE_URL } from "components/Footer";
 import { Input } from "components/Input";
 import { Select } from "components/Select";
