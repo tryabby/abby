@@ -1,0 +1,5 @@
+.git
+apps/angular-example
+apps/docs
+node_modules/
+**/node_modules/

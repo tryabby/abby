@@ -12,15 +12,27 @@
   ],
   "pipeline": {
     "build": {
-      "dependsOn": ["^build"],
-      "outputs": ["dist/**", ".next/**"]
+      "dependsOn": [
+        "^build",
+        "^db:generate"
+      ],
+      "outputs": [
+        "dist/**",
+        ".next/**"
+      ]
     },
     "build:prod": {
-      "dependsOn": ["^build"],
-      "outputs": [".next/**"]
+      "dependsOn": [
+        "^build"
+      ],
+      "outputs": [
+        ".next/**"
+      ]
     },
     "test": {
-      "outputs": ["coverage/**"]
+      "outputs": [
+        "coverage/**"
+      ]
     },
     "lint": {
       "outputs": []
@@ -29,6 +41,9 @@
       "cache": false
     },
     "db:migrate": {
+      "cache": false
+    },
+    "db:generate": {
       "cache": false
     }
   }

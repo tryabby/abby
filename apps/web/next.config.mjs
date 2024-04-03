@@ -33,6 +33,7 @@ const withBundleAnalyzer = bundleAnalzyer({
 /** @type {import("next").NextConfig} */
 const config = {
   reactStrictMode: true,
+  output: "standalone",
   swcMinify: true,
   pageExtensions: ["ts", "tsx", "js", "jsx", "md", "mdx"],
   transpilePackages: ["lodash-es"],

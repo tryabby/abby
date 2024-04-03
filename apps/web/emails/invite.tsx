@@ -1,4 +1,4 @@
-import { Project, User } from "@prisma/client";
+import { Project } from "@prisma/client";
 import { Button } from "@react-email/button";
 import { Container } from "@react-email/container";
 import { Head } from "@react-email/head";
@@ -9,7 +9,6 @@ import { Link } from "@react-email/link";
 import { Preview } from "@react-email/preview";
 import { Section } from "@react-email/section";
 import { Text } from "@react-email/text";
-import { env } from "env/server.mjs";
 import * as React from "react";
 import { ABBY_BASE_URL } from "@tryabby/core";
 

@@ -1,0 +1,71 @@
+version: "3.3"
+
+services:
+  web:
+    image: tryabby/web
+    build:
+      context: .
+      dockerfile: ./apps/web/Dockerfile
+    ports:
+      - "3000:3000"
+    environment:
+      DATABASE_URL: "mysql://root:password@db:3306/abby"
+      NODE_ENV: "development"
+      NEXTAUTH_SECRET: "secret"
+      NEXTAUTH_URL: "http://localhost:3000"
+      EMAIL_SERVER: "smtp://mailhog:1025"
+      GITHUB_ID: "null"
+      GITHUB_SECRET: "null"
+      GOOGLE_CLIENT_ID: ""
+      GOOGLE_CLIENT_SECRET: ""
+      REDIS_URL: "redis://redis:6379"
+      ABBY_FROM_EMAIL: "no-reply@tryabby.dev"
+      GITHUB_OAUTH_TOKEN: ""
+      STRIPE_WEBHOOK_SECRET: "null"
+      STRIPE_SECRET_KEY: "null"
+      LOGSNAG_API_KEY: "null"
+      HASHING_SECRET: "secret"
+      NEXT_PUBLIC_PLAUSIBLE_DOMAIN: "tryabby.com"
+      NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY: "null"
+      NEXT_PUBLIC_STRIPE_STARTER_PLAN_PRICE_ID: "null"
+      NEXT_PUBLIC_STRIPE_PRO_PLAN_PRICE_ID: "null"
+      NEXT_PUBLIC_ABBY_PROJECT_ID: "null"
+
+  db:
+    image: mariadb
+    restart: always
+    environment:
+      MYSQL_DATABASE: "db"
+      # So you don't have to use root, but you can if you like
+      MYSQL_USER: "root"
+      # You can use whatever password you like
+      MYSQL_PASSWORD: "password"
+      # Password for root access
+      MYSQL_ROOT_PASSWORD: "password"
+    ports:
+      # <Port exposed> : < MySQL Port running inside container>
+      - "3306:3306"
+    expose:
+      # Opens port 3306 on the container
+      - "3306"
+      # Where our data will be persisted
+    volumes:
+      - my-db:/var/lib/mysql
+  redis:
+    image: redis
+    restart: always
+    ports:
+      - "6379:6379"
+    expose:
+      - "6379"
+    volumes:
+      - my-redis:/data
+  mailhog:
+    image: mailhog/mailhog
+    ports:
+      - "1025:1025"
+      - "8025:8025"
+# Names our volume
+volumes:
+  my-db:
+  my-redis:
