@@ -239,8 +239,8 @@ const SettingsPage: NextPageWithLayout = () => {
                   maxValue={limits?.tests ?? Number.POSITIVE_INFINITY}
                 />
                 <p className='mt-2'>
-                  {data.project.tests.length} / {limits?.tests === Number.POSITIVE_INFINITY ? '∞' : limits?.tests}{' '}
-                  A/B Test
+                  {data.project.tests.length} /{' '}
+                  {limits?.tests === Number.POSITIVE_INFINITY ? '∞' : limits?.tests} A/B Test
                   {data.project.tests.length === 1 ? '' : 's'} used
                 </p>
               </div>
@@ -264,7 +264,8 @@ const SettingsPage: NextPageWithLayout = () => {
                 />
                 <p className='mt-2'>
                   {data.project.environments.length} /{' '}
-                  {limits?.environments === Number.POSITIVE_INFINITY ? '∞' : limits?.environments} Environment
+                  {limits?.environments === Number.POSITIVE_INFINITY ? '∞' : limits?.environments}{' '}
+                  Environment
                   {data.project.environments.length === 1 ? '' : 's'} used
                 </p>
               </div>
@@ -276,7 +277,10 @@ const SettingsPage: NextPageWithLayout = () => {
                 />
                 <p className='mt-2'>
                   {data.project.eventsThisPeriod} /{' '}
-                  {limits?.eventsPerMonth === Number.POSITIVE_INFINITY ? '∞' : limits?.eventsPerMonth} Events
+                  {limits?.eventsPerMonth === Number.POSITIVE_INFINITY
+                    ? '∞'
+                    : limits?.eventsPerMonth}{' '}
+                  Events
                 </p>
               </div>
             </div>

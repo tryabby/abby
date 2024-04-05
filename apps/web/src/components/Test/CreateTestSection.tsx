@@ -88,7 +88,8 @@ export function CreateTestSection({ setTestName, testName, setVariants, variants
   const handleWeightChange = (index: number, event: ChangeEvent<HTMLInputElement>) => {
     const rawEventValue = event.target.value !== '' ? event.target.value : 0;
 
-    const eventValue = typeof rawEventValue === 'number' ? rawEventValue : Number.parseInt(rawEventValue);
+    const eventValue =
+      typeof rawEventValue === 'number' ? rawEventValue : Number.parseInt(rawEventValue);
 
     if (isNaN(eventValue)) {
       return;
