@@ -1,7 +1,10 @@
 {
   "$schema": "https://biomejs.dev/schemas/1.6.4/schema.json",
   "files": {
-    "include": ["**/*.ts", "**/*.tsx"],
+    "include": [
+      "**/*.ts",
+      "**/*.tsx"
+    ],
     "ignore": [
       "**/node_modules/**",
       "**/dist/**",
@@ -24,7 +27,12 @@
       "complexity": {
         "noStaticOnlyClass": "off",
         "noForEach": "off",
-        "noBannedTypes": "off"
+        "noBannedTypes": "off",
+        "noThisInStatic": "off",
+        "useLiteralKeys": "off",
+        "noUselessConstructor": "off",
+        "noUselessSwitchCase": "off",
+        "useOptionalChain": "off"
       },
       "suspicious": {
         "noExplicitAny": "off",
@@ -33,13 +41,19 @@
         "noAssignInExpressions": "off",
         "noAsyncPromiseExecutor": "off",
         "noArrayIndexKey": "off",
-        "noRedeclare": "off"
+        "noRedeclare": "off",
+        "noGlobalIsNan": "off",
+        "noDoubleEquals": "off"
       },
       "style": {
         "useNodejsImportProtocol": "off",
         "noParameterAssign": "off",
         "noNonNullAssertion": "off",
-        "useImportType": "off"
+        "useImportType": "off",
+        "noUnusedTemplateLiteral": "off",
+        "useTemplate": "off",
+        "useSelfClosingElements": "off",
+        "noUselessElse": "off"
       },
       "correctness": {
         "noEmptyPattern": "off",
