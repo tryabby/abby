@@ -1,19 +1,19 @@
-import type { AppContextType, AppPropsType, NextComponentType } from "next/dist/shared/lib/utils";
-import { AbbyConfig } from "@tryabby/react";
-import { NextRouter } from "next/router";
-import { HttpService } from "@tryabby/core";
-import type { Abby } from "@tryabby/core";
-import { AbbyDataResponse } from "@tryabby/core";
-import { PromiseCache } from "./cache";
+import type { AppContextType, AppPropsType, NextComponentType } from 'next/dist/shared/lib/utils';
+import { AbbyConfig } from '@tryabby/react';
+import { NextRouter } from 'next/router';
+import { HttpService } from '@tryabby/core';
+import type { Abby } from '@tryabby/core';
+import { AbbyDataResponse } from '@tryabby/core';
+import { PromiseCache } from './cache';
 
-export const ABBY_DATA_KEY = "__ABBY_PROJECT_DATA__";
+export const ABBY_DATA_KEY = '__ABBY_PROJECT_DATA__';
 
 export function withAbby<
-  Config extends Pick<AbbyConfig, "apiUrl" | "projectId" | "currentEnvironment">,
+  Config extends Pick<AbbyConfig, 'apiUrl' | 'projectId' | 'currentEnvironment'>,
 >(
   { apiUrl, projectId, currentEnvironment }: Config,
   abbyInstance: Abby<any, any, any, any, any>,
-  preloadAll = true
+  preloadAll = true,
 ) {
   const promiseCache = new PromiseCache<AbbyDataResponse | null>();
 
@@ -29,12 +29,12 @@ export function withAbby<
       let pageProps: Record<string, any> = {};
 
       if (preloadAll && isApp) {
-        const abbyData = await promiseCache.get("abbyData", () =>
+        const abbyData = await promiseCache.get('abbyData', () =>
           HttpService.getProjectData({
             projectId,
             environment: currentEnvironment,
             url: apiUrl,
-          })
+          }),
         );
 
         if (abbyData) {
@@ -44,7 +44,7 @@ export function withAbby<
         pageProps[ABBY_DATA_KEY] = abbyData;
       }
 
-      abbyInstance.setLocalOverrides(appOrPageCtx.ctx.req?.headers.cookie ?? "");
+      abbyInstance.setLocalOverrides(appOrPageCtx.ctx.req?.headers.cookie ?? '');
 
       // Run the wrapped component's getInitialProps function.
       if (AppOrPage.getInitialProps) {
@@ -63,7 +63,7 @@ export function withAbby<
       return getAppTreeProps(pageProps);
     };
 
-    const displayName = AppOrPage.displayName || AppOrPage.name || "Component";
+    const displayName = AppOrPage.displayName || AppOrPage.name || 'Component';
     WithAbby.displayName = `withAbby(${displayName})`;
 
     return WithAbby as any;

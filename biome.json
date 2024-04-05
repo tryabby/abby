@@ -1,0 +1,87 @@
+{
+  "$schema": "https://biomejs.dev/schemas/1.6.4/schema.json",
+  "files": {
+    "include": ["**/*.ts", "**/*.tsx"],
+    "ignore": [
+      "**/node_modules/**",
+      "**/dist/**",
+      "**/build/**",
+      "**/.git/**",
+      "**/.vscode/**",
+      "**/angular/**"
+    ]
+  },
+  "organizeImports": {
+    "enabled": false
+  },
+  "linter": {
+    "enabled": true,
+    "rules": {
+      "recommended": true,
+      "security": {
+        "noDangerouslySetInnerHtml": "off"
+      },
+      "complexity": {
+        "noStaticOnlyClass": "off",
+        "noForEach": "off",
+        "noBannedTypes": "off"
+      },
+      "suspicious": {
+        "noExplicitAny": "off",
+        "noImplicitAnyLet": "off",
+        "noExtraNonNullAssertion": "off",
+        "noAssignInExpressions": "off",
+        "noAsyncPromiseExecutor": "off",
+        "noArrayIndexKey": "off",
+        "noRedeclare": "off"
+      },
+      "style": {
+        "useNodejsImportProtocol": "off",
+        "noParameterAssign": "off",
+        "noNonNullAssertion": "off",
+        "useImportType": "off"
+      },
+      "correctness": {
+        "noEmptyPattern": "off",
+        "useExhaustiveDependencies": "off"
+      },
+      "a11y": {
+        "useValidAnchor": "off",
+        "useButtonType": "off",
+        "noSvgWithoutTitle": "off",
+        "useAriaPropsForRole": "off",
+        "useKeyWithClickEvents": "off",
+        "useAltText": "off"
+      }
+    }
+  },
+  "formatter": {
+    "enabled": true,
+    "formatWithErrors": false,
+    "indentStyle": "space",
+    "indentWidth": 2,
+    "lineWidth": 100,
+    "lineEnding": "lf"
+  },
+  "json": {
+    "formatter": {
+      "indentStyle": "space"
+    }
+  },
+  "javascript": {
+    "parser": {
+      "unsafeParameterDecoratorsEnabled": true
+    },
+    "formatter": {
+      "arrowParentheses": "always",
+      "jsxQuoteStyle": "single",
+      "quoteStyle": "single",
+      "semicolons": "always",
+      "trailingComma": "all",
+      "quoteProperties": "asNeeded",
+      "bracketSpacing": true,
+      "bracketSameLine": false,
+      "indentStyle": "space"
+    }
+  }
+}

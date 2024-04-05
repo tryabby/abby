@@ -1,24 +1,24 @@
-import { compose, rest } from "msw";
-import { AbbyDataResponse, ABBY_BASE_URL } from "../../src/shared";
+import { compose, rest } from 'msw';
+import { AbbyDataResponse, ABBY_BASE_URL } from '../../src/shared';
 
 const returnData: AbbyDataResponse = {
   tests: [
     {
-      name: "test",
+      name: 'test',
       weights: [1, 1, 1, 1],
     },
     {
-      name: "test2",
+      name: 'test2',
       weights: [1, 0],
     },
   ],
   flags: [
     {
-      name: "flag1",
+      name: 'flag1',
       value: true,
     },
   ],
-  remoteConfig: [{ name: "remoteConfig1", value: "asdf" }],
+  remoteConfig: [{ name: 'remoteConfig1', value: 'asdf' }],
 };
 
 export const handlers = [

@@ -2,8 +2,8 @@ import {
   ABBY_AB_STORAGE_PREFIX,
   ABBY_FF_STORAGE_PREFIX,
   ABBY_RC_STORAGE_PREFIX,
-} from "./constants";
-import { RemoteConfigValue, RemoteConfigValueString } from "./schemas";
+} from './constants';
+import { RemoteConfigValue, RemoteConfigValueString } from './schemas';
 
 export function getABStorageKey(projectId: string, testName: string): string {
   return `${ABBY_AB_STORAGE_PREFIX}${projectId}_${testName}`;
@@ -18,7 +18,7 @@ export function getRCStorageKey(projectId: string, remoteConfigName: string): st
 }
 
 export function assertUnreachable(x: never): never {
-  throw new Error("Reached unreachable code");
+  throw new Error('Reached unreachable code');
 }
 
 export function remoteConfigStringToType({
@@ -29,11 +29,11 @@ export function remoteConfigStringToType({
   remoteConfigType: RemoteConfigValueString;
 }): RemoteConfigValue {
   switch (remoteConfigType) {
-    case "String":
+    case 'String':
       return stringifiedValue;
-    case "Number":
-      return parseInt(stringifiedValue, 10);
-    case "JSON":
+    case 'Number':
+      return Number.parseInt(stringifiedValue, 10);
+    case 'JSON':
       return JSON.parse(stringifiedValue);
     default:
       assertUnreachable(remoteConfigType);
@@ -41,14 +41,14 @@ export function remoteConfigStringToType({
 }
 
 export function getDefaultRemoteConfigValue(
-  remoteConfigType: RemoteConfigValueString
+  remoteConfigType: RemoteConfigValueString,
 ): RemoteConfigValue {
   switch (remoteConfigType) {
-    case "String":
-      return "";
-    case "Number":
+    case 'String':
+      return '';
+    case 'Number':
       return 0;
-    case "JSON":
+    case 'JSON':
       return {};
     default:
       assertUnreachable(remoteConfigType);
@@ -57,11 +57,11 @@ export function getDefaultRemoteConfigValue(
 
 export function stringifyRemoteConfigValue(value: RemoteConfigValue) {
   switch (typeof value) {
-    case "number":
+    case 'number':
       return value.toString();
-    case "string":
+    case 'string':
       return value;
-    case "object":
+    case 'object':
       return JSON.stringify(value);
     default:
       assertUnreachable(value);

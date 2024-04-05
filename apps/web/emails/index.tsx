@@ -1,11 +1,9 @@
-import { Project, User } from "@prisma/client";
-import { render } from "@react-email/render";
-import { env } from "env/server.mjs";
-import { createTransport } from "nodemailer";
-import InviteEmail, { Props as InviteEmailProps } from "./invite";
-import ContactFormularEmail, {
-  Props as ContactMailProps,
-} from "./ContactFormularEmail";
+import { Project, User } from '@prisma/client';
+import { render } from '@react-email/render';
+import { env } from 'env/server.mjs';
+import { createTransport } from 'nodemailer';
+import InviteEmail, { Props as InviteEmailProps } from './invite';
+import ContactFormularEmail, { Props as ContactMailProps } from './ContactFormularEmail';
 
 const transporter = createTransport({
   pool: true,
@@ -26,7 +24,7 @@ export function sendInviteEmail(props: InviteEmailProps) {
 
 export function sendContactFormularEmail(props: ContactMailProps) {
   const email = render(<ContactFormularEmail {...props} />);
-  const abbyContactAdress = "tim@tryabby.com";
+  const abbyContactAdress = 'tim@tryabby.com';
   return transporter.sendMail({
     to: abbyContactAdress,
     from: `Abby <${env.ABBY_FROM_EMAIL}>`,

@@ -1,11 +1,11 @@
-import { AbbyConfigFile, DynamicConfigKeys } from "@tryabby/core";
-import fs from "fs/promises";
-import * as prettier from "prettier";
+import { AbbyConfigFile, DynamicConfigKeys } from '@tryabby/core';
+import fs from 'fs/promises';
+import * as prettier from 'prettier';
 
 export async function initAbbyConfig({ path }: { path: string }) {
   const dynamicConfig: Pick<AbbyConfigFile, DynamicConfigKeys> = {
-    projectId: "<YOUR_PROJECT_ID>",
-    currentEnvironment: "<YOUR_ENVIRONMENT>",
+    projectId: '<YOUR_PROJECT_ID>',
+    currentEnvironment: '<YOUR_ENVIRONMENT>',
   };
 
   const staticConfig: Omit<AbbyConfigFile, DynamicConfigKeys> = {
@@ -19,9 +19,9 @@ export async function initAbbyConfig({ path }: { path: string }) {
     export default defineConfig(${JSON.stringify(dynamicConfig, null, 2)}, ${JSON.stringify(
       staticConfig,
       null,
-      2
+      2,
     )});
   `;
 
-  await fs.writeFile(path, await prettier.format(fileContent, { parser: "typescript" }));
+  await fs.writeFile(path, await prettier.format(fileContent, { parser: 'typescript' }));
 }

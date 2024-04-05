@@ -1,8 +1,8 @@
-import { AfterDataRequest } from "./AfterDataRequest";
-import { Job } from "./types";
+import { AfterDataRequest } from './AfterDataRequest';
+import { Job } from './types';
 
 type JobTypeMapping = {
-  "after-data-request": AfterDataRequest;
+  'after-data-request': AfterDataRequest;
 };
 
 export class JobManager {
@@ -25,7 +25,7 @@ export class JobManager {
 
   async emit<K extends keyof JobTypeMapping>(
     jobName: K,
-    data: Parameters<JobTypeMapping[K]["emit"]>[0]
+    data: Parameters<JobTypeMapping[K]['emit']>[0],
   ): Promise<void> {
     const job = this.jobs.get(jobName);
     if (job === undefined) {

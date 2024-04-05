@@ -1,9 +1,9 @@
-import { TRPCError } from "@trpc/server";
-import { getProjectPaidPlan } from "lib/stripe";
-import { getLimitByPlan } from "server/common/plans";
-import { z } from "zod";
-import { protectedProcedure, router } from "../trpc";
-import { FeatureFlagType } from "@prisma/client";
+import { TRPCError } from '@trpc/server';
+import { getProjectPaidPlan } from 'lib/stripe';
+import { getLimitByPlan } from 'server/common/plans';
+import { z } from 'zod';
+import { protectedProcedure, router } from '../trpc';
+import { FeatureFlagType } from '@prisma/client';
 
 export const environmentRouter = router({
   addEnvironment: protectedProcedure
@@ -11,7 +11,7 @@ export const environmentRouter = router({
       z.object({
         projectId: z.string(),
         name: z.string().min(1),
-      })
+      }),
     )
     .mutation(async ({ ctx, input }) => {
       const project = await ctx.prisma.project.findFirst({
@@ -28,13 +28,13 @@ export const environmentRouter = router({
         },
       });
 
-      if (!project) throw new TRPCError({ code: "UNAUTHORIZED" });
+      if (!project) throw new TRPCError({ code: 'UNAUTHORIZED' });
 
       const limits = getLimitByPlan(getProjectPaidPlan(project));
 
       if (project.environments.length >= limits.environments) {
         throw new TRPCError({
-          code: "FORBIDDEN",
+          code: 'FORBIDDEN',
           message: `You have reached the limit of ${limits.environments} environments for your plan.`,
         });
       }
@@ -63,18 +63,18 @@ export const environmentRouter = router({
                 environmentId: newEnv.id,
                 value:
                   flag.type === FeatureFlagType.BOOLEAN
-                    ? "false"
+                    ? 'false'
                     : flag.type === FeatureFlagType.STRING
-                    ? "new value"
-                    : "0",
+                      ? 'new value'
+                      : '0',
               },
-            })
-          )
+            }),
+          ),
         );
         return tx.featureFlagHistory.createMany({
           data: newFlagValues.map((flag) => ({
             userId: ctx.session.user.id,
-            newValue: "false",
+            newValue: 'false',
             flagValueId: flag.id,
             oldValue: null,
           })),
@@ -97,7 +97,7 @@ export const environmentRouter = router({
         },
       });
 
-      if (!env) throw new TRPCError({ code: "UNAUTHORIZED" });
+      if (!env) throw new TRPCError({ code: 'UNAUTHORIZED' });
       return ctx.prisma.environment.update({
         where: {
           id: input.environmentId,
@@ -123,7 +123,7 @@ export const environmentRouter = router({
         },
       });
 
-      if (!env) throw new TRPCError({ code: "UNAUTHORIZED" });
+      if (!env) throw new TRPCError({ code: 'UNAUTHORIZED' });
 
       // delete all environment
       await ctx.prisma.environment.delete({
@@ -139,9 +139,9 @@ export const environmentRouter = router({
           z.object({
             id: z.string(),
             sortIndex: z.number(),
-          })
+          }),
         ),
-      })
+      }),
     )
     .mutation(async ({ ctx, input }) => {
       const env = await ctx.prisma.environment.findFirst({
@@ -157,7 +157,7 @@ export const environmentRouter = router({
         },
       });
 
-      if (!env) throw new TRPCError({ code: "UNAUTHORIZED" });
+      if (!env) throw new TRPCError({ code: 'UNAUTHORIZED' });
 
       await ctx.prisma.$transaction(
         input.environments.map((env) =>
@@ -168,8 +168,8 @@ export const environmentRouter = router({
             data: {
               sortIndex: env.sortIndex,
             },
-          })
-        )
+          }),
+        ),
       );
     }),
 });

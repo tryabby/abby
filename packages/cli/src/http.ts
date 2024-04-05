@@ -1,8 +1,8 @@
-import { AbbyConfig, PullAbbyConfigResponse } from "@tryabby/core";
-import { ABBY_BASE_URL } from "./consts";
-import fetch from "node-fetch";
-import { multiLineLog } from "./util";
-import chalk from "chalk";
+import { AbbyConfig, PullAbbyConfigResponse } from '@tryabby/core';
+import { ABBY_BASE_URL } from './consts';
+import fetch from 'node-fetch';
+import { multiLineLog } from './util';
+import chalk from 'chalk';
 
 export abstract class HttpService {
   static async getConfigFromServer({
@@ -17,15 +17,15 @@ export abstract class HttpService {
     const url = apiUrl ?? ABBY_BASE_URL;
 
     const response = await fetch(`${url}/api/v1/config/${projectId}`, {
-      method: "GET",
+      method: 'GET',
       headers: {
-        Authorization: "Bearer " + apiKey,
-        "Content-Type": "application/json",
+        Authorization: 'Bearer ' + apiKey,
+        'Content-Type': 'application/json',
       },
     });
 
     if (!response.ok) {
-      throw new Error("Invalid response from server");
+      throw new Error('Invalid response from server');
     }
 
     const responseJson = await response.json();
@@ -45,10 +45,10 @@ export abstract class HttpService {
 
     try {
       const response = await fetch(`${url}/api/v1/config/${localAbbyConfig.projectId}`, {
-        method: "PUT",
+        method: 'PUT',
         headers: {
-          Authorization: "Bearer " + apiKey,
-          "Content-Type": "application/json",
+          Authorization: 'Bearer ' + apiKey,
+          'Content-Type': 'application/json',
         },
         body: JSON.stringify(localAbbyConfig),
       });
@@ -56,16 +56,16 @@ export abstract class HttpService {
       const status = response.status;
 
       if (status === 200) {
-        console.log(chalk.green("Config was pushed successfully"));
+        console.log(chalk.green('Config was pushed successfully'));
       } else if (status === 500) {
-        throw new Error("Internal server error while pushing config");
+        throw new Error('Internal server error while pushing config');
       } else if (status === 401) {
-        throw new Error("Invalid API Key");
+        throw new Error('Invalid API Key');
       } else {
-        throw new Error("Push failed");
+        throw new Error('Push failed');
       }
     } catch (e) {
-      console.log(chalk.red(multiLineLog("Error: " + e)));
+      console.log(chalk.red(multiLineLog('Error: ' + e)));
       throw e;
     }
   }

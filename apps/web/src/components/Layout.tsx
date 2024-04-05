@@ -1,87 +1,85 @@
-import { useProjectId } from "lib/hooks/useProjectId";
-import { NextSeo } from "next-seo";
-import { ReactNode } from "react";
-import { twMerge } from "tailwind-merge";
-import { trpc } from "../utils/trpc";
-import { AppNav } from "./app/AppNav";
-import { UserNav } from "./app/UserNav";
-import ProjectSwitcher from "./ProjectSwitcher";
+import { useProjectId } from 'lib/hooks/useProjectId';
+import { NextSeo } from 'next-seo';
+import { ReactNode } from 'react';
+import { twMerge } from 'tailwind-merge';
+import { trpc } from '../utils/trpc';
+import { AppNav } from './app/AppNav';
+import { UserNav } from './app/UserNav';
+import ProjectSwitcher from './ProjectSwitcher';
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from "./DropdownMenu";
-import { Button } from "components/ui/button";
-import { DOCS_URL } from "@tryabby/core";
-import { HelpCircle, Book, Mail, Video } from "lucide-react";
-import { FaDiscord } from "react-icons/fa";
-import { DISCORD_INVITE_URL } from "./Footer";
-import { useTracking } from "lib/tracking";
-import Link from "next/link";
+} from './DropdownMenu';
+import { Button } from 'components/ui/button';
+import { DOCS_URL } from '@tryabby/core';
+import { HelpCircle, Book, Mail, Video } from 'lucide-react';
+import { FaDiscord } from 'react-icons/fa';
+import { DISCORD_INVITE_URL } from './Footer';
+import { useTracking } from 'lib/tracking';
+import Link from 'next/link';
 
 export const Layout = ({ children }: { children: ReactNode }) => {
   const trackEvent = useTracking();
   const currentProjectId = useProjectId();
   const { data } = trpc.user.getProjects.useQuery();
 
-  const currentProject = data?.projects.find(
-    ({ project }) => project.id === currentProjectId
-  );
+  const currentProject = data?.projects.find(({ project }) => project.id === currentProjectId);
 
   return (
     <>
       <NextSeo title={currentProject?.project.name} />
-      <div className={twMerge("dark flex h-screen flex-col bg-background")}>
-        <nav className="border-b border-border px-8 py-3 lg:px-10">
-          <div className="flex items-center justify-between">
-            <div className="flex space-x-8">
+      <div className={twMerge('dark flex h-screen flex-col bg-background')}>
+        <nav className='border-b border-border px-8 py-3 lg:px-10'>
+          <div className='flex items-center justify-between'>
+            <div className='flex space-x-8'>
               {!currentProject ? null : (
                 <>
                   <ProjectSwitcher />
-                  <AppNav className="hidden md:flex" />
+                  <AppNav className='hidden md:flex' />
                 </>
               )}
             </div>
-            <div className="flex items-center space-x-4">
+            <div className='flex items-center space-x-4'>
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <Button
-                    size="icon"
-                    variant="ghost"
-                    className="hidden md:flex"
+                    size='icon'
+                    variant='ghost'
+                    className='hidden md:flex'
                     // all other events are prevented by radix :(
                     onPointerDown={() => {
-                      trackEvent("Dashboard Help Clicked");
+                      trackEvent('Dashboard Help Clicked');
                     }}
-                    title=""
+                    title=''
                   >
                     <HelpCircle />
                   </Button>
                 </DropdownMenuTrigger>
-                <DropdownMenuContent side="bottom" align="end">
+                <DropdownMenuContent side='bottom' align='end'>
                   <DropdownMenuItem disabled>Need help?</DropdownMenuItem>
                   <Link href={DOCS_URL}>
                     <DropdownMenuItem>
-                      <Book className="mr-2 h-4 w-4" />
+                      <Book className='mr-2 h-4 w-4' />
                       Documentation
                     </DropdownMenuItem>
                   </Link>
-                  <Link href="mailto:tim@tryabby.com">
+                  <Link href='mailto:tim@tryabby.com'>
                     <DropdownMenuItem>
-                      <Mail className="mr-2 h-4 w-4" />
+                      <Mail className='mr-2 h-4 w-4' />
                       Send a Mail
                     </DropdownMenuItem>
                   </Link>
-                  <Link href="https://cal.com/cstrnt/abby-help">
+                  <Link href='https://cal.com/cstrnt/abby-help'>
                     <DropdownMenuItem>
-                      <Video className="mr-2 h-4 w-4" />
+                      <Video className='mr-2 h-4 w-4' />
                       Book a free Call
                     </DropdownMenuItem>
                   </Link>
                   <Link href={DISCORD_INVITE_URL}>
                     <DropdownMenuItem>
-                      <FaDiscord className="mr-2 h-4 w-4" />
+                      <FaDiscord className='mr-2 h-4 w-4' />
                       Join our Discord
                     </DropdownMenuItem>
                   </Link>
@@ -91,12 +89,12 @@ export const Layout = ({ children }: { children: ReactNode }) => {
             </div>
           </div>
           <AppNav
-            className="mt-3 min-w-full overflow-x-auto py-3 md:hidden"
-            linkClassName="flex-none"
+            className='mt-3 min-w-full overflow-x-auto py-3 md:hidden'
+            linkClassName='flex-none'
           />
         </nav>
-        <main className="relative w-full flex-1 overflow-y-auto overflow-x-hidden text-white">
-          <div className="p-8 lg:p-10">{children}</div>
+        <main className='relative w-full flex-1 overflow-y-auto overflow-x-hidden text-white'>
+          <div className='p-8 lg:p-10'>{children}</div>
         </main>
       </div>
     </>

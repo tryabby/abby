@@ -1,10 +1,10 @@
-import type { NextApiRequest, NextApiResponse } from "next";
-import { Session, unstable_getServerSession } from "next-auth";
-import { authOptions } from "../pages/api/auth/[...nextauth]";
+import type { NextApiRequest, NextApiResponse } from 'next';
+import { Session, unstable_getServerSession } from 'next-auth';
+import { authOptions } from '../pages/api/auth/[...nextauth]';
 
 const checkSession = async (
   req: NextApiRequest,
-  res: NextApiResponse
+  res: NextApiResponse,
 ): Promise<Session | undefined> => {
   const session = await unstable_getServerSession(req, res, authOptions);
   if (session) {

@@ -1,5 +1,5 @@
-import { HttpService } from "./http";
-import { loadLocalConfig } from "./util";
+import { HttpService } from './http';
+import { loadLocalConfig } from './util';
 
 /**
  * Verify that the local config is valid

@@ -1,4 +1,4 @@
-import { Injectable } from "@angular/core";
+import { Injectable } from '@angular/core';
 import {
   AbbyService,
   InferFlagNames,
@@ -6,11 +6,11 @@ import {
   InferRemoteConfigName,
   InferTestNames,
   InferTests,
-} from "abby";
-import abby from "../../abby.config";
+} from 'abby';
+import abby from '../../abby.config';
 
 @Injectable({
-  providedIn: "root",
+  providedIn: 'root',
   useExisting: AbbyService,
 })
 export class Abby extends AbbyService<

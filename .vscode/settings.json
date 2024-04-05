@@ -4,8 +4,10 @@
     "editor.defaultFormatter": "svelte.svelte-vscode"
   },
   "[typescript][typescriptreact][typescriptangular]": {
-    "editor.defaultFormatter": "esbenp.prettier-vscode"
+    "editor.defaultFormatter": "biomejs.biome"
   },
-  "eslint.workingDirectories": ["apps", "packages"],
-  "prettier.enable": true
+  "editor.codeActionsOnSave": {
+    "quickfix.biome": "explicit",
+    "source.organizeImports.biome": "explicit"
+  }
 }

@@ -1,6 +1,6 @@
-import { renderHook } from "@testing-library/react";
-import { PropsWithChildren } from "react";
-import { createAbby } from "../src";
+import { renderHook } from '@testing-library/react';
+import { PropsWithChildren } from 'react';
+import { createAbby } from '../src';
 
 const OLD_ENV = process.env;
 
@@ -13,15 +13,15 @@ afterAll(() => {
   process.env = OLD_ENV; // Restore old environment
 });
 
-describe("useAbby", () => {
-  it("returns the correct types", () => {
-    const test2Variants = ["SimonsText", "MatthiasText", "TomsText", "TimsText"] as const;
+describe('useAbby', () => {
+  it('returns the correct types', () => {
+    const test2Variants = ['SimonsText', 'MatthiasText', 'TomsText', 'TimsText'] as const;
 
     const { AbbyProvider, useAbby } = createAbby({
       environments: [],
-      projectId: "123",
+      projectId: '123',
       tests: {
-        test: { variants: ["ONLY_ONE_VARIANT"] },
+        test: { variants: ['ONLY_ONE_VARIANT'] },
         test2: {
           variants: test2Variants,
         },
@@ -30,15 +30,15 @@ describe("useAbby", () => {
 
     const wrapper = ({ children }: PropsWithChildren) => <AbbyProvider>{children}</AbbyProvider>;
 
-    const { result: test1Result } = renderHook(() => useAbby("test"), {
+    const { result: test1Result } = renderHook(() => useAbby('test'), {
       wrapper,
     });
 
-    assertType<"ONLY_ONE_VARIANT">(test1Result.current.variant);
+    assertType<'ONLY_ONE_VARIANT'>(test1Result.current.variant);
 
     expect(test1Result.current.variant).toBeDefined();
 
-    const { result: test2Result } = renderHook(() => useAbby("test2"), {
+    const { result: test2Result } = renderHook(() => useAbby('test2'), {
       wrapper,
     });
 
@@ -48,31 +48,31 @@ describe("useAbby", () => {
   });
 });
 
-describe("useFeatureFlag", () => {
-  it("returns the correct types", () => {
+describe('useFeatureFlag', () => {
+  it('returns the correct types', () => {
     const { AbbyProvider, useFeatureFlag } = createAbby({
       environments: [],
-      projectId: "123",
-      flags: ["test"],
+      projectId: '123',
+      flags: ['test'],
     });
 
     const wrapper = ({ children }: PropsWithChildren) => <AbbyProvider>{children}</AbbyProvider>;
 
-    const { result: testFlagResult } = renderHook(() => useFeatureFlag("test"), {
+    const { result: testFlagResult } = renderHook(() => useFeatureFlag('test'), {
       wrapper,
     });
 
     expectTypeOf(testFlagResult.current).toEqualTypeOf<boolean>();
-    expectTypeOf(useFeatureFlag).parameter(0).toEqualTypeOf<"test">();
+    expectTypeOf(useFeatureFlag).parameter(0).toEqualTypeOf<'test'>();
   });
 
   // TODO: the types don't work for this yet
-  it.skip("has the correct type for devOverrides", () => {
+  it.skip('has the correct type for devOverrides', () => {
     const {} = createAbby({
       environments: [],
-      projectId: "123",
-      currentEnvironment: "test",
-      flags: ["test"],
+      projectId: '123',
+      currentEnvironment: 'test',
+      flags: ['test'],
       settings: {
         flags: {
           devOverrides: {
@@ -83,18 +83,18 @@ describe("useFeatureFlag", () => {
     });
   });
 
-  describe("getVariants", () => {
-    it("has the correct types", () => {
+  describe('getVariants', () => {
+    it('has the correct types', () => {
       const { getVariants } = createAbby({
         environments: [],
-        projectId: "123",
-        currentEnvironment: "test",
+        projectId: '123',
+        currentEnvironment: 'test',
         tests: {
           test: {
-            variants: ["ONLY_ONE_VARIANT"],
+            variants: ['ONLY_ONE_VARIANT'],
           },
         },
-        flags: ["test"],
+        flags: ['test'],
         settings: {
           flags: {
             devOverrides: {
@@ -103,33 +103,33 @@ describe("useFeatureFlag", () => {
           },
         },
       });
-      expectTypeOf(getVariants("test")).toEqualTypeOf<["ONLY_ONE_VARIANT"]>();
+      expectTypeOf(getVariants('test')).toEqualTypeOf<['ONLY_ONE_VARIANT']>();
     });
   });
 });
 
-describe("useRemoteConfig", () => {
-  it("uses correct typings", () => {
+describe('useRemoteConfig', () => {
+  it('uses correct typings', () => {
     const { AbbyProvider, useRemoteConfig } = createAbby({
       environments: [],
-      projectId: "123",
+      projectId: '123',
       remoteConfig: {
-        stringRc: "String",
-        numberRc: "Number",
-        jsonRc: "JSON",
+        stringRc: 'String',
+        numberRc: 'Number',
+        jsonRc: 'JSON',
       },
     });
 
-    expectTypeOf(useRemoteConfig).parameter(0).toEqualTypeOf<"stringRc" | "numberRc" | "jsonRc">();
+    expectTypeOf(useRemoteConfig).parameter(0).toEqualTypeOf<'stringRc' | 'numberRc' | 'jsonRc'>();
 
     const wrapper = ({ children }: PropsWithChildren) => <AbbyProvider>{children}</AbbyProvider>;
-    const { result: stringRcResult } = renderHook(() => useRemoteConfig("stringRc"), {
+    const { result: stringRcResult } = renderHook(() => useRemoteConfig('stringRc'), {
       wrapper,
     });
-    const { result: numberRcResult } = renderHook(() => useRemoteConfig("numberRc"), {
+    const { result: numberRcResult } = renderHook(() => useRemoteConfig('numberRc'), {
       wrapper,
     });
-    const { result: jsonRcResult } = renderHook(() => useRemoteConfig("jsonRc"), {
+    const { result: jsonRcResult } = renderHook(() => useRemoteConfig('jsonRc'), {
       wrapper,
     });
 

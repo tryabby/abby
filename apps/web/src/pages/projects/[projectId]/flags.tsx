@@ -1,12 +1,12 @@
-import { DashboardHeader } from "components/DashboardHeader";
-import { Layout } from "components/Layout";
-import { FullPageLoadingSpinner } from "components/LoadingSpinner";
-import { useProjectId } from "lib/hooks/useProjectId";
-import { NextPageWithLayout } from "pages/_app";
-import { trpc } from "utils/trpc";
+import { DashboardHeader } from 'components/DashboardHeader';
+import { Layout } from 'components/Layout';
+import { FullPageLoadingSpinner } from 'components/LoadingSpinner';
+import { useProjectId } from 'lib/hooks/useProjectId';
+import { NextPageWithLayout } from 'pages/_app';
+import { trpc } from 'utils/trpc';
 
-import { FeatureFlagPageContent } from "components/FlagPage";
-import { GetStaticPaths, GetStaticProps } from "next";
+import { FeatureFlagPageContent } from 'components/FlagPage';
+import { GetStaticPaths, GetStaticProps } from 'next';
 
 const FeatureFlagsPage: NextPageWithLayout = () => {
   const projectId = useProjectId();
@@ -14,21 +14,21 @@ const FeatureFlagsPage: NextPageWithLayout = () => {
   const { data, isLoading, isError } = trpc.flags.getFlags.useQuery(
     {
       projectId,
-      types: ["BOOLEAN"],
+      types: ['BOOLEAN'],
     },
     {
       enabled: !!projectId,
-    }
+    },
   );
 
   if (isLoading || isError) return <FullPageLoadingSpinner />;
 
-  return <FeatureFlagPageContent data={data} type="Flags" />;
+  return <FeatureFlagPageContent data={data} type='Flags' />;
 };
 
 FeatureFlagsPage.getLayout = (page) => (
   <Layout>
-    <DashboardHeader title="Feature Flags" />
+    <DashboardHeader title='Feature Flags' />
     {page}
   </Layout>
 );

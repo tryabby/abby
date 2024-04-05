@@ -1,10 +1,10 @@
-import { TRPCError } from "@trpc/server";
-import { z } from "zod";
-import { protectedProcedure, router } from "../trpc";
-import { prisma } from "server/db/client";
-import { InviteService } from "server/services/InviteService";
-import { sendInviteEmail } from "../../../../emails";
-import { updateProjectsOnSession } from "utils/updateSession";
+import { TRPCError } from '@trpc/server';
+import { z } from 'zod';
+import { protectedProcedure, router } from '../trpc';
+import { prisma } from 'server/db/client';
+import { InviteService } from 'server/services/InviteService';
+import { sendInviteEmail } from '../../../../emails';
+import { updateProjectsOnSession } from 'utils/updateSession';
 
 export const inviteRouter = router({
   getInviteData: protectedProcedure
@@ -24,7 +24,7 @@ export const inviteRouter = router({
       z.object({
         projectId: z.string(),
         email: z.string().email(),
-      })
+      }),
     )
     .mutation(async ({ input, ctx }) => {
       const currentProject = await ctx.prisma.project.findFirst({
@@ -42,14 +42,14 @@ export const inviteRouter = router({
       });
 
       if (!currentProject) {
-        throw new TRPCError({ code: "UNAUTHORIZED" });
+        throw new TRPCError({ code: 'UNAUTHORIZED' });
       }
 
       if (
         input.email === ctx.session.user.email ||
         currentProject.users.some((user) => user.user.email === input.email)
       ) {
-        throw new TRPCError({ code: "CONFLICT" });
+        throw new TRPCError({ code: 'CONFLICT' });
       }
 
       const userToInvite = await ctx.prisma.user.findFirst({
@@ -59,7 +59,7 @@ export const inviteRouter = router({
       });
 
       if (!userToInvite) {
-        throw new TRPCError({ code: "NOT_FOUND" });
+        throw new TRPCError({ code: 'NOT_FOUND' });
       }
 
       const invite = await prisma.projectInvite.create({
@@ -71,7 +71,7 @@ export const inviteRouter = router({
       });
 
       if (!ctx.session.user.email) {
-        throw new TRPCError({ code: "UNAUTHORIZED" });
+        throw new TRPCError({ code: 'UNAUTHORIZED' });
       }
       try {
         await sendInviteEmail({
@@ -111,11 +111,11 @@ export const inviteRouter = router({
       });
 
       if (!invite) {
-        throw new TRPCError({ code: "NOT_FOUND" });
+        throw new TRPCError({ code: 'NOT_FOUND' });
       }
 
       if (invite.email !== ctx.session.user.email) {
-        throw new TRPCError({ code: "UNAUTHORIZED" });
+        throw new TRPCError({ code: 'UNAUTHORIZED' });
       }
 
       await InviteService.acceptInvite(invite.id, ctx.session.user.id);

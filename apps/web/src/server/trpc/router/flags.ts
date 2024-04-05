@@ -1,9 +1,9 @@
-import { TRPCError } from "@trpc/server";
-import { FlagService } from "server/services/FlagService";
-import { z } from "zod";
-import { protectedProcedure, router } from "../trpc";
-import { FeatureFlagType } from "@prisma/client";
-import { validateFlag } from "utils/validateFlags";
+import { TRPCError } from '@trpc/server';
+import { FlagService } from 'server/services/FlagService';
+import { z } from 'zod';
+import { protectedProcedure, router } from '../trpc';
+import { FeatureFlagType } from '@prisma/client';
+import { validateFlag } from 'utils/validateFlags';
 
 export const flagRouter = router({
   getFlags: protectedProcedure
@@ -11,7 +11,7 @@ export const flagRouter = router({
       z.object({
         projectId: z.string(),
         types: z.array(z.nativeEnum(FeatureFlagType)),
-      })
+      }),
     )
     .query(async ({ ctx, input }) => {
       const flags = await ctx.prisma.featureFlag.findMany({
@@ -44,7 +44,7 @@ export const flagRouter = router({
             },
           },
         },
-        orderBy: { sortIndex: "asc" },
+        orderBy: { sortIndex: 'asc' },
       });
       return { flags, environments };
     }),
@@ -55,7 +55,7 @@ export const flagRouter = router({
         name: z.string(),
         type: z.nativeEnum(FeatureFlagType),
         value: z.string(),
-      })
+      }),
     )
     .mutation(async ({ ctx, input }) => {
       const projectId = input.projectId;
@@ -75,7 +75,7 @@ export const flagRouter = router({
         flagValueId: z.string(),
         value: z.string(),
         name: z.string(),
-      })
+      }),
     )
     .mutation(async ({ ctx, input }) => {
       const currentFlag = await ctx.prisma.featureFlagValue.findFirst({
@@ -96,11 +96,11 @@ export const flagRouter = router({
         },
       });
 
-      if (!currentFlag) throw new TRPCError({ code: "UNAUTHORIZED" });
+      if (!currentFlag) throw new TRPCError({ code: 'UNAUTHORIZED' });
 
       if (!validateFlag(currentFlag.flag.type, input.value)) {
         throw new TRPCError({
-          code: "INTERNAL_SERVER_ERROR",
+          code: 'INTERNAL_SERVER_ERROR',
           message: `The value ${input.value} is not valid for the type ${currentFlag.flag.type}`,
         });
       }
@@ -137,7 +137,7 @@ export const flagRouter = router({
       z.object({
         name: z.string(),
         projectId: z.string(),
-      })
+      }),
     )
     .mutation(async ({ ctx, input }) => {
       const canUpdate = await ctx.prisma.featureFlag.findFirst({
@@ -154,7 +154,7 @@ export const flagRouter = router({
         },
       });
 
-      if (!canUpdate) throw new TRPCError({ code: "UNAUTHORIZED" });
+      if (!canUpdate) throw new TRPCError({ code: 'UNAUTHORIZED' });
 
       return ctx.prisma.$transaction([
         ctx.prisma.featureFlag.deleteMany({
@@ -169,7 +169,7 @@ export const flagRouter = router({
     .input(
       z.object({
         flagValueId: z.string(),
-      })
+      }),
     )
     .query(async ({ ctx, input }) => {
       const canReadFlag = await ctx.prisma.featureFlag.findFirst({
@@ -189,7 +189,7 @@ export const flagRouter = router({
         },
       });
 
-      if (!canReadFlag) throw new TRPCError({ code: "UNAUTHORIZED" });
+      if (!canReadFlag) throw new TRPCError({ code: 'UNAUTHORIZED' });
 
       return ctx.prisma.featureFlagHistory.findMany({
         where: {
@@ -199,7 +199,7 @@ export const flagRouter = router({
           user: true,
         },
         orderBy: {
-          createdAt: "desc",
+          createdAt: 'desc',
         },
       });
     }),
@@ -208,7 +208,7 @@ export const flagRouter = router({
       z.object({
         flagId: z.string(),
         description: z.string().min(1),
-      })
+      }),
     )
     .mutation(async ({ ctx, input }) => {
       const flagToUpdate = await ctx.prisma.featureFlag.findFirst({
@@ -224,7 +224,7 @@ export const flagRouter = router({
         },
       });
 
-      if (!flagToUpdate) throw new TRPCError({ code: "UNAUTHORIZED" });
+      if (!flagToUpdate) throw new TRPCError({ code: 'UNAUTHORIZED' });
 
       return ctx.prisma.featureFlag.update({
         where: {
@@ -240,7 +240,7 @@ export const flagRouter = router({
       z.object({
         flagId: z.string(),
         title: z.string().min(1),
-      })
+      }),
     )
     .mutation(async ({ ctx, input }) => {
       const flagToUpdate = await ctx.prisma.featureFlag.findFirst({
@@ -256,7 +256,7 @@ export const flagRouter = router({
         },
       });
 
-      if (!flagToUpdate) throw new TRPCError({ code: "UNAUTHORIZED" });
+      if (!flagToUpdate) throw new TRPCError({ code: 'UNAUTHORIZED' });
 
       return ctx.prisma.featureFlag.update({
         where: {

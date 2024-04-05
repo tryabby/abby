@@ -1,14 +1,14 @@
-import { generateCodeSnippets } from "utils/snippets";
-import { z } from "zod";
+import { generateCodeSnippets } from 'utils/snippets';
+import { z } from 'zod';
 
-import { router, publicProcedure } from "../trpc";
+import { router, publicProcedure } from '../trpc';
 
 export const exampleRouter = router({
   hello: publicProcedure
     .input(z.object({ text: z.string().nullish() }).nullish())
     .query(({ input }) => {
       return {
-        greeting: `Hello ${input?.text ?? "world"}`,
+        greeting: `Hello ${input?.text ?? 'world'}`,
       };
     }),
   getAll: publicProcedure.query(({ ctx }) => {
@@ -16,46 +16,46 @@ export const exampleRouter = router({
   }),
   exampleSnippet: publicProcedure.query(() => {
     return generateCodeSnippets({
-      projectId: "<PROJECT_ID>",
+      projectId: '<PROJECT_ID>',
       tests: [
         {
-          name: "footer",
+          name: 'footer',
           options: [
             {
-              identifier: "oldFooter",
+              identifier: 'oldFooter',
             },
             {
-              identifier: "newFooter",
+              identifier: 'newFooter',
             },
           ],
         },
         {
-          name: "ctaButton",
+          name: 'ctaButton',
           options: [
             {
-              identifier: "dark",
+              identifier: 'dark',
             },
             {
-              identifier: "light",
+              identifier: 'light',
             },
             {
-              identifier: "cyberpunk",
+              identifier: 'cyberpunk',
             },
           ],
         },
       ],
       flags: [
         {
-          name: "showPrices",
-          type: "BOOLEAN",
+          name: 'showPrices',
+          type: 'BOOLEAN',
         },
         {
-          name: "userLimit",
-          type: "NUMBER",
+          name: 'userLimit',
+          type: 'NUMBER',
         },
         {
-          name: "appMode",
-          type: "STRING",
+          name: 'appMode',
+          type: 'STRING',
         },
       ],
     });

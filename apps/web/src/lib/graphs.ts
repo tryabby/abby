@@ -1,18 +1,18 @@
-import colors from "tailwindcss/colors";
+import colors from 'tailwindcss/colors';
 
 const forbiddenColors: Array<keyof typeof colors> = [
-  "slate",
-  "gray",
-  "zinc",
-  "neutral",
-  "stone",
-  "black",
-  "blueGray",
-  "coolGray",
-  "warmGray",
-  "current",
-  "inherit",
-  "transparent",
+  'slate',
+  'gray',
+  'zinc',
+  'neutral',
+  'stone',
+  'black',
+  'blueGray',
+  'coolGray',
+  'warmGray',
+  'current',
+  'inherit',
+  'transparent',
 ];
 
 const COLORS = Object.keys(colors)

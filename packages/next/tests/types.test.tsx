@@ -1,8 +1,8 @@
-import { renderHook } from "@testing-library/react";
-import { NextApiRequest, NextApiResponse } from "next";
-import { NextFetchEvent, NextRequest, NextResponse } from "next/server";
-import { PropsWithChildren } from "react";
-import { createAbby } from "../src";
+import { renderHook } from '@testing-library/react';
+import { NextApiRequest, NextApiResponse } from 'next';
+import { NextFetchEvent, NextRequest, NextResponse } from 'next/server';
+import { PropsWithChildren } from 'react';
+import { createAbby } from '../src';
 
 const OLD_ENV = process.env;
 
@@ -15,15 +15,15 @@ afterAll(() => {
   process.env = OLD_ENV; // Restore old environment
 });
 
-describe("useAbby", () => {
-  it("returns the correct types", () => {
-    const test2Variants = ["SimonsText", "MatthiasText", "TomsText", "TimsText"] as const;
+describe('useAbby', () => {
+  it('returns the correct types', () => {
+    const test2Variants = ['SimonsText', 'MatthiasText', 'TomsText', 'TimsText'] as const;
 
     const { AbbyProvider, useAbby } = createAbby({
       environments: [],
-      projectId: "123",
+      projectId: '123',
       tests: {
-        test: { variants: ["ONLY_ONE_VARIANT"] },
+        test: { variants: ['ONLY_ONE_VARIANT'] },
         test2: {
           variants: test2Variants,
         },
@@ -32,15 +32,15 @@ describe("useAbby", () => {
 
     const wrapper = ({ children }: PropsWithChildren) => <AbbyProvider>{children}</AbbyProvider>;
 
-    const { result: test1Result } = renderHook(() => useAbby("test"), {
+    const { result: test1Result } = renderHook(() => useAbby('test'), {
       wrapper,
     });
 
-    assertType<"ONLY_ONE_VARIANT">(test1Result.current.variant);
+    assertType<'ONLY_ONE_VARIANT'>(test1Result.current.variant);
 
     expect(test1Result.current.variant).toBeDefined();
 
-    const { result: test2Result } = renderHook(() => useAbby("test2"), {
+    const { result: test2Result } = renderHook(() => useAbby('test2'), {
       wrapper,
     });
 
@@ -50,31 +50,31 @@ describe("useAbby", () => {
   });
 });
 
-describe("useFeatureFlag", () => {
-  it("returns the correct types", () => {
+describe('useFeatureFlag', () => {
+  it('returns the correct types', () => {
     const { AbbyProvider, useFeatureFlag } = createAbby({
       environments: [],
-      projectId: "123",
-      flags: ["test"],
+      projectId: '123',
+      flags: ['test'],
     });
 
     const wrapper = ({ children }: PropsWithChildren) => <AbbyProvider>{children}</AbbyProvider>;
 
-    renderHook(() => useFeatureFlag("test"), {
+    renderHook(() => useFeatureFlag('test'), {
       wrapper,
     });
   });
 
   // TODO: the types don't work for this yet
-  it.skip("has the correct type for devOverrides", () => {
+  it.skip('has the correct type for devOverrides', () => {
     const { useAbby } = createAbby({
       environments: [],
-      projectId: "123",
-      currentEnvironment: "test",
-      flags: ["test"],
+      projectId: '123',
+      currentEnvironment: 'test',
+      flags: ['test'],
       tests: {
         a: {
-          variants: ["a1", "a2"],
+          variants: ['a1', 'a2'],
         },
       },
       settings: {
@@ -88,47 +88,47 @@ describe("useFeatureFlag", () => {
   });
 
   // we only need typesafety here
-  it.skip("has the correct types for getABTestValue", () => {
+  it.skip('has the correct types for getABTestValue', () => {
     const { getABTestValue } = createAbby({
       environments: [],
-      projectId: "123",
-      currentEnvironment: "test",
-      flags: ["test"],
+      projectId: '123',
+      currentEnvironment: 'test',
+      flags: ['test'],
       tests: {
         a: {
-          variants: ["a1", "a2"],
+          variants: ['a1', 'a2'],
         },
       },
     });
 
-    const [variants, setCookie] = getABTestValue("a");
+    const [variants, setCookie] = getABTestValue('a');
 
-    expectTypeOf(variants).toEqualTypeOf<"a1" | "a2">();
+    expectTypeOf(variants).toEqualTypeOf<'a1' | 'a2'>();
 
     expectTypeOf(setCookie).toEqualTypeOf<() => void>();
 
     // on client -> no request thereforen no res
-    const [, setCookieOnClient] = getABTestValue("a");
+    const [, setCookieOnClient] = getABTestValue('a');
 
     expectTypeOf(setCookieOnClient).toEqualTypeOf<() => void>();
 
     // on edge -> res is NextResponse
-    const [, setCookieOnEdge] = getABTestValue("a", {} as NextRequest);
+    const [, setCookieOnEdge] = getABTestValue('a', {} as NextRequest);
 
     expectTypeOf(setCookieOnEdge).toEqualTypeOf<(res: NextResponse) => void>();
 
     // on server -> res is NextApiResponse
-    const [, setCookieOnServer] = getABTestValue("a", {} as NextApiRequest);
+    const [, setCookieOnServer] = getABTestValue('a', {} as NextApiRequest);
 
     expectTypeOf(setCookieOnServer).toEqualTypeOf<(res: NextApiResponse) => void>();
   });
 
   // we only need typesafety here
-  it.skip("has the correct values for withAbbyEdge", async () => {
+  it.skip('has the correct values for withAbbyEdge', async () => {
     const { withAbbyEdge, withAbbyApiHandler } = createAbby({
       environments: [],
-      projectId: "123",
-      currentEnvironment: "test",
+      projectId: '123',
+      currentEnvironment: 'test',
     });
 
     const edgeHandler = withAbbyEdge((req) => {});
@@ -141,29 +141,29 @@ describe("useFeatureFlag", () => {
   });
 });
 
-describe("useRemoteConfig", () => {
-  it.skip("has the correct typings", () => {
+describe('useRemoteConfig', () => {
+  it.skip('has the correct typings', () => {
     const { AbbyProvider, useRemoteConfig } = createAbby({
       environments: [],
-      projectId: "123",
+      projectId: '123',
       remoteConfig: {
-        stringRc: "String",
-        numberRc: "Number",
-        jsonRc: "JSON",
+        stringRc: 'String',
+        numberRc: 'Number',
+        jsonRc: 'JSON',
       },
     });
 
-    expectTypeOf(useRemoteConfig).parameter(0).toEqualTypeOf<"stringRc" | "numberRc" | "jsonRc">();
+    expectTypeOf(useRemoteConfig).parameter(0).toEqualTypeOf<'stringRc' | 'numberRc' | 'jsonRc'>();
 
     const wrapper = ({ children }: PropsWithChildren) => <AbbyProvider>{children}</AbbyProvider>;
 
-    const { result: stringRcResult } = renderHook(() => useRemoteConfig("stringRc"), {
+    const { result: stringRcResult } = renderHook(() => useRemoteConfig('stringRc'), {
       wrapper,
     });
-    const { result: numberRcResult } = renderHook(() => useRemoteConfig("numberRc"), {
+    const { result: numberRcResult } = renderHook(() => useRemoteConfig('numberRc'), {
       wrapper,
     });
-    const { result: jsonRcResult } = renderHook(() => useRemoteConfig("jsonRc"), {
+    const { result: jsonRcResult } = renderHook(() => useRemoteConfig('jsonRc'), {
       wrapper,
     });
 

@@ -7,12 +7,7 @@ export const getUpdatedWeights = ({
   newWeight: number;
   weights: number[];
 }) => {
-  if (
-    indexToUpdate < 0 ||
-    indexToUpdate > weights.length - 1 ||
-    newWeight < 0 ||
-    newWeight > 100
-  ) {
+  if (indexToUpdate < 0 || indexToUpdate > weights.length - 1 || newWeight < 0 || newWeight > 100) {
     return weights;
   }
 
@@ -39,7 +34,10 @@ export const getUpdatedWeights = ({
 };
 
 export const groupBy = <T, K extends keyof any>(arr: T[], key: (i: T) => K) =>
-  arr.reduce((groups, item) => {
-    (groups[key(item)] ||= []).push(item);
-    return groups;
-  }, {} as Record<K, T[]>);
+  arr.reduce(
+    (groups, item) => {
+      (groups[key(item)] ||= []).push(item);
+      return groups;
+    },
+    {} as Record<K, T[]>,
+  );

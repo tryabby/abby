@@ -1,46 +1,46 @@
-import { rest } from "msw";
-import { ABBY_BASE_URL } from "@tryabby/core";
+import { rest } from 'msw';
+import { ABBY_BASE_URL } from '@tryabby/core';
 
 export const handlers = [
   rest.get(`${ABBY_BASE_URL}/api/v1/config/:projectId`, (req, res, ctx) => {
-    const apiKey = req.url.searchParams.get("apiKey");
+    const apiKey = req.url.searchParams.get('apiKey');
 
-    if (apiKey == "test") {
+    if (apiKey == 'test') {
       return res(
         ctx.json({
-          projectId: "test",
+          projectId: 'test',
           tests: {
             test1: {
-              variants: ["A", "B", "C", "D"],
+              variants: ['A', 'B', 'C', 'D'],
             },
             test2: {
-              variants: ["A", "B"],
+              variants: ['A', 'B'],
             },
           },
-          flags: ["flag1", "flag2"],
-        })
+          flags: ['flag1', 'flag2'],
+        }),
       );
     } else {
       return res(
         ctx.json({
-          projectId: "test",
+          projectId: 'test',
           tests: {
             test1: {
-              variants: ["A", "B", "C", "D"],
+              variants: ['A', 'B', 'C', 'D'],
             },
             test2: {
-              variants: ["A", "B"],
+              variants: ['A', 'B'],
             },
             test3: {
-              variants: ["A", "B", "C", "D"],
+              variants: ['A', 'B', 'C', 'D'],
             },
           },
-          flags: ["flag1", "flag2", "flag3"],
-        })
+          flags: ['flag1', 'flag2', 'flag3'],
+        }),
       );
     }
   }),
   rest.put(`${ABBY_BASE_URL}api/v1/config/:projectId`, (req, res, ctx) => {
-    return res(ctx.json({ message: "Config updated" }));
+    return res(ctx.json({ message: 'Config updated' }));
   }),
 ];

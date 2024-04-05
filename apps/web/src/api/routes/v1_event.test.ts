@@ -1,16 +1,16 @@
-import { testClient } from "hono/testing";
-import { makeEventRoute } from "./v1_event";
-import { AbbyEventType } from "@tryabby/core";
-import { prisma } from "server/db/client";
-import { redis } from "server/db/redis";
+import { testClient } from 'hono/testing';
+import { makeEventRoute } from './v1_event';
+import { AbbyEventType } from '@tryabby/core';
+import { prisma } from 'server/db/client';
+import { redis } from 'server/db/redis';
 
-vi.mock("server/common/plans", () => ({
+vi.mock('server/common/plans', () => ({
   getLimitByPlan: vi.fn(() => {}),
 }));
 
-vi.mock("../../env/client.mjs", () => ({}));
+vi.mock('../../env/client.mjs', () => ({}));
 
-vi.mock("server/db/client", () => ({
+vi.mock('server/db/client', () => ({
   prisma: {
     event: {
       create: vi.fn(),
@@ -21,9 +21,9 @@ vi.mock("server/db/client", () => ({
   },
 }));
 
-vi.mock("server/db/redis", () => ({
+vi.mock('server/db/redis', () => ({
   redis: {
-    incr: vi.fn(async () => "test"),
+    incr: vi.fn(async () => 'test'),
   },
 }));
 
@@ -31,14 +31,14 @@ afterEach(() => {
   vi.resetAllMocks();
 });
 
-it("should work with correct PING events", async () => {
+it('should work with correct PING events', async () => {
   const app = makeEventRoute();
 
   const res = await testClient(app).index.$post({
     json: {
-      projectId: "test",
-      selectedVariant: "test",
-      testName: "test",
+      projectId: 'test',
+      selectedVariant: 'test',
+      testName: 'test',
       type: AbbyEventType.PING,
     },
   });
@@ -48,14 +48,14 @@ it("should work with correct PING events", async () => {
   expect(redis.incr).toHaveBeenCalledTimes(1);
 });
 
-it("should work with correct ACT events", async () => {
+it('should work with correct ACT events', async () => {
   const app = makeEventRoute();
 
   const res = await testClient(app).index.$post({
     json: {
-      projectId: "test",
-      selectedVariant: "test",
-      testName: "test",
+      projectId: 'test',
+      selectedVariant: 'test',
+      testName: 'test',
       type: AbbyEventType.ACT,
     },
   });
@@ -66,14 +66,14 @@ it("should work with correct ACT events", async () => {
   expect(redis.incr).toHaveBeenCalledTimes(1);
 });
 
-it("should ignore unknown events", async () => {
+it('should ignore unknown events', async () => {
   const app = makeEventRoute();
 
   const res = await testClient(app).index.$post({
     json: {
-      projectId: "test",
-      selectedVariant: "test",
-      testName: "test",
+      projectId: 'test',
+      selectedVariant: 'test',
+      testName: 'test',
       type: 3 as any,
     },
   });

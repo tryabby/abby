@@ -1,23 +1,23 @@
-import { DashboardHeader } from "components/DashboardHeader";
-import { Layout } from "components/Layout";
-import { LoadingSpinner } from "components/LoadingSpinner";
-import { Select, SelectItem } from "components/Select";
+import { DashboardHeader } from 'components/DashboardHeader';
+import { Layout } from 'components/Layout';
+import { LoadingSpinner } from 'components/LoadingSpinner';
+import { Select, SelectItem } from 'components/Select';
 import {
   getFormattingByInterval,
   getLabelsByInterval,
   INTERVALS,
   isValidInterval,
-} from "lib/events";
-import { useProjectId } from "lib/hooks/useProjectId";
-import { useQueryParam, useUnsafeQueryParam } from "lib/hooks/useQueryParam";
-import Link from "next/link";
-import { useRouter } from "next/router";
-import { NextPageWithLayout } from "pages/_app";
-import { Line } from "react-chartjs-2";
-import { BiArrowBack } from "react-icons/bi";
-import { trpc } from "utils/trpc";
-import { groupBy, minBy } from "lodash-es";
-import dayjs from "dayjs";
+} from 'lib/events';
+import { useProjectId } from 'lib/hooks/useProjectId';
+import { useQueryParam, useUnsafeQueryParam } from 'lib/hooks/useQueryParam';
+import Link from 'next/link';
+import { useRouter } from 'next/router';
+import { NextPageWithLayout } from 'pages/_app';
+import { Line } from 'react-chartjs-2';
+import { BiArrowBack } from 'react-icons/bi';
+import { trpc } from 'utils/trpc';
+import { groupBy, minBy } from 'lodash-es';
+import dayjs from 'dayjs';
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -29,14 +29,14 @@ import {
   Legend,
   Filler,
   ChartOptions,
-} from "chart.js";
-import colors from "tailwindcss/colors";
-import { useMemo } from "react";
-import { getColorByIndex } from "lib/graphs";
-import { AbbyEventType } from "@tryabby/core";
-import { Button } from "components/ui/button";
+} from 'chart.js';
+import colors from 'tailwindcss/colors';
+import { useMemo } from 'react';
+import { getColorByIndex } from 'lib/graphs';
+import { AbbyEventType } from '@tryabby/core';
+import { Button } from 'components/ui/button';
 
-const INTERVAL_PARAM_NAME = "interval";
+const INTERVAL_PARAM_NAME = 'interval';
 
 ChartJS.register(
   CategoryScale,
@@ -46,14 +46,14 @@ ChartJS.register(
   Title,
   Tooltip,
   Legend,
-  Filler
+  Filler,
 );
 
-ChartJS.defaults.color = "white";
+ChartJS.defaults.color = 'white';
 ChartJS.defaults.font.family = "'Fragment Mono', monospace";
 ChartJS.defaults.borderColor = `${colors.gray[800]}33`;
 
-const CHART_OPTIONS: ChartOptions<"line"> = {
+const CHART_OPTIONS: ChartOptions<'line'> = {
   responsive: true,
   scales: {
     y: {
@@ -62,7 +62,7 @@ const CHART_OPTIONS: ChartOptions<"line"> = {
   },
   plugins: {
     legend: {
-      position: "top" as const,
+      position: 'top' as const,
     },
   },
 };
@@ -80,7 +80,7 @@ const getChartOptions = (index: number, variant: string) => {
 const TestDetailPage: NextPageWithLayout = () => {
   const router = useRouter();
   const projectId = useProjectId();
-  const testId = useUnsafeQueryParam("testId");
+  const testId = useUnsafeQueryParam('testId');
   const intervalParam = useQueryParam(INTERVAL_PARAM_NAME);
 
   const interval =
@@ -98,7 +98,7 @@ const TestDetailPage: NextPageWithLayout = () => {
     },
     {
       enabled: !!testId,
-    }
+    },
   );
 
   const { data: events } = trpc.events.getEventsByTestId.useQuery(
@@ -108,7 +108,7 @@ const TestDetailPage: NextPageWithLayout = () => {
     },
     {
       enabled: !!testId,
-    }
+    },
   );
 
   const eventsByVariant = useMemo(() => {
@@ -120,10 +120,7 @@ const TestDetailPage: NextPageWithLayout = () => {
     return eventsByVariant;
   }, [events, test?.options]);
 
-  const labels = getLabelsByInterval(
-    interval,
-    minBy(events, "createdAt")?.createdAt!
-  );
+  const labels = getLabelsByInterval(interval, minBy(events, 'createdAt')?.createdAt!);
 
   const formattedEvents = useMemo(() => {
     return Object.entries(eventsByVariant).map(([variant, events], i) => {
@@ -132,10 +129,7 @@ const TestDetailPage: NextPageWithLayout = () => {
         // round by 3 hours
         const hour = Math.floor(date.hour() / 3) * 3;
 
-        return date
-          .set("hour", hour)
-          .set("minute", 0)
-          .format(getFormattingByInterval(interval));
+        return date.set('hour', hour).set('minute', 0).format(getFormattingByInterval(interval));
       });
       return { eventsByDate, variant };
     });
@@ -148,14 +142,13 @@ const TestDetailPage: NextPageWithLayout = () => {
         return {
           data: labels.map(
             (label) =>
-              eventsByDate[label]?.filter((e) => e.type === AbbyEventType.PING)
-                ?.length ?? 0
+              eventsByDate[label]?.filter((e) => e.type === AbbyEventType.PING)?.length ?? 0,
           ),
           ...getChartOptions(i, variant),
         };
       }),
     }),
-    [formattedEvents, labels]
+    [formattedEvents, labels],
   );
 
   const actEvents = useMemo(
@@ -165,14 +158,13 @@ const TestDetailPage: NextPageWithLayout = () => {
         return {
           data: labels.map(
             (label) =>
-              eventsByDate[label]?.filter((e) => e.type === AbbyEventType.ACT)
-                ?.length ?? 0
+              eventsByDate[label]?.filter((e) => e.type === AbbyEventType.ACT)?.length ?? 0,
           ),
           ...getChartOptions(i, variant),
         };
       }),
     }),
-    [formattedEvents, labels]
+    [formattedEvents, labels],
   );
 
   if (isTestLoading || isTestError) {
@@ -181,16 +173,16 @@ const TestDetailPage: NextPageWithLayout = () => {
 
   return (
     <div>
-      <div className="grid grid-cols-[auto,1fr] items-center gap-x-4 gap-y-2 md:grid-cols-[auto,1fr,auto]">
-        <Link href={`/projects/${projectId}`} className="contents">
-          <Button size="icon" variant="secondary" title="Back to Tests">
+      <div className='grid grid-cols-[auto,1fr] items-center gap-x-4 gap-y-2 md:grid-cols-[auto,1fr,auto]'>
+        <Link href={`/projects/${projectId}`} className='contents'>
+          <Button size='icon' variant='secondary' title='Back to Tests'>
             <BiArrowBack />
           </Button>
         </Link>
-        <h1 className="justify-self-end text-2xl font-bold text-pink-100 md:justify-self-auto">
+        <h1 className='justify-self-end text-2xl font-bold text-pink-100 md:justify-self-auto'>
           {test.name}
         </h1>
-        <div className="col-span-2 w-48 justify-self-end md:col-span-1">
+        <div className='col-span-2 w-48 justify-self-end md:col-span-1'>
           <Select
             items={INTERVALS}
             value={interval}
@@ -204,7 +196,7 @@ const TestDetailPage: NextPageWithLayout = () => {
                   },
                 },
                 undefined,
-                { shallow: true }
+                { shallow: true },
               )
             }
           />
@@ -212,18 +204,16 @@ const TestDetailPage: NextPageWithLayout = () => {
       </div>
 
       {events?.length === 0 ? (
-        <p className="mt-48 text-center text-lg text-gray-400">
-          No events yet :(
-        </p>
+        <p className='mt-48 text-center text-lg text-gray-400'>No events yet :(</p>
       ) : (
         <div>
           <div>
-            <h2 className="mt-3 text-xl font-bold">Views</h2>
+            <h2 className='mt-3 text-xl font-bold'>Views</h2>
             <Line options={CHART_OPTIONS} data={viewEvents} />
           </div>
-          <hr className="my-16 border-pink-50/20" />
+          <hr className='my-16 border-pink-50/20' />
           <div>
-            <h2 className="mt-3 text-xl font-bold">Interactions</h2>
+            <h2 className='mt-3 text-xl font-bold'>Interactions</h2>
             <Line options={CHART_OPTIONS} data={actEvents} />
           </div>
         </div>

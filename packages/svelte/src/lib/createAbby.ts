@@ -4,24 +4,24 @@ import {
   type ABConfig,
   type RemoteConfigValueString,
   type RemoteConfigValueStringToType,
-} from "@tryabby/core";
-import { HttpService, AbbyEventType } from "@tryabby/core";
-import { derived, type Readable } from "svelte/store";
-import type { F } from "ts-toolbelt";
+} from '@tryabby/core';
+import { HttpService, AbbyEventType } from '@tryabby/core';
+import { derived, type Readable } from 'svelte/store';
+import type { F } from 'ts-toolbelt';
 // import type { LayoutServerLoad, LayoutServerLoadEvent } from "../routes/$types"; TODO fix import
 import {
   FlagStorageService,
   RemoteConfigStorageService,
   TestStorageService,
-} from "./StorageService";
-import AbbyProvider from "./AbbyProvider.svelte";
-import AbbyDevtools from "./AbbyDevtools.svelte";
+} from './StorageService';
+import AbbyProvider from './AbbyProvider.svelte';
+import AbbyDevtools from './AbbyDevtools.svelte';
 
 type ABTestReturnValue<Lookup, TestVariant> = Lookup extends undefined
   ? TestVariant
   : TestVariant extends keyof Lookup
-  ? Lookup[TestVariant]
-  : never;
+    ? Lookup[TestVariant]
+    : never;
 
 export function createAbby<
   FlagName extends string,
@@ -35,40 +35,40 @@ export function createAbby<
     string[],
     RemoteConfigName,
     RemoteConfig
-  >
+  >,
 >(config: F.Narrow<AbbyConfig<FlagName, Tests, string[], RemoteConfigName, RemoteConfig>>) {
   const abby = new Abby<FlagName, TestName, Tests, RemoteConfig, RemoteConfigName>(
     config,
     {
       get: (key: string) => {
-        if (typeof window === "undefined") return null;
+        if (typeof window === 'undefined') return null;
         return TestStorageService.get(config.projectId, key);
       },
       set: (key: string, value: any) => {
-        if (typeof window === "undefined") return;
+        if (typeof window === 'undefined') return;
         TestStorageService.set(config.projectId, key, value);
       },
     },
     {
       get: (key: string) => {
-        if (typeof window === "undefined") return null;
+        if (typeof window === 'undefined') return null;
         return FlagStorageService.get(config.projectId, key);
       },
       set: (key: string, value: any) => {
-        if (typeof window === "undefined") return;
+        if (typeof window === 'undefined') return;
         FlagStorageService.set(config.projectId, key, value);
       },
     },
     {
       get: (key: string) => {
-        if (typeof window === "undefined") return null;
+        if (typeof window === 'undefined') return null;
         return RemoteConfigStorageService.get(config.projectId, key);
       },
       set: (key: string, value: any) => {
-        if (typeof window === "undefined") return;
+        if (typeof window === 'undefined') return;
         RemoteConfigStorageService.set(config.projectId, key, value);
       },
-    }
+    },
   );
 
   const abbyStore = derived(abby, ($v) => {
@@ -92,17 +92,17 @@ export function createAbby<
 
   const useAbby = <
     TestName extends keyof Tests,
-    TestVariant extends Tests[TestName]["variants"][number],
+    TestVariant extends Tests[TestName]['variants'][number],
     LookupValue,
-    Lookup extends Record<TestVariant, LookupValue> | undefined = undefined
+    Lookup extends Record<TestVariant, LookupValue> | undefined = undefined,
   >(
     testName: TestName,
-    lookupObject?: F.Narrow<Lookup>
+    lookupObject?: F.Narrow<Lookup>,
   ): {
     variant: Readable<ABTestReturnValue<Lookup, TestVariant>>;
     onAct: () => void;
   } => {
-    let selectedVariant: string = "";
+    let selectedVariant = '';
     const variant = derived<any, ABTestReturnValue<Lookup, TestVariant>>(abby, ($v) => {
       selectedVariant = abby.getTestVariant(testName);
       return lookupObject ? lookupObject[selectedVariant] : selectedVariant;
@@ -144,12 +144,12 @@ export function createAbby<
 
   const getABTestValue = <
     TestName extends keyof Tests,
-    TestVariant extends Tests[TestName]["variants"][number],
+    TestVariant extends Tests[TestName]['variants'][number],
     LookupValue,
-    Lookup extends Record<TestVariant, LookupValue> | undefined = undefined
+    Lookup extends Record<TestVariant, LookupValue> | undefined = undefined,
   >(
     testName: TestName,
-    lookupObject?: F.Narrow<Lookup>
+    lookupObject?: F.Narrow<Lookup>,
   ): ABTestReturnValue<Lookup, TestVariant> => {
     const variant = abby.getTestVariant(testName);
     // Typescript looses its typing here, so we cast as any in favor of having
@@ -172,13 +172,13 @@ export function createAbby<
   };
 
   const getRemoteConfig = <T extends RemoteConfigName, Config extends RemoteConfig[T]>(
-    remoteConfigName: T
+    remoteConfigName: T,
   ): RemoteConfigValueStringToType<Config> => {
     return abby.getRemoteConfig(remoteConfigName);
   };
 
   const useRemoteConfig = <T extends RemoteConfigName, Config extends RemoteConfig[T]>(
-    remoteConfigName: T
+    remoteConfigName: T,
   ): Readable<RemoteConfigValueStringToType<Config>> => {
     return derived(abby, ($v) => {
       return abby.getRemoteConfig(remoteConfigName);
@@ -198,7 +198,7 @@ export function createAbby<
       return {
         ...data,
         __abby__data,
-        __abby_cookie: evt?.request.headers.get("cookie"),
+        __abby_cookie: evt?.request.headers.get('cookie'),
       };
     };
   };

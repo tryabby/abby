@@ -11,14 +11,14 @@ import {
   ABBY_RC_STORAGE_PREFIX,
   remoteConfigStringToType,
   ABBY_WINDOW_KEY,
-} from "./shared/";
-import { HttpService } from "./shared";
-import { F, O } from "ts-toolbelt";
-import { getWeightedRandomVariant } from "./mathHelpers";
-import { parseCookies } from "./helpers";
+} from './shared/';
+import { HttpService } from './shared';
+import { F, O } from 'ts-toolbelt';
+import { getWeightedRandomVariant } from './mathHelpers';
+import { parseCookies } from './helpers';
 
-export * from "./shared/index";
-export { defineConfig, type DynamicConfigKeys, DYNAMIC_ABBY_CONFIG_KEYS } from "./defineConfig";
+export * from './shared/index';
+export { defineConfig, type DynamicConfigKeys, DYNAMIC_ABBY_CONFIG_KEYS } from './defineConfig';
 
 export type ABConfig<T extends string = string> = {
   variants: ReadonlyArray<T>;
@@ -94,7 +94,7 @@ export type AbbyConfig<
   remoteConfig?: RemoteConfig;
   settings?: Settings<F.NoInfer<FlagName>, F.NoInfer<RemoteConfigName>, F.NoInfer<RemoteConfig>>;
   debug?: boolean;
-  fetch?: (typeof globalThis)["fetch"];
+  fetch?: (typeof globalThis)['fetch'];
   __experimentalCdnUrl?: string;
 };
 
@@ -122,7 +122,7 @@ export class Abby<
   private dataInitialized: Boolean = false;
 
   private flagOverrides = new Map<string, boolean>();
-  private testOverrides: Map<keyof Tests, Tests[keyof Tests]["variants"][number]> = new Map();
+  private testOverrides: Map<keyof Tests, Tests[keyof Tests]['variants'][number]> = new Map();
   private remoteConfigOverrides = new Map<string, RemoteConfigValue>();
 
   constructor(
@@ -131,7 +131,7 @@ export class Abby<
     >,
     private persistantTestStorage?: PersistentStorage,
     private persistantFlagStorage?: PersistentStorage,
-    private persistentRemoteConfigStorage?: PersistentStorage
+    private persistentRemoteConfigStorage?: PersistentStorage,
   ) {
     this._cfg = config as AbbyConfig<FlagName, Tests, Environments>;
     this.#data.flags = Object.values(this._cfg.flags ?? {}).reduce(
@@ -139,19 +139,19 @@ export class Abby<
         acc[flagName as FlagName] = DEFAULT_FEATURE_FLAG_VALUE;
         return acc;
       },
-      {} as Record<FlagName, boolean>
+      {} as Record<FlagName, boolean>,
     );
     this.#data.tests = config.tests ?? ({} as any);
     this.#data.remoteConfig = Object.keys(config.remoteConfig ?? {}).reduce(
       (acc, remoteConfigName) => {
         acc[remoteConfigName as RemoteConfigName] = this.getDefaultRemoteConfigValue(
           remoteConfigName,
-          config.remoteConfig as any
+          config.remoteConfig as any,
         );
 
         return acc;
       },
-      {} as Record<RemoteConfigName, RemoteConfigValue>
+      {} as Record<RemoteConfigName, RemoteConfigValue>,
     );
   }
 
@@ -166,7 +166,7 @@ export class Abby<
     // browser environments can load the abby data from the window object
     // when the script is loaded from the server
     if (
-      typeof window !== "undefined" &&
+      typeof window !== 'undefined' &&
       ABBY_WINDOW_KEY in window &&
       window[ABBY_WINDOW_KEY] != null
     ) {
@@ -205,7 +205,7 @@ export class Abby<
    * to the local data structure
    */
   private responseToLocalData<FlagName extends string, TestName extends string>(
-    data: AbbyDataResponse
+    data: AbbyDataResponse,
   ): LocalData<FlagName, TestName> {
     return {
       tests: data.tests.reduce(
@@ -221,21 +221,21 @@ export class Abby<
           };
           return acc;
         },
-        (this.config.tests ?? {}) as any
+        (this.config.tests ?? {}) as any,
       ),
       flags: data.flags.reduce(
         (acc, { name, value }) => {
           acc[name] = value;
           return acc;
         },
-        {} as Record<string, boolean>
+        {} as Record<string, boolean>,
       ),
       remoteConfig: (data.remoteConfig ?? []).reduce(
         (acc, { name, value }) => {
           acc[name] = value;
           return acc;
         },
-        {} as Record<string, RemoteConfigValue>
+        {} as Record<string, RemoteConfigValue>,
       ),
     };
   }
@@ -262,7 +262,7 @@ export class Abby<
       }, this.#data.flags),
       remoteConfig: Object.keys(this.#data.remoteConfig).reduce((acc, remoteConfigName) => {
         acc[remoteConfigName as RemoteConfigName] = this.getRemoteConfig(
-          remoteConfigName as RemoteConfigName
+          remoteConfigName as RemoteConfigName,
         );
         return acc;
       }, this.#data.remoteConfig),
@@ -282,7 +282,7 @@ export class Abby<
     this.#data = this.responseToLocalData(data);
     this.notifyListeners();
 
-    if (typeof window !== "undefined" && typeof document !== "undefined") {
+    if (typeof window !== 'undefined' && typeof document !== 'undefined') {
       this.setLocalOverrides(document.cookie);
     }
 
@@ -314,7 +314,7 @@ export class Abby<
      * 2. DevOverrides from config
      * 3. DevDefault from config
      */
-    if (process.env.NODE_ENV === "development") {
+    if (process.env.NODE_ENV === 'development') {
       const devOverride = (this.config.settings?.flags?.devOverrides as any)?.[key];
       if (devOverride != null) {
         return devOverride;
@@ -333,7 +333,7 @@ export class Abby<
     if (hasFallbackValue) {
       const fallbackValue = this._cfg.settings?.flags?.fallbackValues?.[key as FlagName];
       if (fallbackValue !== undefined) {
-        if (typeof fallbackValue === "boolean") {
+        if (typeof fallbackValue === 'boolean') {
           this.log(`getFeatureFlag() => fallbackValue:`, fallbackValue);
           return fallbackValue;
         } else {
@@ -359,7 +359,7 @@ export class Abby<
    * @returns the value of the remote config
    */
   getRemoteConfig<T extends RemoteConfigName, Curr extends RemoteConfig[T] = RemoteConfig[T]>(
-    key: T
+    key: T,
   ): RemoteConfigValueStringToType<Curr> {
     this.log(`getRemoteConfig()`, key);
 
@@ -370,7 +370,7 @@ export class Abby<
       return localOverride as RemoteConfigValueStringToType<RemoteConfig[RemoteConfigName]>;
     }
 
-    if (process.env.NODE_ENV === "development") {
+    if (process.env.NODE_ENV === 'development') {
       const devOverride = (this.config.settings?.remoteConfig?.devOverrides as any)?.[key];
       if (devOverride != null) {
         return devOverride;
@@ -405,16 +405,16 @@ export class Abby<
    * @param key The name of the test
    * @returns the value of the test variant
    */
-  getTestVariant<T extends keyof Tests>(key: T): Tests[T]["variants"][number] {
+  getTestVariant<T extends keyof Tests>(key: T): Tests[T]['variants'][number] {
     this.log(`getTestVariant()`, key);
 
-    const { variants, weights } = (this.#data.tests as LocalData["tests"])[
-      key as keyof LocalData["tests"]
+    const { variants, weights } = (this.#data.tests as LocalData['tests'])[
+      key as keyof LocalData['tests']
     ];
 
     const override = this.testOverrides.get(key);
 
-    if (process.env.NODE_ENV === "development" && override != null) {
+    if (process.env.NODE_ENV === 'development' && override != null) {
       return override;
     }
 
@@ -439,7 +439,7 @@ export class Abby<
    * @param key the name of the test
    * @param override the value to override the test variant with
    */
-  updateLocalVariant<T extends keyof Tests>(key: T, override: Tests[T]["variants"][number]) {
+  updateLocalVariant<T extends keyof Tests>(key: T, override: Tests[T]['variants'][number]) {
     this.testOverrides.set(key, override);
     this.persistantTestStorage?.set(key as string, override);
 
@@ -453,7 +453,7 @@ export class Abby<
    */
   updateFlag(name: FlagName, value: boolean) {
     this.flagOverrides.set(name, value);
-    if (process.env.NODE_ENV === "development") {
+    if (process.env.NODE_ENV === 'development') {
       this.persistantFlagStorage?.set(name, this.stringifiedValue(value));
     }
     this.notifyListeners();
@@ -466,10 +466,10 @@ export class Abby<
    */
   updateRemoteConfig<T extends RemoteConfigName>(
     name: RemoteConfigName,
-    value: RemoteConfigValueStringToType<RemoteConfig[T]>
+    value: RemoteConfigValueStringToType<RemoteConfig[T]>,
   ) {
     this.remoteConfigOverrides.set(name, value);
-    if (process.env.NODE_ENV === "development") {
+    if (process.env.NODE_ENV === 'development') {
       this.persistentRemoteConfigStorage?.set(name, this.stringifiedValue(value));
     }
     this.notifyListeners();
@@ -505,7 +505,7 @@ export class Abby<
   /**
    * Function to get all variants for a test
    */
-  getVariants<T extends keyof Tests>(testName: T): Tests[T]["variants"] {
+  getVariants<T extends keyof Tests>(testName: T): Tests[T]['variants'] {
     return this.#data.tests[testName as unknown as TestName].variants;
   }
 
@@ -528,7 +528,7 @@ export class Abby<
         // A/B testing cookie
         const testName = cookieName.replace(
           `${ABBY_AB_STORAGE_PREFIX}${this.config.projectId}_`,
-          ""
+          '',
         );
 
         this.testOverrides.set(testName as TestName, cookieValue);
@@ -538,17 +538,17 @@ export class Abby<
       if (cookieName.startsWith(ABBY_FF_STORAGE_PREFIX)) {
         const flagName = cookieName.replace(
           `${ABBY_FF_STORAGE_PREFIX}${this.config.projectId}_`,
-          ""
+          '',
         );
 
-        const flagValue = cookieValue === "true";
+        const flagValue = cookieValue === 'true';
         this.flagOverrides.set(flagName, flagValue);
       }
 
       if (cookieName.startsWith(ABBY_RC_STORAGE_PREFIX) && this._cfg.remoteConfig) {
         const remoteConfigName = cookieName.replace(
           `${ABBY_RC_STORAGE_PREFIX}${this.config.projectId}_`,
-          ""
+          '',
         );
 
         const remoteConfigValue = remoteConfigStringToType({
@@ -562,7 +562,7 @@ export class Abby<
 
   private getDefaultRemoteConfigValue<RemoteConfigName extends string>(
     remoteConfigName: RemoteConfigName,
-    remoteConfig: RemoteConfig
+    remoteConfig: RemoteConfig,
   ): RemoteConfigValue {
     const remoteConfigType = remoteConfig[remoteConfigName as unknown as keyof RemoteConfig];
 
@@ -576,7 +576,7 @@ export class Abby<
   }
 
   private stringifiedValue(value: RemoteConfigValue | boolean): string {
-    if (typeof value === "boolean") {
+    if (typeof value === 'boolean') {
       return value.toString();
     }
     return stringifyRemoteConfigValue(value);

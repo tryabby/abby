@@ -2,7 +2,7 @@ export interface LibraryJob<T> {
   data: T;
 }
 
-export type JobType = "after-data-request";
+export type JobType = 'after-data-request';
 
 export interface Job<T extends object> {
   type: JobType;

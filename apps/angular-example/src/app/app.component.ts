@@ -1,18 +1,18 @@
-import { Component } from "@angular/core";
-import { FormControl } from "@angular/forms";
-import { map } from "rxjs";
-import { Abby } from "./abby";
+import { Component } from '@angular/core';
+import { FormControl } from '@angular/forms';
+import { map } from 'rxjs';
+import { Abby } from './abby';
 
 @Component({
-  selector: "app-root",
-  templateUrl: "./app.component.html",
-  styleUrls: ["./app.component.css"],
+  selector: 'app-root',
+  templateUrl: './app.component.html',
+  styleUrls: ['./app.component.css'],
 })
 export class AppComponent {
-  angularTest$ = this.abby.getVariant("AngularTest");
-  angularFlag$ = this.abby.getFeatureFlagValue("AngularFlag");
+  angularTest$ = this.abby.getVariant('AngularTest');
+  angularFlag$ = this.abby.getFeatureFlagValue('AngularFlag');
 
-  variantWithLookup$ = this.abby.getVariant("AngularTest", {
+  variantWithLookup$ = this.abby.getVariant('AngularTest', {
     A: 1,
     B: 2,
     C: 3,
@@ -21,7 +21,7 @@ export class AppComponent {
 
   headerColor$ = this.angularTest$.pipe(
     map((angularTest) => {
-      switch(angularTest) {
+      switch (angularTest) {
         case 'A':
           return 'blue';
         case 'B':
@@ -33,7 +33,7 @@ export class AppComponent {
         default:
           return 'grey';
       }
-    })
+    }),
   );
 
   dynamicFeatureFlag = new FormControl<string | null>(null);
@@ -41,6 +41,6 @@ export class AppComponent {
   constructor(public readonly abby: Abby) {}
 
   public onAct(): void {
-    this.abby.onAct("AngularTest");
+    this.abby.onAct('AngularTest');
   }
 }

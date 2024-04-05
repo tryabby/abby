@@ -1,6 +1,6 @@
-import { z } from "zod";
-import { router, protectedProcedure } from "../trpc";
-import { prisma } from "server/db/client";
+import { z } from 'zod';
+import { router, protectedProcedure } from '../trpc';
+import { prisma } from 'server/db/client';
 
 export const projectUserRouter = router({
   addUser: protectedProcedure

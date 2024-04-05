@@ -1,4 +1,4 @@
-import { redis } from "server/db/redis";
+import { redis } from 'server/db/redis';
 
 export abstract class RequestCache {
   private static getCacheKey(projectId: string) {
@@ -15,9 +15,7 @@ export abstract class RequestCache {
 
   static async reset(projectId: string | string[]) {
     return redis.del(
-      new Array<string>()
-        .concat(projectId)
-        .map((id) => RequestCache.getCacheKey(id))
+      new Array<string>().concat(projectId).map((id) => RequestCache.getCacheKey(id)),
     );
   }
 }

@@ -1,5 +1,5 @@
-import { z } from "zod";
-import { AbbyEventType } from "./types";
+import { z } from 'zod';
+import { AbbyEventType } from './types';
 
 export const abbyEventSchema = z.object({
   type: z.nativeEnum(AbbyEventType),
@@ -17,9 +17,9 @@ export const remoteConfigValue = z.union([
 ]);
 
 export const remoteConfigValueStringSchema = z.union([
-  z.literal("String"),
-  z.literal("Number"),
-  z.literal("JSON"),
+  z.literal('String'),
+  z.literal('Number'),
+  z.literal('JSON'),
 ]);
 
 export const abbyConfigSchema = z.object({
@@ -31,7 +31,7 @@ export const abbyConfigSchema = z.object({
     .record(
       z.object({
         variants: z.array(z.string()),
-      })
+      }),
     )
     .optional(),
   flags: z.array(z.string()).optional(),
@@ -65,17 +65,17 @@ export type AbbyConfigFile = z.infer<typeof abbyConfigSchema>;
 
 export type PullAbbyConfigResponse = Pick<
   AbbyConfigFile,
-  "environments" | "flags" | "tests" | "remoteConfig"
+  'environments' | 'flags' | 'tests' | 'remoteConfig'
 >;
 
 export type RemoteConfigValue = z.infer<typeof remoteConfigValue>;
 
 export type RemoteConfigValueString = z.infer<typeof remoteConfigValueStringSchema>;
 
-export type RemoteConfigValueStringToType<T extends RemoteConfigValueString> = T extends "String"
+export type RemoteConfigValueStringToType<T extends RemoteConfigValueString> = T extends 'String'
   ? string
-  : T extends "Number"
-  ? number
-  : T extends "JSON"
-  ? Record<string, unknown>
-  : never;
+  : T extends 'Number'
+    ? number
+    : T extends 'JSON'
+      ? Record<string, unknown>
+      : never;

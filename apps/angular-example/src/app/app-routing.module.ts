@@ -18,7 +18,10 @@ import { combineLatest } from 'rxjs';
   exports: [RouterModule],
 })
 export class AppRoutingModule {
-  constructor(private abby: Abby, private router: Router) {
+  constructor(
+    private abby: Abby,
+    private router: Router,
+  ) {
     // we are using `combineLatest` here, as the devtools can dynamically
     // change the state of our feature flags during runtime.
     // In a live environment, where flags and variants are determined once,
@@ -30,8 +33,7 @@ export class AppRoutingModule {
       this.router.resetConfig([
         {
           path: 'lazy',
-          loadChildren: () =>
-            import('./lazy/lazy.module').then((m) => m.LazyModule),
+          loadChildren: () => import('./lazy/lazy.module').then((m) => m.LazyModule),
           outlet: 'lazy',
         },
         this.abby.getRouterVariant(angularTest, {

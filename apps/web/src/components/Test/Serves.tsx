@@ -1,4 +1,4 @@
-import { Event } from "@prisma/client";
+import { Event } from '@prisma/client';
 import {
   Chart as ChartJS,
   BarElement,
@@ -8,24 +8,17 @@ import {
   Title,
   Tooltip,
   ChartOptions,
-} from "chart.js";
-import { useMemo } from "react";
-import { Bar } from "react-chartjs-2";
-import type { ClientOption } from "server/trpc/router/project";
+} from 'chart.js';
+import { useMemo } from 'react';
+import { Bar } from 'react-chartjs-2';
+import type { ClientOption } from 'server/trpc/router/project';
 
-ChartJS.defaults.font.family = "Mona Sans";
-ChartJS.defaults.color = "white";
+ChartJS.defaults.font.family = 'Mona Sans';
+ChartJS.defaults.color = 'white';
 
-ChartJS.register(
-  CategoryScale,
-  LinearScale,
-  BarElement,
-  Title,
-  Tooltip,
-  Legend
-);
+ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
 
-export const OPTIONS: ChartOptions<"bar"> = {
+export const OPTIONS: ChartOptions<'bar'> = {
   responsive: true,
   maintainAspectRatio: false,
   scales: {
@@ -36,15 +29,15 @@ export const OPTIONS: ChartOptions<"bar"> = {
   },
   plugins: {
     legend: {
-      position: "top" as const,
+      position: 'top' as const,
     },
     tooltip: {
       callbacks: {
-        label: function (context) {
-          let label = context.dataset.label || "";
+        label: (context) => {
+          let label = context.dataset.label || '';
 
           if (label) {
-            label += ": ";
+            label += ': ';
           }
           if (context.parsed.y !== null) {
             label += context.parsed.y;
@@ -67,9 +60,7 @@ const Serves = ({
 
   const actualData = useMemo(() => {
     return options.map((option) => {
-      return pingEvents.filter(
-        (event) => event.selectedVariant === option.identifier
-      ).length;
+      return pingEvents.filter((event) => event.selectedVariant === option.identifier).length;
     });
   }, [options, pingEvents]);
 
@@ -78,26 +69,22 @@ const Serves = ({
   }, 0);
 
   return (
-    <div className="relative h-full w-full">
+    <div className='relative h-full w-full'>
       <Bar
-        className="self-end"
+        className='self-end'
         options={OPTIONS}
         data={{
           labels,
           datasets: [
             {
-              label: "Target",
-              data: options.map(
-                (option) => parseFloat(option.chance.toString()) * 100
-              ),
-              backgroundColor: "#A9E4EF",
+              label: 'Target',
+              data: options.map((option) => Number.parseFloat(option.chance.toString()) * 100),
+              backgroundColor: '#A9E4EF',
             },
             {
-              label: "Actual",
-              data: actualData.map((data) =>
-                Math.round((data / absPings) * 100)
-              ),
-              backgroundColor: "#f472b6",
+              label: 'Actual',
+              data: actualData.map((data) => Math.round((data / absPings) * 100)),
+              backgroundColor: '#f472b6',
             },
           ],
         }}

@@ -1,7 +1,7 @@
-import { TRPCError } from "@trpc/server";
-import { getProjectPaidPlan } from "lib/stripe";
-import { getLimitByPlan } from "server/common/plans";
-import { prisma } from "server/db/client";
+import { TRPCError } from '@trpc/server';
+import { getProjectPaidPlan } from 'lib/stripe';
+import { getLimitByPlan } from 'server/common/plans';
+import { prisma } from 'server/db/client';
 
 type Variant = {
   name: string;
@@ -13,7 +13,7 @@ export abstract class TestService {
     projectId: string,
     variants: Array<Variant>,
     testName: string,
-    userId: string
+    userId: string,
   ) {
     const project = await prisma.project.findFirst({
       where: {
@@ -29,13 +29,13 @@ export abstract class TestService {
       },
     });
 
-    if (!project) throw new TRPCError({ code: "UNAUTHORIZED" });
+    if (!project) throw new TRPCError({ code: 'UNAUTHORIZED' });
 
     const limits = getLimitByPlan(getProjectPaidPlan(project));
 
     if (project.tests.length >= limits.tests) {
       throw new TRPCError({
-        code: "FORBIDDEN",
+        code: 'FORBIDDEN',
         message: `You have reached the limit of ${limits.tests} tests for your plan.`,
       });
     }

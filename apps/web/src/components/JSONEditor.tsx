@@ -1,4 +1,4 @@
-import { Editor } from "@monaco-editor/react";
+import { Editor } from '@monaco-editor/react';
 
 type Props = {
   value: string;
@@ -8,11 +8,11 @@ type Props = {
 export function JSONEditor({ onChange, value }: Props) {
   return (
     <Editor
-      defaultLanguage="json"
-      theme="vs-dark"
+      defaultLanguage='json'
+      theme='vs-dark'
       value={value}
-      onChange={(e) => onChange(e ?? "")}
-      className="min-h-[300px]"
+      onChange={(e) => onChange(e ?? '')}
+      className='min-h-[300px]'
       options={{ padding: { top: 20 } }}
     />
   );

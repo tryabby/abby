@@ -1,8 +1,8 @@
-import { defineConfig } from "tsup";
+import { defineConfig } from 'tsup';
 
 export default defineConfig({
   dts: true,
   sourcemap: true,
   treeshake: true,
-  format: ["cjs", "esm"],
+  format: ['cjs', 'esm'],
 });

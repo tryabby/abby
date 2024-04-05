@@ -1,5 +1,5 @@
-import { z } from "zod";
-import { router, protectedProcedure } from "../trpc";
+import { z } from 'zod';
+import { router, protectedProcedure } from '../trpc';
 
 export const updateProfileSchema = z.object({
   name: z.string().min(1),
@@ -57,18 +57,16 @@ export const userRouter = router({
       }),
     };
   }),
-  updateProfile: protectedProcedure
-    .input(updateProfileSchema)
-    .mutation(async ({ ctx, input }) => {
-      return ctx.prisma.user.update({
-        where: {
-          id: ctx.session.user.id,
-        },
-        data: {
-          name: input.name,
-        },
-      });
-    }),
+  updateProfile: protectedProcedure.input(updateProfileSchema).mutation(async ({ ctx, input }) => {
+    return ctx.prisma.user.update({
+      where: {
+        id: ctx.session.user.id,
+      },
+      data: {
+        name: input.name,
+      },
+    });
+  }),
   onboardUser: protectedProcedure
     .input(
       z.object({
@@ -77,7 +75,7 @@ export const userRouter = router({
         technologies: z.array(z.string()),
         experienceLevelFlags: z.number().min(1).max(5),
         experienceLevelTests: z.number().min(1).max(5),
-      })
+      }),
     )
     .mutation(async ({ ctx, input }) => {
       const userId = ctx.session.user.id;

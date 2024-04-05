@@ -1,12 +1,12 @@
-import { TRPCError } from "@trpc/server";
-import { ProjectService } from "server/services/ProjectService";
-import { z } from "zod";
-import { protectedProcedure, router } from "../trpc";
-import { prisma } from "server/db/client";
-import { getLimitByPlan } from "server/common/plans";
-import { getProjectPaidPlan } from "lib/stripe";
-import { EventService } from "server/services/EventService";
-import { TestService } from "server/services/TestService";
+import { TRPCError } from '@trpc/server';
+import { ProjectService } from 'server/services/ProjectService';
+import { z } from 'zod';
+import { protectedProcedure, router } from '../trpc';
+import { prisma } from 'server/db/client';
+import { getLimitByPlan } from 'server/common/plans';
+import { getProjectPaidPlan } from 'lib/stripe';
+import { EventService } from 'server/services/EventService';
+import { TestService } from 'server/services/TestService';
 
 export const testRouter = router({
   createTest: protectedProcedure
@@ -18,16 +18,16 @@ export const testRouter = router({
           z.object({
             name: z.string(),
             weight: z.number().min(0).max(1),
-          })
+          }),
         ),
-      })
+      }),
     )
     .mutation(async ({ input, ctx }) => {
       await TestService.createTest(
         input.projectId,
         input.variants,
         input.name,
-        ctx.session.user.id
+        ctx.session.user.id,
       );
     }),
   updateName: protectedProcedure
@@ -35,7 +35,7 @@ export const testRouter = router({
       z.object({
         testId: z.string(),
         name: z.string(),
-      })
+      }),
     )
     .mutation(async ({ input, ctx }) => {
       // check whether the user has access to the test
@@ -52,7 +52,7 @@ export const testRouter = router({
         },
       });
       if (!currentTest) {
-        throw new TRPCError({ code: "UNAUTHORIZED" });
+        throw new TRPCError({ code: 'UNAUTHORIZED' });
       }
       await ctx.prisma.test.update({
         where: {
@@ -72,9 +72,9 @@ export const testRouter = router({
           z.object({
             variantId: z.string(),
             weight: z.number().min(0).max(1),
-          })
+          }),
         ),
-      })
+      }),
     )
     .mutation(async ({ input, ctx }) => {
       // check whether the user has access to the test
@@ -91,7 +91,7 @@ export const testRouter = router({
         },
       });
       if (!currentTest) {
-        throw new TRPCError({ code: "UNAUTHORIZED" });
+        throw new TRPCError({ code: 'UNAUTHORIZED' });
       }
 
       await Promise.all(
@@ -103,15 +103,15 @@ export const testRouter = router({
             data: {
               chance: w.weight,
             },
-          })
-        )
+          }),
+        ),
       );
     }),
   getById: protectedProcedure
     .input(
       z.object({
         testId: z.string(),
-      })
+      }),
     )
     .query(async ({ input, ctx }) => {
       const currentTest = await prisma.test.findFirst({
@@ -131,7 +131,7 @@ export const testRouter = router({
       });
 
       if (!currentTest) {
-        throw new TRPCError({ code: "UNAUTHORIZED" });
+        throw new TRPCError({ code: 'UNAUTHORIZED' });
       }
 
       return currentTest;
@@ -140,7 +140,7 @@ export const testRouter = router({
     .input(
       z.object({
         testId: z.string(),
-      })
+      }),
     )
     .mutation(async ({ input, ctx }) => {
       const currentTest = await prisma.test.findFirst({
@@ -157,7 +157,7 @@ export const testRouter = router({
       });
 
       if (!currentTest) {
-        throw new TRPCError({ code: "UNAUTHORIZED" });
+        throw new TRPCError({ code: 'UNAUTHORIZED' });
       }
 
       await prisma.$transaction([

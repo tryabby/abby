@@ -1,7 +1,7 @@
-import type { Next, Context } from "koa";
-import { ABConfig, Abby, AbbyConfig, RemoteConfigValueString } from "@tryabby/core";
-import { F } from "ts-toolbelt";
-import { createAbby } from "../index";
+import type { Next, Context } from 'koa';
+import { ABConfig, Abby, AbbyConfig, RemoteConfigValueString } from '@tryabby/core';
+import { F } from 'ts-toolbelt';
+import { createAbby } from '../index';
 
 const instanceMap = new WeakMap<any, Abby<any, any, any, any, any>>();
 
@@ -21,7 +21,7 @@ export function createAbbyMiddleWare<
 
   const middleware = async (ctx: Context, next: Next) => {
     if (!abbyInstance) {
-      throw new Error("Abby is undefined");
+      throw new Error('Abby is undefined');
     }
     await abbyInstance.loadProjectData();
     if (ctx.headers.cookie) {

@@ -1,10 +1,10 @@
-import { PlanName } from "server/common/plans";
-import { BaseJob, LibraryJob } from "./types";
-import { ApiVersion } from "@prisma/client";
-import { trackPlanOverage } from "lib/logsnag";
-import { RequestCache } from "server/services/RequestCache";
-import { RequestService } from "server/services/RequestService";
-import { EventService } from "server/services/EventService";
+import { PlanName } from 'server/common/plans';
+import { BaseJob, LibraryJob } from './types';
+import { ApiVersion } from '@prisma/client';
+import { trackPlanOverage } from 'lib/logsnag';
+import { RequestCache } from 'server/services/RequestCache';
+import { RequestService } from 'server/services/RequestService';
+import { EventService } from 'server/services/EventService';
 
 type AfterRequest = {
   functionDuration: number;
@@ -13,7 +13,7 @@ type AfterRequest = {
 };
 
 export class AfterDataRequest extends BaseJob<AfterRequest> {
-  readonly type = "after-data-request";
+  readonly type = 'after-data-request';
 
   async emit(data: AfterRequest): Promise<void> {
     return this.work({ data });
@@ -38,11 +38,11 @@ export class AfterDataRequest extends BaseJob<AfterRequest> {
 
       RequestService.storeRequest({
         projectId,
-        type: "GET_CONFIG",
+        type: 'GET_CONFIG',
         durationInMs: functionDuration,
         apiVersion,
       }).catch((e) => {
-        console.error("Unable to store request", e);
+        console.error('Unable to store request', e);
       });
     }, 1);
 

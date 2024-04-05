@@ -1,4 +1,4 @@
-import { FeatureFlag, FeatureFlagType } from "@prisma/client";
+import { FeatureFlag, FeatureFlagType } from '@prisma/client';
 import {
   assertUnreachable,
   DEFAULT_FEATURE_FLAG_VALUE,
@@ -6,9 +6,9 @@ import {
   RemoteConfigValue,
   RemoteConfigValueString,
   stringifyRemoteConfigValue,
-} from "@tryabby/core";
-import { groupBy } from "lodash-es";
-import { FlagValueString } from "../types/flags";
+} from '@tryabby/core';
+import { groupBy } from 'lodash-es';
+import { FlagValueString } from '../types/flags';
 
 export function getFlagCount(flags: Array<FeatureFlag>) {
   return Object.keys(groupBy(flags, (f) => f.name)).length;
@@ -20,9 +20,9 @@ export function getFlagCount(flags: Array<FeatureFlag>) {
 export function transformFlagValue(value: string, type: FeatureFlagType) {
   switch (type) {
     case FeatureFlagType.BOOLEAN:
-      return value === "true";
+      return value === 'true';
     case FeatureFlagType.NUMBER:
-      return parseInt(value);
+      return Number.parseInt(value);
     case FeatureFlagType.JSON:
       return JSON.parse(value);
     case FeatureFlagType.STRING:
@@ -33,20 +33,20 @@ export function transformFlagValue(value: string, type: FeatureFlagType) {
 }
 
 export function stringifyFlagValue(value: RemoteConfigValue | boolean): string {
-  if (typeof value === "boolean") {
+  if (typeof value === 'boolean') {
     return value.toString();
   }
 
   return stringifyRemoteConfigValue(value);
 }
 
-export function getDefaultFlagValue(type: RemoteConfigValueString | "Boolean") {
+export function getDefaultFlagValue(type: RemoteConfigValueString | 'Boolean') {
   switch (type) {
-    case "JSON":
-    case "String":
-    case "Number":
+    case 'JSON':
+    case 'String':
+    case 'Number':
       return getDefaultRemoteConfigValue(type);
-    case "Boolean":
+    case 'Boolean':
       return DEFAULT_FEATURE_FLAG_VALUE;
   }
 }
@@ -54,47 +54,43 @@ export function getDefaultFlagValue(type: RemoteConfigValueString | "Boolean") {
 export function getFlagTypeClassName(type: FeatureFlagType) {
   switch (type) {
     case FeatureFlagType.BOOLEAN:
-      return "text-orange-400 border-orange-400";
+      return 'text-orange-400 border-orange-400';
     case FeatureFlagType.NUMBER:
-      return "text-blue-400 border-blue-400";
+      return 'text-blue-400 border-blue-400';
     case FeatureFlagType.STRING:
-      return "text-green-400 border-green-400";
+      return 'text-green-400 border-green-400';
     case FeatureFlagType.JSON:
-      return "text-purple-400 border-purple-400";
+      return 'text-purple-400 border-purple-400';
     default: {
       assertUnreachable(type);
     }
   }
 }
 
-export function transformDBFlagTypeToclient(
-  type: FeatureFlagType
-): FlagValueString {
+export function transformDBFlagTypeToclient(type: FeatureFlagType): FlagValueString {
   switch (type) {
     case FeatureFlagType.BOOLEAN:
-      return "Boolean";
+      return 'Boolean';
     case FeatureFlagType.NUMBER:
-      return "Number";
+      return 'Number';
     case FeatureFlagType.STRING:
-      return "String";
+      return 'String';
     case FeatureFlagType.JSON:
-      return "JSON";
+      return 'JSON';
     default:
       assertUnreachable(type);
   }
 }
 
-export function transformClientFlagToDBType(
-  type: FlagValueString
-): FeatureFlagType {
+export function transformClientFlagToDBType(type: FlagValueString): FeatureFlagType {
   switch (type) {
-    case "Boolean":
+    case 'Boolean':
       return FeatureFlagType.BOOLEAN;
-    case "Number":
+    case 'Number':
       return FeatureFlagType.NUMBER;
-    case "String":
+    case 'String':
       return FeatureFlagType.STRING;
-    case "JSON":
+    case 'JSON':
       return FeatureFlagType.JSON;
     default:
       assertUnreachable(type);

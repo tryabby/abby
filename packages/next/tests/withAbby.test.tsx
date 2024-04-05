@@ -1,6 +1,6 @@
-import { render } from "@testing-library/react";
-import { createAbby } from "../src";
-import { ABBY_FF_STORAGE_PREFIX } from "@tryabby/core";
+import { render } from '@testing-library/react';
+import { createAbby } from '../src';
+import { ABBY_FF_STORAGE_PREFIX } from '@tryabby/core';
 const OLD_ENV = process.env;
 
 beforeEach(() => {
@@ -12,13 +12,13 @@ afterAll(() => {
   process.env = OLD_ENV; // Restore old environment
 });
 
-describe("withAbby", () => {
-  it("works properly", async () => {
+describe('withAbby', () => {
+  it('works properly', async () => {
     const { getFeatureFlagValue, withAbby } = createAbby({
       environments: [],
-      projectId: "123",
+      projectId: '123',
       tests: {},
-      flags: ["flag1"],
+      flags: ['flag1'],
     });
 
     const Component = withAbby(() => <></>);
@@ -34,17 +34,17 @@ describe("withAbby", () => {
     });
 
     render(<Component {...props} />);
-    expect(getFeatureFlagValue("flag1")).toBe(true);
+    expect(getFeatureFlagValue('flag1')).toBe(true);
   });
 
-  it("seeds the flags in development with the cookies", async () => {
+  it('seeds the flags in development with the cookies', async () => {
     /// @ts-ignore
-    process.env.NODE_ENV = "development";
+    process.env.NODE_ENV = 'development';
     const { getFeatureFlagValue, withAbby } = createAbby({
       environments: [],
-      projectId: "123",
+      projectId: '123',
       tests: {},
-      flags: ["flag1"],
+      flags: ['flag1'],
     });
 
     const Component = withAbby(() => <></>);
@@ -62,15 +62,15 @@ describe("withAbby", () => {
     });
 
     render(<Component {...props} />);
-    expect(getFeatureFlagValue("flag1")).toBe(false);
+    expect(getFeatureFlagValue('flag1')).toBe(false);
   });
 
-  it("returns correct value for remoteConfig", async () => {
+  it('returns correct value for remoteConfig', async () => {
     const { withAbby, getRemoteConfig } = createAbby({
       environments: [],
-      projectId: "123",
+      projectId: '123',
       remoteConfig: {
-        remoteConfig1: "String",
+        remoteConfig1: 'String',
       },
     });
     const Component = withAbby(() => <></>);
@@ -85,6 +85,6 @@ describe("withAbby", () => {
     });
 
     render(<Component {...props} />);
-    expect(getRemoteConfig("remoteConfig1")).toBe("FooBar");
+    expect(getRemoteConfig('remoteConfig1')).toBe('FooBar');
   });
 });

@@ -4,17 +4,17 @@ import {
   createAbby as baseCreateAbby,
   withDevtoolsFunction,
   ABTestReturnValue,
-} from "@tryabby/react";
-import { AbbyDataResponse, getABStorageKey, RemoteConfigValueString } from "@tryabby/core";
-import type { F } from "ts-toolbelt";
-import { ABBY_DATA_KEY, withAbby } from "./withAbby";
-import { HttpService } from "@tryabby/core";
-import type { NextMiddleware, NextRequest, NextResponse } from "next/server";
-import Cookie from "js-cookie";
-import type { NextApiHandler, NextApiRequest, NextApiResponse } from "next";
-import { getIsomorphicCookies, isBrowser, isEdgeFunction } from "./helpers";
+} from '@tryabby/react';
+import { AbbyDataResponse, getABStorageKey, RemoteConfigValueString } from '@tryabby/core';
+import type { F } from 'ts-toolbelt';
+import { ABBY_DATA_KEY, withAbby } from './withAbby';
+import { HttpService } from '@tryabby/core';
+import type { NextMiddleware, NextRequest, NextResponse } from 'next/server';
+import Cookie from 'js-cookie';
+import type { NextApiHandler, NextApiRequest, NextApiResponse } from 'next';
+import { getIsomorphicCookies, isBrowser, isEdgeFunction } from './helpers';
 
-export { defineConfig } from "@tryabby/core";
+export { defineConfig } from '@tryabby/core';
 
 // TODO: figure out how to prevent re-typing of the same types
 export function createAbby<
@@ -66,12 +66,12 @@ export function createAbby<
     // and therefore not working as expected
     useAbby: useAbby as <
       K extends keyof Tests,
-      TestVariant extends Tests[K]["variants"][number],
+      TestVariant extends Tests[K]['variants'][number],
       LookupValue,
       Lookup extends Record<TestVariant, LookupValue> | undefined = undefined,
     >(
       name: K,
-      lookupObject?: F.Narrow<Lookup>
+      lookupObject?: F.Narrow<Lookup>,
     ) => {
       variant: ABTestReturnValue<Lookup, TestVariant>;
       onAct: () => void;
@@ -98,7 +98,7 @@ export function createAbby<
      */
     getABTestValue<
       T extends keyof Tests,
-      TestVariant extends Tests[T]["variants"][number],
+      TestVariant extends Tests[T]['variants'][number],
       LookupValue,
       Lookup extends Record<TestVariant, LookupValue> | undefined = undefined,
       RequestType extends NextRequest | NextApiRequest | undefined = undefined,
@@ -110,7 +110,7 @@ export function createAbby<
     >(
       name: T,
       req?: RequestType,
-      lookupObject?: F.Narrow<Lookup>
+      lookupObject?: F.Narrow<Lookup>,
     ): [
       Lookup extends undefined
         ? TestVariant
@@ -126,7 +126,7 @@ export function createAbby<
       const cookieKey = getABStorageKey(config.projectId, name as string);
 
       if (storedValue) {
-        const storedVariant = typeof storedValue === "string" ? storedValue : storedValue.value;
+        const storedVariant = typeof storedValue === 'string' ? storedValue : storedValue.value;
 
         return [
           lookupObject ? lookupObject[storedVariant as keyof typeof lookupObject] : storedVariant,
@@ -137,8 +137,8 @@ export function createAbby<
       const newValue = __abby__.getTestVariant(name);
 
       const setCookieFunc = (res?: ResponseType) => {
-        if (!res && typeof window === "undefined")
-          throw new Error("You must pass a response object to setABTestValue on the server");
+        if (!res && typeof window === 'undefined')
+          throw new Error('You must pass a response object to setABTestValue on the server');
 
         if (isBrowser(res)) {
           Cookie.set(cookieKey, newValue, {
@@ -154,7 +154,7 @@ export function createAbby<
           return;
         }
 
-        res.setHeader("Set-Cookie", `${cookieKey}=${newValue};`);
+        res.setHeader('Set-Cookie', `${cookieKey}=${newValue};`);
       };
 
       return [
@@ -178,7 +178,7 @@ export function createAbby<
           : never,
     >(
       name: T,
-      req?: RequestType
+      req?: RequestType,
     ): RequestType extends NextRequest | NextApiRequest
       ? (res: ResponseType) => void
       : () => void => {
@@ -187,8 +187,8 @@ export function createAbby<
       const cookieKey = getABStorageKey(config.projectId, name as string);
 
       return (res?: ResponseType) => {
-        if (!res && typeof window === "undefined")
-          throw new Error("You must pass a response object to setABTestValue on the server");
+        if (!res && typeof window === 'undefined')
+          throw new Error('You must pass a response object to setABTestValue on the server');
 
         if (isBrowser(res)) {
           cookies.delete(cookieKey);
@@ -199,7 +199,7 @@ export function createAbby<
           res.cookies.delete(cookieKey);
           return;
         }
-        res.setHeader("Set-Cookie", `${cookieKey}=d; Max-Age=0`);
+        res.setHeader('Set-Cookie', `${cookieKey}=d; Max-Age=0`);
       };
     },
     // TODO: make leaner preloads

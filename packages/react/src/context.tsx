@@ -4,23 +4,23 @@ import {
   ABConfig,
   RemoteConfigValueString,
   RemoteConfigValueStringToType,
-} from "@tryabby/core";
-import React, { useCallback, useEffect, useRef, useState, type PropsWithChildren } from "react";
-import { HttpService } from "@tryabby/core";
-import { AbbyDataResponse, AbbyEventType } from "@tryabby/core";
-import { F } from "ts-toolbelt";
+} from '@tryabby/core';
+import React, { useCallback, useEffect, useRef, useState, type PropsWithChildren } from 'react';
+import { HttpService } from '@tryabby/core';
+import { AbbyDataResponse, AbbyEventType } from '@tryabby/core';
+import { F } from 'ts-toolbelt';
 import {
   FlagStorageService,
   RemoteConfigStorageService,
   TestStorageService,
-} from "./StorageService";
-import type { AbbyDevtoolProps, DevtoolsFactory } from "@tryabby/devtools";
+} from './StorageService';
+import type { AbbyDevtoolProps, DevtoolsFactory } from '@tryabby/devtools';
 
 export type withDevtoolsFunction = (
   factory: DevtoolsFactory,
-  props: Omit<AbbyDevtoolProps, "abby"> & {
+  props: Omit<AbbyDevtoolProps, 'abby'> & {
     dangerouslyForceShow?: boolean;
-  }
+  },
 ) => () => JSX.Element | null;
 
 export type ABTestReturnValue<Lookup, TestVariant> = Lookup extends undefined
@@ -47,34 +47,34 @@ export function createAbby<
     abbyConfig,
     {
       get: (key: string) => {
-        if (typeof window === "undefined") return null;
+        if (typeof window === 'undefined') return null;
         return TestStorageService.get(abbyConfig.projectId, key);
       },
       set: (key: string, value: any) => {
-        if (typeof window === "undefined") return;
+        if (typeof window === 'undefined') return;
         TestStorageService.set(abbyConfig.projectId, key, value);
       },
     },
     {
       get: (key: string) => {
-        if (typeof window === "undefined") return null;
+        if (typeof window === 'undefined') return null;
         return FlagStorageService.get(abbyConfig.projectId, key);
       },
       set: (key: string, value: any) => {
-        if (typeof window === "undefined") return;
+        if (typeof window === 'undefined') return;
         FlagStorageService.set(abbyConfig.projectId, key, value);
       },
     },
     {
       get: (key: string) => {
-        if (typeof window === "undefined") return null;
+        if (typeof window === 'undefined') return null;
         return RemoteConfigStorageService.get(abbyConfig.projectId, key);
       },
       set: (key: string, value: any) => {
-        if (typeof window === "undefined") return;
+        if (typeof window === 'undefined') return;
         RemoteConfigStorageService.set(abbyConfig.projectId, key, value);
       },
-    }
+    },
   );
 
   type AbbyProjectData = ReturnType<typeof abby.getProjectData>;
@@ -86,7 +86,7 @@ export function createAbby<
 
     if (!data) {
       throw new Error(
-        "useAbbyData must be used within an AbbyProvider. Wrap a parent component in <AbbyProvider> to fix this error."
+        'useAbbyData must be used within an AbbyProvider. Wrap a parent component in <AbbyProvider> to fix this error.',
       );
     }
 
@@ -98,12 +98,12 @@ export function createAbby<
 
   const useAbby = <
     K extends keyof Tests,
-    TestVariant extends Tests[K]["variants"][number],
+    TestVariant extends Tests[K]['variants'][number],
     LookupValue,
     Lookup extends Record<TestVariant, LookupValue> | undefined = undefined,
   >(
     name: K,
-    lookupObject?: F.Narrow<Lookup>
+    lookupObject?: F.Narrow<Lookup>,
   ): {
     variant: ABTestReturnValue<Lookup, TestVariant>;
     onAct: () => void;
@@ -112,7 +112,7 @@ export function createAbby<
 
     // always render an empty string on the first render to avoid SSR mismatches
     // because the server doesn't know which variant to render
-    const [selectedVariant, setSelectedVariant] = useState("");
+    const [selectedVariant, setSelectedVariant] = useState('');
 
     // listen to changes in for the current variant
     useEffect(() => {
@@ -128,7 +128,7 @@ export function createAbby<
     // lazily get the tests
     useEffect(() => {
       setSelectedVariant(
-        abby.getProjectData().tests[name as unknown as TestName]?.selectedVariant ?? ""
+        abby.getProjectData().tests[name as unknown as TestName]?.selectedVariant ?? '',
       );
     }, [name]);
 
@@ -246,26 +246,26 @@ export function createAbby<
   };
 
   const useRemoteConfig = <T extends RemoteConfigName, Config extends RemoteConfig[T]>(
-    remoteConfigName: T
+    remoteConfigName: T,
   ): RemoteConfigValueStringToType<Config> => {
     const abby = useAbbyData();
     return abby.remoteConfig[remoteConfigName] as RemoteConfigValueStringToType<Config>;
   };
 
   const getRemoteConfig = <T extends RemoteConfigName, Config extends RemoteConfig[T]>(
-    remoteConfigName: T
+    remoteConfigName: T,
   ): RemoteConfigValueStringToType<Config> => {
     return abby.getRemoteConfig(remoteConfigName);
   };
 
   const getABTestValue = <
     TestName extends keyof Tests,
-    TestVariant extends Tests[TestName]["variants"][number],
+    TestVariant extends Tests[TestName]['variants'][number],
     LookupValue,
     Lookup extends Record<TestVariant, LookupValue> | undefined = undefined,
   >(
     testName: TestName,
-    lookupObject?: F.Narrow<Lookup>
+    lookupObject?: F.Narrow<Lookup>,
   ): ABTestReturnValue<Lookup, TestVariant> => {
     const variant = abby.getTestVariant(testName);
     // Typescript looses its typing here, so we cast as any in favor of having
@@ -287,7 +287,7 @@ export function createAbby<
           return;
         }
 
-        if (!props?.dangerouslyForceShow && process.env.NODE_ENV !== "development") {
+        if (!props?.dangerouslyForceShow && process.env.NODE_ENV !== 'development') {
           return;
         }
 

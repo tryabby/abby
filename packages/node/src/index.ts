@@ -1,7 +1,7 @@
-import { ABConfig, Abby, AbbyConfig, RemoteConfigValueString } from "@tryabby/core";
-export { defineConfig } from "@tryabby/core";
-import { F } from "ts-toolbelt";
-import { InMemoryStorageService } from "./utils/MemoryStorage";
+import { ABConfig, Abby, AbbyConfig, RemoteConfigValueString } from '@tryabby/core';
+export { defineConfig } from '@tryabby/core';
+import { F } from 'ts-toolbelt';
+import { InMemoryStorageService } from './utils/MemoryStorage';
 
 export function createAbby<
   FlagName extends string,

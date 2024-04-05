@@ -1,9 +1,9 @@
-import { FeatureFlagType } from "@prisma/client";
+import { FeatureFlagType } from '@prisma/client';
 
 export function validateFlag(flagType: FeatureFlagType, value: string) {
   switch (flagType) {
     case FeatureFlagType.BOOLEAN: {
-      return value === "true" || value === "false";
+      return value === 'true' || value === 'false';
     }
     case FeatureFlagType.NUMBER: {
       return !isNaN(Number(value));

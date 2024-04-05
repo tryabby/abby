@@ -1,4 +1,4 @@
-import type { IStorageService } from "@tryabby/core";
+import type { IStorageService } from '@tryabby/core';
 
 export class InMemoryStorageService implements IStorageService {
   cache: Map<string, string>;

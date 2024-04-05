@@ -3,8 +3,8 @@ import {
   getFFStorageKey,
   getRCStorageKey,
   type IStorageService,
-} from "@tryabby/core";
-import Cookie from "js-cookie";
+} from '@tryabby/core';
+import Cookie from 'js-cookie';
 
 class ABStorageService implements IStorageService {
   get(projectId: string, testName: string): string | null {

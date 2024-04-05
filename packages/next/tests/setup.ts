@@ -1,9 +1,9 @@
-import { expect, afterEach } from "vitest";
-import { cleanup } from "@testing-library/react";
+import { expect, afterEach } from 'vitest';
+import { cleanup } from '@testing-library/react';
 /// @ts-ignore it doesn't have types
-import matchers from "@testing-library/jest-dom/matchers";
-import { server } from "./mocks/server";
-import fetch from "node-fetch";
+import matchers from '@testing-library/jest-dom/matchers';
+import { server } from './mocks/server';
+import fetch from 'node-fetch';
 
 /// @ts-ignore
 global.fetch = fetch;

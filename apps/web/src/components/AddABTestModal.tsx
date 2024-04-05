@@ -1,16 +1,13 @@
-import { TRPCClientError } from "@trpc/client";
-import { TRPC_ERROR_CODES_BY_KEY } from "@trpc/server/rpc";
+import { TRPCClientError } from '@trpc/client';
+import { TRPC_ERROR_CODES_BY_KEY } from '@trpc/server/rpc';
 
-import { useState } from "react";
-import { toast } from "react-hot-toast";
-import { PlausibleEvents } from "types/plausible-events";
-import { trpc } from "utils/trpc";
-import { Modal } from "./Modal";
-import {
-  CreateTestSection,
-  DEFAULT_NEW_VARIANT_PREFIX,
-} from "./Test/CreateTestSection";
-import { useTracking } from "lib/tracking";
+import { useState } from 'react';
+import { toast } from 'react-hot-toast';
+import { PlausibleEvents } from 'types/plausible-events';
+import { trpc } from 'utils/trpc';
+import { Modal } from './Modal';
+import { CreateTestSection, DEFAULT_NEW_VARIANT_PREFIX } from './Test/CreateTestSection';
+import { useTracking } from 'lib/tracking';
 
 type UIVariant = { name: string; weight: number };
 
@@ -24,7 +21,7 @@ const INITIAL_VARIANTS: Array<UIVariant> = [
   // give each variant a weight of 100 / number of variants
 ].map((v, _, array) => ({ ...v, weight: 100 / array.length }));
 
-const INITIAL_TEST_NAME = "New Test";
+const INITIAL_TEST_NAME = 'New Test';
 
 type Props = {
   onClose: () => void;
@@ -44,8 +41,7 @@ export const AddABTestModal = ({ onClose, isOpen, projectId }: Props) => {
     .map(({ weight }) => weight)
     .reduce((sum, weight) => (sum += weight), 0);
 
-  const isConfirmButtonDisabled =
-    variantsIncludeDuplicates || variantsWeightSum !== 100;
+  const isConfirmButtonDisabled = variantsIncludeDuplicates || variantsWeightSum !== 100;
 
   const createTestMutation = trpc.tests.createTest.useMutation();
 
@@ -58,7 +54,7 @@ export const AddABTestModal = ({ onClose, isOpen, projectId }: Props) => {
       if (!variants.length || !variants[0]) throw new Error();
 
       if (variants.reduce((acc, curr) => acc + curr.weight, 0) !== 100) {
-        toast.error("Weights must add up to 100");
+        toast.error('Weights must add up to 100');
         return;
       }
 
@@ -79,16 +75,15 @@ export const AddABTestModal = ({ onClose, isOpen, projectId }: Props) => {
       setVariants(INITIAL_VARIANTS);
 
       onClose();
-      trackEvent("AB-Test Created", {
-        props: { "Amount Of Variants": variants.length },
+      trackEvent('AB-Test Created', {
+        props: { 'Amount Of Variants': variants.length },
       });
-      toast.success("Test created");
+      toast.success('Test created');
     } catch (e) {
       toast.error(
-        e instanceof TRPCClientError &&
-          e.shape.code === TRPC_ERROR_CODES_BY_KEY.FORBIDDEN
+        e instanceof TRPCClientError && e.shape.code === TRPC_ERROR_CODES_BY_KEY.FORBIDDEN
           ? e.message
-          : "Could not create test"
+          : 'Could not create test',
       );
     }
   };
@@ -97,10 +92,10 @@ export const AddABTestModal = ({ onClose, isOpen, projectId }: Props) => {
     <Modal
       isOpen={isOpen}
       onClose={onClose}
-      title="Create new A/B Test"
-      confirmText="Create"
+      title='Create new A/B Test'
+      confirmText='Create'
       onConfirm={onCreateClick}
-      size="full"
+      size='full'
       isConfirming={createTestMutation.isLoading}
       isConfirmButtonDisabled={isConfirmButtonDisabled}
     >

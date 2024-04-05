@@ -1,7 +1,7 @@
-import type { NextFunction, Request, Response } from "express";
-import { ABConfig, Abby, AbbyConfig, RemoteConfigValueString } from "@tryabby/core";
-import { F } from "ts-toolbelt";
-import { createAbby } from "../index";
+import type { NextFunction, Request, Response } from 'express';
+import { ABConfig, Abby, AbbyConfig, RemoteConfigValueString } from '@tryabby/core';
+import { F } from 'ts-toolbelt';
+import { createAbby } from '../index';
 
 const instanceMap = new Map<string, Abby<any, any, any, any, any>>();
 const initializedProjects = new Set<string>();
@@ -22,7 +22,7 @@ export function createAbbyMiddleWare<
 
   const middleware = async (req: Request, _res: Response, next: NextFunction) => {
     if (!abbyInstance) {
-      throw new Error("Abby is undefined");
+      throw new Error('Abby is undefined');
     }
     await abbyInstance.loadProjectData();
     if (req.headers.cookie) {
