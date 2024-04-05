@@ -6,6 +6,7 @@ import {
 } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
 import clsx from "clsx";
+import { AlignCenter, AlignJustify, AlignLeft, AlignRight, Bold, Heading1, Heading2, Heading3, Italic, Strikethrough } from "lucide-react";
 import { twMerge } from "tailwind-merge";
 
 type Props = {
@@ -45,7 +46,7 @@ const MenuBar = ({ editor }: { editor: TipTapEditor | null }) => {
           isActive: editor.isActive("heading", { level: 1 }),
         })}
       >
-        H1
+        <Heading1 />
       </button>
       <button
         onClick={() => editor.chain().focus().toggleHeading({ level: 2 }).run()}
@@ -53,7 +54,7 @@ const MenuBar = ({ editor }: { editor: TipTapEditor | null }) => {
           isActive: editor.isActive("heading", { level: 2 }),
         })}
       >
-        H2
+        <Heading2 />
       </button>
       <button
         onClick={() => editor.chain().focus().toggleHeading({ level: 3 }).run()}
@@ -61,7 +62,7 @@ const MenuBar = ({ editor }: { editor: TipTapEditor | null }) => {
           isActive: editor.isActive("heading", { level: 3 }),
         })}
       >
-        H3
+        <Heading3 />
       </button>
       <button
         onClick={() => editor.chain().focus().setParagraph().run()}
@@ -69,7 +70,7 @@ const MenuBar = ({ editor }: { editor: TipTapEditor | null }) => {
           isActive: editor.isActive("paragraph"),
         })}
       >
-        paragraph
+        Text
       </button>
       <button
         onClick={() => editor.chain().focus().toggleBold().run()}
@@ -77,7 +78,7 @@ const MenuBar = ({ editor }: { editor: TipTapEditor | null }) => {
           isActive: editor.isActive("bold"),
         })}
       >
-        bold
+        <Bold />
       </button>
       <button
         onClick={() => editor.chain().focus().toggleItalic().run()}
@@ -85,7 +86,7 @@ const MenuBar = ({ editor }: { editor: TipTapEditor | null }) => {
           isActive: editor.isActive("italic"),
         })}
       >
-        italic
+        <Italic />
       </button>
       <button
         onClick={() => editor.chain().focus().toggleStrike().run()}
@@ -93,7 +94,7 @@ const MenuBar = ({ editor }: { editor: TipTapEditor | null }) => {
           isActive: editor.isActive("strike"),
         })}
       >
-        strike
+        <Strikethrough />
       </button>
       <button
         onClick={() => editor.chain().focus().setTextAlign("left").run()}
@@ -101,7 +102,7 @@ const MenuBar = ({ editor }: { editor: TipTapEditor | null }) => {
           isActive: editor.isActive({ textAlign: "left" }),
         })}
       >
-        left
+        <AlignLeft />
       </button>
       <button
         onClick={() => editor.chain().focus().setTextAlign("center").run()}
@@ -109,7 +110,7 @@ const MenuBar = ({ editor }: { editor: TipTapEditor | null }) => {
           isActive: editor.isActive({ textAlign: "center" }),
         })}
       >
-        center
+        <AlignCenter />
       </button>
       <button
         onClick={() => editor.chain().focus().setTextAlign("right").run()}
@@ -117,7 +118,7 @@ const MenuBar = ({ editor }: { editor: TipTapEditor | null }) => {
           isActive: editor.isActive({ textAlign: "right" }),
         })}
       >
-        right
+        <AlignRight />
       </button>
       <button
         onClick={() => editor.chain().focus().setTextAlign("justify").run()}
@@ -126,7 +127,7 @@ const MenuBar = ({ editor }: { editor: TipTapEditor | null }) => {
           roundCorners: "right",
         })}
       >
-        justify
+        <AlignJustify />
       </button>
     </div>
   );
