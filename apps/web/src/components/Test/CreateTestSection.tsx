@@ -1,3 +1,4 @@
+import { Button } from "components/ui/button";
 import produce from "immer";
 import { getUpdatedWeights } from "lib/helper";
 import { ChangeEvent, Dispatch, Fragment, SetStateAction } from "react";
@@ -204,13 +205,13 @@ export function CreateTestSection({
               ) : (
                 <span></span>
               )}
-              <button
+              <Button
                 type="button"
                 onClick={addVariant}
-                className="w-fit self-end justify-self-end rounded-sm bg-blue-300 px-3 py-0.5 text-gray-800 transition-colors duration-200 ease-in-out hover:bg-blue-400"
+                className="w-fit self-end justify-self-end"
               >
                 Add Variant
-              </button>
+              </Button>
             </div>
           </div>
         </Card>
