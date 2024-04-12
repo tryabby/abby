@@ -1,13 +1,14 @@
 import TextAlign from "@tiptap/extension-text-align";
 import {
-  Editor as TipTapEditor,
   EditorContent,
+  type Editor as TipTapEditor,
   useEditor,
 } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
 import clsx from "clsx";
-import { AlignCenter, AlignJustify, AlignLeft, AlignRight, Bold, Heading1, Heading2, Heading3, Italic, Strikethrough } from "lucide-react";
+import { AlignCenter, AlignJustify, AlignLeft, AlignRight, Bold, Heading1, Heading2, Heading3, Italic, Pilcrow, Strikethrough } from "lucide-react";
 import { twMerge } from "tailwind-merge";
+import { Tooltip, TooltipContent, TooltipTrigger } from "./Tooltip";
 
 type Props = {
   className?: string;
@@ -38,97 +39,187 @@ const MenuBar = ({ editor }: { editor: TipTapEditor | null }) => {
   }
 
   return (
-    <div className="flex">
-      <button
-        onClick={() => editor.chain().focus().toggleHeading({ level: 1 }).run()}
-        className={getMenuButtonClass({
-          roundCorners: "left",
-          isActive: editor.isActive("heading", { level: 1 }),
-        })}
-      >
-        <Heading1 />
-      </button>
-      <button
-        onClick={() => editor.chain().focus().toggleHeading({ level: 2 }).run()}
-        className={getMenuButtonClass({
-          isActive: editor.isActive("heading", { level: 2 }),
-        })}
-      >
-        <Heading2 />
-      </button>
-      <button
-        onClick={() => editor.chain().focus().toggleHeading({ level: 3 }).run()}
-        className={getMenuButtonClass({
-          isActive: editor.isActive("heading", { level: 3 }),
-        })}
-      >
-        <Heading3 />
-      </button>
-      <button
-        onClick={() => editor.chain().focus().setParagraph().run()}
-        className={getMenuButtonClass({
-          isActive: editor.isActive("paragraph"),
-        })}
-      >
-        Text
-      </button>
-      <button
-        onClick={() => editor.chain().focus().toggleBold().run()}
-        className={getMenuButtonClass({
-          isActive: editor.isActive("bold"),
-        })}
-      >
-        <Bold />
-      </button>
-      <button
-        onClick={() => editor.chain().focus().toggleItalic().run()}
-        className={getMenuButtonClass({
-          isActive: editor.isActive("italic"),
-        })}
-      >
-        <Italic />
-      </button>
-      <button
-        onClick={() => editor.chain().focus().toggleStrike().run()}
-        className={getMenuButtonClass({
-          isActive: editor.isActive("strike"),
-        })}
-      >
-        <Strikethrough />
-      </button>
-      <button
-        onClick={() => editor.chain().focus().setTextAlign("left").run()}
-        className={getMenuButtonClass({
-          isActive: editor.isActive({ textAlign: "left" }),
-        })}
-      >
-        <AlignLeft />
-      </button>
-      <button
-        onClick={() => editor.chain().focus().setTextAlign("center").run()}
-        className={getMenuButtonClass({
-          isActive: editor.isActive({ textAlign: "center" }),
-        })}
-      >
-        <AlignCenter />
-      </button>
-      <button
-        onClick={() => editor.chain().focus().setTextAlign("right").run()}
-        className={getMenuButtonClass({
-          isActive: editor.isActive({ textAlign: "right" }),
-        })}
-      >
-        <AlignRight />
-      </button>
-      <button
-        onClick={() => editor.chain().focus().setTextAlign("justify").run()}
-        className={getMenuButtonClass({
-          isActive: editor.isActive({ textAlign: "justify" }),
-          roundCorners: "right",
-        })}
-      >
-        <AlignJustify />
-      </button>
+    <div className="flex divide-x-[1px] divide-ab_primary-background">
+      <Tooltip>
+        <TooltipContent>
+          <span>Heading 1</span>
+        </TooltipContent>
+
+        <TooltipTrigger asChild>
+          <button
+            onClick={() => editor.chain().focus().toggleHeading({ level: 1 }).run()}
+            className={getMenuButtonClass({
+              roundCorners: "left",
+              isActive: editor.isActive("heading", { level: 1 }),
+            })}
+          >
+            <Heading1 />
+          </button>
+        </TooltipTrigger>
+      </Tooltip>
+      <Tooltip>
+        <TooltipContent>
+          <span>Heading 2</span>
+        </TooltipContent>
+
+        <TooltipTrigger asChild>
+          <button
+            onClick={() => editor.chain().focus().toggleHeading({ level: 2 }).run()}
+            className={getMenuButtonClass({
+              isActive: editor.isActive("heading", { level: 2 }),
+            })}
+          >
+            <Heading2 />
+          </button>
+        </TooltipTrigger>
+      </Tooltip>
+      <Tooltip>
+        <TooltipContent>
+          <span>Heading 3</span>
+        </TooltipContent>
+
+        <TooltipTrigger asChild>
+          <button
+            onClick={() => editor.chain().focus().toggleHeading({ level: 3 }).run()}
+            className={getMenuButtonClass({
+              isActive: editor.isActive("heading", { level: 3 }),
+            })}
+          >
+            <Heading3 />
+          </button>
+        </TooltipTrigger>
+      </Tooltip>
+      <Tooltip>
+        <TooltipContent>
+          <span>Text</span>
+        </TooltipContent>
+
+        <TooltipTrigger asChild>
+          <button
+            onClick={() => editor.chain().focus().setParagraph().run()}
+            className={getMenuButtonClass({
+              isActive: editor.isActive("paragraph"),
+            })}
+          >
+            <Pilcrow />
+          </button>
+        </TooltipTrigger>
+      </Tooltip>
+      <span className="p-2 bg-primary"></span>
+      <Tooltip>
+        <TooltipContent>
+          <span>Bold</span>
+        </TooltipContent>
+
+        <TooltipTrigger asChild>
+          <button
+            onClick={() => editor.chain().focus().toggleBold().run()}
+            className={getMenuButtonClass({
+              isActive: editor.isActive("bold"),
+            })}
+          >
+            <Bold />
+          </button>
+        </TooltipTrigger>
+      </Tooltip>
+      <Tooltip>
+        <TooltipContent>
+          <span>Italic</span>
+        </TooltipContent>
+
+        <TooltipTrigger asChild>
+          <button
+            onClick={() => editor.chain().focus().toggleItalic().run()}
+            className={getMenuButtonClass({
+              isActive: editor.isActive("italic"),
+            })}
+          >
+            <Italic />
+          </button>
+        </TooltipTrigger>
+      </Tooltip>
+      <Tooltip>
+        <TooltipContent>
+          <span>Strikethrough</span>
+        </TooltipContent>
+
+        <TooltipTrigger asChild>
+          <button
+            onClick={() => editor.chain().focus().toggleStrike().run()}
+            className={getMenuButtonClass({
+              isActive: editor.isActive("strike"),
+            })}
+          >
+            <Strikethrough />
+          </button>
+        </TooltipTrigger>
+      </Tooltip>
+      <span className="p-2 bg-primary"></span>
+      <Tooltip>
+        <TooltipContent>
+          <span>Align Left</span>
+        </TooltipContent>
+
+        <TooltipTrigger asChild>
+          <button
+            onClick={() => editor.chain().focus().setTextAlign("left").run()}
+            className={getMenuButtonClass({
+              isActive: editor.isActive({ textAlign: "left" }),
+            })}
+          >
+            <AlignLeft />
+          </button>
+        </TooltipTrigger>
+      </Tooltip>
+      <Tooltip>
+        <TooltipContent>
+          <span>Align Center</span>
+        </TooltipContent>
+
+        <TooltipTrigger asChild>
+          <button
+            onClick={() => editor.chain().focus().setTextAlign("center").run()}
+            className={getMenuButtonClass({
+              isActive: editor.isActive({ textAlign: "center" }),
+            })}
+          >
+            <AlignCenter />
+          </button>
+        </TooltipTrigger>
+      </Tooltip>
+      <Tooltip>
+        <TooltipContent>
+          <span>Align Right</span>
+        </TooltipContent>
+
+        <TooltipTrigger asChild>
+          <button
+            onClick={() => editor.chain().focus().setTextAlign("right").run()}
+            className={getMenuButtonClass({
+              isActive: editor.isActive({ textAlign: "right" }),
+            })}
+          >
+            <AlignRight />
+          </button>
+        </TooltipTrigger>
+      </Tooltip>
+      <Tooltip>
+        <TooltipContent>
+          <span>Align Justify</span>
+        </TooltipContent>
+
+        <TooltipTrigger asChild>
+          <button
+            onClick={() => editor.chain().focus().setTextAlign("justify").run()}
+            className={getMenuButtonClass({
+              isActive: editor.isActive({ textAlign: "justify" }),
+              roundCorners: "right",
+            })}
+          >
+            <AlignJustify />
+          </button>
+        </TooltipTrigger>
+      </Tooltip>
     </div>
   );
 };
