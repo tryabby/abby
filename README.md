@@ -23,7 +23,18 @@ pnpm db:migrate
 pnpm dev
 ```
 
-Now open your browser at http://localhost:3000 and have fun :)
+1. **Open the Application**:
+   - Go to `http://localhost:3000` in your browser.
+
+2. **Sign Up**:
+   - Select "Continue with Email" and enter your email.
+
+3. **Email Verification**:
+   - Open `http://localhost:8025` in a new tab for MailHog.
+   - Find and open the email from your application.
+
+4. **Complete Registration**:
+   - Click the one-time link in the email to verify and finish account setup.
 
 To create an account, you should choose the "Continue with Email" option. The docker-compose.yml includes a [MailHog](https://github.com/mailhog/MailHog) instance at `localhost:8025`, which intercepts the email, so you can get the one-time link from there.
 
