@@ -50,4 +50,5 @@ COPY --from=installer --chown=nextjs:nodejs /app/apps/web/prisma ./apps/web/pris
 
 
 # Set your entrypoint script as the entrypoint
-CMD ["cd apps/web && npm run start:docker"]
+WORKDIR /app/apps/web
+CMD ["npm", "run", "start:docker"]
