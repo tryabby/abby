@@ -93,61 +93,63 @@
       ></small
     >
     <hr />
-    <h2>Flags:</h2>
-    {#each Object.entries(flags) as [flagName, flagValue]}
-      <Switch
-        id={flagName}
-        label={flagName}
-        checked={flagValue}
-        onChange={(newValue) => {
-          window.postMessage({ type: "abby:update-flag", flagName, newValue }, "*");
-          abby.updateFlag(flagName, newValue);
-        }}
-      />
-    {/each}
-    <hr />
-    <h2>Remote Config:</h2>
-    {#each Object.entries(remoteConfig) as [remoteConfigName, remoteConfigValue]}
-      {#if typeof remoteConfigValue === "string" || typeof remoteConfigValue === "number"}
-        <Input
-          id={remoteConfigName}
-          label={remoteConfigName}
-          type={typeof remoteConfigValue === "string" ? "text" : "number"}
-          value={remoteConfigValue}
+    <div class="content">
+      <h2>Flags:</h2>
+      {#each Object.entries(flags) as [flagName, flagValue]}
+        <Switch
+          id={flagName}
+          label={flagName}
+          checked={flagValue}
           onChange={(newValue) => {
-            window.postMessage({ type: "abby:update-flag", remoteConfigName, newValue }, "*");
-            abby.updateRemoteConfig(remoteConfigName, newValue);
+            window.postMessage({ type: "abby:update-flag", flagName, newValue }, "*");
+            abby.updateFlag(flagName, newValue);
           }}
         />
-      {:else if typeof remoteConfigValue === "object"}
-        <div style="display: flex; flex-direction: column; margin: 10px 0;">
-          <p style="margin-bottom: 5px;">{remoteConfigName}</p>
-          <Modal
+      {/each}
+      <hr />
+      <h2>Remote Config:</h2>
+      {#each Object.entries(remoteConfig) as [remoteConfigName, remoteConfigValue]}
+        {#if typeof remoteConfigValue === "string" || typeof remoteConfigValue === "number"}
+          <Input
+            id={remoteConfigName}
+            label={remoteConfigName}
+            type={typeof remoteConfigValue === "string" ? "text" : "number"}
             value={remoteConfigValue}
             onChange={(newValue) => {
               window.postMessage({ type: "abby:update-flag", remoteConfigName, newValue }, "*");
               abby.updateRemoteConfig(remoteConfigName, newValue);
             }}
           />
-        </div>
-      {/if}
-    {/each}
-    <hr />
-    <h2>A/B Tests:</h2>
-    {#each Object.entries(tests) as [testName, { selectedVariant, variants }]}
-      <Select
-        label={testName}
-        value={selectedVariant}
-        options={variants.map((v) => ({
-          label: v,
-          value: v,
-        }))}
-        onChange={(newValue) => {
-          window.postMessage({ type: "abby:select-variant", testName, newValue }, "*");
-          abby.updateLocalVariant(testName, newValue);
-        }}
-      />
-    {/each}
+        {:else if typeof remoteConfigValue === "object"}
+          <div style="display: flex; flex-direction: column; margin: 10px 0;">
+            <p style="margin-bottom: 5px;">{remoteConfigName}</p>
+            <Modal
+              value={remoteConfigValue}
+              onChange={(newValue) => {
+                window.postMessage({ type: "abby:update-flag", remoteConfigName, newValue }, "*");
+                abby.updateRemoteConfig(remoteConfigName, newValue);
+              }}
+            />
+          </div>
+        {/if}
+      {/each}
+      <hr />
+      <h2>A/B Tests:</h2>
+      {#each Object.entries(tests) as [testName, { selectedVariant, variants }]}
+        <Select
+          label={testName}
+          value={selectedVariant}
+          options={variants.map((v) => ({
+            label: v,
+            value: v,
+          }))}
+          onChange={(newValue) => {
+            window.postMessage({ type: "abby:select-variant", testName, newValue }, "*");
+            abby.updateLocalVariant(testName, newValue);
+          }}
+        />
+      {/each}
+    </div>
   </div>
 {:else}
   <button
@@ -188,7 +190,9 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+    box-shadow:
+      0 10px 15px -3px rgb(0 0 0 / 0.1),
+      0 4px 6px -4px rgb(0 0 0 / 0.1);
   }
 
   #abby-devtools {
@@ -201,7 +205,7 @@
     left: var(--left);
     top: var(--top);
     background: #121929;
-    padding: 15px 10px;
+    padding-inline: 10px;
     padding-top: 10px;
     z-index: 9999;
     border-radius: 6px;
@@ -209,6 +213,9 @@
     font-size: 14px;
     color: hsl(213 31% 91%);
     min-width: 300px;
+    display: flex;
+    flex-direction: column;
+    max-height: calc(100vh - 3rem);
 
     .logo {
       font-family: "Martian Mono", inherit;
@@ -233,6 +240,27 @@
         all: unset;
         display: contents;
         cursor: pointer;
+      }
+    }
+    .content {
+      margin-top: -1rem;
+      padding-top: 1rem;
+      padding-bottom: calc(1rem - 10px);
+      overflow-y: auto;
+      &::-webkit-scrollbar {
+        width: 10px;
+      }
+      &::-webkit-scrollbar-track {
+        background-color: transparent;
+      }
+      &::-webkit-scrollbar-thumb {
+        background-color: rgba(255, 255, 255, 0.4);
+        border: 6px solid transparent;
+        border-right-width: 0px;
+        background-clip: content-box;
+        &:hover {
+          background-color: rgba(255, 255, 255, 0.6);
+        }
       }
     }
     h1,
