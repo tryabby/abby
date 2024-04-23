@@ -22,7 +22,8 @@
     "db:migrate": "turbo run db:migrate --filter=./apps/web",
     "db:generate": "turbo run db:generate --filter=./apps/web",
     "db:stop": "docker-compose down",
-    "ci:publish": "pnpm publish -r --access public"
+    "ci:publish": "pnpm publish -r --access public",
+    "build:docker": "docker build -f apps/web/Dockerfile -t tryabby/abby ."
   },
   "devDependencies": {
     "@changesets/cli": "^2.26.0",
