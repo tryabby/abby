@@ -6,7 +6,7 @@
     "deploy": "wrangler deploy --minify src/index.ts"
   },
   "dependencies": {
-    "hono": "^3.12.6"
+    "hono": "^4.2.7"
   },
   "devDependencies": {
     "@tryabby/core": "workspace:*",
