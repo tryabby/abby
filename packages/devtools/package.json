@@ -41,8 +41,8 @@
     "svelte-check": "^2.10.3",
     "tslib": "^2.5.0",
     "typescript": "^4.9.3",
-    "vite": "^4.4.8",
-    "vite-plugin-dts": "2.3.0"
+    "vite": "^5.2.10",
+    "vite-plugin-dts": "3.9.0"
   },
   "dependencies": {
     "@melt-ui/svelte": "^0.17.0",
