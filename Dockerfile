@@ -4,8 +4,7 @@ ENV PATH="$PNPM_HOME:$PATH"
 RUN corepack enable
 
 FROM base AS builder
-RUN apk add --no-cache libc6-compat
-RUN apk update
+RUN apk update && apk add --no-cache libc6-compat
 # Set working directory
 WORKDIR /app
 COPY . .

@@ -17,7 +17,7 @@
     "mailhog:up": "docker-compose -f docker-compose.mailhog.yaml up",
     "mailhog:down": "docker-compose -f docker-compose.mailhog.yaml down",
     "test": "vitest",
-    "start:docker": "npx prisma migrate deploy && node server.js"
+    "start:docker": "npx prisma migrate deploy || { echo 'Migration failed, exiting'; exit 1; } && node server.js"
   },
   "dependencies": {
     "@code-hike/mdx": "0.9.0",
