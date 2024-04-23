@@ -1,4 +1,3 @@
-import { Project, User } from "@prisma/client";
 import { render } from "@react-email/render";
 import { env } from "env/server.mjs";
 import { createTransport } from "nodemailer";

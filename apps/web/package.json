@@ -7,7 +7,8 @@
     "build:prod": "npx prisma migrate deploy && npm run build",
     "postbuild": "next-sitemap",
     "dev": "next dev",
-    "postinstall": "prisma generate",
+    "postinstall": "pnpm run db:generate",
+    "db:generate": "prisma generate",
     "lint": "next lint",
     "start": "next start",
     "seed:events": "ts-node --compiler-options {\\\"module\\\":\\\"CommonJS\\\"} prisma/seedEvents.ts",
@@ -15,7 +16,8 @@
     "generate:coupons": "pnpm ts-node -r tsconfig-paths/register  --compiler-options {\\\"module\\\":\\\"CommonJS\\\"} prisma/generateCoupons.ts",
     "mailhog:up": "docker-compose -f docker-compose.mailhog.yaml up",
     "mailhog:down": "docker-compose -f docker-compose.mailhog.yaml down",
-    "test": "vitest"
+    "test": "vitest",
+    "start:docker": "npx prisma migrate deploy || { echo 'Migration failed, exiting'; exit 1; } && node server.js"
   },
   "dependencies": {
     "@code-hike/mdx": "0.9.0",
