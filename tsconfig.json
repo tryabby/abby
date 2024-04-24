@@ -1,0 +1,13 @@
+{
+  "compilerOptions": {
+    "target": "esnext",
+    "module": "esnext",
+    "moduleResolution": "node",
+    "lib": ["dom", "esnext"],
+    "jsx": "preserve",
+    "strict": true,
+    "esModuleInterop": true
+  },
+  "include": ["packages/packages/vue/@tryabby/vue/src/**/*"],
+  "exclude": ["node_modules", "dist"]
+}

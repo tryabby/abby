@@ -1,0 +1,29 @@
+{
+  "name": "@tryabby/vue",
+  "version": "1.0.0",
+  "description": "Vue integration for Abby feature flagging and experimentation",
+  "main": "index.js",
+  "scripts": {
+    "test": "jest"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@tryabby/core": "workspace:^",
+    "@vue/composition-api": "^1.7.2",
+    "vue": "^3.4.24"
+  },
+  "devDependencies": {
+    "jest": "^27.2.0",
+    "@types/jest": "^27.0.2"
+  },
+  "scripts": {
+    "test": "jest"
+  },
+  "scripts": {
+    "test": "npx jest"
+  }
+  
+  
+}

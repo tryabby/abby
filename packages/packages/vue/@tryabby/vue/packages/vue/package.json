@@ -1,0 +1,23 @@
+{
+  "name": "vue",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@tryabby/core": "^5.2.0",
+    "@vueuse/core": "^10.9.0",
+    "vue": "^3.4.24"
+  },
+  "devDependencies": {
+    "@vue/test-utils": "^2.4.5",
+    "jest": "^29.7.0",
+    "ts-jest": "^29.1.2",
+    "typescript": "^5.4.5"
+  }
+}
