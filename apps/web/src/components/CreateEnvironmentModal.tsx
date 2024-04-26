@@ -1,12 +1,12 @@
-import { TRPCClientError } from '@trpc/client'
-import { TRPC_ERROR_CODES_BY_KEY } from '@trpc/server/rpc'
-import { useRef, useState } from 'react'
-import { toast } from 'react-hot-toast'
-import { PlausibleEvents } from 'types/plausible-events'
-import { trpc } from 'utils/trpc'
-import { Modal } from './Modal'
-import { useTracking } from 'lib/tracking'
-import { Input } from './ui/input'
+import { TRPCClientError } from "@trpc/client"
+import { TRPC_ERROR_CODES_BY_KEY } from "@trpc/server/rpc"
+import { useRef, useState } from "react"
+import { toast } from "react-hot-toast"
+import { PlausibleEvents } from "types/plausible-events"
+import { trpc } from "utils/trpc"
+import { Modal } from "./Modal"
+import { useTracking } from "lib/tracking"
+import { Input } from "./ui/input"
 
 type Props = {
   onClose: () => void
@@ -17,7 +17,7 @@ type Props = {
 export const CreateEnvironmentModal = ({ onClose, isOpen, projectId }: Props) => {
   const inputRef = useRef<HTMLInputElement>(null)
   const ctx = trpc.useContext()
-  const [name, setName] = useState<string>('')
+  const [name, setName] = useState<string>("")
   const trimmedName = name.trim()
   const { mutateAsync } = trpc.environments.addEnvironment.useMutation({
     onSuccess() {
@@ -30,11 +30,11 @@ export const CreateEnvironmentModal = ({ onClose, isOpen, projectId }: Props) =>
     <Modal
       isOpen={isOpen}
       onClose={onClose}
-      title='Create new Environment'
-      confirmText='Create'
+      title="Create new Environment"
+      confirmText="Create"
       onConfirm={async () => {
         if (!trimmedName) {
-          toast.error('Name is required')
+          toast.error("Name is required")
           return
         }
         try {
@@ -42,26 +42,26 @@ export const CreateEnvironmentModal = ({ onClose, isOpen, projectId }: Props) =>
             name,
             projectId,
           })
-          setName('')
-          toast.success('Environment created')
-          trackEvent('Environment Created')
+          setName("")
+          toast.success("Environment created")
+          trackEvent("Environment Created")
           onClose()
         } catch (e) {
           toast.error(
             e instanceof TRPCClientError && e.shape.code === TRPC_ERROR_CODES_BY_KEY.FORBIDDEN
               ? e.message
-              : 'Error creating environment'
+              : "Error creating environment"
           )
         }
       }}
     >
-      <label className='mb-1 block text-pink-50'>Name</label>
+      <label className="mb-1 block text-pink-50">Name</label>
       <Input
         ref={inputRef}
         value={name}
         onChange={(e) => setName(e.target.value)}
-        type='text'
-        placeholder='production'
+        type="text"
+        placeholder="production"
       />
     </Modal>
   )

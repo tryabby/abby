@@ -1,11 +1,11 @@
-import { MarketingLayout } from 'components/MarketingLayout'
-import { NextPageWithLayout } from './_app'
-import Link from 'next/link'
+import { MarketingLayout } from "components/MarketingLayout"
+import { NextPageWithLayout } from "./_app"
+import Link from "next/link"
 
 const RedemptionPage: NextPageWithLayout = () => {
   return (
-    <main className='container px-6 py-6 md:px-16'>
-      <div className='prose mt-12 max-w-full text-center lg:prose-lg prose-h1:font-bold prose-p:font-medium'>
+    <main className="container px-6 py-6 md:px-16">
+      <div className="prose mt-12 max-w-full text-center lg:prose-lg prose-h1:font-bold prose-p:font-medium">
         <h1>Hey there 👋</h1>
         <h2>You are awesome 🥳</h2>
         <p>
@@ -13,7 +13,7 @@ const RedemptionPage: NextPageWithLayout = () => {
           redeem your license, you need to create an account first.
         </p>
         <p>
-          You can do this for free <Link href='/login?callbackUrl=/redeem'>here</Link>
+          You can do this for free <Link href="/login?callbackUrl=/redeem">here</Link>
         </p>
         <p>
           After you signed up, you can then enter redeem your code at the bottom of the Settings
@@ -28,6 +28,6 @@ const RedemptionPage: NextPageWithLayout = () => {
   )
 }
 
-RedemptionPage.getLayout = (page) => <MarketingLayout seoTitle='Devtools'>{page}</MarketingLayout>
+RedemptionPage.getLayout = (page) => <MarketingLayout seoTitle="Devtools">{page}</MarketingLayout>
 
 export default RedemptionPage

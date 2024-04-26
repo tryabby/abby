@@ -1,8 +1,8 @@
-import { loadStripe } from '@stripe/stripe-js'
-import { env } from 'env/client.mjs'
-import { trpc } from 'utils/trpc'
-import { Project } from '@prisma/client'
-import { PlanName, PLANS } from 'server/common/plans'
+import { loadStripe } from "@stripe/stripe-js"
+import { env } from "env/client.mjs"
+import { trpc } from "utils/trpc"
+import { Project } from "@prisma/client"
+import { PlanName, PLANS } from "server/common/plans"
 
 export const useAbbyStripe = () => {
   const { mutateAsync: createCheckoutSession } =
@@ -35,7 +35,7 @@ export const useAbbyStripe = () => {
 
 const MILLISECONDS_IN_A_DAY = 86_400_000
 
-export const BETA_PRICE_ID = 'BETA'
+export const BETA_PRICE_ID = "BETA"
 
 export const isBetaPlan = (project: Project) => project.stripePriceId === BETA_PRICE_ID
 /**

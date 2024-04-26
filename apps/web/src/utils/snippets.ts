@@ -1,10 +1,10 @@
-import { Test, Option, FeatureFlag, Environment } from '@prisma/client'
-import prettier from 'prettier'
-import path from 'path'
-import * as fs from 'fs/promises'
-import { getHighlighter } from 'shiki'
-import { AbbyConfig, RemoteConfigValueString } from '@tryabby/core'
-import { transformDBFlagTypeToclient } from 'lib/flags'
+import { Test, Option, FeatureFlag, Environment } from "@prisma/client"
+import prettier from "prettier"
+import path from "path"
+import * as fs from "fs/promises"
+import { getHighlighter } from "shiki"
+import { AbbyConfig, RemoteConfigValueString } from "@tryabby/core"
+import { transformDBFlagTypeToclient } from "lib/flags"
 
 // Shiki loads languages and themes using "fs" instead of "import", so Next.js
 // doesn't bundle them into production build. To work around, we manually copy
@@ -13,7 +13,7 @@ import { transformDBFlagTypeToclient } from 'lib/flags'
 // Note that they are only referenced on server side
 // See: https://github.com/shikijs/shiki/issues/138
 const getShikiPath = (): string => {
-  return path.join(process.cwd(), 'src/lib/shiki')
+  return path.join(process.cwd(), "src/lib/shiki")
 }
 
 const touched = { current: false }
@@ -28,8 +28,8 @@ const touchShikiPath = (): void => {
 }
 
 const formatCode = (code: string) => {
-  return prettier.format(code.replace('"process.env.NODE_ENV"', 'process.env.NODE_ENV'), {
-    parser: 'typescript',
+  return prettier.format(code.replace('"process.env.NODE_ENV"', "process.env.NODE_ENV"), {
+    parser: "typescript",
   })
 }
 
@@ -38,7 +38,7 @@ export type CodeSnippetData = {
   html: string
 }
 
-export type Integrations = 'react' | 'nextjs' | 'svelte' | 'angular'
+export type Integrations = "react" | "nextjs" | "svelte" | "angular"
 
 export async function generateCodeSnippets({
   projectId,
@@ -47,22 +47,22 @@ export async function generateCodeSnippets({
 }: {
   projectId: string
   tests: Array<
-    Pick<Test, 'name'> & {
-      options: Pick<Option, 'identifier'>[]
+    Pick<Test, "name"> & {
+      options: Pick<Option, "identifier">[]
     }
   >
-  flags: Array<Pick<FeatureFlag, 'name' | 'type'>>
+  flags: Array<Pick<FeatureFlag, "name" | "type">>
 }): Promise<Record<Integrations, CodeSnippetData>> {
   touchShikiPath()
 
   const baseConfig = JSON.stringify(
     {
       projectId,
-      currentEnvironment: 'process.env.NODE_ENV',
-      flags: flags.filter((flag) => flag.type === 'BOOLEAN').map((flag) => flag.name),
+      currentEnvironment: "process.env.NODE_ENV",
+      flags: flags.filter((flag) => flag.type === "BOOLEAN").map((flag) => flag.name),
       remoteConfig: flags.reduce(
         (acc, flag) => {
-          if (flag.type !== 'BOOLEAN') {
+          if (flag.type !== "BOOLEAN") {
             acc[flag.name] = transformDBFlagTypeToclient(flag.type) as RemoteConfigValueString
           }
           return acc
@@ -118,7 +118,7 @@ export async function generateCodeSnippets({
 
   const highlighter = await getHighlighter({
     // it is in-fact a proper theme, but the types are wrong
-    theme: 'poimandres',
+    theme: "poimandres",
     paths: {
       languages: `${getShikiPath()}/languages/`,
       themes: `${getShikiPath()}/themes/`,
@@ -129,25 +129,25 @@ export async function generateCodeSnippets({
     react: {
       code: reactCode,
       html: highlighter.codeToHtml(reactCode, {
-        lang: 'tsx',
+        lang: "tsx",
       }),
     },
     nextjs: {
       code: nextJsCode,
       html: highlighter.codeToHtml(nextJsCode, {
-        lang: 'tsx',
+        lang: "tsx",
       }),
     },
     svelte: {
       code: svelteCode,
       html: highlighter.codeToHtml(svelteCode, {
-        lang: 'svelte',
+        lang: "svelte",
       }),
     },
     angular: {
       code: angularCode,
       html: highlighter.codeToHtml(angularCode, {
-        lang: 'tsx',
+        lang: "tsx",
       }),
     },
   }

@@ -1,21 +1,21 @@
-import { Popover, PopoverContent, PopoverTrigger } from 'components/ui/popover'
-import dayjs from 'dayjs'
-import { FaHistory } from 'react-icons/fa'
-import { match, P } from 'ts-pattern'
+import { Popover, PopoverContent, PopoverTrigger } from "components/ui/popover"
+import dayjs from "dayjs"
+import { FaHistory } from "react-icons/fa"
+import { match, P } from "ts-pattern"
 
-import { FeatureFlagHistory, FeatureFlagType } from '@prisma/client'
-import { Tooltip, TooltipContent, TooltipTrigger } from 'components/Tooltip'
-import relativeTime from 'dayjs/plugin/relativeTime'
-import { useState } from 'react'
-import { toast } from 'react-hot-toast'
-import { RouterOutputs, trpc } from 'utils/trpc'
-import { Avatar } from './Avatar'
-import { LoadingSpinner } from './LoadingSpinner'
-import { Modal } from './Modal'
-import { Edit } from 'lucide-react'
-import { ChangeFlagForm, FlagFormValues } from './AddFeatureFlagModal'
-import { Switch } from './ui/switch'
-import { cn } from 'lib/utils'
+import { FeatureFlagHistory, FeatureFlagType } from "@prisma/client"
+import { Tooltip, TooltipContent, TooltipTrigger } from "components/Tooltip"
+import relativeTime from "dayjs/plugin/relativeTime"
+import { useState } from "react"
+import { toast } from "react-hot-toast"
+import { RouterOutputs, trpc } from "utils/trpc"
+import { Avatar } from "./Avatar"
+import { LoadingSpinner } from "./LoadingSpinner"
+import { Modal } from "./Modal"
+import { Edit } from "lucide-react"
+import { ChangeFlagForm, FlagFormValues } from "./AddFeatureFlagModal"
+import { Switch } from "./ui/switch"
+import { cn } from "lib/utils"
 
 dayjs.extend(relativeTime)
 
@@ -26,14 +26,14 @@ const getHistoryEventDescription = (event: FeatureFlagHistory) => {
         newValue: P.not(P.nullish),
         oldValue: null,
       },
-      () => 'created' as const
+      () => "created" as const
     )
     .with(
       {
         newValue: P.not(P.nullish),
         oldValue: P.not(P.nullish),
       },
-      () => 'updated' as const
+      () => "updated" as const
     )
     .run()
 }
@@ -52,31 +52,31 @@ const HistoryButton = ({ flagValueId }: { flagValueId: string }) => {
       <Popover>
         <PopoverTrigger asChild>
           <TooltipTrigger asChild>
-            <button onClick={() => loadHistory()} className='focus:outline-none focus:ring-0'>
+            <button onClick={() => loadHistory()} className="focus:outline-none focus:ring-0">
               <FaHistory />
             </button>
           </TooltipTrigger>
         </PopoverTrigger>
 
-        <PopoverContent className='w-full max-w-xl select-none text-sm' sideOffset={5}>
+        <PopoverContent className="w-full max-w-xl select-none text-sm" sideOffset={5}>
           {isLoading && <LoadingSpinner />}
           {data !== undefined && (
             <>
-              <p className='text-xs'>Edited {data.length} times</p>
-              <hr className='-mx-2 my-1 border-gray-700' />
-              <div className='max-h-48 space-y-4 overflow-y-auto py-2'>
+              <p className="text-xs">Edited {data.length} times</p>
+              <hr className="-mx-2 my-1 border-gray-700" />
+              <div className="max-h-48 space-y-4 overflow-y-auto py-2">
                 {data.map((history) => (
-                  <div key={history.id} className='flex items-center space-x-3'>
+                  <div key={history.id} className="flex items-center space-x-3">
                     <div>
                       <Avatar
                         userName={history.user.name ?? history.user.email ?? undefined}
                         imageUrl={history.user.image ?? undefined}
-                        className='h-5 w-5 rounded-lg text-[10px]'
+                        className="h-5 w-5 rounded-lg text-[10px]"
                       />
                     </div>
                     <span>
-                      {history.user.name ?? history.user.email}{' '}
-                      {getHistoryEventDescription(history)} this flag{' '}
+                      {history.user.name ?? history.user.email}{" "}
+                      {getHistoryEventDescription(history)} this flag{" "}
                       {dayjs(history.createdAt).fromNow()}
                     </span>
                   </div>
@@ -137,18 +137,18 @@ const ConfirmUpdateModal = ({
       onClose()
     },
     onError() {
-      toast.error(`Failed to update ${type === 'BOOLEAN' ? 'flag' : 'value'}`)
+      toast.error(`Failed to update ${type === "BOOLEAN" ? "flag" : "value"}`)
     },
   })
 
   return (
     <Modal
-      title={`Update ${type === 'BOOLEAN' ? 'flag' : 'value'}`}
-      confirmText={`Update ${type === 'BOOLEAN' ? 'flag' : 'value'}`}
+      title={`Update ${type === "BOOLEAN" ? "flag" : "value"}`}
+      confirmText={`Update ${type === "BOOLEAN" ? "flag" : "value"}`}
       onConfirm={() => updateFlag({ ...state, flagValueId })}
       isOpen={isOpen}
       onClose={onClose}
-      size='full'
+      size="full"
     >
       <ChangeFlagForm
         key={flagValueId}
@@ -160,11 +160,11 @@ const ConfirmUpdateModal = ({
         onChange={(newState) => setState(newState)}
         errors={{}}
         canChangeType={false}
-        isRemoteConfig={type !== 'BOOLEAN'}
+        isRemoteConfig={type !== "BOOLEAN"}
       />
-      <h3 className='mt-8 text-sm font-semibold'>Description:</h3>
+      <h3 className="mt-8 text-sm font-semibold">Description:</h3>
       {!description ? (
-        'No description provided'
+        "No description provided"
       ) : (
         <p dangerouslySetInnerHTML={{ __html: description }} />
       )}
@@ -173,7 +173,7 @@ const ConfirmUpdateModal = ({
 }
 
 type Props = {
-  flag: RouterOutputs['flags']['getFlags']['flags'][number]
+  flag: RouterOutputs["flags"]["getFlags"]["flags"][number]
   projectId: string
   environmentName: string
   flagValueId: string
@@ -191,22 +191,22 @@ export function FeatureFlag({ flag, projectId, environmentName, flagValueId, typ
 
   return (
     <>
-      <span className='flex w-full items-center justify-between space-x-3 rounded-lg bg-card py-3 pl-3 pr-4 text-sm font-medium text-gray-300'>
-        <div className='flex items-center space-x-2'>
+      <span className="flex w-full items-center justify-between space-x-3 rounded-lg bg-card py-3 pl-3 pr-4 text-sm font-medium text-gray-300">
+        <div className="flex items-center space-x-2">
           <p>{environmentName}</p>
           <code
             title={currentFlagValue}
             className={cn(
-              'max-w-[60px] overflow-hidden text-ellipsis whitespace-nowrap rounded-lg bg-accent p-1',
-              type === 'BOOLEAN' && currentFlagValue === 'true' ? 'text-green-500' : 'text-red-500'
+              "max-w-[60px] overflow-hidden text-ellipsis whitespace-nowrap rounded-lg bg-accent p-1",
+              type === "BOOLEAN" && currentFlagValue === "true" ? "text-green-500" : "text-red-500"
             )}
           >
-            {typeof currentFlagValue === 'string' && currentFlagValue.trim() === ''
-              ? 'Empty String'
+            {typeof currentFlagValue === "string" && currentFlagValue.trim() === ""
+              ? "Empty String"
               : currentFlagValue}
           </code>
         </div>
-        <div className='flex space-x-2'>
+        <div className="flex space-x-2">
           <button onClick={() => setIsUpdateConfirmationModalOpen(true)}>
             <Edit size={18} />
           </button>
@@ -218,7 +218,7 @@ export function FeatureFlag({ flag, projectId, environmentName, flagValueId, typ
         isOpen={isUpdateConfirmationModalOpen}
         onClose={() => setIsUpdateConfirmationModalOpen(false)}
         flagValueId={flagValueId}
-        description={flag.description ?? ''}
+        description={flag.description ?? ""}
         projectId={projectId}
         flagName={flag.name}
         type={flag.type}

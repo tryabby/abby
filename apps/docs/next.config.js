@@ -1,10 +1,10 @@
-const withNextra = require('nextra')({
-  theme: 'nextra-theme-docs',
-  themeConfig: './theme.config.jsx',
+const withNextra = require("nextra")({
+  theme: "nextra-theme-docs",
+  themeConfig: "./theme.config.jsx",
   defaultShowCopyCode: true,
 })
 
-const { withPlausibleProxy } = require('next-plausible')
+const { withPlausibleProxy } = require("next-plausible")
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
@@ -12,8 +12,8 @@ const nextConfig = {
   swcMinify: true,
   // use this to add <html lang="en"> to all pages
   i18n: {
-    locales: ['en'],
-    defaultLocale: 'en',
+    locales: ["en"],
+    defaultLocale: "en",
   },
 }
 

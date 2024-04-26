@@ -1,32 +1,32 @@
-import { ROLE, User } from '@prisma/client'
-import clsx from 'clsx'
-import { DashboardButton } from 'components/DashboardButton'
+import { ROLE, User } from "@prisma/client"
+import clsx from "clsx"
+import { DashboardButton } from "components/DashboardButton"
 import {
   DashboardSection,
   DashboardSectionSubtitle,
   DashboardSectionTitle,
-} from 'components/DashboardSection'
-import { DeleteProjectModal } from 'components/DeleteProjectModal'
-import { Layout } from 'components/Layout'
-import { FullPageLoadingSpinner } from 'components/LoadingSpinner'
-import { Progress } from 'components/Progress'
-import { RemoveUserModal } from 'components/RemoveUserModal'
-import { Button } from 'components/ui/button'
-import { Input } from 'components/ui/input'
-import dayjs from 'dayjs'
-import { getFlagCount } from 'lib/flags'
-import { getProjectPaidPlan, useAbbyStripe } from 'lib/stripe'
-import { useTracking } from 'lib/tracking'
-import { GetStaticProps, GetStaticPaths } from 'next'
-import { useSession } from 'next-auth/react'
-import Link from 'next/link'
-import { useRouter } from 'next/router'
-import { NextPageWithLayout } from 'pages/_app'
-import { FormEvent, useRef, useState } from 'react'
-import { toast } from 'react-hot-toast'
-import { BsX } from 'react-icons/bs'
-import { getLimitByPlan } from 'server/common/plans'
-import { trpc } from 'utils/trpc'
+} from "components/DashboardSection"
+import { DeleteProjectModal } from "components/DeleteProjectModal"
+import { Layout } from "components/Layout"
+import { FullPageLoadingSpinner } from "components/LoadingSpinner"
+import { Progress } from "components/Progress"
+import { RemoveUserModal } from "components/RemoveUserModal"
+import { Button } from "components/ui/button"
+import { Input } from "components/ui/input"
+import dayjs from "dayjs"
+import { getFlagCount } from "lib/flags"
+import { getProjectPaidPlan, useAbbyStripe } from "lib/stripe"
+import { useTracking } from "lib/tracking"
+import { GetStaticProps, GetStaticPaths } from "next"
+import { useSession } from "next-auth/react"
+import Link from "next/link"
+import { useRouter } from "next/router"
+import { NextPageWithLayout } from "pages/_app"
+import { FormEvent, useRef, useState } from "react"
+import { toast } from "react-hot-toast"
+import { BsX } from "react-icons/bs"
+import { getLimitByPlan } from "server/common/plans"
+import { trpc } from "utils/trpc"
 
 const SettingsPage: NextPageWithLayout = () => {
   const [userToRemove, setUserToRemove] = useState<User | null>(null)
@@ -55,7 +55,7 @@ const SettingsPage: NextPageWithLayout = () => {
 
   const { mutate: updateProjectName } = trpc.project.updateName.useMutation({
     onSuccess() {
-      toast.success('Project name updated')
+      toast.success("Project name updated")
       trpcContext.project.getProjectData.invalidate()
       trpcContext.user.getProjects.invalidate()
     },
@@ -82,40 +82,40 @@ const SettingsPage: NextPageWithLayout = () => {
           projectId,
           email,
         })
-        inviteEmailRef.current!.value = ''
+        inviteEmailRef.current!.value = ""
       })(),
       {
-        error: 'Failed to send invite',
-        loading: 'Sending invite...',
-        success: 'Invite sent',
+        error: "Failed to send invite",
+        loading: "Sending invite...",
+        success: "Invite sent",
       }
     )
   }
 
-  const isPlanWithStripe = projectPlan !== null && projectPlan !== 'BETA'
+  const isPlanWithStripe = projectPlan !== null && projectPlan !== "BETA"
 
   return (
-    <main className='space-y-8 text-pink-50'>
-      <h1 className='text-3xl font-bold'>Project Settings</h1>
+    <main className="space-y-8 text-pink-50">
+      <h1 className="text-3xl font-bold">Project Settings</h1>
       {isLoading || isError ? (
         <FullPageLoadingSpinner />
       ) : (
         <>
           <DashboardSection>
-            <DashboardSectionTitle className='mb-8'>General Details</DashboardSectionTitle>
-            <div className='flex flex-col space-y-4'>
-              <div className='flex'>
-                <label className='flex flex-col'>
+            <DashboardSectionTitle className="mb-8">General Details</DashboardSectionTitle>
+            <div className="flex flex-col space-y-4">
+              <div className="flex">
+                <label className="flex flex-col">
                   Name
-                  <div className='col flex space-x-5'>
+                  <div className="col flex space-x-5">
                     <Input
                       ref={projectNameRef}
-                      className='w-52 px-3 py-2'
-                      type='text'
+                      className="w-52 px-3 py-2"
+                      type="text"
                       defaultValue={data.project.name}
                     />
                     <DashboardButton
-                      className='px-12'
+                      className="px-12"
                       onClick={() => {
                         if (!projectNameRef.current?.value) return
                         updateProjectName({
@@ -130,39 +130,39 @@ const SettingsPage: NextPageWithLayout = () => {
                 </label>
               </div>
               <p>Current Plan:</p>
-              <div className='flex flex-col space-y-5'>
-                <div className='flex w-52 items-center justify-center rounded-lg border bg-background px-3 py-2'>
-                  <span>{projectPlan ?? 'Free'}</span>
+              <div className="flex flex-col space-y-5">
+                <div className="flex w-52 items-center justify-center rounded-lg border bg-background px-3 py-2">
+                  <span>{projectPlan ?? "Free"}</span>
                 </div>
-                <div className='flex space-x-5'>
+                <div className="flex space-x-5">
                   <DashboardButton
-                    className='px-3 py-2'
+                    className="px-3 py-2"
                     onClick={async () => {
-                      trackEvent('Plan Upgrade Clicked', {
-                        props: { Plan: 'STARTUP' },
+                      trackEvent("Plan Upgrade Clicked", {
+                        props: { Plan: "STARTUP" },
                       })
-                      redirectToCheckout(projectId, 'STARTUP')
+                      redirectToCheckout(projectId, "STARTUP")
                     }}
                   >
                     Upgrade to Startup
                   </DashboardButton>
                   <DashboardButton
-                    className='px-3'
+                    className="px-3"
                     onClick={async () => {
-                      trackEvent('Plan Upgrade Clicked', {
-                        props: { Plan: 'PRO' },
+                      trackEvent("Plan Upgrade Clicked", {
+                        props: { Plan: "PRO" },
                       })
-                      redirectToCheckout(projectId, 'PRO')
+                      redirectToCheckout(projectId, "PRO")
                     }}
                   >
                     Upgrade to Pro
                   </DashboardButton>
                   <Link href={`/projects/${projectId}/redeem`}>
-                    <DashboardButton className='px-3 py-2'>Redeem Coupon</DashboardButton>
+                    <DashboardButton className="px-3 py-2">Redeem Coupon</DashboardButton>
                   </Link>
                   {data.project.stripeCustomerId !== null && projectPlan !== null && (
                     <DashboardButton
-                      className='px-3'
+                      className="px-3"
                       onClick={async () => {
                         redirectToBillingPortal(projectId)
                       }}
@@ -177,25 +177,25 @@ const SettingsPage: NextPageWithLayout = () => {
           <DashboardSection>
             <DashboardSectionTitle>Members</DashboardSectionTitle>
             <DashboardSectionSubtitle>Members have access to this project</DashboardSectionSubtitle>
-            <div className='mt-8 divide-y divide-pink-50/20'>
+            <div className="mt-8 divide-y divide-pink-50/20">
               {data.project.users.map(({ user, role }) => (
-                <div key={user.id} className='py-3'>
-                  <div className='flex items-center justify-between space-x-2'>
-                    <div className='flex space-x-2'>
+                <div key={user.id} className="py-3">
+                  <div className="flex items-center justify-between space-x-2">
+                    <div className="flex space-x-2">
                       <span>{user.email}</span>
                       <span
-                        className={clsx('rounded-md px-2 py-0.5 text-sm capitalize', {
-                          'bg-green-400 text-black': role === ROLE.ADMIN,
-                          'bg-orange-200 text-black': role === ROLE.USER,
+                        className={clsx("rounded-md px-2 py-0.5 text-sm capitalize", {
+                          "bg-green-400 text-black": role === ROLE.ADMIN,
+                          "bg-orange-200 text-black": role === ROLE.USER,
                         })}
                       >
                         {role.toLowerCase()}
                       </span>
-                    </div>{' '}
+                    </div>{" "}
                     {role !== ROLE.ADMIN && (
                       <Button
-                        variant='link'
-                        title='Remove User'
+                        variant="link"
+                        title="Remove User"
                         onClick={() => setUserToRemove(user)}
                       >
                         Remove User
@@ -204,21 +204,21 @@ const SettingsPage: NextPageWithLayout = () => {
                   </div>
                 </div>
               ))}
-              <form className='pt-4' onSubmit={onInvite}>
-                <label htmlFor='newUserEmail' className=' font-semibold'>
+              <form className="pt-4" onSubmit={onInvite}>
+                <label htmlFor="newUserEmail" className=" font-semibold">
                   Invite a new User:
                 </label>
-                <div className='mt-2 flex space-x-5'>
+                <div className="mt-2 flex space-x-5">
                   <Input
                     ref={inviteEmailRef}
-                    id='newUserEmail'
-                    type='email'
-                    className='w-80 max-w-full'
-                    placeholder='abby@tryabby.com'
-                  />{' '}
-                  <DashboardButton className='px-12'>Invite</DashboardButton>
+                    id="newUserEmail"
+                    type="email"
+                    className="w-80 max-w-full"
+                    placeholder="abby@tryabby.com"
+                  />{" "}
+                  <DashboardButton className="px-12">Invite</DashboardButton>
                 </div>
-                <small className='mt-1 text-xs text-gray-400'>
+                <small className="mt-1 text-xs text-gray-400">
                   Note: You can only invite users with an existing account.
                 </small>
               </form>
@@ -226,64 +226,64 @@ const SettingsPage: NextPageWithLayout = () => {
           </DashboardSection>
           <DashboardSection>
             <DashboardSectionTitle>Usage</DashboardSectionTitle>
-            <DashboardSectionSubtitle className='mb-8'>
+            <DashboardSectionSubtitle className="mb-8">
               Current Billing Cycle (
-              {dayjs(data.project.currentPeriodEnd).subtract(30, 'days').format('MMM DD')} -{' '}
-              {dayjs(data.project.currentPeriodEnd).format('MMM DD')})
+              {dayjs(data.project.currentPeriodEnd).subtract(30, "days").format("MMM DD")} -{" "}
+              {dayjs(data.project.currentPeriodEnd).format("MMM DD")})
             </DashboardSectionSubtitle>
-            <div className='flex flex-col space-y-4'>
+            <div className="flex flex-col space-y-4">
               <div>
-                <h3 className='mb-1'>A/B Tests:</h3>
+                <h3 className="mb-1">A/B Tests:</h3>
                 <Progress
                   currentValue={data.project.tests.length}
                   maxValue={limits?.tests ?? Infinity}
                 />
-                <p className='mt-2'>
-                  {data.project.tests.length} / {limits?.tests === Infinity ? '∞' : limits?.tests}{' '}
+                <p className="mt-2">
+                  {data.project.tests.length} / {limits?.tests === Infinity ? "∞" : limits?.tests}{" "}
                   A/B Test
-                  {data.project.tests.length === 1 ? '' : 's'} used
+                  {data.project.tests.length === 1 ? "" : "s"} used
                 </p>
               </div>
               <div>
-                <h3 className='mb-1'>Flags:</h3>
+                <h3 className="mb-1">Flags:</h3>
                 <Progress
                   currentValue={getFlagCount(data.project.featureFlags ?? [])}
                   maxValue={limits?.flags ?? Infinity}
                 />
-                <p className='mt-2'>
-                  {getFlagCount(data.project.featureFlags ?? [])} /{' '}
-                  {limits?.flags === Infinity ? '∞' : limits?.flags} Flag
-                  {getFlagCount(data.project.featureFlags ?? []) === 1 ? '' : 's'} used
+                <p className="mt-2">
+                  {getFlagCount(data.project.featureFlags ?? [])} /{" "}
+                  {limits?.flags === Infinity ? "∞" : limits?.flags} Flag
+                  {getFlagCount(data.project.featureFlags ?? []) === 1 ? "" : "s"} used
                 </p>
               </div>
               <div>
-                <h3 className='mb-1'>Environments:</h3>
+                <h3 className="mb-1">Environments:</h3>
                 <Progress
                   currentValue={data.project.environments.length}
                   maxValue={limits?.environments ?? Infinity}
                 />
-                <p className='mt-2'>
-                  {data.project.environments.length} /{' '}
-                  {limits?.environments === Infinity ? '∞' : limits?.environments} Environment
-                  {data.project.environments.length === 1 ? '' : 's'} used
+                <p className="mt-2">
+                  {data.project.environments.length} /{" "}
+                  {limits?.environments === Infinity ? "∞" : limits?.environments} Environment
+                  {data.project.environments.length === 1 ? "" : "s"} used
                 </p>
               </div>
               <div>
-                <h3 className='mb-1'>Monthly Events:</h3>
+                <h3 className="mb-1">Monthly Events:</h3>
                 <Progress
                   currentValue={data.project.eventsThisPeriod}
                   maxValue={limits?.eventsPerMonth ?? Infinity}
                 />
-                <p className='mt-2'>
-                  {data.project.eventsThisPeriod} /{' '}
-                  {limits?.eventsPerMonth === Infinity ? '∞' : limits?.eventsPerMonth} Events
+                <p className="mt-2">
+                  {data.project.eventsThisPeriod} /{" "}
+                  {limits?.eventsPerMonth === Infinity ? "∞" : limits?.eventsPerMonth} Events
                 </p>
               </div>
             </div>
           </DashboardSection>
           <DashboardSection>
             <DashboardSectionTitle>Danger Zone</DashboardSectionTitle>
-            <DashboardSectionSubtitle className='mb-8'>
+            <DashboardSectionSubtitle className="mb-8">
               Delete this project and all of its data
             </DashboardSectionSubtitle>
 
@@ -296,17 +296,17 @@ const SettingsPage: NextPageWithLayout = () => {
                 session.data?.user?.projectIds === null ||
                 session.data?.user?.projectIds.length === 1
               }
-              variant='destructive'
+              variant="destructive"
             >
               Delete Project
             </Button>
             {isPlanWithStripe && (
-              <p className='mt-2 text-sm text-gray-400'>
+              <p className="mt-2 text-sm text-gray-400">
                 You must downgrade to the free plan before deleting this project.
               </p>
             )}
             {session.data?.user?.projectIds.length === 1 && (
-              <p className='mt-2 text-sm text-gray-400'>
+              <p className="mt-2 text-sm text-gray-400">
                 You must create a new project before deleting this project.
               </p>
             )}

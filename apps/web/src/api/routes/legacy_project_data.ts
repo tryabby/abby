@@ -1,22 +1,22 @@
-import { Context, Hono } from 'hono'
-import { endTime, startTime, timing } from 'hono/timing'
+import { Context, Hono } from "hono"
+import { endTime, startTime, timing } from "hono/timing"
 
-import { zValidator } from '@hono/zod-validator'
-import { cors } from 'hono/cors'
-import { prisma } from 'server/db/client'
+import { zValidator } from "@hono/zod-validator"
+import { cors } from "hono/cors"
+import { prisma } from "server/db/client"
 
-import { LegacyAbbyDataResponse } from '@tryabby/core'
-import { transformFlagValue } from 'lib/flags'
-import { trackPlanOverage } from 'lib/logsnag'
-import createCache from 'server/common/memory-cache'
-import { EventService } from 'server/services/EventService'
-import { RequestCache } from 'server/services/RequestCache'
-import { RequestService } from 'server/services/RequestService'
-import { z } from 'zod'
-import { jobManager } from 'server/queue/Manager'
+import { LegacyAbbyDataResponse } from "@tryabby/core"
+import { transformFlagValue } from "lib/flags"
+import { trackPlanOverage } from "lib/logsnag"
+import createCache from "server/common/memory-cache"
+import { EventService } from "server/services/EventService"
+import { RequestCache } from "server/services/RequestCache"
+import { RequestService } from "server/services/RequestService"
+import { z } from "zod"
+import { jobManager } from "server/queue/Manager"
 
 const configCache = createCache<string, LegacyAbbyDataResponse>({
-  name: 'legacyConfigCache',
+  name: "legacyConfigCache",
   expireAfterMilliseconds: 1000 * 10,
 })
 
@@ -29,16 +29,16 @@ async function getAbbyResponseWithCache({
   projectId: string
   c: Context
 }) {
-  startTime(c, 'readCache')
+  startTime(c, "readCache")
   const cachedConfig = configCache.get(projectId + environment)
-  endTime(c, 'readCache')
+  endTime(c, "readCache")
 
-  c.header('X-Abby-Cache', cachedConfig !== undefined ? 'HIT' : 'MISS')
+  c.header("X-Abby-Cache", cachedConfig !== undefined ? "HIT" : "MISS")
   if (cachedConfig) {
     return cachedConfig
   }
 
-  startTime(c, 'db')
+  startTime(c, "db")
   const [tests, flags] = await Promise.all([
     prisma.test.findMany({
       where: {
@@ -53,14 +53,14 @@ async function getAbbyResponseWithCache({
           projectId,
         },
         flag: {
-          type: 'BOOLEAN',
+          type: "BOOLEAN",
         },
       },
       include: { flag: { select: { name: true, type: true } } },
     }),
   ])
 
-  endTime(c, 'db')
+  endTime(c, "db")
   const response = {
     tests: tests.map((test) => ({
       name: test.name,
@@ -70,7 +70,7 @@ async function getAbbyResponseWithCache({
       const value = transformFlagValue(flagValue.value, flagValue.flag.type)
       return {
         name: flagValue.flag.name,
-        isEnabled: flagValue.flag.type === 'BOOLEAN' ? value === true : value !== null,
+        isEnabled: flagValue.flag.type === "BOOLEAN" ? value === true : value !== null,
       }
     }),
   } satisfies LegacyAbbyDataResponse
@@ -81,43 +81,43 @@ async function getAbbyResponseWithCache({
 
 export function makeLegacyProjectDataRoute() {
   const app = new Hono().get(
-    '/:projectId/data',
+    "/:projectId/data",
     cors({
-      origin: '*',
+      origin: "*",
       maxAge: 86400,
     }),
     zValidator(
-      'query',
+      "query",
       z.object({
         environment: z.string(),
       })
     ),
     timing(),
     async (c) => {
-      const projectId = c.req.param('projectId')
-      const { environment } = c.req.valid('query')
+      const projectId = c.req.param("projectId")
+      const { environment } = c.req.valid("query")
 
       const now = performance.now()
 
       try {
-        startTime(c, 'getAbbyResponseWithCache')
+        startTime(c, "getAbbyResponseWithCache")
         const response = await getAbbyResponseWithCache({
           projectId,
           environment,
           c,
         })
-        endTime(c, 'getAbbyResponseWithCache')
+        endTime(c, "getAbbyResponseWithCache")
 
-        jobManager.emit('after-data-request', {
+        jobManager.emit("after-data-request", {
           projectId,
-          apiVersion: 'V0',
+          apiVersion: "V0",
           functionDuration: performance.now() - now,
         })
 
         return c.json(response)
       } catch (e) {
         console.error(e)
-        return c.json({ error: 'Internal server error' }, { status: 500 })
+        return c.json({ error: "Internal server error" }, { status: 500 })
       }
     }
   )

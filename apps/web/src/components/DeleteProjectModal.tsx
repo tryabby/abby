@@ -1,9 +1,9 @@
-import { useProjectId } from 'lib/hooks/useProjectId'
-import { toast } from 'react-hot-toast'
-import { trpc } from 'utils/trpc'
-import { Modal } from './Modal'
-import { useRouter } from 'next/router'
-import { useSession } from 'next-auth/react'
+import { useProjectId } from "lib/hooks/useProjectId"
+import { toast } from "react-hot-toast"
+import { trpc } from "utils/trpc"
+import { Modal } from "./Modal"
+import { useRouter } from "next/router"
+import { useSession } from "next-auth/react"
 
 type Props = {
   isOpen: boolean
@@ -20,7 +20,7 @@ export function DeleteProjectModal({ isOpen, onClose }: Props) {
     async onSuccess() {
       if (!session?.user?.projectIds) return
 
-      toast.success('Project deleted')
+      toast.success("Project deleted")
       onClose()
 
       const newProjectIds = session?.user?.projectIds.filter((id) => id !== projectId)
@@ -39,16 +39,16 @@ export function DeleteProjectModal({ isOpen, onClose }: Props) {
 
   return (
     <Modal
-      title='Delete project'
-      confirmText='Delete project'
+      title="Delete project"
+      confirmText="Delete project"
       isOpen={isOpen}
       onClose={onClose}
       onConfirm={() => {
-        if (!projectId || status !== 'authenticated') return
+        if (!projectId || status !== "authenticated") return
         deleteProject({ projectId })
       }}
     >
-      <p className='text-white'>
+      <p className="text-white">
         Are you sure that you want to delete this Project? <br /> You will be unable to recover it
         afterwards!
       </p>

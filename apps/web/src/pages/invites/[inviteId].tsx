@@ -1,21 +1,21 @@
-import { Layout } from 'components/Layout'
-import { GetServerSideProps, type NextPage } from 'next'
-import { getSession, useSession } from 'next-auth/react'
-import { useRouter } from 'next/router'
-import { prisma } from '../../server/db/client'
+import { Layout } from "components/Layout"
+import { GetServerSideProps, type NextPage } from "next"
+import { getSession, useSession } from "next-auth/react"
+import { useRouter } from "next/router"
+import { prisma } from "../../server/db/client"
 
-import { trpc } from 'utils/trpc'
-import Link from 'next/link'
+import { trpc } from "utils/trpc"
+import Link from "next/link"
 
 export const getServerSideProps: GetServerSideProps = async (ctx) => {
   const session = await getSession(ctx)
 
   const user = await prisma.user.findUnique({
-    where: { email: session?.user?.email ?? '' },
+    where: { email: session?.user?.email ?? "" },
   })
 
   // no logged in user, required to accept invite
-  if (!user || !user.email) return { props: {}, redirect: { destination: '/' } }
+  if (!user || !user.email) return { props: {}, redirect: { destination: "/" } }
 
   //  TODO: check if user is already in project or invite is expired
   const invite = await prisma.projectInvite.findFirst({
@@ -27,7 +27,7 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
     return {
       props: {},
       redirect: {
-        destination: '/',
+        destination: "/",
       },
     }
   }
@@ -59,22 +59,22 @@ const Projects: NextPage = () => {
   if (isLoading || !session) return null
 
   return (
-    <main className='flex h-screen w-screen items-center justify-center bg-pink-100'>
-      <div className='max-w-2xl rounded-md bg-white p-8 text-gray-900 shadow-2xl'>
-        <div className='mb-12 flex justify-center'>
-          <img src={session.user?.image} className='h-24 w-24 rounded-full' />
+    <main className="flex h-screen w-screen items-center justify-center bg-pink-100">
+      <div className="max-w-2xl rounded-md bg-white p-8 text-gray-900 shadow-2xl">
+        <div className="mb-12 flex justify-center">
+          <img src={session.user?.image} className="h-24 w-24 rounded-full" />
         </div>
-        <div className='text-center text-lg'>
+        <div className="text-center text-lg">
           <h2>You have been invited to</h2>
-          <p className='my-3 text-xl font-bold'>{data?.project?.name}</p>
+          <p className="my-3 text-xl font-bold">{data?.project?.name}</p>
           <button
-            className='rounded-lg bg-gray-900 px-3 py-2 font-semibold text-white transition-transform duration-150 ease-in-out hover:scale-110'
+            className="rounded-lg bg-gray-900 px-3 py-2 font-semibold text-white transition-transform duration-150 ease-in-out hover:scale-110"
             onClick={acceptInvite}
           >
             Accept Invitation
           </button>
-          <p className='my-4 text-sm'>or</p>
-          <Link href='/projects' className='block text-sm text-gray-500'>
+          <p className="my-4 text-sm">or</p>
+          <Link href="/projects" className="block text-sm text-gray-500">
             Go back to projects
           </Link>
         </div>

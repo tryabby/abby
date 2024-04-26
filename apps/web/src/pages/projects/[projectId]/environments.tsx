@@ -1,15 +1,15 @@
-import { CreateEnvironmentModal } from 'components/CreateEnvironmentModal'
-import { DashboardHeader } from 'components/DashboardHeader'
-import { Layout } from 'components/Layout'
-import { Modal } from 'components/Modal'
-import { FullPageLoadingSpinner, LoadingSpinner } from 'components/LoadingSpinner'
-import { toast } from 'react-hot-toast'
-import { TitleEdit } from 'components/TitleEdit'
-import { useProjectId } from 'lib/hooks/useProjectId'
-import { NextPageWithLayout } from 'pages/_app'
-import { useState } from 'react'
-import { AiOutlineDelete, AiOutlineEdit, AiOutlinePlus } from 'react-icons/ai'
-import { trpc } from 'utils/trpc'
+import { CreateEnvironmentModal } from "components/CreateEnvironmentModal"
+import { DashboardHeader } from "components/DashboardHeader"
+import { Layout } from "components/Layout"
+import { Modal } from "components/Modal"
+import { FullPageLoadingSpinner, LoadingSpinner } from "components/LoadingSpinner"
+import { toast } from "react-hot-toast"
+import { TitleEdit } from "components/TitleEdit"
+import { useProjectId } from "lib/hooks/useProjectId"
+import { NextPageWithLayout } from "pages/_app"
+import { useState } from "react"
+import { AiOutlineDelete, AiOutlineEdit, AiOutlinePlus } from "react-icons/ai"
+import { trpc } from "utils/trpc"
 import {
   closestCenter,
   DndContext,
@@ -17,18 +17,18 @@ import {
   PointerSensor,
   useSensor,
   useSensors,
-} from '@dnd-kit/core'
+} from "@dnd-kit/core"
 import {
   arrayMove,
   SortableContext,
   useSortable,
   verticalListSortingStrategy,
-} from '@dnd-kit/sortable'
-import { Environment, FeatureFlagType } from '@prisma/client'
-import { CSS } from '@dnd-kit/utilities'
-import { MdDragIndicator } from 'react-icons/md'
-import { Button } from 'components/ui/button'
-import { GetStaticProps, GetStaticPaths } from 'next'
+} from "@dnd-kit/sortable"
+import { Environment, FeatureFlagType } from "@prisma/client"
+import { CSS } from "@dnd-kit/utilities"
+import { MdDragIndicator } from "react-icons/md"
+import { Button } from "components/ui/button"
+import { GetStaticProps, GetStaticPaths } from "next"
 
 function EnvironmentItem({
   environment,
@@ -63,14 +63,14 @@ function EnvironmentItem({
   return (
     <div
       key={environment.id}
-      className='flex items-center justify-between rounded-lg bg-secondary px-4 py-3'
+      className="flex items-center justify-between rounded-lg bg-secondary px-4 py-3"
       ref={setNodeRef}
       style={style}
       {...attributes}
       {...listeners}
     >
-      <div className='flex items-center space-x-2'>
-        <button className='cursor-grab text-pink-50/60 focus:cursor-grabbing'>
+      <div className="flex items-center space-x-2">
+        <button className="cursor-grab text-pink-50/60 focus:cursor-grabbing">
           <MdDragIndicator />
         </button>
         <TitleEdit
@@ -84,9 +84,9 @@ function EnvironmentItem({
         />
       </div>
       <Button
-        size='icon'
-        variant='ghost'
-        title='Delete Environment'
+        size="icon"
+        variant="ghost"
+        title="Delete Environment"
         onClick={() => setDeleteState()}
       >
         <AiOutlineDelete />
@@ -110,18 +110,18 @@ const DeleteEnvironmentModal = ({
 
   const { mutate: deleteEnvironment } = trpc.environments.deleteEnvironment.useMutation({
     onSuccess: () => {
-      toast.success('Deleted environment')
+      toast.success("Deleted environment")
       trpcContext.flags.getFlags.invalidate({ projectId })
     },
     onError() {
-      toast.error('Failed to delete environment')
+      toast.error("Failed to delete environment")
     },
   })
 
   return (
     <Modal
-      title='Delete Environment'
-      confirmText='Delete'
+      title="Delete Environment"
+      confirmText="Delete"
       onConfirm={() => deleteEnvironment({ environmentId: environment.id })}
       isOpen={isOpen}
       onClose={onClose}
@@ -139,7 +139,7 @@ const EnvironmentPage: NextPageWithLayout = () => {
   const [isCreateEnvironmentModalOpen, setIsCreateEnvironmentModalOpen] = useState(false)
   const [activeEnvironmentInfo, setActiveEnvironmentInfo] = useState<{
     id: string
-    action: 'delete'
+    action: "delete"
   } | null>(null)
   const projectId = useProjectId()
 
@@ -194,9 +194,9 @@ const EnvironmentPage: NextPageWithLayout = () => {
 
   if (data.environments.length === 0)
     return (
-      <div className='mt-48 flex flex-col items-center justify-center'>
-        <h1 className='text-2xl font-semibold'>You don&apos;t have any environments set up!</h1>
-        <Button className='mt-4' onClick={() => setIsCreateEnvironmentModalOpen(true)}>
+      <div className="mt-48 flex flex-col items-center justify-center">
+        <h1 className="text-2xl font-semibold">You don&apos;t have any environments set up!</h1>
+        <Button className="mt-4" onClick={() => setIsCreateEnvironmentModalOpen(true)}>
           Create Environment
         </Button>
         <CreateEnvironmentModal
@@ -209,9 +209,9 @@ const EnvironmentPage: NextPageWithLayout = () => {
 
   return (
     <>
-      <div className='flex justify-end space-x-2'>
+      <div className="flex justify-end space-x-2">
         <Button
-          className='mb-4 flex items-center space-x-2 text-primary-foreground'
+          className="mb-4 flex items-center space-x-2 text-primary-foreground"
           onClick={() => setIsCreateEnvironmentModalOpen(true)}
         >
           <AiOutlinePlus /> <span>Add Environment</span>
@@ -223,8 +223,8 @@ const EnvironmentPage: NextPageWithLayout = () => {
           projectId={projectId}
         />
       </div>
-      <div className='space-y-8'>
-        <section className='space-y-3'>
+      <div className="space-y-8">
+        <section className="space-y-3">
           <DndContext
             sensors={dndSensors}
             collisionDetection={closestCenter}
@@ -239,7 +239,7 @@ const EnvironmentPage: NextPageWithLayout = () => {
                   setDeleteState={() => {
                     setActiveEnvironmentInfo({
                       id: environment.id,
-                      action: 'delete',
+                      action: "delete",
                     })
                   }}
                 />
@@ -253,7 +253,7 @@ const EnvironmentPage: NextPageWithLayout = () => {
           <DeleteEnvironmentModal
             environment={activeEnvironment}
             projectId={projectId}
-            isOpen={activeEnvironmentInfo?.action === 'delete'}
+            isOpen={activeEnvironmentInfo?.action === "delete"}
             onClose={() => setActiveEnvironmentInfo(null)}
           />
         </>
@@ -265,7 +265,7 @@ const EnvironmentPage: NextPageWithLayout = () => {
 EnvironmentPage.getLayout = (page) => {
   return (
     <Layout>
-      <DashboardHeader title='Environments' />
+      <DashboardHeader title="Environments" />
       {page}
     </Layout>
   )

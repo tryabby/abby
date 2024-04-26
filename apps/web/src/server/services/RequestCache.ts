@@ -1,4 +1,4 @@
-import { redis } from 'server/db/redis'
+import { redis } from "server/db/redis"
 
 export abstract class RequestCache {
   private static getCacheKey(projectId: string) {

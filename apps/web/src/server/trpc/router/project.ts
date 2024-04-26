@@ -1,20 +1,20 @@
-import { Option, ROLE } from '@prisma/client'
-import { TRPCError } from '@trpc/server'
-import { env } from 'env/server.mjs'
-import { encode, getToken } from 'next-auth/jwt'
-import { planNameSchema, PLANS } from 'server/common/plans'
-import { stripe } from 'server/common/stripe'
-import { EventService } from 'server/services/EventService'
-import { ProjectService } from 'server/services/ProjectService'
-import { generateCodeSnippets } from 'utils/snippets'
-import { z } from 'zod'
+import { Option, ROLE } from "@prisma/client"
+import { TRPCError } from "@trpc/server"
+import { env } from "env/server.mjs"
+import { encode, getToken } from "next-auth/jwt"
+import { planNameSchema, PLANS } from "server/common/plans"
+import { stripe } from "server/common/stripe"
+import { EventService } from "server/services/EventService"
+import { ProjectService } from "server/services/ProjectService"
+import { generateCodeSnippets } from "utils/snippets"
+import { z } from "zod"
 
-export type ClientOption = Omit<Option, 'chance'> & {
+export type ClientOption = Omit<Option, "chance"> & {
   chance: number
 }
 
-import { router, protectedProcedure } from '../trpc'
-import { updateProjectsOnSession } from 'utils/updateSession'
+import { router, protectedProcedure } from "../trpc"
+import { updateProjectsOnSession } from "utils/updateSession"
 
 export const projectRouter = router({
   getProjectData: protectedProcedure
@@ -40,7 +40,7 @@ export const projectRouter = router({
       })
 
       if (!project) {
-        throw new TRPCError({ code: 'UNAUTHORIZED' })
+        throw new TRPCError({ code: "UNAUTHORIZED" })
       }
       const { events: eventsThisPeriod } = await EventService.getEventsForCurrentPeriod(project.id)
 
@@ -75,7 +75,7 @@ export const projectRouter = router({
         },
       })
 
-      if (!projectData) throw new TRPCError({ code: 'NOT_FOUND' })
+      if (!projectData) throw new TRPCError({ code: "NOT_FOUND" })
 
       return generateCodeSnippets({
         projectId: input.projectId,
@@ -99,7 +99,7 @@ export const projectRouter = router({
         },
       })
 
-      if (!project) throw new TRPCError({ code: 'NOT_FOUND' })
+      if (!project) throw new TRPCError({ code: "NOT_FOUND" })
 
       // checkout.sessions.create can only be called with *either* a customer ID (if it exists) *or* a customer_email (if no ID exists yet)
       const customerMetadata = project.stripeCustomerId
@@ -111,8 +111,8 @@ export const projectRouter = router({
           }
 
       const session = await stripe.checkout.sessions.create({
-        mode: 'subscription',
-        payment_method_types: ['card'],
+        mode: "subscription",
+        payment_method_types: ["card"],
         line_items: [
           {
             price: priceId,
@@ -125,7 +125,7 @@ export const projectRouter = router({
         },
         allow_promotion_codes: true,
         ...customerMetadata,
-        billing_address_collection: 'auto',
+        billing_address_collection: "auto",
         success_url: `${ctx.origin}/projects/${project.id}/?upgraded=true`,
         cancel_url: `${ctx.origin}/projects/${project.id}`,
       })
@@ -213,7 +213,7 @@ export const projectRouter = router({
         },
       })
 
-      if (!project) throw new TRPCError({ code: 'UNAUTHORIZED' })
+      if (!project) throw new TRPCError({ code: "UNAUTHORIZED" })
 
       await ctx.prisma.project.delete({
         where: {

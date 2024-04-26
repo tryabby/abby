@@ -1,9 +1,9 @@
-import { env } from 'env/server.mjs'
-import Stripe from 'stripe'
+import { env } from "env/server.mjs"
+import Stripe from "stripe"
 
 if (process.browser)
   throw new Error(
-    'DO NOT USE stripe/server.ts IN THE BROWSER AS YOU WILL EXPOSE FULL CONTROL OVER YOUR STRIPE ACCOUNT!'
+    "DO NOT USE stripe/server.ts IN THE BROWSER AS YOU WILL EXPOSE FULL CONTROL OVER YOUR STRIPE ACCOUNT!"
   )
 
 if (!env.STRIPE_SECRET_KEY)

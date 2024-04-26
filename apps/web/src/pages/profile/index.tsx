@@ -1,25 +1,25 @@
-import { CreateNextContextOptions } from '@trpc/server/adapters/next'
-import { Avatar } from 'components/Avatar'
-import { DashboardButton } from 'components/DashboardButton'
+import { CreateNextContextOptions } from "@trpc/server/adapters/next"
+import { Avatar } from "components/Avatar"
+import { DashboardButton } from "components/DashboardButton"
 import {
   DashboardSection,
   DashboardSectionSubtitle,
   DashboardSectionTitle,
-} from 'components/DashboardSection'
-import { Input } from 'components/Input'
-import { Layout } from 'components/Layout'
-import { FullPageLoadingSpinner } from 'components/LoadingSpinner'
-import { Modal } from 'components/Modal'
-import { ArrowLeft } from 'lucide-react'
-import { GetServerSideProps } from 'next'
-import { useRouter } from 'next/router'
-import { useRef, useState } from 'react'
-import { toast } from 'react-hot-toast'
-import { BsX } from 'react-icons/bs'
-import { getSSRTrpc } from 'server/trpc/helpers'
-import { trpc } from 'utils/trpc'
-import { NextPageWithLayout } from '../_app'
-import { Button } from 'components/ui/button'
+} from "components/DashboardSection"
+import { Input } from "components/Input"
+import { Layout } from "components/Layout"
+import { FullPageLoadingSpinner } from "components/LoadingSpinner"
+import { Modal } from "components/Modal"
+import { ArrowLeft } from "lucide-react"
+import { GetServerSideProps } from "next"
+import { useRouter } from "next/router"
+import { useRef, useState } from "react"
+import { toast } from "react-hot-toast"
+import { BsX } from "react-icons/bs"
+import { getSSRTrpc } from "server/trpc/helpers"
+import { trpc } from "utils/trpc"
+import { NextPageWithLayout } from "../_app"
+import { Button } from "components/ui/button"
 
 const CreateApiKeyModal = ({
   isOpen,
@@ -35,36 +35,36 @@ const CreateApiKeyModal = ({
   const [isHovered, setIsHovered] = useState(false)
   return (
     <Modal
-      title={'Your API Key'}
-      confirmText='Copy and Close'
-      cancelText='Close'
+      title={"Your API Key"}
+      confirmText="Copy and Close"
+      cancelText="Close"
       onConfirm={() => {
         navigator.clipboard.writeText(apiKey)
         onClose()
-        toast.success('API Key copied')
+        toast.success("API Key copied")
       }}
-      size='full'
+      size="full"
       isOpen={isOpen}
       onClose={onClose}
     >
-      <div className='py-2'>
+      <div className="py-2">
         Ensure you copy your personal access token promptly as you won&apos;t have another
         opportunity to view it.
       </div>
       <Input
         value={apiKey}
         readOnly
-        type={isHovered ? 'text' : 'password'}
+        type={isHovered ? "text" : "password"}
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={() => setIsHovered(false)}
-        className='py-3 focus:ring-green-400 dark:focus:ring-green-500'
+        className="py-3 focus:ring-green-400 dark:focus:ring-green-500"
         onClick={() => {
           navigator.clipboard.writeText(apiKey).then(() => {
-            toast.success('API Key copied')
+            toast.success("API Key copied")
           })
         }}
       />
-      <div className='pt-2 text-sm text-gray-500'>Expires in 365 Days | Hover to reveal</div>
+      <div className="pt-2 text-sm text-gray-500">Expires in 365 Days | Hover to reveal</div>
     </Modal>
   )
 }
@@ -82,7 +82,7 @@ const RevokeApiKeyModal = ({
 
   const { mutate: revokeApiKey } = trpc.apikey.revokeApiKey.useMutation({
     onSuccess() {
-      toast.success('API Key revoked')
+      toast.success("API Key revoked")
 
       onClose()
       trpcContext.user.getApiKeyData.invalidate()
@@ -91,13 +91,13 @@ const RevokeApiKeyModal = ({
 
   return (
     <Modal
-      title={'Revoke API Key'}
-      confirmText='Confirm'
+      title={"Revoke API Key"}
+      confirmText="Confirm"
       onConfirm={() => {
         if (!apiKey) return
         revokeApiKey({ id: apiKey })
       }}
-      size='full'
+      size="full"
       isOpen={isOpen}
       onClose={onClose}
     >
@@ -132,12 +132,12 @@ const ProfilePage: NextPageWithLayout = () => {
 
     const formData = new FormData(e.currentTarget)
 
-    const name = formData.get('name') as string
+    const name = formData.get("name") as string
 
     await updateProfileMutation.mutateAsync({ name })
     trpcContext.user.me.invalidate()
 
-    toast.success('Profile updated successfully')
+    toast.success("Profile updated successfully")
   }
 
   const { mutateAsync: createApiKey } = trpc.apikey.createApiKey.useMutation({
@@ -152,43 +152,43 @@ const ProfilePage: NextPageWithLayout = () => {
   return (
     <>
       <div>
-        <DashboardButton className='flex py-1 font-medium' onClick={() => router.back()}>
+        <DashboardButton className="flex py-1 font-medium" onClick={() => router.back()}>
           <ArrowLeft />
           <span>Go Back</span>
         </DashboardButton>
-        <div className='mx-auto mt-12 max-w-3xl space-y-3'>
+        <div className="mx-auto mt-12 max-w-3xl space-y-3">
           <DashboardSection>
-            <h1 className='text-3xl font-bold'>Account Settings</h1>
-            <form onSubmit={onSubmit} className='mt-8 space-y-8'>
+            <h1 className="text-3xl font-bold">Account Settings</h1>
+            <form onSubmit={onSubmit} className="mt-8 space-y-8">
               <Avatar
-                role='img'
-                imageUrl={data?.image ?? ''}
-                userName={data?.name ?? data?.email ?? ''}
-                className='mx-auto block h-36 w-36'
+                role="img"
+                imageUrl={data?.image ?? ""}
+                userName={data?.name ?? data?.email ?? ""}
+                className="mx-auto block h-36 w-36"
               />
               <div>
-                <label htmlFor='name' className='block text-sm font-medium'>
+                <label htmlFor="name" className="block text-sm font-medium">
                   Name *
                 </label>
-                <div className='mt-1'>
-                  <Input type='text' name='name' id='name' defaultValue={data?.name ?? ''} />
+                <div className="mt-1">
+                  <Input type="text" name="name" id="name" defaultValue={data?.name ?? ""} />
                 </div>
               </div>
               <div>
-                <label htmlFor='name' className='block text-sm font-medium'>
+                <label htmlFor="name" className="block text-sm font-medium">
                   Email *
                 </label>
-                <div className='mt-1'>
-                  <Input type='text' defaultValue={data?.email ?? ''} disabled />
+                <div className="mt-1">
+                  <Input type="text" defaultValue={data?.email ?? ""} disabled />
                 </div>
               </div>
               <div>
-                You signed up in via{' '}
-                <span className='font-medium capitalize underline underline-offset-2'>
+                You signed up in via{" "}
+                <span className="font-medium capitalize underline underline-offset-2">
                   {data?.accounts[0]?.provider}
                 </span>
               </div>
-              <DashboardButton type='submit' className='ml-auto block px-5 py-1'>
+              <DashboardButton type="submit" className="ml-auto block px-5 py-1">
                 Save
               </DashboardButton>
             </form>
@@ -198,22 +198,22 @@ const ProfilePage: NextPageWithLayout = () => {
             <DashboardSectionSubtitle>
               API Keys are used to authenticate with the API.
             </DashboardSectionSubtitle>
-            <div className='mt-8 divide-y divide-pink-50/20'>
+            <div className="mt-8 divide-y divide-pink-50/20">
               {isAPIKeyDataLoading || isAPIKeyDataError ? (
                 <FullPageLoadingSpinner />
               ) : (
                 <>
                   {apiKeyData.apiKeys.map(({ name: apiKeyName, id: apiKeyId }) => (
-                    <div key={apiKeyName} className='col flex justify-between py-3'>
-                      <div className='flex items-center'>{apiKeyName}</div>
+                    <div key={apiKeyName} className="col flex justify-between py-3">
+                      <div className="flex items-center">{apiKeyName}</div>
                       <Button
-                        title='Revoke API Key'
+                        title="Revoke API Key"
                         onClick={() => {
                           setIsRevokeApiKeyModalOpen(true)
                           setApiKeyToRevoke(apiKeyId)
                         }}
-                        size='icon'
-                        variant='destructive'
+                        size="icon"
+                        variant="destructive"
                       >
                         <BsX />
                       </Button>
@@ -223,25 +223,25 @@ const ProfilePage: NextPageWithLayout = () => {
               )}
 
               <form
-                className='pt-4'
+                className="pt-4"
                 onSubmit={(e) => {
                   // TODO: Create API Key
                   e.preventDefault()
                 }}
               >
-                <label htmlFor='newApiKey' className=' font-semibold'>
+                <label htmlFor="newApiKey" className=" font-semibold">
                   Create a new API Key:
                 </label>
-                <div className='mt-2'>
+                <div className="mt-2">
                   <input
                     ref={apiKeyNameRef}
-                    id='newApiKeyName'
-                    className='w-80 max-w-full rounded-l-md bg-gray-700 px-3 py-2 pr-2 focus:outline-none'
-                    placeholder='API Key name'
-                  />{' '}
+                    id="newApiKeyName"
+                    className="w-80 max-w-full rounded-l-md bg-gray-700 px-3 py-2 pr-2 focus:outline-none"
+                    placeholder="API Key name"
+                  />{" "}
                   <button
                     onClick={async () => {
-                      const name = apiKeyNameRef.current?.value ?? 'New Api Key'
+                      const name = apiKeyNameRef.current?.value ?? "New Api Key"
 
                       const apiKey = await createApiKey({
                         name: name,
@@ -252,7 +252,7 @@ const ProfilePage: NextPageWithLayout = () => {
                         apiKey: apiKey,
                       })
                     }}
-                    className='-ml-1 mt-2 rounded-l-md rounded-r-md bg-gray-900 px-3 py-2 md:mt-0 md:rounded-l-none'
+                    className="-ml-1 mt-2 rounded-l-md rounded-r-md bg-gray-900 px-3 py-2 md:mt-0 md:rounded-l-none"
                   >
                     Create
                   </button>
@@ -264,8 +264,8 @@ const ProfilePage: NextPageWithLayout = () => {
       </div>
       <CreateApiKeyModal
         isOpen={isCreateApiKeyModalOpen}
-        apiKey={newApiKeyInfo?.apiKey ?? ''}
-        name={newApiKeyInfo?.name ?? ''}
+        apiKey={newApiKeyInfo?.apiKey ?? ""}
+        name={newApiKeyInfo?.name ?? ""}
         onClose={() => {
           setIsCreateApiKeyModalOpen(false)
           setNewApiKeyInfo(null)

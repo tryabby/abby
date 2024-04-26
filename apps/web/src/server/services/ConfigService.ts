@@ -1,15 +1,15 @@
-import { AbbyConfigFile, PullAbbyConfigResponse, RemoteConfigValueString } from '@tryabby/core'
+import { AbbyConfigFile, PullAbbyConfigResponse, RemoteConfigValueString } from "@tryabby/core"
 import {
   getDefaultFlagValue,
   stringifyFlagValue,
   transformClientFlagToDBType,
   transformDBFlagTypeToclient,
-} from 'lib/flags'
-import { prisma } from 'server/db/client'
-import { TestService } from './TestService'
-import { FlagService } from './FlagService'
-import { FeatureFlagType } from '@prisma/client'
-import { FlagValueString } from 'types/flags'
+} from "lib/flags"
+import { prisma } from "server/db/client"
+import { TestService } from "./TestService"
+import { FlagService } from "./FlagService"
+import { FeatureFlagType } from "@prisma/client"
+import { FlagValueString } from "types/flags"
 
 export async function handleGET({ projectId }: { projectId: string }) {
   const projectData = await prisma.project.findUnique({
@@ -27,7 +27,7 @@ export async function handleGET({ projectId }: { projectId: string }) {
     },
   })
 
-  if (!projectData) throw new Error('Cant find project')
+  if (!projectData) throw new Error("Cant find project")
 
   const config = {
     environments: projectData.environments.map((environment) => environment.name),
@@ -48,7 +48,7 @@ export async function handleGET({ projectId }: { projectId: string }) {
         if (flag.type !== FeatureFlagType.BOOLEAN) {
           acc[flag.name] = transformDBFlagTypeToclient(flag.type) as Exclude<
             FlagValueString,
-            'Boolean'
+            "Boolean"
           >
         }
         return acc
@@ -101,7 +101,7 @@ export async function handlePUT({
           },
         })
 
-        const variants: Array<string> = test['variants']
+        const variants: Array<string> = test["variants"]
         const weightedVariants = variants.map((variant) => ({
           name: variant,
           weight: 1 / variants.length,
@@ -118,7 +118,7 @@ export async function handlePUT({
 
   const featureFlags = (config.flags ?? []).map((flag) => ({
     name: flag,
-    type: 'Boolean' as const,
+    type: "Boolean" as const,
   }))
   const remoteConfig = Object.entries(config.remoteConfig ?? {}).map((config) => ({
     name: config[0],

@@ -1,33 +1,33 @@
-import { testClient } from 'hono/testing'
-import { makeConfigRoute } from './v1_config'
-import { handleGET, handlePUT } from 'server/services/ConfigService'
-import { prisma } from 'server/db/client'
+import { testClient } from "hono/testing"
+import { makeConfigRoute } from "./v1_config"
+import { handleGET, handlePUT } from "server/services/ConfigService"
+import { prisma } from "server/db/client"
 
-vi.mock('../../env/server.mjs', () => ({
+vi.mock("../../env/server.mjs", () => ({
   env: {
-    HASHING_SECRET: 'test',
+    HASHING_SECRET: "test",
   },
 }))
 
 const mockConfig = {
-  environments: ['test'],
+  environments: ["test"],
   flags: [],
   remoteConfig: {},
   tests: {},
 } satisfies Awaited<ReturnType<typeof handleGET>>
 
-vi.mock('server/services/ConfigService', () => ({
+vi.mock("server/services/ConfigService", () => ({
   handleGET: vi.fn(() => mockConfig),
   handlePUT: vi.fn(() => mockConfig),
 }))
 
-vi.mock('server/db/redis', () => ({
+vi.mock("server/db/redis", () => ({
   redis: {
-    incr: vi.fn(async () => 'test'),
+    incr: vi.fn(async () => "test"),
   },
 }))
 
-vi.mock('server/db/client', () => ({
+vi.mock("server/db/client", () => ({
   prisma: {
     apiKey: {
       findUnique: vi.fn().mockResolvedValue({
@@ -38,19 +38,19 @@ vi.mock('server/db/client', () => ({
   },
 }))
 
-describe('Retreive Config', () => {
-  it('should work with correct with an API provided', async () => {
+describe("Retreive Config", () => {
+  it("should work with correct with an API provided", async () => {
     const app = makeConfigRoute()
 
-    const res = await testClient(app)[':projectId'].$get(
+    const res = await testClient(app)[":projectId"].$get(
       {
         param: {
-          projectId: 'test',
+          projectId: "test",
         },
       },
       {
         headers: {
-          Authorization: 'Bearer test',
+          Authorization: "Bearer test",
         },
       }
     )
@@ -60,31 +60,31 @@ describe('Retreive Config', () => {
     expect(data).toEqual(mockConfig)
   })
 
-  it('should return an error if the API key is not provided', async () => {
+  it("should return an error if the API key is not provided", async () => {
     const app = makeConfigRoute()
 
-    const res = await testClient(app)[':projectId'].$get({
+    const res = await testClient(app)[":projectId"].$get({
       param: {
-        projectId: 'test',
+        projectId: "test",
       },
     })
 
     expect(res.status).toEqual(401)
   })
 
-  it('should return an error if the API key is not found', async () => {
+  it("should return an error if the API key is not found", async () => {
     const app = makeConfigRoute()
     vi.mocked(prisma.apiKey.findUnique).mockResolvedValueOnce(null)
 
-    const res = await testClient(app)[':projectId'].$get(
+    const res = await testClient(app)[":projectId"].$get(
       {
         param: {
-          projectId: 'test',
+          projectId: "test",
         },
       },
       {
         headers: {
-          Authorization: 'Bearer test',
+          Authorization: "Bearer test",
         },
       }
     )
@@ -92,7 +92,7 @@ describe('Retreive Config', () => {
     expect(res.status).toEqual(401)
   })
 
-  it('should return an error if the API key is outdated', async () => {
+  it("should return an error if the API key is outdated", async () => {
     const app = makeConfigRoute()
 
     vi.mocked(prisma.apiKey.findUnique).mockResolvedValueOnce({
@@ -100,15 +100,15 @@ describe('Retreive Config', () => {
       revokedAt: null,
     } as any)
 
-    const res = await testClient(app)[':projectId'].$get(
+    const res = await testClient(app)[":projectId"].$get(
       {
         param: {
-          projectId: 'test',
+          projectId: "test",
         },
       },
       {
         headers: {
-          Authorization: 'Bearer test',
+          Authorization: "Bearer test",
         },
       }
     )
@@ -116,7 +116,7 @@ describe('Retreive Config', () => {
     expect(res.status).toEqual(401)
   })
 
-  it('should return an error if the API key is revoked', async () => {
+  it("should return an error if the API key is revoked", async () => {
     const app = makeConfigRoute()
 
     vi.mocked(prisma.apiKey.findUnique).mockResolvedValueOnce({
@@ -124,15 +124,15 @@ describe('Retreive Config', () => {
       revokedAt: new Date(),
     } as any)
 
-    const res = await testClient(app)[':projectId'].$get(
+    const res = await testClient(app)[":projectId"].$get(
       {
         param: {
-          projectId: 'test',
+          projectId: "test",
         },
       },
       {
         headers: {
-          Authorization: 'Bearer test',
+          Authorization: "Bearer test",
         },
       }
     )
@@ -141,27 +141,27 @@ describe('Retreive Config', () => {
   })
 })
 
-describe('Update Config', () => {
-  it('should work with correct with an API provided', async () => {
+describe("Update Config", () => {
+  it("should work with correct with an API provided", async () => {
     const app = makeConfigRoute()
 
-    const res = await testClient(app)[':projectId'].$put(
+    const res = await testClient(app)[":projectId"].$put(
       {
         param: {
-          projectId: 'test',
+          projectId: "test",
         },
         json: {
-          environments: ['test'],
+          environments: ["test"],
           flags: [],
           remoteConfig: {},
           tests: {},
-          projectId: 'test',
-          apiUrl: 'test',
+          projectId: "test",
+          apiUrl: "test",
         },
       },
       {
         headers: {
-          Authorization: 'Bearer test',
+          Authorization: "Bearer test",
         },
       }
     )
@@ -170,27 +170,27 @@ describe('Update Config', () => {
     expect(vi.mocked(handlePUT)).toHaveBeenCalledTimes(1)
   })
 
-  it('should not work with invalid api keys', async () => {
+  it("should not work with invalid api keys", async () => {
     const app = makeConfigRoute()
 
     const makeRequest = () =>
-      testClient(app)[':projectId'].$put(
+      testClient(app)[":projectId"].$put(
         {
           param: {
-            projectId: 'test',
+            projectId: "test",
           },
           json: {
-            environments: ['test'],
+            environments: ["test"],
             flags: [],
             remoteConfig: {},
             tests: {},
-            projectId: 'test',
-            apiUrl: 'test',
+            projectId: "test",
+            apiUrl: "test",
           },
         },
         {
           headers: {
-            Authorization: 'Bearer test',
+            Authorization: "Bearer test",
           },
         }
       )

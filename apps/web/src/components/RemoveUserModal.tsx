@@ -1,8 +1,8 @@
-import { User } from '@prisma/client'
-import { useProjectId } from 'lib/hooks/useProjectId'
-import { toast } from 'react-hot-toast'
-import { trpc } from 'utils/trpc'
-import { Modal } from './Modal'
+import { User } from "@prisma/client"
+import { useProjectId } from "lib/hooks/useProjectId"
+import { toast } from "react-hot-toast"
+import { trpc } from "utils/trpc"
+import { Modal } from "./Modal"
 
 type Props = {
   isOpen: boolean
@@ -16,7 +16,7 @@ export function RemoveUserModal({ isOpen, onClose, user }: Props) {
 
   const { mutate: removeUser } = trpc.project.removeUser.useMutation({
     onSuccess() {
-      toast.success('User removed')
+      toast.success("User removed")
       onClose()
       trpcContext.project.getProjectData.invalidate()
       trpcContext.user.getProjects.invalidate()
@@ -25,8 +25,8 @@ export function RemoveUserModal({ isOpen, onClose, user }: Props) {
 
   return (
     <Modal
-      title='Remove user'
-      confirmText='Remove User'
+      title="Remove user"
+      confirmText="Remove User"
       isOpen={isOpen}
       onClose={onClose}
       onConfirm={() => {
@@ -34,9 +34,9 @@ export function RemoveUserModal({ isOpen, onClose, user }: Props) {
         removeUser({ userId: user.id, projectId })
       }}
     >
-      <p className='text-white'>
+      <p className="text-white">
         Are you sure that you want to remove
-        <pre className='mx-1 inline rounded-md bg-gray-900 p-1'>{user?.email}</pre>
+        <pre className="mx-1 inline rounded-md bg-gray-900 p-1">{user?.email}</pre>
         ?
         <br />
         <br />

@@ -1,11 +1,11 @@
-import { env as serverEnv } from 'env/server.mjs'
-import { NextApiRequest, NextApiResponse } from 'next'
-import { buffer } from 'micro'
-import Stripe from 'stripe'
-import { prisma } from 'server/db/client'
-import { stripe } from 'server/common/stripe'
-import dayjs from 'dayjs'
-import { RequestCache } from 'server/services/RequestCache'
+import { env as serverEnv } from "env/server.mjs"
+import { NextApiRequest, NextApiResponse } from "next"
+import { buffer } from "micro"
+import Stripe from "stripe"
+import { prisma } from "server/db/client"
+import { stripe } from "server/common/stripe"
+import dayjs from "dayjs"
+import { RequestCache } from "server/services/RequestCache"
 
 const secondsToMsDate = (seconds: number) => new Date(seconds * 1000)
 
@@ -33,7 +33,7 @@ interface StripeSession {
 }
 
 export default async function handleStripeWebhook(req: NextApiRequest, res: NextApiResponse) {
-  const sig = req.headers['stripe-signature']
+  const sig = req.headers["stripe-signature"]
 
   if (!sig) {
     return res.status(400).send(`Webhook Error: Missing signature`)
@@ -54,7 +54,7 @@ export default async function handleStripeWebhook(req: NextApiRequest, res: Next
 
   // Handle the event
   switch (event.type) {
-    case 'checkout.session.completed': {
+    case "checkout.session.completed": {
       const subscription = await stripe.subscriptions.retrieve(session.subscription)
 
       await RequestCache.reset(session.metadata.projectId)
@@ -72,13 +72,13 @@ export default async function handleStripeWebhook(req: NextApiRequest, res: Next
       })
       break
     }
-    case 'customer.subscription.deleted': {
+    case "customer.subscription.deleted": {
       await prisma.project.update({
         where: {
           stripeSubscriptionId: session.id,
         },
         data: {
-          currentPeriodEnd: dayjs().add(30, 'days').toISOString(),
+          currentPeriodEnd: dayjs().add(30, "days").toISOString(),
           stripePriceId: null,
         },
       })

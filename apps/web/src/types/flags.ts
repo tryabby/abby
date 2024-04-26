@@ -1,3 +1,3 @@
-import { RemoteConfigValueString } from '@tryabby/core'
+import { RemoteConfigValueString } from "@tryabby/core"
 
-export type FlagValueString = RemoteConfigValueString | 'Boolean'
+export type FlagValueString = RemoteConfigValueString | "Boolean"

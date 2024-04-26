@@ -1,10 +1,10 @@
-import { FeatureFlagType, Prisma } from '@prisma/client'
-import { TRPCError } from '@trpc/server'
-import { getFlagCount } from 'lib/flags'
-import { getProjectPaidPlan } from 'lib/stripe'
-import { getLimitByPlan } from 'server/common/plans'
-import { prisma } from 'server/db/client'
-import { validateFlag } from 'utils/validateFlags'
+import { FeatureFlagType, Prisma } from "@prisma/client"
+import { TRPCError } from "@trpc/server"
+import { getFlagCount } from "lib/flags"
+import { getProjectPaidPlan } from "lib/stripe"
+import { getLimitByPlan } from "server/common/plans"
+import { prisma } from "server/db/client"
+import { validateFlag } from "utils/validateFlags"
 
 export abstract class FlagService {
   static async createFlag({
@@ -34,20 +34,20 @@ export abstract class FlagService {
       },
     })
 
-    if (!project) throw new TRPCError({ code: 'UNAUTHORIZED' })
+    if (!project) throw new TRPCError({ code: "UNAUTHORIZED" })
 
     const limits = getLimitByPlan(getProjectPaidPlan(project))
 
     if (getFlagCount(project.featureFlags) >= limits.flags) {
       throw new TRPCError({
-        code: 'FORBIDDEN',
+        code: "FORBIDDEN",
         message: `You have reached the limit of ${limits.flags} flags for your plan.`,
       })
     }
 
     if (!validateFlag(type, value)) {
       throw new TRPCError({
-        code: 'INTERNAL_SERVER_ERROR',
+        code: "INTERNAL_SERVER_ERROR",
         message: `The value ${value} is not valid for the type ${type}`,
       })
     }

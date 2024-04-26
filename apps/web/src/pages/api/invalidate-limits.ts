@@ -1,12 +1,12 @@
-import { NextApiRequest, NextApiResponse } from 'next'
-import { z } from 'zod'
-import { prisma } from 'server/db/client'
-import { RequestCache } from 'server/services/RequestCache'
-import dayjs from 'dayjs'
-import { PLANS } from 'server/common/plans'
+import { NextApiRequest, NextApiResponse } from "next"
+import { z } from "zod"
+import { prisma } from "server/db/client"
+import { RequestCache } from "server/services/RequestCache"
+import dayjs from "dayjs"
+import { PLANS } from "server/common/plans"
 
 const incomingQuerySchema = z.object({
-  secretKey: z.literal('yfMWV3TC0xyLvEKoHjslTp8GeKFEFRDtfVckg3Y2LHA='),
+  secretKey: z.literal("yfMWV3TC0xyLvEKoHjslTp8GeKFEFRDtfVckg3Y2LHA="),
 })
 
 export default async function invalidateProjectLimitsHandler(
@@ -17,7 +17,7 @@ export default async function invalidateProjectLimitsHandler(
 
   if (!success) {
     // fail silently
-    console.warn('Invalid request to invalidate project limits')
+    console.warn("Invalid request to invalidate project limits")
     return res.status(200)
   }
 
@@ -35,7 +35,7 @@ export default async function invalidateProjectLimitsHandler(
   })
 
   if (nonStripeProjectsToUpdate.length === 0) {
-    console.info('No projects to update')
+    console.info("No projects to update")
     return res.end()
   }
 
@@ -48,7 +48,7 @@ export default async function invalidateProjectLimitsHandler(
       },
     },
     data: {
-      currentPeriodEnd: dayjs().add(30, 'days').toISOString(),
+      currentPeriodEnd: dayjs().add(30, "days").toISOString(),
     },
   })
 

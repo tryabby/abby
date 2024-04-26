@@ -1,8 +1,8 @@
-import { TRPCError } from '@trpc/server'
-import { EventService } from 'server/services/EventService'
-import { ProjectService } from 'server/services/ProjectService'
-import { z } from 'zod'
-import { protectedProcedure, router } from '../trpc'
+import { TRPCError } from "@trpc/server"
+import { EventService } from "server/services/EventService"
+import { ProjectService } from "server/services/ProjectService"
+import { z } from "zod"
+import { protectedProcedure, router } from "../trpc"
 
 export const eventRouter = router({
   getEvents: protectedProcedure
@@ -11,7 +11,7 @@ export const eventRouter = router({
       const hasAccess = await ProjectService.hasProjectAccess(input.projectId, ctx.session.user.id)
 
       if (!hasAccess) {
-        throw new TRPCError({ code: 'UNAUTHORIZED' })
+        throw new TRPCError({ code: "UNAUTHORIZED" })
       }
 
       return EventService.getEventsByProjectId(input.projectId)
@@ -38,7 +38,7 @@ export const eventRouter = router({
       })
 
       if (!currentTest) {
-        throw new TRPCError({ code: 'UNAUTHORIZED' })
+        throw new TRPCError({ code: "UNAUTHORIZED" })
       }
 
       const tests = await EventService.getEventsByTestId(input.testId, input.interval)

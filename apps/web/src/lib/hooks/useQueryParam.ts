@@ -1,4 +1,4 @@
-import { useRouter } from 'next/router'
+import { useRouter } from "next/router"
 
 export function useQueryParam<T extends string = string>(param: string) {
   const router = useRouter()

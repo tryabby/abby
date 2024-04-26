@@ -1,5 +1,5 @@
-import { z } from 'zod'
-import { router, protectedProcedure } from '../trpc'
+import { z } from "zod"
+import { router, protectedProcedure } from "../trpc"
 
 export const updateProfileSchema = z.object({
   name: z.string().min(1),

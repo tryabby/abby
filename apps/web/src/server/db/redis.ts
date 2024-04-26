@@ -1,6 +1,6 @@
-import Redis from 'ioredis'
+import Redis from "ioredis"
 
-import { env } from '../../env/server.mjs'
+import { env } from "../../env/server.mjs"
 
 declare global {
   // eslint-disable-next-line no-var
@@ -9,6 +9,6 @@ declare global {
 
 export const redis = global.redis || new Redis(env.REDIS_URL)
 
-if (env.NODE_ENV !== 'production') {
+if (env.NODE_ENV !== "production") {
   global.redis = redis
 }
