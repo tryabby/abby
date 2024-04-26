@@ -1,16 +1,16 @@
-import { GetServerSideProps, type NextPage } from "next";
+import { GetServerSideProps, type NextPage } from 'next'
 
 export const getServerSideProps: GetServerSideProps = async (ctx) => {
   return {
     props: {},
     redirect: {
-      destination: "/",
+      destination: '/',
     },
-  };
-};
+  }
+}
 
 const Invite: NextPage = () => {
-  return null;
-};
+  return null
+}
 
-export default Invite;
+export default Invite

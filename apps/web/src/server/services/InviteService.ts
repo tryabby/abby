@@ -1,5 +1,5 @@
-import { prisma } from "server/db/client";
-import { AbbyEvent } from "@tryabby/core";
+import { prisma } from 'server/db/client'
+import { AbbyEvent } from '@tryabby/core'
 
 export abstract class InviteService {
   static async acceptInvite(inviteId: string, userId: string) {
@@ -7,24 +7,24 @@ export abstract class InviteService {
       where: {
         id: inviteId,
       },
-    });
+    })
 
     if (!invite) {
-      throw new Error("Invite not found");
+      throw new Error('Invite not found')
     }
 
     const user = await prisma.user.findUnique({
       where: {
         id: userId,
       },
-    });
+    })
 
     if (!user) {
-      throw new Error("User not found");
+      throw new Error('User not found')
     }
 
     if (invite.email !== user.email) {
-      throw new Error("User not invited");
+      throw new Error('User not invited')
     }
 
     await prisma.projectUser.create({
@@ -32,13 +32,13 @@ export abstract class InviteService {
         projectId: invite.projectId,
         userId: userId,
       },
-    });
+    })
 
     await prisma.projectInvite.delete({
       where: {
         id: inviteId,
       },
-    });
+    })
   }
 
   static async getEventsByProjectId(projectId: string) {
@@ -48,6 +48,6 @@ export abstract class InviteService {
           projectId,
         },
       },
-    });
+    })
   }
 }

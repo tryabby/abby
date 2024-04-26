@@ -1,100 +1,98 @@
-import { AnimatePresence, motion } from "framer-motion";
-import { useTracking } from "lib/tracking";
-import { CornerRightDown } from "lucide-react";
+import { AnimatePresence, motion } from 'framer-motion'
+import { useTracking } from 'lib/tracking'
+import { CornerRightDown } from 'lucide-react'
 
-import { useState, useEffect } from "react";
+import { useState, useEffect } from 'react'
 
-const DEVTOOLS_ID = "abby-devtools-collapsed";
+const DEVTOOLS_ID = 'abby-devtools-collapsed'
 
 export function useDevtoolsPosition() {
-  const [devtoolsPosition, setDevtoolsPosition] = useState<DOMRect | null>(
-    null
-  );
-  const trackEvent = useTracking();
+  const [devtoolsPosition, setDevtoolsPosition] = useState<DOMRect | null>(null)
+  const trackEvent = useTracking()
 
   useEffect(() => {
-    const devtools = document.getElementById(DEVTOOLS_ID);
+    const devtools = document.getElementById(DEVTOOLS_ID)
 
-    if (!devtools) return;
+    if (!devtools) return
 
     const resizeObserver = new ResizeObserver((entries) => {
-      if (!entries[0]) return;
+      if (!entries[0]) return
 
-      setDevtoolsPosition(devtools.getBoundingClientRect());
+      setDevtoolsPosition(devtools.getBoundingClientRect())
       // we only need to set it once
-      resizeObserver.disconnect();
-    });
+      resizeObserver.disconnect()
+    })
 
-    resizeObserver.observe(devtools);
+    resizeObserver.observe(devtools)
 
-    setDevtoolsPosition(devtools.getBoundingClientRect());
+    setDevtoolsPosition(devtools.getBoundingClientRect())
 
     const devtoolsAnalytics = () => {
-      trackEvent("Devtools Opened");
-    };
-    devtools.addEventListener("click", devtoolsAnalytics);
+      trackEvent('Devtools Opened')
+    }
+    devtools.addEventListener('click', devtoolsAnalytics)
 
     return () => {
-      resizeObserver.disconnect();
-      devtools.removeEventListener("click", devtoolsAnalytics);
-    };
-  }, [trackEvent]);
+      resizeObserver.disconnect()
+      devtools.removeEventListener('click', devtoolsAnalytics)
+    }
+  }, [trackEvent])
 
   // listen to window resize
   useEffect(() => {
     const onResize = () => {
-      const devtools = document.getElementById(DEVTOOLS_ID);
+      const devtools = document.getElementById(DEVTOOLS_ID)
 
-      if (!devtools) return;
+      if (!devtools) return
 
-      setDevtoolsPosition(devtools.getBoundingClientRect());
-    };
+      setDevtoolsPosition(devtools.getBoundingClientRect())
+    }
 
-    window.addEventListener("resize", onResize);
+    window.addEventListener('resize', onResize)
 
     return () => {
-      window.removeEventListener("resize", onResize);
-    };
-  }, []);
+      window.removeEventListener('resize', onResize)
+    }
+  }, [])
 
-  return devtoolsPosition;
+  return devtoolsPosition
 }
 
 export function DevtoolsArrow() {
-  const trackEvent = useTracking();
-  const devtoolsPosition = useDevtoolsPosition();
+  const trackEvent = useTracking()
+  const devtoolsPosition = useDevtoolsPosition()
 
   useEffect(() => {
     const onMessage = (e: MessageEvent) => {
-      const messageType = e.data.type;
-      if (!messageType?.startsWith("abby:")) return;
+      const messageType = e.data.type
+      if (!messageType?.startsWith('abby:')) return
 
       switch (messageType) {
-        case "abby:update-flag": {
-          trackEvent("Devtools Interaction", {
+        case 'abby:update-flag': {
+          trackEvent('Devtools Interaction', {
             props: {
-              type: "Flag Updated",
+              type: 'Flag Updated',
             },
-          });
-          break;
+          })
+          break
         }
-        case "abby:select-variant": {
-          trackEvent("Devtools Interaction", {
+        case 'abby:select-variant': {
+          trackEvent('Devtools Interaction', {
             props: {
-              type: "Variant Selected",
+              type: 'Variant Selected',
             },
-          });
-          break;
+          })
+          break
         }
       }
-    };
+    }
 
-    window.addEventListener("message", onMessage);
+    window.addEventListener('message', onMessage)
 
     return () => {
-      window.removeEventListener("message", onMessage);
-    };
-  }, [trackEvent]);
+      window.removeEventListener('message', onMessage)
+    }
+  }, [trackEvent])
 
   return (
     <AnimatePresence>
@@ -103,17 +101,17 @@ export function DevtoolsArrow() {
           initial={{ opacity: 0, scale: 0.5 }}
           animate={{ opacity: 1, scale: 1 }}
           exit={{ opacity: 0, scale: 0.5 }}
-          className="flex items-center rounded-md bg-ab_primary-background p-1 font-mono text-xl text-ab_accent-background"
+          className='flex items-center rounded-md bg-ab_primary-background p-1 font-mono text-xl text-ab_accent-background'
           style={{
             zIndex: 9999,
-            position: "fixed",
+            position: 'fixed',
             top: (devtoolsPosition?.top ?? 0) - 42,
             left: (devtoolsPosition?.left ?? 0) - 115,
           }}
         >
-          Try me out <CornerRightDown className="mt-3" />
+          Try me out <CornerRightDown className='mt-3' />
         </motion.div>
       )}
     </AnimatePresence>
-  );
+  )
 }

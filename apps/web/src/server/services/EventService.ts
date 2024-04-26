@@ -1,22 +1,17 @@
-import dayjs from "dayjs";
+import dayjs from 'dayjs'
 import {
   getMSFromSpecialTimeInterval,
   isSpecialTimeInterval,
   SpecialTimeInterval,
-} from "lib/events";
-import ms from "ms";
-import { getLimitByPlan, PlanName, PLANS } from "server/common/plans";
-import { prisma } from "server/db/client";
-import { AbbyEvent } from "@tryabby/core";
-import { RequestCache } from "./RequestCache";
+} from 'lib/events'
+import ms from 'ms'
+import { getLimitByPlan, PlanName, PLANS } from 'server/common/plans'
+import { prisma } from 'server/db/client'
+import { AbbyEvent } from '@tryabby/core'
+import { RequestCache } from './RequestCache'
 
 export abstract class EventService {
-  static async createEvent({
-    projectId,
-    selectedVariant,
-    testName,
-    type,
-  }: AbbyEvent) {
+  static async createEvent({ projectId, selectedVariant, testName, type }: AbbyEvent) {
     return prisma.event.create({
       data: {
         selectedVariant,
@@ -30,7 +25,7 @@ export abstract class EventService {
           },
         },
       },
-    });
+    })
   }
 
   static async getEventsByProjectId(projectId: string) {
@@ -40,14 +35,14 @@ export abstract class EventService {
           projectId,
         },
       },
-    });
+    })
   }
 
   static async getEventsByTestId(testId: string, timeInterval: string) {
-    const now = new Date().getTime();
+    const now = new Date().getTime()
 
     if (isSpecialTimeInterval(timeInterval)) {
-      const specialIntervalInMs = getMSFromSpecialTimeInterval(timeInterval);
+      const specialIntervalInMs = getMSFromSpecialTimeInterval(timeInterval)
       return prisma.event.findMany({
         where: {
           testId,
@@ -60,17 +55,17 @@ export abstract class EventService {
           // Special case for day, since we want to include the current day
           ...(timeInterval === SpecialTimeInterval.DAY && {
             createdAt: {
-              gte: dayjs().startOf("day").toDate(),
+              gte: dayjs().startOf('day').toDate(),
             },
           }),
         },
-      });
+      })
     }
 
-    const parsedInterval = ms(timeInterval) as number | undefined;
+    const parsedInterval = ms(timeInterval) as number | undefined
 
     if (parsedInterval === undefined) {
-      throw new Error("Invalid time interval");
+      throw new Error('Invalid time interval')
     }
 
     return prisma.event.findMany({
@@ -80,7 +75,7 @@ export abstract class EventService {
           gte: new Date(now - ms(timeInterval)),
         },
       },
-    });
+    })
   }
 
   static async getEventsForCurrentPeriod(projectId: string) {
@@ -90,21 +85,21 @@ export abstract class EventService {
         select: { stripePriceId: true },
       }),
       RequestCache.get(projectId),
-    ]);
+    ])
 
-    if (!project) throw new Error("Project not found");
+    if (!project) throw new Error('Project not found')
 
     const plan = Object.keys(PLANS).find(
       (plan) => PLANS[plan as PlanName] === project.stripePriceId
-    ) as PlanName | undefined;
+    ) as PlanName | undefined
 
-    const planLimits = getLimitByPlan(plan ?? null);
+    const planLimits = getLimitByPlan(plan ?? null)
 
     return {
       events: eventCount,
       planLimits,
       plan,
       is80PercentOfLimit: planLimits.eventsPerMonth * 0.8 === eventCount,
-    };
+    }
   }
 }

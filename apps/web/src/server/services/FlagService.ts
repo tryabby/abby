@@ -1,10 +1,10 @@
-import { FeatureFlagType, Prisma } from "@prisma/client";
-import { TRPCError } from "@trpc/server";
-import { getFlagCount } from "lib/flags";
-import { getProjectPaidPlan } from "lib/stripe";
-import { getLimitByPlan } from "server/common/plans";
-import { prisma } from "server/db/client";
-import { validateFlag } from "utils/validateFlags";
+import { FeatureFlagType, Prisma } from '@prisma/client'
+import { TRPCError } from '@trpc/server'
+import { getFlagCount } from 'lib/flags'
+import { getProjectPaidPlan } from 'lib/stripe'
+import { getLimitByPlan } from 'server/common/plans'
+import { prisma } from 'server/db/client'
+import { validateFlag } from 'utils/validateFlags'
 
 export abstract class FlagService {
   static async createFlag({
@@ -14,11 +14,11 @@ export abstract class FlagService {
     type,
     value,
   }: {
-    projectId: string;
-    flagName: string;
-    userId: string;
-    type: FeatureFlagType;
-    value: string;
+    projectId: string
+    flagName: string
+    userId: string
+    type: FeatureFlagType
+    value: string
   }) {
     const project = await prisma.project.findFirst({
       where: {
@@ -32,31 +32,31 @@ export abstract class FlagService {
       include: {
         featureFlags: true,
       },
-    });
+    })
 
-    if (!project) throw new TRPCError({ code: "UNAUTHORIZED" });
+    if (!project) throw new TRPCError({ code: 'UNAUTHORIZED' })
 
-    const limits = getLimitByPlan(getProjectPaidPlan(project));
+    const limits = getLimitByPlan(getProjectPaidPlan(project))
 
     if (getFlagCount(project.featureFlags) >= limits.flags) {
       throw new TRPCError({
-        code: "FORBIDDEN",
+        code: 'FORBIDDEN',
         message: `You have reached the limit of ${limits.flags} flags for your plan.`,
-      });
+      })
     }
 
     if (!validateFlag(type, value)) {
       throw new TRPCError({
-        code: "INTERNAL_SERVER_ERROR",
+        code: 'INTERNAL_SERVER_ERROR',
         message: `The value ${value} is not valid for the type ${type}`,
-      });
+      })
     }
 
     const projectEnvs = await prisma.environment.findMany({
       where: {
         projectId: projectId,
       },
-    });
+    })
 
     return await prisma.$transaction(async (tx) => {
       const newFlag = await tx.featureFlag.create({
@@ -65,7 +65,7 @@ export abstract class FlagService {
           projectId: projectId,
           type,
         },
-      });
+      })
 
       const featureFlagValues = await Promise.all(
         projectEnvs.map((env) =>
@@ -77,7 +77,7 @@ export abstract class FlagService {
             },
           })
         )
-      );
+      )
 
       return tx.featureFlagHistory.createMany({
         data: featureFlagValues.map((featureFlag) => ({
@@ -85,7 +85,7 @@ export abstract class FlagService {
           flagValueId: featureFlag.id,
           newValue: value,
         })) satisfies Prisma.FeatureFlagHistoryCreateManyInput[],
-      });
-    });
+      })
+    })
   }
 }

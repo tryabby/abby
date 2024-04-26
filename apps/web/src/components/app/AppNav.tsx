@@ -1,35 +1,30 @@
-import Link from "next/link";
+import Link from 'next/link'
 
-import { cn } from "lib/utils";
-import { useProjectId } from "lib/hooks/useProjectId";
-import { useRouter } from "next/router";
+import { cn } from 'lib/utils'
+import { useProjectId } from 'lib/hooks/useProjectId'
+import { useRouter } from 'next/router'
 
 const getItemClassName = (isActive: boolean) =>
   cn(
-    "flex-none text-sm font-medium transition-colors hover:text-primary",
-    !isActive && "text-muted-foreground"
-  );
+    'flex-none text-sm font-medium transition-colors hover:text-primary',
+    !isActive && 'text-muted-foreground'
+  )
 export function AppNav({
   className,
   linkClassName,
   ...props
 }: React.HTMLAttributes<HTMLElement> & {
-  linkClassName?: string;
+  linkClassName?: string
 }) {
-  const currentProjectId = useProjectId();
-  const router = useRouter();
+  const currentProjectId = useProjectId()
+  const router = useRouter()
 
   return (
-    <nav
-      className={cn("flex items-center space-x-4 lg:space-x-6", className)}
-      {...props}
-    >
+    <nav className={cn('flex items-center space-x-4 lg:space-x-6', className)} {...props}>
       <Link
         href={`/projects/${currentProjectId}/flags`}
         className={cn(
-          getItemClassName(
-            router.pathname.endsWith("/projects/[projectId]/flags")
-          ),
+          getItemClassName(router.pathname.endsWith('/projects/[projectId]/flags')),
           linkClassName
         )}
       >
@@ -38,9 +33,7 @@ export function AppNav({
       <Link
         href={`/projects/${currentProjectId}/remote-config`}
         className={cn(
-          getItemClassName(
-            router.pathname.endsWith("/projects/[projectId]/remote-config")
-          ),
+          getItemClassName(router.pathname.endsWith('/projects/[projectId]/remote-config')),
           linkClassName
         )}
       >
@@ -49,9 +42,7 @@ export function AppNav({
       <Link
         href={`/projects/${currentProjectId}/environments`}
         className={cn(
-          getItemClassName(
-            router.pathname.endsWith("/projects/[projectId]/environments")
-          ),
+          getItemClassName(router.pathname.endsWith('/projects/[projectId]/environments')),
           linkClassName
         )}
       >
@@ -60,7 +51,7 @@ export function AppNav({
       <Link
         href={`/projects/${currentProjectId}`}
         className={cn(
-          getItemClassName(router.pathname.endsWith("/projects/[projectId]")),
+          getItemClassName(router.pathname.endsWith('/projects/[projectId]')),
           linkClassName
         )}
       >
@@ -69,14 +60,12 @@ export function AppNav({
       <Link
         href={`/projects/${currentProjectId}/settings`}
         className={cn(
-          getItemClassName(
-            router.pathname.endsWith("/projects/[projectId]/settings")
-          ),
+          getItemClassName(router.pathname.endsWith('/projects/[projectId]/settings')),
           linkClassName
         )}
       >
         Settings
       </Link>
     </nav>
-  );
+  )
 }

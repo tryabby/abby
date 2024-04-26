@@ -1,4 +1,4 @@
-import { Prisma, Event } from "@prisma/client";
+import { Prisma, Event } from '@prisma/client'
 import {
   Chart as ChartJS,
   BarElement,
@@ -8,24 +8,17 @@ import {
   Title,
   Tooltip,
   ChartOptions,
-} from "chart.js";
-import { useMemo } from "react";
-import { Bar } from "react-chartjs-2";
-import type { ClientOption } from "server/trpc/router/project";
+} from 'chart.js'
+import { useMemo } from 'react'
+import { Bar } from 'react-chartjs-2'
+import type { ClientOption } from 'server/trpc/router/project'
 
-ChartJS.defaults.font.family = "Mona Sans";
-ChartJS.defaults.color = "white";
+ChartJS.defaults.font.family = 'Mona Sans'
+ChartJS.defaults.color = 'white'
 
-ChartJS.register(
-  CategoryScale,
-  LinearScale,
-  BarElement,
-  Title,
-  Tooltip,
-  Legend
-);
+ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend)
 
-export const OPTIONS: ChartOptions<"bar"> = {
+export const OPTIONS: ChartOptions<'bar'> = {
   responsive: true,
   maintainAspectRatio: false,
   scales: {
@@ -36,57 +29,55 @@ export const OPTIONS: ChartOptions<"bar"> = {
   },
   plugins: {
     legend: {
-      position: "top" as const,
+      position: 'top' as const,
     },
   },
-};
+}
 
 const Metrics = ({
   pingEvents,
   options,
 }: {
-  pingEvents: Event[];
-  options: ClientOption[];
+  pingEvents: Event[]
+  options: ClientOption[]
 }) => {
-  const labels = options.map((option) => option.identifier);
+  const labels = options.map((option) => option.identifier)
   const actualData = useMemo(() => {
     return options.map((option) => {
       return {
-        pings: pingEvents.filter(
-          (event) => event.selectedVariant === option.identifier
-        ).length,
+        pings: pingEvents.filter((event) => event.selectedVariant === option.identifier).length,
         weight: option.chance,
-      };
-    });
-  }, [options, pingEvents]);
+      }
+    })
+  }, [options, pingEvents])
 
   const absPings = actualData.reduce((accumulator, value) => {
-    return accumulator + value.pings;
-  }, 0);
+    return accumulator + value.pings
+  }, 0)
 
   return (
-    <div className="relative mb-6 h-full w-full">
+    <div className='relative mb-6 h-full w-full'>
       <Bar
-        className="self-end"
+        className='self-end'
         options={OPTIONS}
         data={{
           labels,
           datasets: [
             {
-              label: "Actual",
+              label: 'Actual',
               data: actualData.map((d) => d.pings),
-              backgroundColor: "#A9E4EF",
+              backgroundColor: '#A9E4EF',
             },
             {
-              label: "Expected",
+              label: 'Expected',
               data: actualData.map((data) => absPings * data.weight),
-              backgroundColor: "#f472b6",
+              backgroundColor: '#f472b6',
             },
           ],
         }}
       />
     </div>
-  );
-};
+  )
+}
 
-export { Metrics };
+export { Metrics }

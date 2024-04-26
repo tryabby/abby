@@ -1,10 +1,10 @@
-import { Button } from "components/ui/button";
-import { getUpdatedWeights } from "lib/helper";
-import { useRouter } from "next/router";
-import { ChangeEvent, useState } from "react";
-import { toast } from "react-hot-toast";
-import type { ClientOption } from "server/trpc/router/project";
-import { trpc } from "utils/trpc";
+import { Button } from 'components/ui/button'
+import { getUpdatedWeights } from 'lib/helper'
+import { useRouter } from 'next/router'
+import { ChangeEvent, useState } from 'react'
+import { toast } from 'react-hot-toast'
+import type { ClientOption } from 'server/trpc/router/project'
+import { trpc } from 'utils/trpc'
 
 const Weight = ({
   option,
@@ -12,41 +12,41 @@ const Weight = ({
   index,
   onChange,
 }: {
-  option: ClientOption;
-  value: number;
-  index: number;
-  onChange: (e: ChangeEvent<HTMLInputElement>) => void;
+  option: ClientOption
+  value: number
+  index: number
+  onChange: (e: ChangeEvent<HTMLInputElement>) => void
 }) => {
   return (
     <>
       <label
         htmlFor={option.id}
-        className="mb-0 mt-2 flex justify-between text-sm font-medium text-pink-100 dark:text-white"
+        className='mb-0 mt-2 flex justify-between text-sm font-medium text-pink-100 dark:text-white'
       >
         <span>{option.identifier}</span>
         <span>{Math.round(value)}%</span>
       </label>
       <input
         id={option.id}
-        type="range"
-        min="0"
-        max="100"
+        type='range'
+        min='0'
+        max='100'
         value={value}
-        className="h-2 w-full cursor-pointer"
+        className='h-2 w-full cursor-pointer'
         onChange={onChange}
       ></input>
     </>
-  );
-};
+  )
+}
 
 const Weights = ({ options }: { options: ClientOption[] }) => {
-  const router = useRouter();
-  const trpcContext = trpc.useContext();
+  const router = useRouter()
+  const trpcContext = trpc.useContext()
   const [weights, setWeights] = useState(
     options.map((option) => parseFloat(option.chance.toString()) * 100)
-  );
+  )
 
-  const { mutateAsync } = trpc.tests.updateWeights.useMutation();
+  const { mutateAsync } = trpc.tests.updateWeights.useMutation()
 
   const updateWeight = (indexToUpdate: number, newWeight: number) => {
     setWeights((currentWeights) =>
@@ -55,16 +55,14 @@ const Weights = ({ options }: { options: ClientOption[] }) => {
         newWeight,
         weights: currentWeights,
       })
-    );
-  };
+    )
+  }
 
-  const weightsSum = Math.round(
-    weights.reduce((sum, curr) => (sum += curr), 0)
-  );
+  const weightsSum = Math.round(weights.reduce((sum, curr) => (sum += curr), 0))
 
   const onSave = async () => {
     try {
-      if (!options.length || !options[0]) throw new Error();
+      if (!options.length || !options[0]) throw new Error()
 
       await mutateAsync({
         testId: options[0].testId,
@@ -72,21 +70,21 @@ const Weights = ({ options }: { options: ClientOption[] }) => {
           variantId: options[index]!.id,
           weight: weight / 100,
         })),
-      });
+      })
 
       await trpcContext.project.getProjectData.invalidate({
         projectId: router.query.projectId as string,
-      });
+      })
 
-      toast.success("Weights saved");
+      toast.success('Weights saved')
     } catch (e) {
-      console.error(e);
-      toast.error("Could not update weights");
+      console.error(e)
+      toast.error('Could not update weights')
     }
-  };
+  }
 
   return (
-    <div className="flex flex-col gap-4">
+    <div className='flex flex-col gap-4'>
       {options.map((option, index) => (
         <Weight
           key={option.id}
@@ -96,11 +94,10 @@ const Weights = ({ options }: { options: ClientOption[] }) => {
           option={option}
         />
       ))}
-      <div className="flex justify-between">
+      <div className='flex justify-between'>
         {weightsSum !== 100 ? (
-          <p className="text-center text-xs text-ab_accent-background">
-            Your weights must add up to 100%. Your weights currently make up{" "}
-            {weightsSum}%
+          <p className='text-center text-xs text-ab_accent-background'>
+            Your weights must add up to 100%. Your weights currently make up {weightsSum}%
           </p>
         ) : (
           <span></span>
@@ -110,7 +107,7 @@ const Weights = ({ options }: { options: ClientOption[] }) => {
         </Button>
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default Weights;
+export default Weights
