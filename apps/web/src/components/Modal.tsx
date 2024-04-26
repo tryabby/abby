@@ -1,31 +1,31 @@
-import { Transition } from "@headlessui/react";
-import clsx from "clsx";
-import { Loader2 } from "lucide-react";
-import { Fragment, useRef } from "react";
-import { twMerge } from "tailwind-merge";
-import { Button } from "./ui/button";
+import { Transition } from '@headlessui/react'
+import clsx from 'clsx'
+import { Loader2 } from 'lucide-react'
+import { Fragment, useRef } from 'react'
+import { twMerge } from 'tailwind-merge'
+import { Button } from './ui/button'
 import {
   Dialog,
   DialogContent,
   DialogDescription,
   DialogFooter,
   DialogTitle,
-} from "components/ui/dialog";
-import { cn } from "lib/utils";
+} from 'components/ui/dialog'
+import { cn } from 'lib/utils'
 
 type Props = {
-  onClose: () => void;
-  isOpen: boolean;
-  children: React.ReactNode;
-  title: string;
-  subtitle?: string;
-  cancelText?: string;
-  confirmText?: string;
-  onConfirm?: () => void | Promise<void>;
-  size?: "base" | "full";
-  isConfirming?: boolean;
-  isConfirmButtonDisabled?: boolean;
-};
+  onClose: () => void
+  isOpen: boolean
+  children: React.ReactNode
+  title: string
+  subtitle?: string
+  cancelText?: string
+  confirmText?: string
+  onConfirm?: () => void | Promise<void>
+  size?: 'base' | 'full'
+  isConfirming?: boolean
+  isConfirmButtonDisabled?: boolean
+}
 
 export const Modal = ({
   onClose,
@@ -35,41 +35,41 @@ export const Modal = ({
   cancelText,
   confirmText,
   onConfirm,
-  size = "base",
+  size = 'base',
   isConfirming = false,
   isConfirmButtonDisabled = false,
   subtitle,
 }: Props) => {
   const handleConfirm = async () => {
-    await onConfirm?.();
-  };
+    await onConfirm?.()
+  }
 
   return (
     <Dialog
       open={isOpen}
       onOpenChange={(e) => {
-        if (!e) onClose();
+        if (!e) onClose()
       }}
     >
-      <DialogContent className={cn(size === "full" && "sm:max-w-[980px]")}>
+      <DialogContent className={cn(size === 'full' && 'sm:max-w-[980px]')}>
         <DialogTitle> {title} </DialogTitle>
         <DialogDescription>{subtitle}</DialogDescription>
-        <div className="my-6 text-pink-50">{children}</div>
+        <div className='my-6 text-pink-50'>{children}</div>
 
         <DialogFooter>
-          <Button variant="secondary" onClick={onClose}>
-            {cancelText ?? "Cancel"}
+          <Button variant='secondary' onClick={onClose}>
+            {cancelText ?? 'Cancel'}
           </Button>
           <Button
-            type="button"
+            type='button'
             onClick={handleConfirm}
             disabled={isConfirming || isConfirmButtonDisabled}
           >
-            {isConfirming && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-            {confirmText ?? "Confirm"}
+            {isConfirming && <Loader2 className='mr-2 h-4 w-4 animate-spin' />}
+            {confirmText ?? 'Confirm'}
           </Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>
-  );
-};
+  )
+}

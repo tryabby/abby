@@ -1,19 +1,15 @@
-import {
-  AbbyConfigFile,
-  PullAbbyConfigResponse,
-  RemoteConfigValueString,
-} from "@tryabby/core";
+import { AbbyConfigFile, PullAbbyConfigResponse, RemoteConfigValueString } from '@tryabby/core'
 import {
   getDefaultFlagValue,
   stringifyFlagValue,
   transformClientFlagToDBType,
   transformDBFlagTypeToclient,
-} from "lib/flags";
-import { prisma } from "server/db/client";
-import { TestService } from "./TestService";
-import { FlagService } from "./FlagService";
-import { FeatureFlagType } from "@prisma/client";
-import { FlagValueString } from "types/flags";
+} from 'lib/flags'
+import { prisma } from 'server/db/client'
+import { TestService } from './TestService'
+import { FlagService } from './FlagService'
+import { FeatureFlagType } from '@prisma/client'
+import { FlagValueString } from 'types/flags'
 
 export async function handleGET({ projectId }: { projectId: string }) {
   const projectData = await prisma.project.findUnique({
@@ -29,35 +25,39 @@ export async function handleGET({ projectId }: { projectId: string }) {
       },
       featureFlags: true,
     },
-  });
+  })
 
-  if (!projectData) throw new Error("Cant find project");
+  if (!projectData) throw new Error('Cant find project')
 
   const config = {
-    environments: projectData.environments.map(
-      (environment) => environment.name
+    environments: projectData.environments.map((environment) => environment.name),
+    tests: projectData.tests.reduce(
+      (acc, test) => {
+        acc[test.name] = {
+          variants: test.options.map((option) => option.identifier),
+        }
+        return acc
+      },
+      {} as Record<string, any>
     ),
-    tests: projectData.tests.reduce((acc, test) => {
-      acc[test.name] = {
-        variants: test.options.map((option) => option.identifier),
-      };
-      return acc;
-    }, {} as Record<string, any>),
     flags: projectData.featureFlags
       .filter((flag) => flag.type === FeatureFlagType.BOOLEAN)
       .map((flag) => flag.name),
-    remoteConfig: projectData.featureFlags.reduce((acc, flag) => {
-      if (flag.type !== FeatureFlagType.BOOLEAN) {
-        acc[flag.name] = transformDBFlagTypeToclient(flag.type) as Exclude<
-          FlagValueString,
-          "Boolean"
-        >;
-      }
-      return acc;
-    }, {} as Record<string, RemoteConfigValueString>),
-  } satisfies PullAbbyConfigResponse;
+    remoteConfig: projectData.featureFlags.reduce(
+      (acc, flag) => {
+        if (flag.type !== FeatureFlagType.BOOLEAN) {
+          acc[flag.name] = transformDBFlagTypeToclient(flag.type) as Exclude<
+            FlagValueString,
+            'Boolean'
+          >
+        }
+        return acc
+      },
+      {} as Record<string, RemoteConfigValueString>
+    ),
+  } satisfies PullAbbyConfigResponse
 
-  return config;
+  return config
 }
 
 export async function handlePUT({
@@ -65,9 +65,9 @@ export async function handlePUT({
   projectId,
   userId,
 }: {
-  userId: string;
-  projectId: string;
-  config: AbbyConfigFile;
+  userId: string
+  projectId: string
+  config: AbbyConfigFile
 }) {
   // create all missing environments
   if (config.environments) {
@@ -75,19 +75,18 @@ export async function handlePUT({
       where: {
         projectId,
       },
-    });
+    })
 
     const missingEnvironments = config.environments.filter(
-      (env) =>
-        !currentEnvironments.find((currentEnv) => currentEnv.name === env)
-    );
+      (env) => !currentEnvironments.find((currentEnv) => currentEnv.name === env)
+    )
 
     await prisma.environment.createMany({
       data: missingEnvironments.map((envName) => ({
         name: envName,
         projectId,
       })),
-    });
+    })
   }
 
   if (config.tests) {
@@ -100,44 +99,37 @@ export async function handlePUT({
               projectId,
             },
           },
-        });
+        })
 
-        const variants: Array<string> = test["variants"];
+        const variants: Array<string> = test['variants']
         const weightedVariants = variants.map((variant) => ({
           name: variant,
           weight: 1 / variants.length,
-        }));
+        }))
 
         if (testData) {
-          return;
+          return
         }
 
-        return TestService.createTest(
-          projectId,
-          weightedVariants,
-          testName,
-          userId
-        );
+        return TestService.createTest(projectId, weightedVariants, testName, userId)
       })
-    );
+    )
   }
 
   const featureFlags = (config.flags ?? []).map((flag) => ({
     name: flag,
-    type: "Boolean" as const,
-  }));
-  const remoteConfig = Object.entries(config.remoteConfig ?? {}).map(
-    (config) => ({
-      name: config[0],
-      type: config[1],
-    })
-  );
+    type: 'Boolean' as const,
+  }))
+  const remoteConfig = Object.entries(config.remoteConfig ?? {}).map((config) => ({
+    name: config[0],
+    type: config[1],
+  }))
 
-  const flags = [...featureFlags, ...remoteConfig];
+  const flags = [...featureFlags, ...remoteConfig]
 
   await Promise.all(
     flags.map(async ({ name, type }) => {
-      const flagValue = getDefaultFlagValue(type);
+      const flagValue = getDefaultFlagValue(type)
       const flagData = await prisma.featureFlag.findUnique({
         where: {
           projectId_name: {
@@ -145,10 +137,10 @@ export async function handlePUT({
             projectId,
           },
         },
-      });
+      })
 
       if (flagData) {
-        return;
+        return
       }
 
       return FlagService.createFlag({
@@ -157,7 +149,7 @@ export async function handlePUT({
         userId,
         type: transformClientFlagToDBType(type),
         value: stringifyFlagValue(flagValue),
-      });
+      })
     })
-  );
+  )
 }

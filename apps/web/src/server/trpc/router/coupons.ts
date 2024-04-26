@@ -1,7 +1,7 @@
-import { z } from "zod";
-import { protectedProcedure, router } from "../trpc";
-import { TRPCError } from "@trpc/server";
-import dayjs from "dayjs";
+import { z } from 'zod'
+import { protectedProcedure, router } from '../trpc'
+import { TRPCError } from '@trpc/server'
+import dayjs from 'dayjs'
 
 export const couponRouter = router({
   redeemCode: protectedProcedure
@@ -16,20 +16,20 @@ export const couponRouter = router({
         where: {
           id: input.projectId,
         },
-      });
+      })
 
       if (!project) {
-        throw new TRPCError({ code: "NOT_FOUND" });
+        throw new TRPCError({ code: 'NOT_FOUND' })
       }
 
       const code = await ctx.prisma.couponCodes.findUnique({
         where: {
           code: input.code,
         },
-      });
+      })
 
       if (!code || code.redeemedAt !== null) {
-        throw new TRPCError({ code: "NOT_FOUND" });
+        throw new TRPCError({ code: 'NOT_FOUND' })
       }
 
       await ctx.prisma.$transaction([
@@ -51,6 +51,6 @@ export const couponRouter = router({
             redeemedById: ctx.session.user.id,
           },
         }),
-      ]);
+      ])
     }),
-});
+})

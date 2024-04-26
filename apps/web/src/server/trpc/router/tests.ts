@@ -1,12 +1,12 @@
-import { TRPCError } from "@trpc/server";
-import { ProjectService } from "server/services/ProjectService";
-import { z } from "zod";
-import { protectedProcedure, router } from "../trpc";
-import { prisma } from "server/db/client";
-import { getLimitByPlan } from "server/common/plans";
-import { getProjectPaidPlan } from "lib/stripe";
-import { EventService } from "server/services/EventService";
-import { TestService } from "server/services/TestService";
+import { TRPCError } from '@trpc/server'
+import { ProjectService } from 'server/services/ProjectService'
+import { z } from 'zod'
+import { protectedProcedure, router } from '../trpc'
+import { prisma } from 'server/db/client'
+import { getLimitByPlan } from 'server/common/plans'
+import { getProjectPaidPlan } from 'lib/stripe'
+import { EventService } from 'server/services/EventService'
+import { TestService } from 'server/services/TestService'
 
 export const testRouter = router({
   createTest: protectedProcedure
@@ -23,12 +23,7 @@ export const testRouter = router({
       })
     )
     .mutation(async ({ input, ctx }) => {
-      await TestService.createTest(
-        input.projectId,
-        input.variants,
-        input.name,
-        ctx.session.user.id
-      );
+      await TestService.createTest(input.projectId, input.variants, input.name, ctx.session.user.id)
     }),
   updateName: protectedProcedure
     .input(
@@ -50,9 +45,9 @@ export const testRouter = router({
             },
           },
         },
-      });
+      })
       if (!currentTest) {
-        throw new TRPCError({ code: "UNAUTHORIZED" });
+        throw new TRPCError({ code: 'UNAUTHORIZED' })
       }
       await ctx.prisma.test.update({
         where: {
@@ -61,7 +56,7 @@ export const testRouter = router({
         data: {
           name: input.name,
         },
-      });
+      })
     }),
 
   updateWeights: protectedProcedure
@@ -89,9 +84,9 @@ export const testRouter = router({
             },
           },
         },
-      });
+      })
       if (!currentTest) {
-        throw new TRPCError({ code: "UNAUTHORIZED" });
+        throw new TRPCError({ code: 'UNAUTHORIZED' })
       }
 
       await Promise.all(
@@ -105,7 +100,7 @@ export const testRouter = router({
             },
           })
         )
-      );
+      )
     }),
   getById: protectedProcedure
     .input(
@@ -128,13 +123,13 @@ export const testRouter = router({
         include: {
           options: true,
         },
-      });
+      })
 
       if (!currentTest) {
-        throw new TRPCError({ code: "UNAUTHORIZED" });
+        throw new TRPCError({ code: 'UNAUTHORIZED' })
       }
 
-      return currentTest;
+      return currentTest
     }),
   delete: protectedProcedure
     .input(
@@ -154,10 +149,10 @@ export const testRouter = router({
             },
           },
         },
-      });
+      })
 
       if (!currentTest) {
-        throw new TRPCError({ code: "UNAUTHORIZED" });
+        throw new TRPCError({ code: 'UNAUTHORIZED' })
       }
 
       await prisma.$transaction([
@@ -166,6 +161,6 @@ export const testRouter = router({
             id: input.testId,
           },
         }),
-      ]);
+      ])
     }),
-});
+})

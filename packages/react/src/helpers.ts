@@ -66,7 +66,7 @@ export function validateWeights<
   Weights extends Tuple<number, Variants["length"]>
 >(variants: Variants, weights?: Weights): Weights {
   const sum = weights?.reduce((acc, weight) => acc + weight, 0);
-  return weights != null && sum === 1 && variants.length === weights.length
+  return weights !== null && sum === 1 && variants.length === weights.length
     ? weights
     : (getDefaultWeights(variants) as Weights);
 }

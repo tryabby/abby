@@ -1,9 +1,9 @@
-import { z } from "zod";
-import { router, protectedProcedure } from "../trpc";
+import { z } from 'zod'
+import { router, protectedProcedure } from '../trpc'
 
 export const updateProfileSchema = z.object({
   name: z.string().min(1),
-});
+})
 
 export const userRouter = router({
   getUserData: protectedProcedure.query(async ({ ctx }) => {
@@ -21,7 +21,7 @@ export const userRouter = router({
           tests: true,
         },
       }),
-    };
+    }
   }),
   me: protectedProcedure.query(async ({ ctx }) => {
     return ctx.prisma.user.findUnique({
@@ -31,7 +31,7 @@ export const userRouter = router({
       include: {
         accounts: true,
       },
-    });
+    })
   }),
   getProjects: protectedProcedure.query(async ({ ctx }) => {
     return {
@@ -44,7 +44,7 @@ export const userRouter = router({
           project: true,
         },
       }),
-    };
+    }
   }),
   getApiKeyData: protectedProcedure.query(async ({ ctx }) => {
     return {
@@ -55,20 +55,18 @@ export const userRouter = router({
           revokedAt: null,
         },
       }),
-    };
+    }
   }),
-  updateProfile: protectedProcedure
-    .input(updateProfileSchema)
-    .mutation(async ({ ctx, input }) => {
-      return ctx.prisma.user.update({
-        where: {
-          id: ctx.session.user.id,
-        },
-        data: {
-          name: input.name,
-        },
-      });
-    }),
+  updateProfile: protectedProcedure.input(updateProfileSchema).mutation(async ({ ctx, input }) => {
+    return ctx.prisma.user.update({
+      where: {
+        id: ctx.session.user.id,
+      },
+      data: {
+        name: input.name,
+      },
+    })
+  }),
   onboardUser: protectedProcedure
     .input(
       z.object({
@@ -80,7 +78,7 @@ export const userRouter = router({
       })
     )
     .mutation(async ({ ctx, input }) => {
-      const userId = ctx.session.user.id;
+      const userId = ctx.session.user.id
       await ctx.prisma.user.update({
         where: {
           id: userId,
@@ -93,6 +91,6 @@ export const userRouter = router({
           experienceLevelTests: input.experienceLevelTests,
           hasCompletedOnboarding: true,
         },
-      });
+      })
     }),
-});
+})

@@ -1,5 +1,5 @@
-import createCacheRealm from "@databases/cache";
+import createCacheRealm from '@databases/cache'
 
-const { createCache } = createCacheRealm({ maximumSize: 10_000 });
+const { createCache } = createCacheRealm({ maximumSize: 10_000 })
 
-export default createCache;
+export default createCache

@@ -1,21 +1,21 @@
-import NextAuth, { type NextAuthOptions } from "next-auth";
-import EmailProvider from "next-auth/providers/email";
-import GithubProvider from "next-auth/providers/github";
-import GoogleProvider from "next-auth/providers/google";
-import { PrismaAdapter } from "@next-auth/prisma-adapter";
+import NextAuth, { type NextAuthOptions } from 'next-auth'
+import EmailProvider from 'next-auth/providers/email'
+import GithubProvider from 'next-auth/providers/github'
+import GoogleProvider from 'next-auth/providers/google'
+import { PrismaAdapter } from '@next-auth/prisma-adapter'
 
-import { env } from "../../../env/server.mjs";
-import { prisma } from "../../../server/db/client";
-import { trackSignup } from "lib/logsnag";
-import { ProjectService } from "../../../server/services/ProjectService";
+import { env } from '../../../env/server.mjs'
+import { prisma } from '../../../server/db/client'
+import { trackSignup } from 'lib/logsnag'
+import { ProjectService } from '../../../server/services/ProjectService'
 
 export const authOptions: NextAuthOptions = {
   pages: {
-    signIn: "/login",
-    newUser: "/welcome",
+    signIn: '/login',
+    newUser: '/welcome',
   },
   session: {
-    strategy: "jwt",
+    strategy: 'jwt',
   },
   callbacks: {
     // Include user.id on session
@@ -30,24 +30,24 @@ export const authOptions: NextAuthOptions = {
           lastOpenProjectId: session.user?.lastOpenProjectId
             ? session.user?.lastOpenProjectId
             : token.user.projectIds[0],
-        };
+        }
       }
 
-      return session;
+      return session
     },
     async jwt({ token, user, trigger, session }) {
-      if (trigger === "update" && session) {
-        if ("lastOpenProjectId" in session) {
-          token.user.lastOpenProjectId = session.lastOpenProjectId;
+      if (trigger === 'update' && session) {
+        if ('lastOpenProjectId' in session) {
+          token.user.lastOpenProjectId = session.lastOpenProjectId
         }
-        if ("projectIds" in session) {
-          token.user.projectIds = session.projectIds;
+        if ('projectIds' in session) {
+          token.user.projectIds = session.projectIds
         }
-        if ("hasCompletedOnboarding" in session) {
-          token.user.hasCompletedOnboarding = session.hasCompletedOnboarding;
+        if ('hasCompletedOnboarding' in session) {
+          token.user.hasCompletedOnboarding = session.hasCompletedOnboarding
         }
-        if ("name" in session) {
-          token.name = session.name;
+        if ('name' in session) {
+          token.name = session.name
         }
       }
       if (user) {
@@ -58,31 +58,27 @@ export const authOptions: NextAuthOptions = {
               select: { projectId: true },
             },
           },
-        });
+        })
 
         token.user = {
           ...(token.user ?? {}),
           id: user.id,
-          image:
-            user.image ??
-            `https://avatars.dicebear.com/api/initials/${user?.email}.svg`,
+          image: user.image ?? `https://avatars.dicebear.com/api/initials/${user?.email}.svg`,
           hasCompletedOnboarding: dbUser?.hasCompletedOnboarding ?? false,
-          projectIds: (dbUser?.projects ?? []).map(
-            (project) => project.projectId
-          ),
-        };
+          projectIds: (dbUser?.projects ?? []).map((project) => project.projectId),
+        }
       }
 
-      return token;
+      return token
     },
   },
   events: {
     async createUser({ user }) {
       await ProjectService.createProject({
         userId: user.id,
-        projectName: "My Project",
-      });
-      await trackSignup();
+        projectName: 'My Project',
+      })
+      await trackSignup()
     },
   },
   // Configure one or more authentication providers
@@ -107,6 +103,6 @@ export const authOptions: NextAuthOptions = {
       : []),
     // ...add more providers here
   ],
-};
+}
 
-export default NextAuth(authOptions);
+export default NextAuth(authOptions)

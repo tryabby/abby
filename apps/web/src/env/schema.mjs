@@ -1,5 +1,5 @@
 // @ts-check
-import { z } from "zod";
+import { z } from 'zod'
 
 /**
  * Specify your server-side environment variables schema here.
@@ -7,11 +7,9 @@ import { z } from "zod";
  */
 export const serverSchema = z.object({
   DATABASE_URL: z.string().url(),
-  NODE_ENV: z.enum(["development", "test", "production"]),
+  NODE_ENV: z.enum(['development', 'test', 'production']),
   NEXTAUTH_SECRET:
-    process.env.NODE_ENV === "production"
-      ? z.string().min(1)
-      : z.string().min(1).optional(),
+    process.env.NODE_ENV === 'production' ? z.string().min(1) : z.string().min(1).optional(),
   NEXTAUTH_URL: z.preprocess(
     // This makes Vercel deployments not fail if you don't set NEXTAUTH_URL
     // Since NextAuth.js automatically uses the VERCEL_URL if present.
@@ -31,8 +29,8 @@ export const serverSchema = z.object({
   GOOGLE_CLIENT_ID: z.string().optional(),
   GOOGLE_CLIENT_SECRET: z.string().optional(),
   HASHING_SECRET: z.string().min(1),
-  USE_PLANETSCALE: z.enum(["true", "false"]).default("false"),
-});
+  USE_PLANETSCALE: z.enum(['true', 'false']).default('false'),
+})
 
 /**
  * Specify your client-side environment variables schema here.
@@ -47,7 +45,7 @@ export const clientSchema = z.object({
   NEXT_PUBLIC_STRIPE_PRO_PLAN_PRICE_ID: z.string().min(1),
   NEXT_PUBLIC_ABBY_PROJECT_ID: z.string().min(1),
   NEXT_PUBLIC_PLAUSIBLE_DOMAIN: z.string().optional(),
-});
+})
 
 /**
  * You can't destruct `process.env` as a regular object, so you have to do
@@ -57,15 +55,10 @@ export const clientSchema = z.object({
  */
 export const clientEnv = {
   // NEXT_PUBLIC_CLIENTVAR: process.env.NEXT_PUBLIC_CLIENTVAR,
-  NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY:
-    process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY,
-  NEXT_PUBLIC_STRIPE_STARTER_PLAN_PRICE_ID:
-    process.env.NEXT_PUBLIC_STRIPE_STARTER_PLAN_PRICE_ID,
-  NEXT_PUBLIC_STRIPE_PRO_PLAN_PRICE_ID:
-    process.env.NEXT_PUBLIC_STRIPE_PRO_PLAN_PRICE_ID,
-  NEXT_PUBLIC_DISABLE_ANALYTICS: Boolean(
-    process.env.NEXT_PUBLIC_DISABLE_ANALYTICS
-  ),
+  NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY: process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY,
+  NEXT_PUBLIC_STRIPE_STARTER_PLAN_PRICE_ID: process.env.NEXT_PUBLIC_STRIPE_STARTER_PLAN_PRICE_ID,
+  NEXT_PUBLIC_STRIPE_PRO_PLAN_PRICE_ID: process.env.NEXT_PUBLIC_STRIPE_PRO_PLAN_PRICE_ID,
+  NEXT_PUBLIC_DISABLE_ANALYTICS: Boolean(process.env.NEXT_PUBLIC_DISABLE_ANALYTICS),
   NEXT_PUBLIC_ABBY_PROJECT_ID: process.env.NEXT_PUBLIC_ABBY_PROJECT_ID,
   NEXT_PUBLIC_PLAUSIBLE_DOMAIN: process.env.NEXT_PUBLIC_PLAUSIBLE_DOMAIN,
-};
+}

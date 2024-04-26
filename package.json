@@ -16,8 +16,8 @@
     "dev:docs": "turbo run dev --filter=./apps/docs",
     "dev:angular": "turbo run dev --filter=./apps/angular-example",
     "dev:all": "turbo run dev --filter=!./apps/docs",
-    "lint": "turbo run lint",
-    "format": "prettier --write \"**/*.{ts,tsx,md}\"",
+    "lint": "pnpm biome lint --apply apps/",
+    "format": "pnpm biome format --write apps/",
     "db:start": "docker-compose up -d",
     "db:migrate": "turbo run db:migrate --filter=./apps/web",
     "db:generate": "turbo run db:generate --filter=./apps/web",
@@ -25,8 +25,8 @@
     "ci:publish": "pnpm publish -r --access public"
   },
   "devDependencies": {
+    "@biomejs/biome": "1.7.1",
     "@changesets/cli": "^2.26.0",
-    "eslint-config-custom": "workspace:*",
     "prettier": "latest",
     "turbo": "latest"
   },

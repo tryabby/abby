@@ -1,9 +1,9 @@
-import { TRPCError } from "@trpc/server";
-import { getProjectPaidPlan } from "lib/stripe";
-import { getLimitByPlan } from "server/common/plans";
-import { z } from "zod";
-import { protectedProcedure, router } from "../trpc";
-import { FeatureFlagType } from "@prisma/client";
+import { TRPCError } from '@trpc/server'
+import { getProjectPaidPlan } from 'lib/stripe'
+import { getLimitByPlan } from 'server/common/plans'
+import { z } from 'zod'
+import { protectedProcedure, router } from '../trpc'
+import { FeatureFlagType } from '@prisma/client'
 
 export const environmentRouter = router({
   addEnvironment: protectedProcedure
@@ -26,17 +26,17 @@ export const environmentRouter = router({
         include: {
           environments: true,
         },
-      });
+      })
 
-      if (!project) throw new TRPCError({ code: "UNAUTHORIZED" });
+      if (!project) throw new TRPCError({ code: 'UNAUTHORIZED' })
 
-      const limits = getLimitByPlan(getProjectPaidPlan(project));
+      const limits = getLimitByPlan(getProjectPaidPlan(project))
 
       if (project.environments.length >= limits.environments) {
         throw new TRPCError({
-          code: "FORBIDDEN",
+          code: 'FORBIDDEN',
           message: `You have reached the limit of ${limits.environments} environments for your plan.`,
-        });
+        })
       }
 
       const [newEnv, featureFlags] = await Promise.all([
@@ -52,7 +52,7 @@ export const environmentRouter = router({
             projectId: input.projectId,
           },
         }),
-      ]);
+      ])
 
       await ctx.prisma.$transaction(async (tx) => {
         const newFlagValues = await Promise.all(
@@ -63,23 +63,23 @@ export const environmentRouter = router({
                 environmentId: newEnv.id,
                 value:
                   flag.type === FeatureFlagType.BOOLEAN
-                    ? "false"
+                    ? 'false'
                     : flag.type === FeatureFlagType.STRING
-                    ? "new value"
-                    : "0",
+                      ? 'new value'
+                      : '0',
               },
             })
           )
-        );
+        )
         return tx.featureFlagHistory.createMany({
           data: newFlagValues.map((flag) => ({
             userId: ctx.session.user.id,
-            newValue: "false",
+            newValue: 'false',
             flagValueId: flag.id,
             oldValue: null,
           })),
-        });
-      });
+        })
+      })
     }),
   updateName: protectedProcedure
     .input(z.object({ name: z.string(), environmentId: z.string() }))
@@ -95,9 +95,9 @@ export const environmentRouter = router({
             },
           },
         },
-      });
+      })
 
-      if (!env) throw new TRPCError({ code: "UNAUTHORIZED" });
+      if (!env) throw new TRPCError({ code: 'UNAUTHORIZED' })
       return ctx.prisma.environment.update({
         where: {
           id: input.environmentId,
@@ -105,7 +105,7 @@ export const environmentRouter = router({
         data: {
           name: input.name,
         },
-      });
+      })
     }),
   deleteEnvironment: protectedProcedure
     .input(z.object({ environmentId: z.string() }))
@@ -121,16 +121,16 @@ export const environmentRouter = router({
             },
           },
         },
-      });
+      })
 
-      if (!env) throw new TRPCError({ code: "UNAUTHORIZED" });
+      if (!env) throw new TRPCError({ code: 'UNAUTHORIZED' })
 
       // delete all environment
       await ctx.prisma.environment.delete({
         where: {
           id: input.environmentId,
         },
-      });
+      })
     }),
   updateEnvironmentSort: protectedProcedure
     .input(
@@ -155,9 +155,9 @@ export const environmentRouter = router({
             },
           },
         },
-      });
+      })
 
-      if (!env) throw new TRPCError({ code: "UNAUTHORIZED" });
+      if (!env) throw new TRPCError({ code: 'UNAUTHORIZED' })
 
       await ctx.prisma.$transaction(
         input.environments.map((env) =>
@@ -170,6 +170,6 @@ export const environmentRouter = router({
             },
           })
         )
-      );
+      )
     }),
-});
+})

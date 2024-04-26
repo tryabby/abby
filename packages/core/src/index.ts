@@ -168,7 +168,7 @@ export class Abby<
     if (
       typeof window !== "undefined" &&
       ABBY_WINDOW_KEY in window &&
-      window[ABBY_WINDOW_KEY] != null
+      window[ABBY_WINDOW_KEY] !== null
     ) {
       this.log(`loadProjectData() => using window data`);
       return this.init(window[ABBY_WINDOW_KEY] as AbbyDataResponse);
@@ -303,7 +303,7 @@ export class Abby<
 
     const localOverride = this.flagOverrides?.get(key as unknown as FlagName);
 
-    if (localOverride != null) {
+    if (localOverride !== null) {
       return localOverride;
     }
 
@@ -316,7 +316,7 @@ export class Abby<
      */
     if (process.env.NODE_ENV === "development") {
       const devOverride = (this.config.settings?.flags?.devOverrides as any)?.[key];
-      if (devOverride != null) {
+      if (devOverride !== null) {
         return devOverride;
       }
     }
@@ -372,7 +372,7 @@ export class Abby<
 
     if (process.env.NODE_ENV === "development") {
       const devOverride = (this.config.settings?.remoteConfig?.devOverrides as any)?.[key];
-      if (devOverride != null) {
+      if (devOverride !== null) {
         return devOverride;
       }
     }
@@ -389,7 +389,7 @@ export class Abby<
         ] as RemoteConfigValueStringToType<RemoteConfig[RemoteConfigName]>;
       }
 
-      if (defaultValue != null) {
+      if (defaultValue !== null) {
         return defaultValue as RemoteConfigValueStringToType<RemoteConfig[RemoteConfigName]>;
       }
     }
@@ -414,13 +414,13 @@ export class Abby<
 
     const override = this.testOverrides.get(key);
 
-    if (process.env.NODE_ENV === "development" && override != null) {
+    if (process.env.NODE_ENV === "development" && override !== null) {
       return override;
     }
 
     const persistedValue = this.persistantTestStorage?.get(key as string);
 
-    if (persistedValue != null) {
+    if (persistedValue !== null) {
       this.log(`getTestVariant() => persistedValue:`, persistedValue);
 
       return persistedValue;

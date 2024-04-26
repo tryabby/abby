@@ -1,20 +1,20 @@
-import { Option, ROLE } from "@prisma/client";
-import { TRPCError } from "@trpc/server";
-import { env } from "env/server.mjs";
-import { encode, getToken } from "next-auth/jwt";
-import { planNameSchema, PLANS } from "server/common/plans";
-import { stripe } from "server/common/stripe";
-import { EventService } from "server/services/EventService";
-import { ProjectService } from "server/services/ProjectService";
-import { generateCodeSnippets } from "utils/snippets";
-import { z } from "zod";
+import { Option, ROLE } from '@prisma/client'
+import { TRPCError } from '@trpc/server'
+import { env } from 'env/server.mjs'
+import { encode, getToken } from 'next-auth/jwt'
+import { planNameSchema, PLANS } from 'server/common/plans'
+import { stripe } from 'server/common/stripe'
+import { EventService } from 'server/services/EventService'
+import { ProjectService } from 'server/services/ProjectService'
+import { generateCodeSnippets } from 'utils/snippets'
+import { z } from 'zod'
 
-export type ClientOption = Omit<Option, "chance"> & {
-  chance: number;
-};
+export type ClientOption = Omit<Option, 'chance'> & {
+  chance: number
+}
 
-import { router, protectedProcedure } from "../trpc";
-import { updateProjectsOnSession } from "utils/updateSession";
+import { router, protectedProcedure } from '../trpc'
+import { updateProjectsOnSession } from 'utils/updateSession'
 
 export const projectRouter = router({
   getProjectData: protectedProcedure
@@ -37,13 +37,12 @@ export const projectRouter = router({
           featureFlags: true,
           users: { include: { user: true } },
         },
-      });
+      })
 
       if (!project) {
-        throw new TRPCError({ code: "UNAUTHORIZED" });
+        throw new TRPCError({ code: 'UNAUTHORIZED' })
       }
-      const { events: eventsThisPeriod } =
-        await EventService.getEventsForCurrentPeriod(project.id);
+      const { events: eventsThisPeriod } = await EventService.getEventsForCurrentPeriod(project.id)
 
       return {
         project: {
@@ -57,7 +56,7 @@ export const projectRouter = router({
             })),
           })),
         },
-      };
+      }
     }),
   getCodeSnippet: protectedProcedure
     .input(z.object({ projectId: z.string() }))
@@ -74,20 +73,20 @@ export const projectRouter = router({
           },
           featureFlags: true,
         },
-      });
+      })
 
-      if (!projectData) throw new TRPCError({ code: "NOT_FOUND" });
+      if (!projectData) throw new TRPCError({ code: 'NOT_FOUND' })
 
       return generateCodeSnippets({
         projectId: input.projectId,
         tests: projectData.tests,
         flags: projectData.featureFlags,
-      });
+      })
     }),
   createStripeCheckoutSession: protectedProcedure
     .input(z.object({ projectId: z.string(), plan: planNameSchema }))
     .mutation(async ({ ctx, input: { plan, projectId } }) => {
-      const priceId = PLANS[plan];
+      const priceId = PLANS[plan]
 
       const project = await ctx.prisma.project.findFirst({
         where: {
@@ -98,9 +97,9 @@ export const projectRouter = router({
             },
           },
         },
-      });
+      })
 
-      if (!project) throw new TRPCError({ code: "NOT_FOUND" });
+      if (!project) throw new TRPCError({ code: 'NOT_FOUND' })
 
       // checkout.sessions.create can only be called with *either* a customer ID (if it exists) *or* a customer_email (if no ID exists yet)
       const customerMetadata = project.stripeCustomerId
@@ -109,11 +108,11 @@ export const projectRouter = router({
           }
         : {
             customer_email: ctx.session.user.email!,
-          };
+          }
 
       const session = await stripe.checkout.sessions.create({
-        mode: "subscription",
-        payment_method_types: ["card"],
+        mode: 'subscription',
+        payment_method_types: ['card'],
         line_items: [
           {
             price: priceId,
@@ -126,12 +125,12 @@ export const projectRouter = router({
         },
         allow_promotion_codes: true,
         ...customerMetadata,
-        billing_address_collection: "auto",
+        billing_address_collection: 'auto',
         success_url: `${ctx.origin}/projects/${project.id}/?upgraded=true`,
         cancel_url: `${ctx.origin}/projects/${project.id}`,
-      });
+      })
 
-      return session.id;
+      return session.id
     }),
   createStripeBillingPortalUrl: protectedProcedure
     .input(z.object({ projectId: z.string() }))
@@ -145,16 +144,16 @@ export const projectRouter = router({
           },
           id: projectId,
         },
-      });
+      })
 
-      if (!project || !project.stripeCustomerId) return null;
+      if (!project || !project.stripeCustomerId) return null
 
       const { url } = await stripe.billingPortal.sessions.create({
         customer: project.stripeCustomerId,
         return_url: `${ctx.origin}/projects/${project.id}/settings`,
-      });
+      })
 
-      return url;
+      return url
     }),
   updateName: protectedProcedure
     .input(
@@ -171,8 +170,8 @@ export const projectRouter = router({
         data: {
           name: input.name,
         },
-      });
-      return project;
+      })
+      return project
     }),
   removeUser: protectedProcedure
     .input(
@@ -187,7 +186,7 @@ export const projectRouter = router({
           projectId: input.projectId,
           userId: input.userId,
         },
-      });
+      })
       await ctx.prisma.projectUser.delete({
         where: {
           userId_projectId: {
@@ -195,12 +194,12 @@ export const projectRouter = router({
             userId: input.userId,
           },
         },
-      });
+      })
     }),
   deleteProject: protectedProcedure
     .input(z.object({ projectId: z.string() }))
     .mutation(async ({ ctx, input }) => {
-      const projectId = input.projectId;
+      const projectId = input.projectId
 
       const project = await ctx.prisma.project.findFirst({
         where: {
@@ -212,25 +211,25 @@ export const projectRouter = router({
             },
           },
         },
-      });
+      })
 
-      if (!project) throw new TRPCError({ code: "UNAUTHORIZED" });
+      if (!project) throw new TRPCError({ code: 'UNAUTHORIZED' })
 
       await ctx.prisma.project.delete({
         where: {
           id: projectId,
         },
-      });
+      })
     }),
   createProject: protectedProcedure
     .input(z.object({ projectName: z.string().min(3) }))
     .mutation(async ({ ctx, input }) => {
-      const userId = ctx.session.user.id;
+      const userId = ctx.session.user.id
       const project = await ProjectService.createProject({
         projectName: input.projectName,
         userId,
-      });
-      await updateProjectsOnSession(ctx, project.id);
-      return project;
+      })
+      await updateProjectsOnSession(ctx, project.id)
+      return project
     }),
-});
+})
