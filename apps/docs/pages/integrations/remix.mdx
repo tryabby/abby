@@ -1,0 +1,137 @@
+import { Tab, Tabs, Callout } from "nextra-theme-docs";
+
+# Remix
+
+Our Remix integration works with Remix v2 or later. It uses the React SDK under the hood and just has some additional features for Remix.
+
+## Installation
+
+To get started make sure to install the package using your favorite package manager.
+
+<Tabs items={["npm", "yarn", "pnpm"]}>
+  <Tab>
+    ```bash
+    npm i @tryabby/remix
+    ```
+    </Tab>
+
+  <Tab>
+    ```bash
+    yarn add @tryabby/remix
+    ```
+</Tab>
+  <Tab>
+    ```bash
+    pnpm i @tryabby/remix 
+    ```
+    </Tab>
+</Tabs>
+
+### Create your config
+
+To use Abby you need to create your config first. You can do this by creating a file called `abby.config.ts` in your `root` folder. This file will be used to configure your project.
+
+```ts
+// abby.config.ts
+import { defineConfig } from "@tryabby/remix";
+
+export default defineConfig({
+  projectId: "<YOUR_PROJECT_ID>",
+  currentEnvironment: process.env.NODE_ENV,
+  environments: ["production", "development"],
+  tests: {
+    test: { variants: ["A", "B"] },
+    footer: { variants: ["dark", "orange", "green"] },
+    // ... your tests
+  },
+  flags: ["darkMode", "newFeature"],
+  remoteConfig: {
+    customButtonText: "String",
+  },
+});
+```
+
+### Create your Instance
+
+To use Abby in your code you will need to create a typed Hook and Provider first. You can do this by using the `createAbby` function.
+Please copy the id of your project from the dashboard to get started.
+
+```tsx
+import { createAbby } from "@tryabby/remix";
+import abbyConfig from "../abby.config";
+
+const { AbbyProvider, useAbby } = createAbby(abbyConfig);
+```
+
+### Wrap your Application
+
+You will need to wrap your application with the `AbbyProvider` to make sure the hook works.
+This is done in the `root.tsx` / `root.js` file in your Next.js project.
+
+```tsx
+import { AbbyProvider } from "../lib/abby";
+
+export function Layout({ children }: { children: React.ReactNode }) {
+  return (
+    <html lang="en">
+      <head>
+        <meta charSet="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <Meta />
+        <Links />
+      </head>
+      <body>
+        <AbbyProvider>
+          {children}
+          <ScrollRestoration />
+          <Scripts />
+        </AbbyProvider>
+      </body>
+    </html>
+  );
+}
+```
+
+<Callout type="info" emoji="💡">
+  If you want to improve the experience read the following section.
+</Callout>
+
+By default the `AbbyProvider` will fetch the data from the server on the first render (client side). This can be improved by using a `loader`. This will make sure the data is already available on the first render
+This allows you to use Server Side Reendering (SSR) with Abby.
+Doing this will prevent Flash of Original Content (FOOC) and improve the user experience.
+
+```tsx /await getAbbyData(ctx)/
+import { AbbyProvider, getAbbyData } from "../lib/abby";
+
+export const loader = async (ctx) => {
+  return json({
+    ...(await getAbbyData(ctx)),
+  });
+};
+
+export function Layout({ children }: { children: React.ReactNode }) {
+  return (
+    <html lang="en">
+      <head>
+        <meta charSet="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <Meta />
+        <Links />
+      </head>
+      <body>
+        <AbbyProvider>
+          {children}
+          <ScrollRestoration />
+          <Scripts />
+        </AbbyProvider>
+      </body>
+    </html>
+  );
+}
+
+export default withAbby(MyApp);
+```
+
+## Usage
+
+For the hook usage please read the [React SDK](/integrations/react#usage) documentation.

@@ -1,6 +1,7 @@
 {
   "nextjs": "Next.js",
   "react": "React",
+  "remix": "Remix",
   "svelte": "Svelte",
   "angular": "Angular",
   "node": "Node",

@@ -3,7 +3,13 @@ import { AnimatePresence, motion } from "framer-motion";
 import { cn } from "lib/utils";
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
-import { SiAngular, SiNextdotjs, SiReact, SiSvelte } from "react-icons/si";
+import {
+  SiAngular,
+  SiNextdotjs,
+  SiReact,
+  SiRemix,
+  SiSvelte,
+} from "react-icons/si";
 
 export const INTEGRATIONS = [
   {
@@ -37,6 +43,15 @@ export const INTEGRATIONS = [
       "Feature Flags, Remote Config, and A/B Testing for Svelte & Sveltekit",
     npmPackage: "svelte",
     additionalFeatures: ["Sveltekit Support"],
+  },
+  {
+    name: "Remix",
+    logo: <SiRemix />,
+    docsUrlSlug: "remix",
+    logoFill: "#eaf2fe",
+    description: "Feature Flags, Remote Config, and A/B Testing for Remix ",
+    npmPackage: "remix",
+    additionalFeatures: ["Server Side Rendering", "Easy to use Hooks"],
   },
   {
     name: "Angular",
