@@ -1,0 +1,23 @@
+{
+  "files": [],  // This can be omitted if not used
+  "references": [
+    {
+      "path": "./tsconfig.node.json"
+    },
+    {
+      "path": "./tsconfig.app.json"
+    },
+    {
+      "path": "./tsconfig.vitest.json"
+    }
+  ],
+  "compilerOptions": {
+    "module": "NodeNext",
+    "target": "ES2020",  // Specify a target to ensure compatibility
+    "moduleResolution": "node",  // Explicitly set module resolution strategy
+    "baseUrl": "./",  // Set a base URL for non-relative module imports
+    "strict": true,  // Enable all strict type-checking options
+    "esModuleInterop": true,  // Enables ES6 module emulation
+    "skipLibCheck": true  // Skip type checking of declaration files
+  }
+}
