@@ -1,5 +1,11 @@
 {
-  "files": [],  // This can be omitted if not used
+  "files": [],
+  "target": "ES2020",
+  "moduleResolution": "node",
+  "baseUrl": "./",
+  "strict": true,
+  "esModuleInterop": true,
+  "skipLibCheck": true
   "references": [
     {
       "path": "./tsconfig.node.json"
