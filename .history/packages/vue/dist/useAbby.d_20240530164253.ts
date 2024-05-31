@@ -1,5 +1,6 @@
 import { ref, onMounted } from 'vue';
-import { createAbby, ABTestReturnValue } from '@tryabby/core';
+import { createAbby } from '@tryabby/core';
+import type { ABTestReturnValue } from '@tryabby/core';
 
 export function useAbby(experimentName: string): ABTestReturnValue {
   const abby = createAbby();
