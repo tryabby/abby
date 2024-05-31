@@ -1,0 +1,20 @@
+{
+  "name": "@tryabby/vue",
+  "version": "0.1.0",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "test": "jest"
+  },
+  "dependencies": {
+    "@tryabby/core": "^1.0.0",
+    "vue": "^3.0.0"
+  },
+  "devDependencies": {
+    "typescript": "^4.0.0",
+    "@vue/compiler-sfc": "^3.0.0",
+    "jest": "^26.0.0",
+    "@types/jest": "^26.0.0"
+  }
+}
