@@ -28,7 +28,7 @@
     "@changesets/cli": "^2.26.0",
     "eslint-config-custom": "workspace:*",
     "prettier": "latest",
-    "turbo": "latest"
+    "turbo": "^2.0.4"
   },
   "engines": {
     "node": ">=20.12.0"
