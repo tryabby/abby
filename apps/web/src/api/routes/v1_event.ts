@@ -13,8 +13,8 @@ import { redis } from "server/db/redis";
 export const rateLimiter = new RateLimiterRedis({
   storeClient: redis,
   keyPrefix: "rateLimiter",
-  points: 20, // Number of points
-  duration: 20, // Per 10 seconds
+  points: 10, // Number of points
+  duration: 10, // Per 10 seconds
 });
 
 export const checkRateLimit = async (ip: string) => {
@@ -90,7 +90,7 @@ export function makeEventRoute() {
         console.error(err);
         return c.text("Internal Server Error", 500);
       }
-    },
+    }
   );
 
   return app;
