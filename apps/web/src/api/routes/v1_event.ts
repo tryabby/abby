@@ -1,13 +1,30 @@
 import { zValidator } from "@hono/zod-validator";
 import { abbyEventSchema, AbbyEventType } from "@tryabby/core";
-import { Ratelimit } from "@upstash/ratelimit";
-import { Redis } from "@upstash/redis";
 import { Hono } from "hono";
 
 import isbot from "isbot";
 import { EventService } from "server/services/EventService";
 import { RequestCache } from "server/services/RequestCache";
 import { RequestService } from "server/services/RequestService";
+
+import { RateLimiterRedis } from "rate-limiter-flexible";
+import { redis } from "server/db/redis";
+
+export const rateLimiter = new RateLimiterRedis({
+  storeClient: redis,
+  keyPrefix: "rateLimiter",
+  points: 20, // Number of points
+  duration: 20, // Per 10 seconds
+});
+
+export const checkRateLimit = async (ip: string) => {
+  try {
+    await rateLimiter.consume(ip);
+    return true;
+  } catch (rateLimiterRes) {
+    return false;
+  }
+};
 
 export function makeEventRoute() {
   const app = new Hono().post(
@@ -26,11 +43,6 @@ export function makeEventRoute() {
         //   // we only want to rate limit in production
         if (process.env.NODE_ENV === "production") {
           // Create a new ratelimiter, that allows 10 requests per 10 seconds
-          const ratelimit = new Ratelimit({
-            redis: Redis.fromEnv(),
-            limiter: Ratelimit.slidingWindow(10, "10 s"),
-          });
-
           const clientIp = (c.req.header("x-forwarded-for") || "")
             .split(",")
             .pop()
@@ -42,7 +54,7 @@ export function makeEventRoute() {
             return c.text("Internal Server Error", 500);
           }
 
-          const { success } = await ratelimit.limit(clientIp);
+          const success = await checkRateLimit(clientIp);
 
           if (!success) {
             return c.text("Too Many Requests", 429);
@@ -78,7 +90,7 @@ export function makeEventRoute() {
         console.error(err);
         return c.text("Internal Server Error", 500);
       }
-    }
+    },
   );
 
   return app;
