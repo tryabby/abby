@@ -1,5 +1,6 @@
 import { TRPCError } from "@trpc/server";
 import { getProjectPaidPlan } from "lib/stripe";
+import { ConfigCache } from "server/common/config-cache";
 import { getLimitByPlan } from "server/common/plans";
 import { prisma } from "server/db/client";
 
@@ -26,6 +27,7 @@ export abstract class TestService {
       },
       include: {
         tests: true,
+        environments: true,
       },
     });
 
@@ -39,6 +41,13 @@ export abstract class TestService {
         message: `You have reached the limit of ${limits.tests} tests for your plan.`,
       });
     }
+
+    project.environments.forEach((env) => {
+      ConfigCache.deleteConfig({
+        environment: env.name,
+        projectId: env.projectId,
+      });
+    });
 
     return await prisma.test.create({
       data: {

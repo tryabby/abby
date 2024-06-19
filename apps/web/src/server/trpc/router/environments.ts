@@ -4,6 +4,7 @@ import { getLimitByPlan } from "server/common/plans";
 import { z } from "zod";
 import { protectedProcedure, router } from "../trpc";
 import { FeatureFlagType } from "@prisma/client";
+import { ConfigCache } from "server/common/config-cache";
 
 export const environmentRouter = router({
   addEnvironment: protectedProcedure
@@ -98,6 +99,10 @@ export const environmentRouter = router({
       });
 
       if (!env) throw new TRPCError({ code: "UNAUTHORIZED" });
+      ConfigCache.deleteConfig({
+        environment: env.name,
+        projectId: env.projectId,
+      });
       return ctx.prisma.environment.update({
         where: {
           id: input.environmentId,
@@ -125,6 +130,10 @@ export const environmentRouter = router({
 
       if (!env) throw new TRPCError({ code: "UNAUTHORIZED" });
 
+      ConfigCache.deleteConfig({
+        environment: env.name,
+        projectId: env.projectId,
+      });
       // delete all environment
       await ctx.prisma.environment.delete({
         where: {

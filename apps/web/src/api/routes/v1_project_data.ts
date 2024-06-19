@@ -8,13 +8,9 @@ import { z } from "zod";
 import createCache from "server/common/memory-cache";
 import { transformFlagValue } from "lib/flags";
 import { jobManager } from "server/queue/Manager";
+import { ConfigCache } from "server/common/config-cache";
 
 export const X_ABBY_CACHE_HEADER = "X-Abby-Cache";
-
-const configCache = createCache<string, AbbyDataResponse>({
-  name: "configCache",
-  expireAfterMilliseconds: 1000 * 10,
-});
 
 async function getAbbyResponseWithCache({
   environment,
@@ -26,7 +22,7 @@ async function getAbbyResponseWithCache({
   c: Context;
 }) {
   startTime(c, "readCache");
-  const cachedConfig = configCache.get(projectId + environment);
+  const cachedConfig = ConfigCache.getConfig({ environment, projectId });
   endTime(c, "readCache");
 
   c.header(X_ABBY_CACHE_HEADER, cachedConfig !== undefined ? "HIT" : "MISS");
@@ -77,7 +73,7 @@ async function getAbbyResponseWithCache({
       }),
   } satisfies AbbyDataResponse;
 
-  configCache.set(projectId + environment, response);
+  ConfigCache.setConfig({ environment, projectId, value: response });
   return response;
 }
 
