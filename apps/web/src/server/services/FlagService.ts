@@ -2,6 +2,7 @@ import { FeatureFlagType, Prisma } from "@prisma/client";
 import { TRPCError } from "@trpc/server";
 import { getFlagCount } from "lib/flags";
 import { getProjectPaidPlan } from "lib/stripe";
+import { ConfigCache } from "server/common/config-cache";
 import { getLimitByPlan } from "server/common/plans";
 import { prisma } from "server/db/client";
 import { validateFlag } from "utils/validateFlags";
@@ -58,7 +59,7 @@ export abstract class FlagService {
       },
     });
 
-    return await prisma.$transaction(async (tx) => {
+    await prisma.$transaction(async (tx) => {
       const newFlag = await tx.featureFlag.create({
         data: {
           name: flagName,
@@ -85,6 +86,12 @@ export abstract class FlagService {
           flagValueId: featureFlag.id,
           newValue: value,
         })) satisfies Prisma.FeatureFlagHistoryCreateManyInput[],
+      });
+    });
+    projectEnvs.forEach((env) => {
+      ConfigCache.deleteConfig({
+        projectId,
+        environment: env.name,
       });
     });
   }

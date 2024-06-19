@@ -7,6 +7,7 @@ import { getLimitByPlan } from "server/common/plans";
 import { getProjectPaidPlan } from "lib/stripe";
 import { EventService } from "server/services/EventService";
 import { TestService } from "server/services/TestService";
+import { ConfigCache } from "server/common/config-cache";
 
 export const testRouter = router({
   createTest: protectedProcedure
@@ -50,10 +51,24 @@ export const testRouter = router({
             },
           },
         },
+        include: {
+          project: {
+            include: {
+              environments: true,
+            },
+          },
+        },
       });
       if (!currentTest) {
         throw new TRPCError({ code: "UNAUTHORIZED" });
       }
+
+      currentTest.project.environments.forEach((env) => {
+        ConfigCache.deleteConfig({
+          environment: env.name,
+          projectId: env.projectId,
+        });
+      });
       await ctx.prisma.test.update({
         where: {
           id: input.testId,
@@ -89,11 +104,24 @@ export const testRouter = router({
             },
           },
         },
+        include: {
+          project: {
+            include: {
+              environments: true,
+            },
+          },
+        },
       });
       if (!currentTest) {
         throw new TRPCError({ code: "UNAUTHORIZED" });
       }
 
+      currentTest.project.environments.forEach((env) => {
+        ConfigCache.deleteConfig({
+          environment: env.name,
+          projectId: env.projectId,
+        });
+      });
       await Promise.all(
         input.weights.map((w) =>
           prisma.option.update({
@@ -154,12 +182,25 @@ export const testRouter = router({
             },
           },
         },
+        include: {
+          project: {
+            include: {
+              environments: true,
+            },
+          },
+        },
       });
 
       if (!currentTest) {
         throw new TRPCError({ code: "UNAUTHORIZED" });
       }
 
+      currentTest.project.environments.forEach((env) => {
+        ConfigCache.deleteConfig({
+          environment: env.name,
+          projectId: env.projectId,
+        });
+      });
       await prisma.$transaction([
         prisma.test.delete({
           where: {
