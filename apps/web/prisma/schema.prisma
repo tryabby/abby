@@ -307,4 +307,6 @@ model ApiRequest {
   project   Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
 
   @@index([projectId])
+  @@index([createdAt])
+  @@index([type])
 }

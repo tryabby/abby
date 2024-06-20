@@ -16,11 +16,25 @@ export const getQueueingRedisConnection = () =>
 
 export const eventQueue = new Queue<EventJobPayload>(QUEUE_NAMES.events, {
   connection: getQueueingRedisConnection(),
+  defaultJobOptions: {
+    attempts: 3,
+    backoff: {
+      type: "exponential",
+      delay: 1000,
+    },
+  },
 });
 
 export const afterDataRequestQueue = new Queue<AfterRequestJobPayload>(
   QUEUE_NAMES.afterDataRequestQueue,
   {
     connection: getQueueingRedisConnection(),
+    defaultJobOptions: {
+      attempts: 3,
+      backoff: {
+        type: "exponential",
+        delay: 1000,
+      },
+    },
   }
 );
