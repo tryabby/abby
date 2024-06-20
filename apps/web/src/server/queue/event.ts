@@ -54,6 +54,7 @@ export const eventWorker = new Worker<EventJobPayload>(
   },
   {
     connection: getQueueingRedisConnection(),
+    concurrency: 50,
   }
 );
 

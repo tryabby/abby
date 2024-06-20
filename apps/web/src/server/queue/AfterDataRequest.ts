@@ -39,6 +39,7 @@ export const afterDataRequestWorker = new Worker<AfterRequestJobPayload>(
   },
   {
     connection: getQueueingRedisConnection(),
+    concurrency: 50,
   }
 );
 
