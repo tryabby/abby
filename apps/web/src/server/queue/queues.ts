@@ -38,3 +38,9 @@ export const afterDataRequestQueue = new Queue<AfterRequestJobPayload>(
     },
   }
 );
+
+[afterDataRequestQueue, eventQueue].forEach((queue) => {
+  queue.on("error", (error) => {
+    console.error(`[${queue.name}]: Error`, error);
+  });
+});

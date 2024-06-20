@@ -17,7 +17,7 @@ const EventTypeToRequestType = {
   [AbbyEventType.PING]: "TRACK_VIEW",
 } satisfies Record<AbbyEventType, ApiRequestType>;
 
-export const eventWorker = new Worker<EventJobPayload>(
+const eventWorker = new Worker<EventJobPayload>(
   eventQueue.name,
   async ({ data: event }) => {
     // TODO: add those to a queue and process them in a background job as they are not critical
@@ -68,3 +68,9 @@ eventWorker.on("completed", (job) => {
     console.log(`[${eventQueue.name}]: Job completed`, job.id);
   }
 });
+
+eventWorker.on("error", (error) => {
+  console.log(`[${eventWorker.name}]: Error`, error);
+});
+
+export default eventWorker;

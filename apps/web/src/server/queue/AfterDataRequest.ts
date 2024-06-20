@@ -13,7 +13,7 @@ export type AfterRequestJobPayload = {
   apiVersion: ApiVersion;
 };
 
-export const afterDataRequestWorker = new Worker<AfterRequestJobPayload>(
+const afterDataRequestWorker = new Worker<AfterRequestJobPayload>(
   afterDataRequestQueue.name,
   async ({ data: { apiVersion, functionDuration, projectId } }) => {
     const { events, planLimits, plan, is80PercentOfLimit } =
@@ -53,3 +53,9 @@ afterDataRequestWorker.on("completed", (job) => {
     console.log(`[${afterDataRequestQueue.name}]: Job completed`, job.id);
   }
 });
+
+afterDataRequestWorker.on("error", (error) => {
+  console.log(`[${afterDataRequestQueue.name}]: Error`, error);
+});
+
+export default afterDataRequestWorker;
