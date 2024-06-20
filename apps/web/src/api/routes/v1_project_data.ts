@@ -5,10 +5,9 @@ import { zValidator } from "@hono/zod-validator";
 import { prisma } from "server/db/client";
 import { ABBY_WINDOW_KEY, AbbyDataResponse } from "@tryabby/core";
 import { z } from "zod";
-import createCache from "server/common/memory-cache";
 import { transformFlagValue } from "lib/flags";
-import { jobManager } from "server/queue/Manager";
 import { ConfigCache } from "server/common/config-cache";
+import { afterDataRequestQueue } from "server/queue/queues";
 
 export const X_ABBY_CACHE_HEADER = "X-Abby-Cache";
 
@@ -109,7 +108,7 @@ export function makeProjectDataRoute() {
 
           const duration = performance.now() - now;
 
-          jobManager.emit("after-data-request", {
+          afterDataRequestQueue.add("after-data-request", {
             apiVersion: "V1",
             functionDuration: duration,
             projectId,
@@ -156,7 +155,7 @@ export function makeProjectDataRoute() {
 
           const duration = performance.now() - now;
 
-          jobManager.emit("after-data-request", {
+          afterDataRequestQueue.add("after-data-request", {
             apiVersion: "V1",
             functionDuration: duration,
             projectId,
