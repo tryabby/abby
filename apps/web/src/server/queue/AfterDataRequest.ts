@@ -40,6 +40,7 @@ export const afterDataRequestWorker = new Worker<AfterRequestJobPayload>(
   {
     connection: getQueueingRedisConnection(),
     concurrency: 50,
+    removeOnComplete: { count: 100 },
   }
 );
 
