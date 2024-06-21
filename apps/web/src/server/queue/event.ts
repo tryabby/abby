@@ -69,6 +69,10 @@ eventWorker.on("completed", (job) => {
   }
 });
 
+eventWorker.on("failed", (job) => {
+  console.log(`[${eventQueue.name}]: Job failed`, job?.id, job?.failedReason);
+});
+
 eventWorker.on("error", (error) => {
   console.log(`[${eventWorker.name}]: Error`, error);
 });

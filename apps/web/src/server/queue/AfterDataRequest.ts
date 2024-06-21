@@ -54,6 +54,14 @@ afterDataRequestWorker.on("completed", (job) => {
   }
 });
 
+afterDataRequestWorker.on("failed", (job) => {
+  console.log(
+    `[${afterDataRequestQueue.name}]: Job failed`,
+    job?.id,
+    job?.failedReason
+  );
+});
+
 afterDataRequestWorker.on("error", (error) => {
   console.log(`[${afterDataRequestQueue.name}]: Error`, error);
 });
