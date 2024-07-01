@@ -1,4 +1,4 @@
-import { Project } from "@prisma/client";
+import { Project } from "@tryabby/db";
 import { Button } from "@react-email/button";
 import { Container } from "@react-email/container";
 import { Head } from "@react-email/head";

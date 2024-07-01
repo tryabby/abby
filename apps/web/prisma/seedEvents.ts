@@ -1,4 +1,4 @@
-import { PrismaClient, Prisma } from "@prisma/client";
+import { PrismaClient, Prisma } from "@tryabby/db";
 import { AbbyEventType } from "@tryabby/core";
 
 const prisma = new PrismaClient();

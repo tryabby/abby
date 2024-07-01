@@ -1,4 +1,4 @@
-import { Test, Option, FeatureFlag, Environment } from "@prisma/client";
+import { Test, Option, FeatureFlag, Environment } from "@tryabby/db";
 import prettier from "prettier";
 import path from "path";
 import * as fs from "fs/promises";

@@ -1,16 +1,16 @@
 import { testClient } from "hono/testing";
 import { makeLegacyProjectDataRoute } from "./legacy_project_data";
-import { jobManager } from "server/queue/Manager";
-import { FeatureFlag, FeatureFlagValue, Option, Test } from "@prisma/client";
-import { Decimal } from "@prisma/client/runtime/library";
+import { afterDataRequestQueue } from "@tryabby/queue";
+import { FeatureFlag, FeatureFlagValue, Option, Test } from "@tryabby/db";
+import { add } from "lodash-es";
 
 vi.mock("../../env/server.mjs", () => ({
   env: {},
 }));
 
-vi.mock("server/queue/Manager", () => ({
-  jobManager: {
-    emit: vi.fn().mockResolvedValue(null),
+vi.mock("@tryabby/queue", () => ({
+  afterDataRequestQueue: {
+    add: vi.fn().mockResolvedValue(null),
   },
 }));
 
@@ -40,16 +40,16 @@ vi.mock("server/db/client", () => ({
           updatedAt: new Date(),
           options: [
             {
-              chance: { toNumber: () => 0.25 } as Decimal,
+              chance: { toNumber: () => 0.25 } as any,
             },
             {
-              chance: { toNumber: () => 0.25 } as Decimal,
+              chance: { toNumber: () => 0.25 } as any,
             },
             {
-              chance: { toNumber: () => 0.25 } as Decimal,
+              chance: { toNumber: () => 0.25 } as any,
             },
             {
-              chance: { toNumber: () => 0.25 } as Decimal,
+              chance: { toNumber: () => 0.25 } as any,
             },
           ],
         },
@@ -102,8 +102,8 @@ describe("Get Config", () => {
     expect(data.flags?.[0]?.name).toBe("First Flag");
     expect(data.flags?.[0]?.isEnabled).toBe(true);
 
-    expect(vi.mocked(jobManager.emit)).toHaveBeenCalledTimes(1);
-    expect(vi.mocked(jobManager.emit)).toHaveBeenCalledWith(
+    expect(vi.mocked(afterDataRequestQueue.add)).toHaveBeenCalledTimes(1);
+    expect(vi.mocked(afterDataRequestQueue.add)).toHaveBeenCalledWith(
       "after-data-request",
       expect.objectContaining({})
     );

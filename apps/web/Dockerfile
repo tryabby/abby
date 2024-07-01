@@ -3,6 +3,7 @@ ENV PNPM_HOME="/pnpm"
 ENV PATH="$PNPM_HOME:$PATH"
 RUN corepack enable
 
+
 FROM base AS builder
 RUN apk add --no-cache libc6-compat
 RUN apk update
@@ -26,8 +27,9 @@ COPY --from=builder /app/out/pnpm-lock.yaml ./pnpm-lock.yaml
 RUN pnpm install
  
 # Build the project
+ENV SKIP_ENV_VALIDATION=1
 COPY --from=builder /app/out/full/ .
-RUN pnpm turbo run db:generate --filter=web
+RUN pnpm turbo run db:generate
 RUN pnpm turbo run build --filter=web...
  
 FROM base AS runner
@@ -46,10 +48,8 @@ COPY --from=installer /app/apps/web/package.json .
 COPY --from=installer --chown=nextjs:nodejs /app/apps/web/.next/standalone ./
 COPY --from=installer --chown=nextjs:nodejs /app/apps/web/.next/static ./apps/web/.next/static
 COPY --from=installer --chown=nextjs:nodejs /app/apps/web/public ./apps/web/public
-COPY --from=installer --chown=nextjs:nodejs /app/apps/web/prisma ./apps/web/prisma
-
-
+COPY --from=installer --chown=nextjs:nodejs /app/packages/db/prisma ./apps/web/prisma
 
 # Set your entrypoint script as the entrypoint
 # CMD ["cd apps/web && npm run start:docker"]
-CMD ["sh", "-cx", "cd ./apps/web && npm run start:docker"]
+CMD node apps/web/server.js

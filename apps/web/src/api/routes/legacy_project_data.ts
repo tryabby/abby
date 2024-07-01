@@ -10,7 +10,7 @@ import { transformFlagValue } from "lib/flags";
 import createCache from "server/common/memory-cache";
 
 import { z } from "zod";
-import { afterDataRequestQueue } from "server/queue/queues";
+import { afterDataRequestQueue } from "@tryabby/queue";
 
 const configCache = createCache<string, LegacyAbbyDataResponse>({
   name: "legacyConfigCache",

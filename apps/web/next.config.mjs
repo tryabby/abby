@@ -36,13 +36,15 @@ const config = {
   output: "standalone",
   swcMinify: true,
   pageExtensions: ["ts", "tsx", "js", "jsx", "md", "mdx"],
-  transpilePackages: ["lodash-es"],
+  transpilePackages: [
+    "lodash-es",
+    "@tryabby/db",
+    "@tryabby/redis",
+    "@tryabby/queue",
+  ],
   i18n: {
     locales: ["en"],
     defaultLocale: "en",
-  },
-  experimental: {
-    instrumentationHook: true,
   },
 };
 

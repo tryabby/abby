@@ -8,7 +8,7 @@ import ms from "ms";
 import { getLimitByPlan, PlanName, PLANS } from "server/common/plans";
 import { prisma } from "server/db/client";
 import { AbbyEvent } from "@tryabby/core";
-import { RequestCache } from "./RequestCache";
+import { RequestCache } from "@tryabby/services";
 
 export abstract class EventService {
   static async createEvent({

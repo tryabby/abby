@@ -1,0 +1,19 @@
+{
+  "name": "@tryabby/queue",
+  "private": true,
+  "version": "0.0.0",
+  "main": "src/index.ts",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "dependencies": {
+    "@tryabby/core": "workspace:*",
+    "@tryabby/db": "workspace:*",
+    "@tryabby/redis": "workspace:*",
+    "bullmq": "^5.8.2"
+  },
+  "devDependencies": {
+    "tsconfig": "workspace:*",
+    "typescript": "^5.5.2"
+  }
+}

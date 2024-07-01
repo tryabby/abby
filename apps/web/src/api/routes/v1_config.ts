@@ -3,7 +3,7 @@ import { zValidator } from "@hono/zod-validator";
 import { prisma } from "server/db/client";
 import { hashString } from "utils/apiKey";
 import * as ConfigService from "server/services/ConfigService";
-import { ApiKey } from "@prisma/client";
+import { ApiKey } from "@tryabby/db";
 import { abbyConfigSchema } from "@tryabby/core";
 
 const apiKeyMiddleware: MiddlewareHandler<{

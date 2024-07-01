@@ -3,7 +3,7 @@ import dayjs from "dayjs";
 import { FaHistory } from "react-icons/fa";
 import { match, P } from "ts-pattern";
 
-import { FeatureFlagHistory, FeatureFlagType } from "@prisma/client";
+import { FeatureFlagHistory, FeatureFlagType } from "@tryabby/db";
 import { Tooltip, TooltipContent, TooltipTrigger } from "components/Tooltip";
 import relativeTime from "dayjs/plugin/relativeTime";
 import { useState } from "react";

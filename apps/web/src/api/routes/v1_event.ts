@@ -3,11 +3,8 @@ import { abbyEventSchema, AbbyEventType } from "@tryabby/core";
 import { Hono } from "hono";
 
 import isbot from "isbot";
-import { EventService } from "server/services/EventService";
-import { RequestCache } from "server/services/RequestCache";
-import { RequestService } from "server/services/RequestService";
 import { checkRateLimit } from "server/common/ratelimit";
-import { eventQueue } from "server/queue/queues";
+import { eventQueue } from "@tryabby/queue";
 
 export function makeEventRoute() {
   const app = new Hono().post(

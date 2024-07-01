@@ -1,4 +1,4 @@
-import { ROLE, User } from "@prisma/client";
+import { ROLE, User } from "@tryabby/db";
 import clsx from "clsx";
 import { DashboardButton } from "components/DashboardButton";
 import {

@@ -1,4 +1,4 @@
-import { Option, ROLE } from "@prisma/client";
+import { Option, ROLE } from "@tryabby/db";
 import { TRPCError } from "@trpc/server";
 import { PLANS, planNameSchema } from "server/common/plans";
 import { stripe } from "server/common/stripe";

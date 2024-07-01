@@ -1,4 +1,4 @@
-import { ApiRequest } from "@prisma/client";
+import { ApiRequest } from "@tryabby/db";
 import { prisma } from "server/db/client";
 
 export abstract class RequestService {

@@ -7,7 +7,7 @@ import { ABBY_WINDOW_KEY, AbbyDataResponse } from "@tryabby/core";
 import { z } from "zod";
 import { transformFlagValue } from "lib/flags";
 import { ConfigCache } from "server/common/config-cache";
-import { afterDataRequestQueue } from "server/queue/queues";
+import { afterDataRequestQueue } from "@tryabby/queue";
 
 export const X_ABBY_CACHE_HEADER = "X-Abby-Cache";
 

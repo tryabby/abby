@@ -1,4 +1,4 @@
-import { FeatureFlagType } from "@prisma/client";
+import { FeatureFlagType } from "@tryabby/db";
 import { PlanName } from "server/common/plans";
 
 export type Plan = PlanName | "HOBBY";

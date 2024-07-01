@@ -1,0 +1,16 @@
+{
+  "name": "@tryabby/redis",
+  "private": true,
+  "version": "0.0.0",
+  "main": "src/index.ts",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "dependencies": {
+    "ioredis": "^5.4.1"
+  },
+  "devDependencies": {
+    "tsconfig": "workspace:*",
+    "typescript": "^5.5.2"
+  }
+}

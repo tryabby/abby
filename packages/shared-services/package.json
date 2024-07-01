@@ -1,0 +1,17 @@
+{
+  "name": "@tryabby/services",
+  "private": true,
+  "version": "0.0.0",
+  "main": "src/index.ts",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "dependencies": {
+    "@tryabby/db": "workspace:*",
+    "@tryabby/redis": "workspace:*"
+  },
+  "devDependencies": {
+    "tsconfig": "workspace:*",
+    "typescript": "^5.5.2"
+  }
+}

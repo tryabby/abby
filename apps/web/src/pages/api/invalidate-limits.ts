@@ -1,7 +1,7 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import { z } from "zod";
 import { prisma } from "server/db/client";
-import { RequestCache } from "server/services/RequestCache";
+import { RequestCache } from "@tryabby/services";
 import dayjs from "dayjs";
 import { PLANS } from "server/common/plans";
 

@@ -1,0 +1,24 @@
+{
+  "name": "@tryabby/db",
+  "private": true,
+  "version": "0.0.0",
+  "main": "src/index.ts",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "scripts": {
+    "db:generate": "pnpm with-env prisma generate",
+    "db:migrate": "pnpm with-env prisma migrate dev",
+    "db:migrate-prod": "pnpm with-env prisma migrate deploy",
+    "seed:events": "ts-node --compiler-options {\\\"module\\\":\\\"CommonJS\\\"} prisma/seedEvents.ts",
+    "with-env": "dotenv -e ../../.env -c --"
+  },
+  "dependencies": {
+    "@prisma/client": "5.15.1"
+  },
+  "devDependencies": {
+    "prisma": "5.15.1",
+    "tsconfig": "workspace:*",
+    "typescript": "^5.5.2"
+  }
+}

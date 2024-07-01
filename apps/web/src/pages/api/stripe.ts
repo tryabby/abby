@@ -5,7 +5,7 @@ import Stripe from "stripe";
 import { prisma } from "server/db/client";
 import { stripe } from "server/common/stripe";
 import dayjs from "dayjs";
-import { RequestCache } from "server/services/RequestCache";
+import { RequestCache } from "@tryabby/services";
 
 const secondsToMsDate = (seconds: number) => new Date(seconds * 1000);
 

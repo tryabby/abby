@@ -1,4 +1,4 @@
-import { FeatureFlagType } from "@prisma/client";
+import { FeatureFlagType } from "@tryabby/db";
 import { InferQueryResult } from "@trpc/react-query/dist/utils/inferReactQueryProcedure";
 import { AddFeatureFlagModal } from "components/AddFeatureFlagModal";
 import { CreateEnvironmentModal } from "components/CreateEnvironmentModal";

@@ -27,7 +27,7 @@ import {
   useSortable,
   verticalListSortingStrategy,
 } from "@dnd-kit/sortable";
-import { Environment, FeatureFlagType } from "@prisma/client";
+import { Environment, FeatureFlagType } from "@tryabby/db";
 import { CSS } from "@dnd-kit/utilities";
 import { MdDragIndicator } from "react-icons/md";
 import { Button } from "components/ui/button";

@@ -3,7 +3,7 @@ import { getProjectPaidPlan } from "lib/stripe";
 import { getLimitByPlan } from "server/common/plans";
 import { z } from "zod";
 import { protectedProcedure, router } from "../trpc";
-import { FeatureFlagType } from "@prisma/client";
+import { FeatureFlagType } from "@tryabby/db";
 import { ConfigCache } from "server/common/config-cache";
 
 export const environmentRouter = router({

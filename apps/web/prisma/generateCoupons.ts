@@ -1,4 +1,4 @@
-import { PrismaClient } from "@prisma/client";
+import { PrismaClient } from "@tryabby/db";
 import fs from "node:fs/promises";
 import path from "node:path";
 

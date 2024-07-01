@@ -1,4 +1,4 @@
-import { FeatureFlag, FeatureFlagType } from "@prisma/client";
+import { FeatureFlag, FeatureFlagType } from "@tryabby/db";
 import {
   assertUnreachable,
   DEFAULT_FEATURE_FLAG_VALUE,

@@ -1,4 +1,4 @@
-import { Event, Test } from "@prisma/client";
+import { Event, Test } from "@tryabby/db";
 import { ReactNode, useId, useState } from "react";
 import { AbbyEventType } from "@tryabby/core";
 import { Serves } from "./Serves";

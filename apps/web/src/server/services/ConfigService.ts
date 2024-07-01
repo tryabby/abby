@@ -12,7 +12,7 @@ import {
 import { prisma } from "server/db/client";
 import { TestService } from "./TestService";
 import { FlagService } from "./FlagService";
-import { FeatureFlagType } from "@prisma/client";
+import { FeatureFlagType } from "@tryabby/db";
 import { FlagValueString } from "types/flags";
 
 export async function handleGET({ projectId }: { projectId: string }) {

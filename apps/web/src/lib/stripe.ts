@@ -1,7 +1,7 @@
 import { loadStripe } from "@stripe/stripe-js";
 import { env } from "env/client.mjs";
 import { trpc } from "utils/trpc";
-import { Project } from "@prisma/client";
+import { Project } from "@tryabby/db";
 import { PlanName, PLANS } from "server/common/plans";
 
 export const useAbbyStripe = () => {

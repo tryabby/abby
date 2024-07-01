@@ -1,4 +1,4 @@
-import { User } from "@prisma/client";
+import { User } from "@tryabby/db";
 import { useProjectId } from "lib/hooks/useProjectId";
 import { toast } from "react-hot-toast";
 import { trpc } from "utils/trpc";

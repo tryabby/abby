@@ -1,4 +1,4 @@
-import { ROLE } from "@prisma/client";
+import { ROLE } from "@tryabby/db";
 import { BETA_PRICE_ID } from "lib/stripe";
 import { env } from "process";
 import { prisma } from "server/db/client";

@@ -1,4 +1,4 @@
-import { FeatureFlagType } from "@prisma/client";
+import { FeatureFlagType } from "@tryabby/db";
 import { TRPCClientError } from "@trpc/client";
 import { TRPC_ERROR_CODES_BY_KEY } from "@trpc/server/rpc";
 import { getFlagTypeClassName, transformDBFlagTypeToclient } from "lib/flags";

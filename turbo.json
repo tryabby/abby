@@ -5,10 +5,6 @@
       "dependsOn": ["^build", "^db:generate"],
       "outputs": ["dist/**", ".next/**"]
     },
-    "build:prod": {
-      "dependsOn": ["^build"],
-      "outputs": [".next/**"]
-    },
     "test": {
       "outputs": ["coverage/**"]
     },
@@ -16,15 +12,20 @@
       "outputs": []
     },
     "dev": {
+      "dependsOn": ["^db:generate"],
       "cache": false
     },
     "db:migrate": {
+      "cache": false
+    },
+    "db:migrate-prod": {
       "cache": false
     },
     "db:generate": {
       "cache": false
     }
   },
+  "globalDependencies": [".env"],
   "globalEnv": [
     "VERCEL_URL",
     "PORT",
@@ -56,7 +57,9 @@
     "GOOGLE_CLIENT_ID",
     "GOOGLE_CLIENT_SECRET",
     "HASHING_SECRET",
-    "USE_PLANETSCALE",
-    "NEXT_RUNTIME"
+    "NEXT_RUNTIME",
+    "WATCH",
+    "CONCURRENCY",
+    "WORKER_PORT"
   ]
 }

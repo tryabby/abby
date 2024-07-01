@@ -1,4 +1,4 @@
-import { Prisma, PrismaClient } from "@prisma/client";
+import { Prisma, PrismaClient } from "@tryabby/db";
 import { Session } from "next-auth";
 import { encode, getToken } from "next-auth/jwt";
 import { NextApiRequest, NextApiResponse } from "next/types";

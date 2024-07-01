@@ -1,4 +1,4 @@
-import { Prisma, Event } from "@prisma/client";
+import { Prisma, Event } from "@tryabby/db";
 import {
   Chart as ChartJS,
   BarElement,
