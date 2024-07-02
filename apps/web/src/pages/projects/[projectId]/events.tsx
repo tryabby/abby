@@ -86,7 +86,9 @@ const EventsPage: NextPageWithLayout = () => {
                   imageUrl={event.user.image ?? undefined}
                   className="h-5 w-5 rounded-lg text-[10px]"
                 />
-                <span>{event.user.name}</span>
+                <span>
+                  {event.user.name ?? event.user.email ?? "Deleted User"}
+                </span>
               </TableCell>
               <TableCell
                 className="text-right"
