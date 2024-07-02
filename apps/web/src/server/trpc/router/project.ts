@@ -231,4 +231,56 @@ export const projectRouter = router({
       await updateProjectsOnSession(ctx, project.id);
       return project;
     }),
+  getEventLogs: protectedProcedure
+    .input(
+      z.object({
+        projectId: z.string(),
+        limit: z.number().min(1).max(100).nullish(),
+        cursor: z.string().nullish(),
+      })
+    )
+    .query(async ({ ctx, input }) => {
+      const cursor = input.cursor;
+      const limit = input.limit ?? 50;
+      const logItems = await ctx.prisma.featureFlagHistory.findMany({
+        take: limit + 1,
+        where: {
+          flagValue: {
+            flag: {
+              project: {
+                id: input.projectId,
+                users: {
+                  some: {
+                    userId: ctx.session.user.id,
+                  },
+                },
+              },
+            },
+          },
+        },
+        orderBy: {
+          createdAt: "desc",
+        },
+        include: {
+          user: true,
+          flagValue: {
+            include: {
+              flag: { select: { name: true } },
+              environment: { select: { name: true } },
+            },
+          },
+        },
+        cursor: cursor ? { id: cursor } : undefined,
+      });
+
+      let nextCursor: typeof cursor | undefined = undefined;
+      if (logItems.length > limit) {
+        const nextItem = logItems.pop();
+        nextCursor = nextItem!.id;
+      }
+      return {
+        items: logItems,
+        nextCursor,
+      };
+    }),
 });
