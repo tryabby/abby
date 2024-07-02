@@ -19,6 +19,8 @@ import {
   TableRow,
 } from "components/ui/table";
 import { Button } from "components/ui/button";
+import { Tooltip, TooltipContent, TooltipTrigger } from "components/Tooltip";
+import toast from "react-hot-toast";
 
 dayjs.extend(relativeTime);
 
@@ -90,11 +92,26 @@ const EventsPage: NextPageWithLayout = () => {
                   {event.user.name ?? event.user.email ?? "Deleted User"}
                 </span>
               </TableCell>
-              <TableCell
-                className="text-right"
-                title={event.createdAt.toLocaleString()}
-              >
-                {dayjs(event.createdAt).fromNow()}
+              <TableCell className="text-right">
+                <Tooltip>
+                  <TooltipTrigger
+                    onClick={async () => {
+                      try {
+                        await navigator.clipboard.writeText(
+                          event.createdAt.toISOString()
+                        );
+                        toast.success("Copied date to clipboard");
+                      } catch (e) {
+                        toast.error("Failed to copy date to clipboard");
+                      }
+                    }}
+                  >
+                    {dayjs(event.createdAt).fromNow()}
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    {event.createdAt.toLocaleString()}
+                  </TooltipContent>
+                </Tooltip>
               </TableCell>
             </TableRow>
           ))
