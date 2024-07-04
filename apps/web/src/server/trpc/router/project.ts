@@ -1,8 +1,6 @@
 import { Option, ROLE } from "@prisma/client";
 import { TRPCError } from "@trpc/server";
-import { env } from "env/server.mjs";
-import { encode, getToken } from "next-auth/jwt";
-import { planNameSchema, PLANS } from "server/common/plans";
+import { PLANS, planNameSchema } from "server/common/plans";
 import { stripe } from "server/common/stripe";
 import { EventService } from "server/services/EventService";
 import { ProjectService } from "server/services/ProjectService";
@@ -13,8 +11,8 @@ export type ClientOption = Omit<Option, "chance"> & {
   chance: number;
 };
 
-import { router, protectedProcedure } from "../trpc";
 import { updateProjectsOnSession } from "utils/updateSession";
+import { protectedProcedure, router } from "../trpc";
 
 export const projectRouter = router({
   getProjectData: protectedProcedure
@@ -232,5 +230,57 @@ export const projectRouter = router({
       });
       await updateProjectsOnSession(ctx, project.id);
       return project;
+    }),
+  getEventLogs: protectedProcedure
+    .input(
+      z.object({
+        projectId: z.string(),
+        limit: z.number().min(1).max(100).nullish(),
+        cursor: z.string().nullish(),
+      })
+    )
+    .query(async ({ ctx, input }) => {
+      const cursor = input.cursor;
+      const limit = input.limit ?? 50;
+      const logItems = await ctx.prisma.featureFlagHistory.findMany({
+        take: limit + 1,
+        where: {
+          flagValue: {
+            flag: {
+              project: {
+                id: input.projectId,
+                users: {
+                  some: {
+                    userId: ctx.session.user.id,
+                  },
+                },
+              },
+            },
+          },
+        },
+        orderBy: {
+          createdAt: "desc",
+        },
+        include: {
+          user: true,
+          flagValue: {
+            include: {
+              flag: { select: { name: true } },
+              environment: { select: { name: true } },
+            },
+          },
+        },
+        cursor: cursor ? { id: cursor } : undefined,
+      });
+
+      let nextCursor: typeof cursor | undefined = undefined;
+      if (logItems.length > limit) {
+        const nextItem = logItems.pop();
+        nextCursor = nextItem!.id;
+      }
+      return {
+        items: logItems,
+        nextCursor,
+      };
     }),
 });

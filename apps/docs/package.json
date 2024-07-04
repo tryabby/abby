@@ -14,7 +14,7 @@
     "@types/react-dom": "^18.0.5",
     "eslint": "8.29.0",
     "eslint-config-next": "13.0.6",
-    "next": "14.0.4",
+    "next": "14.1.1",
     "next-plausible": "^3.11.3",
     "nextra": "2.13.2",
     "nextra-theme-docs": "2.13.2",

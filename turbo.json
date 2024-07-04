@@ -1,6 +1,6 @@
 {
   "$schema": "https://turbo.build/schema.json",
-  "pipeline": {
+  "tasks": {
     "build": {
       "dependsOn": ["^build", "^db:generate"],
       "outputs": ["dist/**", ".next/**"]
@@ -33,6 +33,30 @@
     "VERCEL_ENV",
     "NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY",
     "ANALYZE",
-    "SKIP_ENV_VALIDATION"
+    "SKIP_ENV_VALIDATION",
+    "DATABASE_URL",
+    "NEXT_PUBLIC_STRIPE_STARTER_PLAN_PRICE_ID",
+    "NEXT_PUBLIC_STRIPE_PRO_PLAN_PRICE_ID",
+    "NEXT_PUBLIC_DISABLE_ANALYTICS",
+    "NEXT_PUBLIC_ABBY_PROJECT_ID",
+    "NEXT_PUBLIC_PLAUSIBLE_DOMAIN",
+    "DATABASE_URL",
+    "NODE_ENV",
+    "NEXTAUTH_SECRET",
+    "NEXTAUTH_URL",
+    "GITHUB_ID",
+    "GITHUB_SECRET",
+    "STRIPE_WEBHOOK_SECRET",
+    "STRIPE_SECRET_KEY",
+    "EMAIL_SERVER",
+    "LOGSNAG_API_KEY",
+    "REDIS_URL",
+    "ABBY_FROM_EMAIL",
+    "GITHUB_OAUTH_TOKEN",
+    "GOOGLE_CLIENT_ID",
+    "GOOGLE_CLIENT_SECRET",
+    "HASHING_SECRET",
+    "USE_PLANETSCALE",
+    "NEXT_RUNTIME"
   ]
 }

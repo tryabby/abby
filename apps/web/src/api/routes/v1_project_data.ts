@@ -5,16 +5,11 @@ import { zValidator } from "@hono/zod-validator";
 import { prisma } from "server/db/client";
 import { ABBY_WINDOW_KEY, AbbyDataResponse } from "@tryabby/core";
 import { z } from "zod";
-import createCache from "server/common/memory-cache";
 import { transformFlagValue } from "lib/flags";
-import { jobManager } from "server/queue/Manager";
+import { ConfigCache } from "server/common/config-cache";
+import { afterDataRequestQueue } from "server/queue/queues";
 
 export const X_ABBY_CACHE_HEADER = "X-Abby-Cache";
-
-const configCache = createCache<string, AbbyDataResponse>({
-  name: "configCache",
-  expireAfterMilliseconds: 1000 * 10,
-});
 
 async function getAbbyResponseWithCache({
   environment,
@@ -26,7 +21,7 @@ async function getAbbyResponseWithCache({
   c: Context;
 }) {
   startTime(c, "readCache");
-  const cachedConfig = configCache.get(projectId + environment);
+  const cachedConfig = ConfigCache.getConfig({ environment, projectId });
   endTime(c, "readCache");
 
   c.header(X_ABBY_CACHE_HEADER, cachedConfig !== undefined ? "HIT" : "MISS");
@@ -77,7 +72,7 @@ async function getAbbyResponseWithCache({
       }),
   } satisfies AbbyDataResponse;
 
-  configCache.set(projectId + environment, response);
+  ConfigCache.setConfig({ environment, projectId, value: response });
   return response;
 }
 
@@ -113,7 +108,7 @@ export function makeProjectDataRoute() {
 
           const duration = performance.now() - now;
 
-          jobManager.emit("after-data-request", {
+          afterDataRequestQueue.add("after-data-request", {
             apiVersion: "V1",
             functionDuration: duration,
             projectId,
@@ -160,7 +155,7 @@ export function makeProjectDataRoute() {
 
           const duration = performance.now() - now;
 
-          jobManager.emit("after-data-request", {
+          afterDataRequestQueue.add("after-data-request", {
             apiVersion: "V1",
             functionDuration: duration,
             projectId,

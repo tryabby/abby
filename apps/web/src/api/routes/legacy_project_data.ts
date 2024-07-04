@@ -7,13 +7,10 @@ import { prisma } from "server/db/client";
 
 import { LegacyAbbyDataResponse } from "@tryabby/core";
 import { transformFlagValue } from "lib/flags";
-import { trackPlanOverage } from "lib/logsnag";
 import createCache from "server/common/memory-cache";
-import { EventService } from "server/services/EventService";
-import { RequestCache } from "server/services/RequestCache";
-import { RequestService } from "server/services/RequestService";
+
 import { z } from "zod";
-import { jobManager } from "server/queue/Manager";
+import { afterDataRequestQueue } from "server/queue/queues";
 
 const configCache = createCache<string, LegacyAbbyDataResponse>({
   name: "legacyConfigCache",
@@ -109,10 +106,10 @@ export function makeLegacyProjectDataRoute() {
         });
         endTime(c, "getAbbyResponseWithCache");
 
-        jobManager.emit("after-data-request", {
-          projectId,
+        afterDataRequestQueue.add("after-data-request", {
           apiVersion: "V0",
           functionDuration: performance.now() - now,
+          projectId,
         });
 
         return c.json(response);

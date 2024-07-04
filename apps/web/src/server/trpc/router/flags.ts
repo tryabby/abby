@@ -4,6 +4,7 @@ import { z } from "zod";
 import { protectedProcedure, router } from "../trpc";
 import { FeatureFlagType } from "@prisma/client";
 import { validateFlag } from "utils/validateFlags";
+import { ConfigCache } from "server/common/config-cache";
 
 export const flagRouter = router({
   getFlags: protectedProcedure
@@ -92,7 +93,8 @@ export const flagRouter = router({
           },
         },
         include: {
-          flag: { select: { type: true } },
+          flag: { select: { type: true, projectId: true } },
+          environment: { select: { name: true } },
         },
       });
 
@@ -131,6 +133,10 @@ export const flagRouter = router({
           },
         }),
       ]);
+      ConfigCache.deleteConfig({
+        environment: currentFlag.environment.name,
+        projectId: currentFlag.flag.projectId,
+      });
     }),
   removeFlag: protectedProcedure
     .input(
@@ -140,7 +146,7 @@ export const flagRouter = router({
       })
     )
     .mutation(async ({ ctx, input }) => {
-      const canUpdate = await ctx.prisma.featureFlag.findFirst({
+      const currentFlag = await ctx.prisma.featureFlag.findFirst({
         where: {
           name: input.name,
           projectId: input.projectId,
@@ -152,18 +158,29 @@ export const flagRouter = router({
             },
           },
         },
+        include: {
+          project: {
+            include: { environments: { select: { name: true } } },
+            select: { id: true },
+          },
+        },
       });
 
-      if (!canUpdate) throw new TRPCError({ code: "UNAUTHORIZED" });
+      if (!currentFlag) throw new TRPCError({ code: "UNAUTHORIZED" });
 
-      return ctx.prisma.$transaction([
-        ctx.prisma.featureFlag.deleteMany({
-          where: {
-            projectId: input.projectId,
-            name: input.name,
-          },
-        }),
-      ]);
+      await ctx.prisma.featureFlag.deleteMany({
+        where: {
+          projectId: input.projectId,
+          name: input.name,
+        },
+      });
+
+      currentFlag.project.environments.forEach((env) =>
+        ConfigCache.deleteConfig({
+          environment: env.name,
+          projectId: input.projectId,
+        })
+      );
     }),
   getHistory: protectedProcedure
     .input(
@@ -254,11 +271,23 @@ export const flagRouter = router({
             },
           },
         },
+        include: {
+          project: {
+            include: {
+              environments: {
+                select: { name: true },
+              },
+            },
+            select: {
+              id: true,
+            },
+          },
+        },
       });
 
       if (!flagToUpdate) throw new TRPCError({ code: "UNAUTHORIZED" });
 
-      return ctx.prisma.featureFlag.update({
+      await ctx.prisma.featureFlag.update({
         where: {
           id: flagToUpdate.id,
         },
@@ -266,5 +295,12 @@ export const flagRouter = router({
           name: input.title,
         },
       });
+
+      flagToUpdate.project.environments.forEach((env) =>
+        ConfigCache.deleteConfig({
+          environment: env.name,
+          projectId: flagToUpdate.project.id,
+        })
+      );
     }),
 });
