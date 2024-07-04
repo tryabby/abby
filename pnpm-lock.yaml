@@ -188,6 +188,9 @@ importers:
 
   apps/web:
     dependencies:
+      '@clickhouse/client':
+        specifier: ^1.0.1
+        version: 1.0.1
       '@code-hike/mdx':
         specifier: 0.9.0
         version: 0.9.0(react@18.2.0)
@@ -5426,6 +5429,17 @@ packages:
       human-id: 1.0.2
       prettier: 2.8.8
     dev: true
+
+  /@clickhouse/client-common@1.0.1:
+    resolution: {integrity: sha512-3L6e0foP6VOktScoi6XWMjJyOpKCWgLUYgPVxP2c7gm6Kotq+iRmmmXtXTSg7B7uozcLZycTtPfIw2d80SYsYw==}
+    dev: false
+
+  /@clickhouse/client@1.0.1:
+    resolution: {integrity: sha512-fluUNnE2R7COJ6rn6DorYfi4D+AQn3t2qeBtEq37bQV3pD4EbKrBfKAwJ13e1lmMWdQ2B9bJUTMqGsRIDdWhJw==}
+    engines: {node: '>=16'}
+    dependencies:
+      '@clickhouse/client-common': 1.0.1
+    dev: false
 
   /@cloudflare/kv-asset-handler@0.2.0:
     resolution: {integrity: sha512-MVbXLbTcAotOPUj0pAMhVtJ+3/kFkwJqc5qNOleOZTv6QkZZABDMS21dSrSlVswEHwrpWC03e4fWytjqKvuE2A==}
