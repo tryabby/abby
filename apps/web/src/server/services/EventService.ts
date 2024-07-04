@@ -10,18 +10,11 @@ import { prisma } from "server/db/client";
 import { AbbyEvent } from "@tryabby/core";
 import { RequestCache } from "./RequestCache";
 
-type EventPeriodData = {
-  events: number;
-  planLimits: Limit;
-  plan: PlanName | undefined;
-  is80PercentOfLimit: boolean;
-};
-
 export interface EventServiceInterface {
   createEvent(event: AbbyEvent): Promise<AbbyEvent>;
-  getEventsByProjectId(projectId: string): Promise<AbbyEvent[]>;
-  getEventsByTestId(testId: string, timeInterval: string): Promise<AbbyEvent[]>;
-  getEventsForCurrentPeriod(projectId: string): Promise<EventPeriodData>;
+  // getEventsByProjectId(projectId: string): Promise<AbbyEvent[]>;
+  // getEventsByTestId(testId: string, timeInterval: string): Promise<AbbyEvent[]>;
+  // getEventsForCurrentPeriod(projectId: string): Promise<EventPeriodData>;
 }
 
 export abstract class EventService {

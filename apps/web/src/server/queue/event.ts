@@ -7,6 +7,7 @@ import { eventQueue, getQueueingRedisConnection } from "./queues";
 import { AbbyEvent, AbbyEventType } from "@tryabby/core";
 import { env } from "env/server.mjs";
 import { ApiRequestType } from "@prisma/client";
+import { ClickHouseEventService } from "server/services/ClickHouseEventService";
 
 export type EventJobPayload = AbbyEvent & {
   functionDuration: number;
@@ -24,7 +25,11 @@ const eventWorker = new Worker<EventJobPayload>(
     switch (event.type) {
       case AbbyEventType.PING:
       case AbbyEventType.ACT: {
-        await EventService.createEvent(event);
+        await Promise.all([
+          EventService.createEvent(event),
+          ClickHouseEventService.createEvent(event),
+        ]);
+
         break;
       }
       default: {

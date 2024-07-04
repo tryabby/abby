@@ -154,8 +154,6 @@ const Section = ({
     },
   });
 
-  console.log(events);
-
   return (
     <section className="w-full rounded-lg bg-secondary p-4">
       <div className="flex justify-between px-2">
