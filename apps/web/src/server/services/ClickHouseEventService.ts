@@ -34,14 +34,20 @@ export abstract class ClickHouseEventService {
     return insertedEvent;
   }
 
-  static async getEventsByProjectId(projectId: string) {
-    return prisma.event.findMany({
-      where: {
-        test: {
-          projectId,
-        },
-      },
+  static async getEventsByProjectId(projectId: string): Promise<
+    {
+      id: string;
+      testId: string;
+      type: number;
+      selectedVariant: string;
+      createdAt: Date;
+    }[]
+  > {
+    const queryResult = await clickhouseClient.query({
+      query: `SELECT * FROM abby.events WHERE projectId = '${"clvh4sv5n0001furg6tj08z63"}'`,
     });
+
+    return (await queryResult.json()).data as any;
   }
 
   static async getEventsByTestId(testId: string, timeInterval: string) {

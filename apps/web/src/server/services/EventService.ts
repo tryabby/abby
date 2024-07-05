@@ -9,14 +9,6 @@ import { getLimitByPlan, Limit, PlanName, PLANS } from "server/common/plans";
 import { prisma } from "server/db/client";
 import { AbbyEvent } from "@tryabby/core";
 import { RequestCache } from "./RequestCache";
-
-export interface EventServiceInterface {
-  createEvent(event: AbbyEvent): Promise<AbbyEvent>;
-  // getEventsByProjectId(projectId: string): Promise<AbbyEvent[]>;
-  // getEventsByTestId(testId: string, timeInterval: string): Promise<AbbyEvent[]>;
-  // getEventsForCurrentPeriod(projectId: string): Promise<EventPeriodData>;
-}
-
 export abstract class EventService {
   static async createEvent({
     projectId,
