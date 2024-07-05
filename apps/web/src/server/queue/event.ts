@@ -25,9 +25,10 @@ const eventWorker = new Worker<EventJobPayload>(
     switch (event.type) {
       case AbbyEventType.PING:
       case AbbyEventType.ACT: {
+        const id = crypto.randomUUID();
         await Promise.all([
-          EventService.createEvent(event),
-          ClickHouseEventService.createEvent(event),
+          EventService.createEvent(event, id),
+          ClickHouseEventService.createEvent(event, id),
         ]);
 
         break;

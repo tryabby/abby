@@ -12,21 +12,21 @@ import { RequestCache } from "./RequestCache";
 import { clickhouseClient } from "server/db/clickhouseClient";
 
 export abstract class ClickHouseEventService {
-  static async createEvent(event: {
-    type: AbbyEventType;
-    projectId: string;
-    testName: string;
-    selectedVariant: string;
-  }) {
+  static async createEvent(
+    { projectId, selectedVariant, testName, type }: AbbyEvent,
+    id: string
+  ) {
+    console.log("clickhouse", id);
     const insertedEvent = await clickhouseClient.insert({
-      table: "abby.events",
+      table: "abby.Event",
       format: "JSONEachRow",
       values: [
         {
-          type: event.type,
-          projectId: event.projectId,
-          testName: event.testName,
-          selectedVariant: event.selectedVariant,
+          id,
+          project_id: projectId,
+          testName: testName,
+          type: 0,
+          selectedVariant: selectedVariant,
         },
       ],
     });

@@ -10,14 +10,14 @@ import { prisma } from "server/db/client";
 import { AbbyEvent } from "@tryabby/core";
 import { RequestCache } from "./RequestCache";
 export abstract class EventService {
-  static async createEvent({
-    projectId,
-    selectedVariant,
-    testName,
-    type,
-  }: AbbyEvent) {
+  static async createEvent(
+    { projectId, selectedVariant, testName, type }: AbbyEvent,
+    id: string
+  ) {
+    console.log("prisma", id);
     return prisma.event.create({
       data: {
+        id,
         selectedVariant,
         type,
         test: {
