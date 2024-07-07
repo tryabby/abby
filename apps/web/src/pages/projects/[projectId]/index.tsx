@@ -10,6 +10,7 @@ import { AiOutlinePlus } from "react-icons/ai";
 import { trpc } from "utils/trpc";
 import { Button } from "components/ui/button";
 import { GetStaticProps, GetStaticPaths } from "next";
+import { AbbyEventType } from "@tryabby/core";
 
 const Projects: NextPageWithLayout = () => {
   const [isCreateTestModalOpen, setIsCreateTestModalOpen] = useState(false);
@@ -58,9 +59,17 @@ const Projects: NextPageWithLayout = () => {
         />
       </div>
       <div className="space-y-8">
-        {data?.project?.tests.map((test) => (
-          <Section key={test.id} {...test} events={test.events}></Section>
-        ))}
+        {data?.project?.tests.map((test) => {
+          console.log("test", test);
+          return (
+            <Section
+              key={test.id}
+              name={test.name}
+              id={test.id}
+              visitData={test.visitData}
+            ></Section>
+          );
+        })}
       </div>
     </>
   );

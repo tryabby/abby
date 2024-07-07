@@ -5,7 +5,7 @@ import { stripe } from "server/common/stripe";
 import { EventService } from "server/services/EventService";
 import { ProjectService } from "server/services/ProjectService";
 import { generateCodeSnippets } from "utils/snippets";
-import { z } from "zod";
+import { ParseStatus, z } from "zod";
 
 export type ClientOption = Omit<Option, "chance"> & {
   chance: number;
@@ -13,6 +13,7 @@ export type ClientOption = Omit<Option, "chance"> & {
 
 import { updateProjectsOnSession } from "utils/updateSession";
 import { protectedProcedure, router } from "../trpc";
+import { AbbyEventType } from "@tryabby/core";
 
 export const projectRouter = router({
   getProjectData: protectedProcedure
@@ -43,17 +44,50 @@ export const projectRouter = router({
       const { events: eventsThisPeriod } =
         await EventService.getEventsForCurrentPeriod(project.id);
 
+      const tests = await Promise.all(
+        project.tests.map(async (test) => {
+          const visitData = await Promise.all(
+            test.options.map(async (option) => {
+              const [visitedEventCount, actEventCount] = await Promise.all([
+                ctx.prisma.event.count({
+                  where: {
+                    testId: test.id,
+                    selectedVariant: option.identifier,
+                    type: AbbyEventType.PING,
+                  },
+                }),
+                ctx.prisma.event.count({
+                  where: {
+                    testId: test.id,
+                    selectedVariant: option.identifier,
+                    type: AbbyEventType.ACT,
+                  },
+                }),
+              ]);
+
+              return {
+                variantName: option.identifier,
+                ...option,
+                chance: option.chance.toNumber(),
+                visitedEventCount,
+                actEventCount,
+              };
+            })
+          );
+
+          return {
+            id: test.id,
+            name: test.name,
+            visitData,
+          };
+        })
+      );
+
       return {
         project: {
           ...project,
           eventsThisPeriod,
-          tests: project.tests.map((test) => ({
-            ...test,
-            options: test.options.map((option) => ({
-              ...option,
-              chance: option.chance.toNumber(),
-            })),
-          })),
+          tests,
         },
       };
     }),

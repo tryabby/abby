@@ -18,16 +18,10 @@ import { TitleEdit } from "components/TitleEdit";
 import { Modal } from "components/Modal";
 import { cn } from "lib/utils";
 
-function getBestVariant({
-  absPings,
-  options,
-}: {
-  absPings: number;
-  options: ClientOption[];
-}) {
-  const bestVariant = options.reduce(
+function getBestVariant(visitData: VisitData) {
+  const bestVariant = visitData.reduce(
     (accumulator, option) => {
-      const pings = absPings * option.chance;
+      const pings = option.actEventCount;
       if (pings > accumulator.pings) {
         return {
           pings,
@@ -39,7 +33,7 @@ function getBestVariant({
     { pings: 0, identifier: "" }
   );
 
-  return bestVariant;
+  return bestVariant.identifier;
 }
 
 const DeleteTestModal = ({
@@ -125,24 +119,31 @@ export const Card = ({
   );
 };
 
+export type VisitData = {
+  visitedEventCount: number;
+  actEventCount: number;
+  id: string;
+  identifier: string;
+  testId: string;
+  chance: number;
+
+  variantName: string;
+}[];
+
 const Section = ({
   name,
-  options = [],
-  events = [],
   id,
-}: Test & {
-  options: ClientOption[];
-  events: Event[];
+  visitData,
+}: {
+  name: string;
+  id: string;
+  visitData: VisitData;
 }) => {
   const router = useRouter();
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const trpcContext = trpc.useContext();
   const showAdvancedTestStats = useFeatureFlag("AdvancedTestStats");
-
-  const bestVariant = getBestVariant({
-    absPings: events.filter((event) => event.type === AbbyEventType.ACT).length,
-    options,
-  }).identifier;
+  const bestVariant = getBestVariant(visitData);
 
   const { mutate: updateTestName } = trpc.tests.updateName.useMutation({
     onSuccess() {
@@ -190,7 +191,7 @@ const Section = ({
             </p>
           }
         >
-          <Weights options={options} />
+          <Weights options={visitData} />
         </Card>
         <Card
           title="Visits"
@@ -201,12 +202,7 @@ const Section = ({
             </p>
           }
         >
-          <Serves
-            options={options}
-            pingEvents={events.filter(
-              (event) => event.type === AbbyEventType.PING
-            )}
-          />
+          <Serves visitData={visitData} />
         </Card>
         <Card
           title="Interactions"
@@ -220,12 +216,7 @@ const Section = ({
             </p>
           }
         >
-          <Metrics
-            options={options}
-            pingEvents={events.filter(
-              (event) => event.type === AbbyEventType.ACT
-            )}
-          />
+          <Metrics visitData={visitData} />
         </Card>
       </div>
       <div className="mt-3 flex">
