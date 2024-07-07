@@ -19,21 +19,26 @@ import { Modal } from "components/Modal";
 import { cn } from "lib/utils";
 
 function getBestVariant(visitData: VisitData) {
-  const bestVariant = visitData.reduce(
-    (accumulator, option) => {
-      const pings = option.actEventCount;
-      if (pings > accumulator.pings) {
-        return {
-          pings,
-          identifier: option.identifier,
-        };
-      }
-      return accumulator;
-    },
-    { pings: 0, identifier: "" }
-  );
+  const absPings = visitData
+    .map((data) => data.actEventCount)
+    .reduce((acc, curr) => acc + curr);
 
-  return bestVariant.identifier;
+  const diffToExpected = visitData.map((data) => {
+    return {
+      variantName: data.variantName,
+      difference: data.actEventCount - data.chance * absPings,
+    };
+  });
+
+  let currentMax = diffToExpected[0];
+
+  diffToExpected.forEach((diff) => {
+    if (currentMax!.difference < diff.difference) {
+      currentMax = diff;
+    }
+  });
+
+  return currentMax?.variantName;
 }
 
 const DeleteTestModal = ({

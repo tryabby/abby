@@ -60,7 +60,6 @@ const Projects: NextPageWithLayout = () => {
       </div>
       <div className="space-y-8">
         {data?.project?.tests.map((test) => {
-          console.log("test", test);
           return (
             <Section
               key={test.id}

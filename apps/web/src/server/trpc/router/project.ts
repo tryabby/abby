@@ -30,7 +30,7 @@ export const projectRouter = router({
         },
         include: {
           tests: {
-            include: { options: true, events: true },
+            include: { options: true },
           },
           environments: true,
           featureFlags: true,
