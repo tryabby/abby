@@ -14,6 +14,7 @@ export type ClientOption = Omit<Option, "chance"> & {
 import { updateProjectsOnSession } from "utils/updateSession";
 import { protectedProcedure, router } from "../trpc";
 import { AbbyEventType } from "@tryabby/core";
+import { ClickHouseEventService } from "server/services/ClickHouseEventService";
 
 export const projectRouter = router({
   getProjectData: protectedProcedure
@@ -48,29 +49,23 @@ export const projectRouter = router({
         project.tests.map(async (test) => {
           const visitData = await Promise.all(
             test.options.map(async (option) => {
-              const [visitedEventCount, actEventCount] = await Promise.all([
-                ctx.prisma.event.count({
-                  where: {
-                    testId: test.id,
-                    selectedVariant: option.identifier,
-                    type: AbbyEventType.PING,
-                  },
-                }),
-                ctx.prisma.event.count({
-                  where: {
-                    testId: test.id,
-                    selectedVariant: option.identifier,
-                    type: AbbyEventType.ACT,
-                  },
-                }),
-              ]);
+              const clickhouseResult =
+                await ClickHouseEventService.getGroupedEventsByTestId(test);
 
               return {
                 variantName: option.identifier,
                 ...option,
                 chance: option.chance.toNumber(),
-                visitedEventCount,
-                actEventCount,
+                visitedEventCount: clickhouseResult.find(
+                  (res) =>
+                    res.variant == option.identifier &&
+                    res.type == AbbyEventType.PING
+                )?.count,
+                actEventCount: clickhouseResult.find(
+                  (res) =>
+                    res.variant == option.identifier &&
+                    res.type == AbbyEventType.ACT
+                )?.count,
               };
             })
           );

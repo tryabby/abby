@@ -10,6 +10,7 @@ import { prisma } from "server/db/client";
 import { AbbyEvent, AbbyEventType } from "@tryabby/core";
 import { RequestCache } from "./RequestCache";
 import { clickhouseClient } from "server/db/clickhouseClient";
+import { count } from "node:console";
 
 export abstract class ClickHouseEventService {
   static async createEvent(
@@ -48,6 +49,45 @@ export abstract class ClickHouseEventService {
     });
 
     return (await queryResult.json()).data as any;
+  }
+
+  static async getGroupedEventsByTestId(
+    test: {
+      options: {
+        id: string;
+        identifier: string;
+        testId: string;
+      }[];
+    } & {
+      id: string;
+      projectId: string;
+      createdAt: Date;
+      updatedAt: Date;
+      name: string;
+    }
+  ) {
+    const queryResult = await clickhouseClient.query({
+      query: `select count(*) as count, type, selectedVariant from abby.Event 
+      where testName ='${test.id}' 
+      group by type, selectedVariant;
+              `,
+    });
+
+    //TODO add validation with id
+    const parsedRes = (await queryResult.json()).data as {
+      selectedVariant: string;
+      type: string;
+      count: string;
+    }[];
+
+    return parsedRes.map((row) => {
+      console.log(typeof row.count);
+      return {
+        variant: row.selectedVariant,
+        type: parseInt(row.type) == 0 ? AbbyEventType.PING : AbbyEventType.ACT,
+        count: parseInt(row.count),
+      };
+    });
   }
 
   static async getEventsByTestId(testId: string, timeInterval: string) {

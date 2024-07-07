@@ -63,12 +63,11 @@ const Serves = ({
 }) => {
   const labels = visitData.map((data) => data.identifier);
   const absPings = visitData.reduce((accumulator, value) => {
+    console.log(value.visitedEventCount);
     return accumulator + value.visitedEventCount;
   }, 0);
 
-  visitData.map((data) => {
-    console.log((data.visitedEventCount / absPings) * 249);
-  });
+  console.log("abs", absPings);
 
   return (
     <div className="relative h-full w-full ">
