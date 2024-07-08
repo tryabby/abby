@@ -10,23 +10,31 @@ import { prisma } from "server/db/client";
 import { AbbyEvent, AbbyEventType } from "@tryabby/core";
 import { RequestCache } from "./RequestCache";
 import { clickhouseClient } from "server/db/clickhouseClient";
-import { count } from "node:console";
+import { z } from "zod";
+
+const GroupedTestQueryResultSchema = z.object({
+  selectedVariant: z.string(),
+  type: z.number(),
+  count: z.string(),
+});
+
+type GroupedTestQueryResult = z.infer<typeof GroupedTestQueryResultSchema>;
 
 export abstract class ClickHouseEventService {
-  static async createEvent(
-    { projectId, selectedVariant, testName, type }: AbbyEvent,
-    id: string
-  ) {
-    console.log("clickhouse", id);
+  static async createEvent({
+    projectId,
+    selectedVariant,
+    testName,
+    type,
+  }: AbbyEvent) {
     const insertedEvent = await clickhouseClient.insert({
       table: "abby.Event",
       format: "JSONEachRow",
       values: [
         {
-          id,
           project_id: projectId,
           testName: testName,
-          type: 0,
+          type,
           selectedVariant: selectedVariant,
         },
       ],
@@ -45,7 +53,7 @@ export abstract class ClickHouseEventService {
     }[]
   > {
     const queryResult = await clickhouseClient.query({
-      query: `SELECT * FROM abby.events WHERE projectId = '${"clvh4sv5n0001furg6tj08z63"}'`,
+      query: `SELECT * FROM abby.events WHERE projectId = '${projectId}'`,
     });
 
     return (await queryResult.json()).data as any;
@@ -72,20 +80,15 @@ export abstract class ClickHouseEventService {
       group by type, selectedVariant;
               `,
     });
+    const parsedJson = (await queryResult.json()).data;
 
-    //TODO add validation with id
-    const parsedRes = (await queryResult.json()).data as {
-      selectedVariant: string;
-      type: string;
-      count: string;
-    }[];
-
-    return parsedRes.map((row) => {
-      console.log(typeof row.count);
+    return parsedJson.map((row) => {
+      const { count, selectedVariant, type } =
+        GroupedTestQueryResultSchema.parse(row);
       return {
-        variant: row.selectedVariant,
-        type: parseInt(row.type) == 0 ? AbbyEventType.PING : AbbyEventType.ACT,
-        count: parseInt(row.count),
+        variant: selectedVariant,
+        type: type === 0 ? AbbyEventType.PING : AbbyEventType.ACT,
+        count: parseInt(count),
       };
     });
   }
