@@ -48,6 +48,7 @@ export abstract class EventService {
     if (isSpecialTimeInterval(timeInterval)) {
       const specialIntervalInMs = getMSFromSpecialTimeInterval(timeInterval);
       return prisma.event.findMany({
+        take: 1000,
         where: {
           testId,
           ...(specialIntervalInMs !== Infinity &&
@@ -79,6 +80,7 @@ export abstract class EventService {
           gte: new Date(now - ms(timeInterval)),
         },
       },
+      take: 1000,
     });
   }
 
