@@ -100,17 +100,21 @@ export abstract class ClickHouseEventService {
     console.log("hier2");
     try {
       const result = await clickhouseClient.query({
-        query: `SELECT
-    toStartOfInterval(toTimeZone(createdAt, 'UTC'), toIntervalHour(3)) AS bucket_start,
-    count(*) AS bucket_count
+        query: `
+        SELECT
+  toStartOfHour(createdAt) AS startTime,
+  Count(selectedVariant) AS countSelectedVariant, 
+  selectedVariant,
+  type
 FROM abby.Event
 WHERE testName = '${testId}'
-GROUP BY toStartOfInterval(toTimeZone(createdAt, 'UTC'), toIntervalHour(3))
-ORDER BY bucket_start ASC;
+GROUP BY startTime, selectedVariant, type
+ORDER BY startTime ASC;
+
 `,
       });
 
-      console.log("result", result);
+      console.log("result", (await result.json()).data);
     } catch (e) {
       console.log("error", e);
     }

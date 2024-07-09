@@ -53,11 +53,11 @@ export const eventRouter = router({
         input.interval
       );
 
-      // console.log("clickhouse");
-      // await ClickHouseEventService.getEventsByTestId(
-      //   input.testId,
-      //   input.interval
-      // );
+      console.log("clickhouse");
+      await ClickHouseEventService.getEventsByTestId(
+        input.testId,
+        input.interval
+      );
       console.log("lickhouse end");
 
       return tests;
