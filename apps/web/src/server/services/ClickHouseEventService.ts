@@ -93,44 +93,27 @@ export abstract class ClickHouseEventService {
     });
   }
 
+  //brauchen wir das?
   static async getEventsByTestId(testId: string, timeInterval: string) {
     const now = new Date().getTime();
 
-    if (isSpecialTimeInterval(timeInterval)) {
-      const specialIntervalInMs = getMSFromSpecialTimeInterval(timeInterval);
-      return prisma.event.findMany({
-        where: {
-          testId,
-          ...(specialIntervalInMs !== Infinity &&
-            timeInterval !== SpecialTimeInterval.DAY && {
-              createdAt: {
-                gte: new Date(now - getMSFromSpecialTimeInterval(timeInterval)),
-              },
-            }),
-          // Special case for day, since we want to include the current day
-          ...(timeInterval === SpecialTimeInterval.DAY && {
-            createdAt: {
-              gte: dayjs().startOf("day").toDate(),
-            },
-          }),
-        },
+    console.log("hier2");
+    try {
+      const result = await clickhouseClient.query({
+        query: `SELECT
+    toStartOfInterval(toTimeZone(createdAt, 'UTC'), toIntervalHour(3)) AS bucket_start,
+    count(*) AS bucket_count
+FROM abby.Event
+WHERE testName = '${testId}'
+GROUP BY toStartOfInterval(toTimeZone(createdAt, 'UTC'), toIntervalHour(3))
+ORDER BY bucket_start ASC;
+`,
       });
+
+      console.log("result", result);
+    } catch (e) {
+      console.log("error", e);
     }
-
-    const parsedInterval = ms(timeInterval) as number | undefined;
-
-    if (parsedInterval === undefined) {
-      throw new Error("Invalid time interval");
-    }
-
-    return prisma.event.findMany({
-      where: {
-        testId,
-        createdAt: {
-          gte: new Date(now - ms(timeInterval)),
-        },
-      },
-    });
   }
 
   static async getEventsForCurrentPeriod(projectId: string) {

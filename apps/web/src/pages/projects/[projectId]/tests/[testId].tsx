@@ -141,8 +141,6 @@ const TestDetailPage: NextPageWithLayout = () => {
     });
   }, [eventsByVariant, interval]);
 
-  console.log("formattedEvents", formattedEvents);
-
   const viewEvents = useMemo(
     () => ({
       labels,
