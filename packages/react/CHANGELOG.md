@@ -1,5 +1,16 @@
 # @tryabby/react
 
+## 5.2.0
+
+### Minor Changes
+
+- 31d14b7: add cookie consent options
+
+### Patch Changes
+
+- Updated dependencies [31d14b7]
+  - @tryabby/core@5.3.0
+
 ## 5.1.0
 
 ### Minor Changes
