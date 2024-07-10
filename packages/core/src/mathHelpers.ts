@@ -12,9 +12,7 @@ function getRandomDecimal() {
   return Math.random();
 }
 
-function getWeightedRandomNumber<T extends Record<string, number>>(
-  spec: T
-): keyof T {
+function getWeightedRandomNumber<T extends Record<string, number>>(spec: T): keyof T {
   let i: keyof T;
   let sum = 0;
   const r = getRandomDecimal();
@@ -27,17 +25,13 @@ function getWeightedRandomNumber<T extends Record<string, number>>(
   return i!;
 }
 
-function getDefaultWeights<Variants extends ReadonlyArray<string>>(
-  variants: Variants
-) {
-  return Array.from<number>({ length: variants.length }).fill(
-    1 / variants.length
-  );
+function getDefaultWeights<Variants extends ReadonlyArray<string>>(variants: Variants) {
+  return Array.from<number>({ length: variants.length }).fill(1 / variants.length);
 }
 
 export function validateWeights<
   Variants extends ReadonlyArray<string>,
-  Weights extends Array<number>
+  Weights extends Array<number>,
 >(variants: Variants, weights?: Weights): Weights {
   const sum = weights?.reduce((acc, weight) => acc + weight, 0);
   return weights != null && sum === 1 && variants.length === weights.length
@@ -45,14 +39,34 @@ export function validateWeights<
     : (getDefaultWeights(variants) as Weights);
 }
 
-export function getWeightedRandomVariant<
-  Variants extends ReadonlyArray<string>
->(variants: Variants, weights?: Array<number>): Variants[number] {
+export function getWeightedRandomVariant<Variants extends ReadonlyArray<string>>(
+  variants: Variants,
+  weights?: Array<number>
+): Variants[number] {
   const validatedWeights = validateWeights(variants, weights);
   return getWeightedRandomNumber(
-    variants.reduce((acc, variant, index) => {
-      acc[variant as Variants[number]] = validatedWeights[index];
-      return acc;
-    }, {} as Record<Variants[number], number>)
+    variants.reduce(
+      (acc, variant, index) => {
+        acc[variant as Variants[number]] = validatedWeights[index];
+        return acc;
+      },
+      {} as Record<Variants[number], number>
+    )
   );
+}
+
+export function getVariantWithHeighestWeightOrFirst<Variants extends ReadonlyArray<string>>(
+  variants: Variants,
+  weights?: Array<number>
+): Variants[number] {
+  const validatedWeights = validateWeights(variants, weights);
+  let variantWithHeighestWeight = variants[0];
+
+  for (let i = 1; i < variants.length; i++) {
+    if (validatedWeights[i] > validatedWeights[i - 1]) {
+      variantWithHeighestWeight = variants[i];
+    }
+  }
+
+  return variantWithHeighestWeight;
 }

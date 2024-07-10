@@ -23,5 +23,6 @@ export default defineConfig(
     remoteConfig: {
       abc: "JSON",
     },
+    cookies: { disableByDefault: true, expiresInDays: 30 },
   }
 );
