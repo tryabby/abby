@@ -4,6 +4,7 @@ import { ProjectService } from "server/services/ProjectService";
 import { z } from "zod";
 import { protectedProcedure, router } from "../trpc";
 import { ClickHouseEventService } from "server/services/ClickHouseEventService";
+import { SpecialTimeInterval } from "lib/events";
 
 export const eventRouter = router({
   getEvents: protectedProcedure
@@ -24,12 +25,10 @@ export const eventRouter = router({
     .input(
       z.object({
         testId: z.string(),
-        interval: z.string(),
+        interval: z.nativeEnum(SpecialTimeInterval),
       })
     )
     .query(async ({ ctx, input }) => {
-      console.log("hier");
-
       const currentTest = await ctx.prisma.test.count({
         where: {
           id: input.testId,
@@ -44,22 +43,14 @@ export const eventRouter = router({
       });
 
       if (!currentTest) {
-        console.log("erro");
         throw new TRPCError({ code: "UNAUTHORIZED" });
       }
 
-      const tests = await EventService.getEventsByTestId(
+      const clickhouseEvents = await ClickHouseEventService.getEventsByTestId(
         input.testId,
         input.interval
       );
 
-      console.log("clickhouse");
-      await ClickHouseEventService.getEventsByTestId(
-        input.testId,
-        input.interval
-      );
-      console.log("lickhouse end");
-
-      return tests;
+      return clickhouseEvents;
     }),
 });

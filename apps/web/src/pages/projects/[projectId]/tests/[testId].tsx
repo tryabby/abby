@@ -29,6 +29,7 @@ import {
   Legend,
   Filler,
   ChartOptions,
+  ChartData,
 } from "chart.js";
 import colors from "tailwindcss/colors";
 import { useMemo } from "react";
@@ -100,8 +101,8 @@ const TestDetailPage: NextPageWithLayout = () => {
       enabled: !!testId,
     }
   );
-
-  const { data: events } = trpc.events.getEventsByTestId.useQuery(
+  //TODO beide zusammen fassen
+  const { data } = trpc.events.getEventsByTestId.useQuery(
     {
       testId,
       interval,
@@ -111,69 +112,49 @@ const TestDetailPage: NextPageWithLayout = () => {
     }
   );
 
-  const eventsByVariant = useMemo(() => {
-    const eventsByVariant = groupBy(events, (e) => e.selectedVariant);
-    // make sure all variants are present
-    test?.options.map((option) => {
-      eventsByVariant[option.identifier] ??= [];
-    });
-    return eventsByVariant;
-  }, [events, test?.options]);
+  const events = data ?? [];
 
   const labels = getLabelsByInterval(
     interval,
-    minBy(events, "createdAt")?.createdAt!
+    minBy(events, "createdAt")?.startTime!
   );
 
-  const formattedEvents = useMemo(() => {
-    return Object.entries(eventsByVariant).map(([variant, events], i) => {
-      const eventsByDate = groupBy(events, (e) => {
-        const date = dayjs(e.createdAt);
-        // round by 3 hours
-        const hour = Math.floor(date.hour() / 3) * 3;
-
-        return date
-          .set("hour", hour)
-          .set("minute", 0)
-          .format(getFormattingByInterval(interval));
-      });
-      return { eventsByDate, variant };
-    });
-  }, [eventsByVariant, interval]);
-
-  const viewEvents = useMemo(
+  const viewEvents: ChartData<"line", number[], unknown> = useMemo(
     () => ({
-      labels,
-      datasets: formattedEvents.map(({ eventsByDate, variant }, i) => {
-        return {
-          data: labels.map(
-            (label) =>
-              eventsByDate[label]?.filter((e) => e.type === AbbyEventType.PING)
-                ?.length ?? 0
-          ),
-          ...getChartOptions(i, variant),
-        };
-      }),
+      labelsAndDates: labels.labels,
+      datasets: events
+        .filter((event) => event.type == AbbyEventType.PING)
+        .map((event, i) => {
+          return {
+            data: labels.dates.map((date) => {
+              console.log("Label", date, event.startTime);
+              return events.find((e) => e.startTime === date)?.count ?? 0;
+            }),
+            ...getChartOptions(i, event.selectedVariant),
+          };
+        }),
     }),
-    [formattedEvents, labels]
+    [events, labels]
   );
 
-  const actEvents = useMemo(
+  console.log(viewEvents);
+
+  const actEvents: ChartData<"line", number[], unknown> = useMemo(
     () => ({
-      labels,
-      datasets: formattedEvents.map(({ eventsByDate, variant }, i) => {
-        return {
-          data: labels.map(
-            (label) =>
-              eventsByDate[label]?.filter((e) => e.type === AbbyEventType.ACT)
-                ?.length ?? 0
-          ),
-          ...getChartOptions(i, variant),
-        };
-      }),
+      labels: labels.labels,
+      datasets: events
+        .filter((event) => event.type === AbbyEventType.ACT)
+        .map((event, i) => {
+          return {
+            data: labels.dates.map((date) => event.count),
+            ...getChartOptions(i, event.selectedVariant),
+          };
+        }),
     }),
-    [formattedEvents, labels]
+    [events, labels]
   );
+
+  if (!events) return <LoadingSpinner />;
 
   if (isTestLoading || isTestError) {
     return <LoadingSpinner />;

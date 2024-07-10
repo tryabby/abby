@@ -7,7 +7,7 @@ import {
 import ms from "ms";
 import { getLimitByPlan, Limit, PlanName, PLANS } from "server/common/plans";
 import { prisma } from "server/db/client";
-import { AbbyEvent, AbbyEventType } from "@tryabby/core";
+import { AbbyEvent, AbbyEventType, assertUnreachable } from "@tryabby/core";
 import { RequestCache } from "./RequestCache";
 import { clickhouseClient } from "server/db/clickhouseClient";
 import { z } from "zod";
@@ -18,6 +18,14 @@ const GroupedTestQueryResultSchema = z.object({
   count: z.string(),
 });
 
+const GroupedTestQueryResultSchemaWithTimeSchema = z.intersection(
+  GroupedTestQueryResultSchema,
+  z.object({ startTime: z.string() })
+);
+
+type GroupedTestQueryResultSchemaWithTime = z.infer<
+  typeof GroupedTestQueryResultSchemaWithTimeSchema
+>;
 type GroupedTestQueryResult = z.infer<typeof GroupedTestQueryResultSchema>;
 
 export abstract class ClickHouseEventService {
@@ -94,27 +102,41 @@ export abstract class ClickHouseEventService {
   }
 
   //brauchen wir das?
-  static async getEventsByTestId(testId: string, timeInterval: string) {
-    const now = new Date().getTime();
+  static async getEventsByTestId(
+    testId: string,
+    timeInterval: SpecialTimeInterval
+  ) {
+    const computedBucketSize = this.computeBucketSize(timeInterval);
 
-    console.log("hier2");
     try {
       const result = await clickhouseClient.query({
         query: `
         SELECT
-  toStartOfHour(createdAt) AS startTime,
-  Count(selectedVariant) AS countSelectedVariant, 
-  selectedVariant,
-  type
-FROM abby.Event
-WHERE testName = '${testId}'
-GROUP BY startTime, selectedVariant, type
-ORDER BY startTime ASC;
-
+        ${computedBucketSize} AS startTime,
+        Count(selectedVariant) AS count, 
+        selectedVariant,
+        type
+        FROM abby.Event
+        WHERE testName = '${testId}'
+        GROUP BY startTime, selectedVariant, type
+        ORDER BY startTime ASC;
 `,
       });
 
-      console.log("result", (await result.json()).data);
+      const parsedJson = (await result.json()).data;
+      console.log(parsedJson);
+      const parsedRes = parsedJson.map((row) => {
+        const { count, selectedVariant, type, startTime } =
+          GroupedTestQueryResultSchemaWithTimeSchema.parse(row);
+        return {
+          startTime: new Date(startTime),
+          selectedVariant,
+          type: type === 0 ? AbbyEventType.PING : AbbyEventType.ACT,
+          count: parseInt(count),
+        };
+      });
+
+      return parsedRes;
     } catch (e) {
       console.log("error", e);
     }
@@ -143,5 +165,20 @@ ORDER BY startTime ASC;
       plan,
       is80PercentOfLimit: planLimits.eventsPerMonth * 0.8 === eventCount,
     };
+  }
+
+  static computeBucketSize(timeInterval: SpecialTimeInterval) {
+    switch (timeInterval) {
+      case SpecialTimeInterval.DAY: {
+        return "toStartOfHour(createdAt)";
+      }
+      case SpecialTimeInterval.MONTH_TO_DATE:
+      case SpecialTimeInterval.ALL_TIME:
+      case SpecialTimeInterval.Last30DAYS: {
+        return "toStartOfDay(createdAt)";
+      }
+      default:
+        return assertUnreachable(timeInterval);
+    }
   }
 }
