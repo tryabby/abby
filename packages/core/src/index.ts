@@ -11,10 +11,11 @@ import {
   ABBY_RC_STORAGE_PREFIX,
   remoteConfigStringToType,
   ABBY_WINDOW_KEY,
+  StorageServiceOptions,
 } from "./shared/";
 import { HttpService } from "./shared";
-import { F, O } from "ts-toolbelt";
-import { getWeightedRandomVariant } from "./mathHelpers";
+import { F } from "ts-toolbelt";
+import { getVariantWithHeighestWeightOrFirst, getWeightedRandomVariant } from "./mathHelpers";
 import { parseCookies } from "./helpers";
 
 export * from "./shared/index";
@@ -72,7 +73,7 @@ type LocalData<
 
 interface PersistentStorage {
   get: (key: string) => string | null;
-  set: (key: string, value: string) => void;
+  set: (key: string, value: string, options?: StorageServiceOptions) => void;
 }
 
 export type AbbyConfig<
@@ -95,6 +96,10 @@ export type AbbyConfig<
   settings?: Settings<F.NoInfer<FlagName>, F.NoInfer<RemoteConfigName>, F.NoInfer<RemoteConfig>>;
   debug?: boolean;
   fetch?: (typeof globalThis)["fetch"];
+  cookies?: {
+    disableByDefault?: boolean;
+    expiresInDays?: number;
+  };
   __experimentalCdnUrl?: string;
 };
 
@@ -125,6 +130,8 @@ export class Abby<
   private testOverrides: Map<keyof Tests, Tests[keyof Tests]["variants"][number]> = new Map();
   private remoteConfigOverrides = new Map<string, RemoteConfigValue>();
 
+  private COOKIE_CONSENT_KEY = "$_abcc_$";
+
   constructor(
     private config: F.Narrow<
       AbbyConfig<FlagName, Tests, Environments, RemoteConfigName, RemoteConfig>
@@ -153,6 +160,17 @@ export class Abby<
       },
       {} as Record<RemoteConfigName, RemoteConfigValue>
     );
+
+    if (persistantTestStorage) {
+      this.persistantTestStorage = {
+        get: (...args) => persistantTestStorage.get(...args),
+        set: (...args) => {
+          if (config.cookies?.disableByDefault) return;
+          const [key, value] = args;
+          persistantTestStorage.set(key, value, { expiresInDays: config.cookies?.expiresInDays });
+        },
+      };
+    }
   }
 
   /**
@@ -425,7 +443,9 @@ export class Abby<
 
       return persistedValue;
     }
-
+    if (this.config.cookies?.disableByDefault) {
+      return getVariantWithHeighestWeightOrFirst(variants, weights);
+    }
     const weightedVariant = getWeightedRandomVariant(variants, weights);
     this.persistantTestStorage?.set(key as string, weightedVariant);
 
@@ -531,6 +551,13 @@ export class Abby<
           ""
         );
 
+        // special case for the cookie consent
+        if (testName === this.COOKIE_CONSENT_KEY) {
+          this.config.cookies ??= {};
+          this.config.cookies.disableByDefault = cookieValue !== "true";
+          return;
+        }
+
         this.testOverrides.set(testName as TestName, cookieValue);
         this.persistantTestStorage?.set(testName as TestName, cookieValue);
       }
@@ -603,5 +630,33 @@ export class Abby<
       name: RemoteConfigName;
       value: RemoteConfigValueStringToType<RemoteConfig[RemoteConfigName]>;
     }>;
+  }
+
+  /**
+   * Enables the usage of cookies for the storage of user data
+   * and also sets the cookies if possible
+   */
+  enableCookies() {
+    this.config.cookies ??= {};
+    this.config.cookies.disableByDefault = false;
+    this.persistantTestStorage?.set(this.COOKIE_CONSENT_KEY, "true");
+
+    Object.keys(this.#data.tests).forEach((testName) => {
+      this.persistantTestStorage?.set(testName, this.getTestVariant(testName as TestName));
+    });
+  }
+
+  /**
+   * Disables the usage of cookies for storage of user data
+   * and also removes all set cookies if possible
+   */
+  disableCookies() {
+    this.config.cookies ??= {};
+    this.config.cookies.disableByDefault = true;
+    this.persistantTestStorage?.set(this.COOKIE_CONSENT_KEY, "false");
+
+    Object.keys(this.#data.tests).forEach((testName) => {
+      this.persistantTestStorage?.set(testName, this.getTestVariant(testName as TestName));
+    });
   }
 }

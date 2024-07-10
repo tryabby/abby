@@ -46,6 +46,7 @@ const { useAbby, AbbyProvider, useFeatureFlag, __abby__, withDevtools } =
       },
     },
     flags: ["ForceDarkTheme"],
+    cookies: { disableByDefault: true, expiresInDays: 30 },
   });
 
 const Devtools = withDevtools(DevtoolsFactory, {

@@ -84,6 +84,7 @@ function PricingElement({
               <Fragment key={feature}>
                 <AiOutlineCheckCircle className={clsx("text-xl")} />
                 <span
+                  suppressHydrationWarning
                   className={clsx(
                     "flex items-center",
                     i === 0 ? "font-semibold" : "te"
