@@ -112,7 +112,7 @@ const TestDetailPage: NextPageWithLayout = () => {
     }
   );
 
-  const events = data ?? [];
+  const events = useMemo(() => data ?? [], [data]);
 
   const labels = getLabelsByInterval(
     interval,
@@ -123,7 +123,7 @@ const TestDetailPage: NextPageWithLayout = () => {
     () => ({
       labelsAndDates: labels.labels,
       datasets: events
-        .filter((event) => event.type == AbbyEventType.PING)
+        .filter((event) => event.type === AbbyEventType.PING)
         .map((event, i) => {
           return {
             data: labels.dates.map((date) => {

@@ -18,7 +18,7 @@ export const eventRouter = router({
         throw new TRPCError({ code: "UNAUTHORIZED" });
       }
 
-      return EventService.getEventsByProjectId(input.projectId);
+      return ClickHouseEventService.getEventsByProjectId(input.projectId);
     }),
   getEventsByTestId: protectedProcedure
     .input(

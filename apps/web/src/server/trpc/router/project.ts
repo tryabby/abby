@@ -58,14 +58,14 @@ export const projectRouter = router({
                 visitedEventCount:
                   clickhouseResult.find(
                     (res) =>
-                      res.variant == option.identifier &&
-                      res.type == AbbyEventType.PING
+                      res.variant === option.identifier &&
+                      res.type === AbbyEventType.PING
                   )?.count ?? 0,
                 actEventCount:
                   clickhouseResult.find(
                     (res) =>
-                      res.variant == option.identifier &&
-                      res.type == AbbyEventType.ACT
+                      res.variant === option.identifier &&
+                      res.type === AbbyEventType.ACT
                   )?.count ?? 0,
               };
             })
