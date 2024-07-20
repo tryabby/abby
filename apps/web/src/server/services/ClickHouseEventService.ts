@@ -172,7 +172,6 @@ export abstract class ClickHouseEventService {
       case SpecialTimeInterval.DAY: {
         return "toStartOfHour(createdAt)";
       }
-      case SpecialTimeInterval.MONTH_TO_DATE:
       case SpecialTimeInterval.ALL_TIME:
       case SpecialTimeInterval.Last30DAYS: {
         return "toStartOfDay(createdAt)";

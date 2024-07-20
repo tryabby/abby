@@ -3,9 +3,9 @@ import { ApiVersion } from "@prisma/client";
 import { trackPlanOverage } from "lib/logsnag";
 import { RequestCache } from "server/services/RequestCache";
 import { RequestService } from "server/services/RequestService";
-import { EventService } from "server/services/EventService";
 import { afterDataRequestQueue, getQueueingRedisConnection } from "./queues";
 import { env } from "env/server.mjs";
+import { ClickHouseEventService } from "server/services/ClickHouseEventService";
 
 export type AfterRequestJobPayload = {
   functionDuration: number;
@@ -17,7 +17,7 @@ const afterDataRequestWorker = new Worker<AfterRequestJobPayload>(
   afterDataRequestQueue.name,
   async ({ data: { apiVersion, functionDuration, projectId } }) => {
     const { events, planLimits, plan, is80PercentOfLimit } =
-      await EventService.getEventsForCurrentPeriod(projectId);
+      await ClickHouseEventService.getEventsForCurrentPeriod(projectId);
 
     if (events > planLimits.eventsPerMonth) {
       // TODO: send email

@@ -2,7 +2,6 @@ import { Worker } from "bullmq";
 import { trackPlanOverage } from "lib/logsnag";
 import { RequestCache } from "server/services/RequestCache";
 import { RequestService } from "server/services/RequestService";
-import { EventService } from "server/services/EventService";
 import { eventQueue, getQueueingRedisConnection } from "./queues";
 import { AbbyEvent, AbbyEventType } from "@tryabby/core";
 import { env } from "env/server.mjs";
@@ -25,11 +24,7 @@ const eventWorker = new Worker<EventJobPayload>(
     switch (event.type) {
       case AbbyEventType.PING:
       case AbbyEventType.ACT: {
-        const id = crypto.randomUUID();
-        await Promise.all([
-          EventService.createEvent(event, id),
-          ClickHouseEventService.createEvent(event, id),
-        ]);
+        await ClickHouseEventService.createEvent(event);
 
         break;
       }
@@ -38,7 +33,7 @@ const eventWorker = new Worker<EventJobPayload>(
       }
     }
     const { events, planLimits, plan, is80PercentOfLimit } =
-      await EventService.getEventsForCurrentPeriod(event.projectId);
+      await ClickHouseEventService.getEventsForCurrentPeriod(event.projectId);
 
     if (events > planLimits.eventsPerMonth) {
       // TODO: send email

@@ -1,5 +1,4 @@
 import { TRPCError } from "@trpc/server";
-import { EventService } from "server/services/EventService";
 import { ProjectService } from "server/services/ProjectService";
 import { z } from "zod";
 import { protectedProcedure, router } from "../trpc";

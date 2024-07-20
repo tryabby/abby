@@ -2,7 +2,6 @@ import { Option, ROLE } from "@prisma/client";
 import { TRPCError } from "@trpc/server";
 import { PLANS, planNameSchema } from "server/common/plans";
 import { stripe } from "server/common/stripe";
-import { EventService } from "server/services/EventService";
 import { ProjectService } from "server/services/ProjectService";
 import { generateCodeSnippets } from "utils/snippets";
 import { ParseStatus, z } from "zod";
@@ -43,7 +42,7 @@ export const projectRouter = router({
         throw new TRPCError({ code: "UNAUTHORIZED" });
       }
       const { events: eventsThisPeriod } =
-        await EventService.getEventsForCurrentPeriod(project.id);
+        await ClickHouseEventService.getEventsForCurrentPeriod(project.id);
 
       const tests = await Promise.all(
         project.tests.map(async (test) => {
