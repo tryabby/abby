@@ -30,10 +30,10 @@ export const OPTIONS: ChartOptions<"bar"> = {
   maintainAspectRatio: false,
   scales: {
     y: {
-      min: 0,
-      max: 100,
+      beginAtZero: true,
     },
   },
+
   plugins: {
     legend: {
       position: "top" as const,
@@ -51,6 +51,8 @@ const Metrics = ({
   const absPings = visitData.reduce((accumulator, value) => {
     return accumulator + value.actEventCount;
   }, 0);
+
+  console.log(absPings, visitData);
 
   return (
     <div className="relative mb-6 h-full w-full">

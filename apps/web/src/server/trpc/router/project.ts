@@ -56,16 +56,18 @@ export const projectRouter = router({
                 variantName: option.identifier,
                 ...option,
                 chance: option.chance.toNumber(),
-                visitedEventCount: clickhouseResult.find(
-                  (res) =>
-                    res.variant == option.identifier &&
-                    res.type == AbbyEventType.PING
-                )?.count,
-                actEventCount: clickhouseResult.find(
-                  (res) =>
-                    res.variant == option.identifier &&
-                    res.type == AbbyEventType.ACT
-                )?.count,
+                visitedEventCount:
+                  clickhouseResult.find(
+                    (res) =>
+                      res.variant == option.identifier &&
+                      res.type == AbbyEventType.PING
+                  )?.count ?? 0,
+                actEventCount:
+                  clickhouseResult.find(
+                    (res) =>
+                      res.variant == option.identifier &&
+                      res.type == AbbyEventType.ACT
+                  )?.count ?? 0,
               };
             })
           );
