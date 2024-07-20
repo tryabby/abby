@@ -1,5 +1,11 @@
 # @tryabby/core
 
+## 5.3.0
+
+### Minor Changes
+
+- 31d14b7: add cookie consent options
+
 ## 5.2.0
 
 ### Minor Changes

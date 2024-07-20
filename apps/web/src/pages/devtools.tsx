@@ -19,6 +19,7 @@ const { useAbby, AbbyProvider, useFeatureFlag, withDevtools, __abby__ } =
       },
     },
     flags: ["ToggleMeIfYoureExcited", "showEasterEgg", "showHeading"],
+    cookies: { disableByDefault: true, expiresInDays: 30 },
   });
 
 export const AbbyProdDevtools = withDevtools(abbyDevtools, {

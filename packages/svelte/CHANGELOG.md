@@ -1,5 +1,16 @@
 # @tryabby/svelte
 
+## 2.2.0
+
+### Minor Changes
+
+- 31d14b7: add cookie consent options
+
+### Patch Changes
+
+- Updated dependencies [31d14b7]
+  - @tryabby/core@5.3.0
+
 ## 2.1.5
 
 ### Patch Changes

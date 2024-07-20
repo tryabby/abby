@@ -29,6 +29,7 @@ export const flagRouter = router({
             },
           },
         },
+        orderBy: { createdAt: "asc" },
         include: {
           values: { include: { environment: true } },
         },
@@ -161,7 +162,6 @@ export const flagRouter = router({
         include: {
           project: {
             include: { environments: { select: { name: true } } },
-            select: { id: true },
           },
         },
       });
@@ -277,9 +277,6 @@ export const flagRouter = router({
               environments: {
                 select: { name: true },
               },
-            },
-            select: {
-              id: true,
             },
           },
         },

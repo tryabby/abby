@@ -1,5 +1,12 @@
 # @tryabby/next
 
+## 1.0.2
+
+### Patch Changes
+
+- Updated dependencies [31d14b7]
+  - @tryabby/react@5.2.0
+
 ## 1.0.1
 
 ### Patch Changes

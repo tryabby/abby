@@ -51,7 +51,7 @@ export function createAbby<
         return TestStorageService.get(abbyConfig.projectId, key);
       },
       set: (key: string, value: any) => {
-        if (typeof window === "undefined") return;
+        if (typeof window === "undefined" || config.cookies?.disableByDefault) return;
         TestStorageService.set(abbyConfig.projectId, key, value);
       },
     },

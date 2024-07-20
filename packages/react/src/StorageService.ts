@@ -4,7 +4,10 @@ import {
   getRCStorageKey,
   type IStorageService,
 } from "@tryabby/core";
+import type { StorageServiceOptions } from "@tryabby/core/dist/shared/interfaces";
 import Cookie from "js-cookie";
+
+const DEFAULT_COOKIE_AGE = 365;
 
 class ABStorageService implements IStorageService {
   get(projectId: string, testName: string): string | null {
@@ -14,8 +17,10 @@ class ABStorageService implements IStorageService {
     return retrievedValue;
   }
 
-  set(projectId: string, testName: string, value: string): void {
-    Cookie.set(getABStorageKey(projectId, testName), value);
+  set(projectId: string, testName: string, value: string, options?: StorageServiceOptions): void {
+    Cookie.set(getABStorageKey(projectId, testName), value, {
+      expires: options?.expiresInDays ? options.expiresInDays : DEFAULT_COOKIE_AGE,
+    });
   }
 
   remove(projectId: string, testName: string): void {
@@ -32,7 +37,7 @@ class FFStorageService implements IStorageService {
   }
 
   set(projectId: string, flagName: string, value: string): void {
-    Cookie.set(getFFStorageKey(projectId, flagName), value);
+    Cookie.set(getFFStorageKey(projectId, flagName), value, { expires: DEFAULT_COOKIE_AGE });
   }
 
   remove(projectId: string, flagName: string): void {
@@ -47,7 +52,7 @@ class RCStorageService implements IStorageService {
   }
 
   set(projectId: string, key: string, value: string): void {
-    Cookie.set(getRCStorageKey(projectId, key), value);
+    Cookie.set(getRCStorageKey(projectId, key), value, { expires: DEFAULT_COOKIE_AGE });
   }
 
   remove(projectId: string, key: string): void {
