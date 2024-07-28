@@ -5,6 +5,7 @@ import { AbbyEvent, AbbyEventType, assertUnreachable } from "@tryabby/core";
 import { RequestCache } from "./RequestCache";
 import { clickhouseClient } from "server/db/clickhouseClient";
 import { z } from "zod";
+import dayjs from "dayjs";
 
 const GroupedTestQueryResultSchema = z.object({
   selectedVariant: z.string(),
@@ -16,6 +17,10 @@ const GroupedTestQueryResultSchemaWithTimeSchema = z.intersection(
   GroupedTestQueryResultSchema,
   z.object({ startTime: z.string() })
 );
+
+const EventCurrentPeriodQueryResultSchema = z.object({
+  apiRequestCount: z.string(),
+});
 
 type GroupedTestQueryResultSchemaWithTime = z.infer<
   typeof GroupedTestQueryResultSchemaWithTimeSchema
@@ -140,12 +145,28 @@ export abstract class ClickHouseEventService {
     const [project, eventCount] = await Promise.all([
       prisma.project.findUnique({
         where: { id: projectId },
-        select: { stripePriceId: true },
+        select: { stripePriceId: true, currentPeriodEnd: true },
       }),
       RequestCache.get(projectId),
     ]);
 
     if (!project) throw new Error("Project not found");
+
+    const billingPeriodStartDate = dayjs(project.currentPeriodEnd)
+      .subtract(30, "days")
+      .format("YYYY-MM-DD");
+
+    const res = await clickhouseClient
+      .query({
+        query: `
+      SELECT
+      Count(*) as apiRequestCount
+      FROM abby.ApiRequest
+      WHERE projectId = '${projectId}' AND createdAt >= toDate('${billingPeriodStartDate}');
+ 
+`,
+      })
+      .then((res) => res.json());
 
     const plan = Object.keys(PLANS).find(
       (plan) => PLANS[plan as PlanName] === project.stripePriceId
@@ -154,7 +175,9 @@ export abstract class ClickHouseEventService {
     const planLimits = getLimitByPlan(plan ?? null);
 
     return {
-      events: eventCount,
+      events: parseInt(
+        EventCurrentPeriodQueryResultSchema.parse(res.data[0]).apiRequestCount
+      ),
       planLimits,
       plan,
       is80PercentOfLimit: planLimits.eventsPerMonth * 0.8 === eventCount,

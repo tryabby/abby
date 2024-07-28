@@ -32,6 +32,8 @@ const eventWorker = new Worker<EventJobPayload>(
         event.type satisfies never;
       }
     }
+
+    //could be moved into a cron job and checked only once a hour
     const { events, planLimits, plan, is80PercentOfLimit } =
       await ClickHouseEventService.getEventsForCurrentPeriod(event.projectId);
 
