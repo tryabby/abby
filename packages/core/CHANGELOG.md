@@ -1,5 +1,11 @@
 # @tryabby/core
 
+## 5.3.1
+
+### Patch Changes
+
+- d05cb9a: add feature flag removal command
+
 ## 5.3.0
 
 ### Minor Changes

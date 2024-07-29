@@ -1,5 +1,11 @@
 # @tryabby/cli
 
+## 1.1.1
+
+### Patch Changes
+
+- d05cb9a: add feature flag removal command
+
 ## 1.1.0
 
 ### Minor Changes

@@ -67,3 +67,6 @@ export function stringifyRemoteConfigValue(value: RemoteConfigValue) {
       assertUnreachable(value);
   }
 }
+
+export const getUseFeatureFlagRegex = (flagName: string) =>
+  new RegExp(`useFeatureFlag\\s*\\(\\s*['"\`]${flagName}['"\`]\\s*\\)`);
