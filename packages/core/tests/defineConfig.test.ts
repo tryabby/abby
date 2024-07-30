@@ -3,7 +3,7 @@ import { defineConfig } from "../src/defineConfig";
 
 describe("defineConfig", () => {
   const cfg = defineConfig(
-    { projectId: "xd" },
+    { projectId: "xd", currentEnvironment: "development" },
     {
       environments: ["development", "production"],
       flags: ["a"],

@@ -22,7 +22,8 @@ describe("useAbby", () => {
     const spy = vi.spyOn(TestStorageService, "set");
 
     const { AbbyProvider, useAbby } = createAbby({
-      environments: [],
+      environments: [""],
+      currentEnvironment: "",
       projectId: "123",
       tests: {
         test: { variants: ["OldFooter", "NewFooter"] },
@@ -52,7 +53,8 @@ describe("useAbby", () => {
     getSpy.mockReturnValue(persistedValue);
 
     const { AbbyProvider, useAbby } = createAbby({
-      environments: [],
+      environments: [""],
+      currentEnvironment: "",
       projectId: "123",
       tests: {
         test: { variants },
@@ -80,7 +82,8 @@ describe("useAbby", () => {
     getSpy.mockReturnValue(persistedValue);
 
     const { AbbyProvider, useAbby } = createAbby({
-      environments: [],
+      environments: [""],
+      currentEnvironment: "",
       projectId: "123",
       tests: {
         test: { variants },
@@ -102,7 +105,8 @@ describe("useAbby", () => {
   it("should ping the current info on mount", () => {
     const spy = vi.spyOn(HttpService, "sendData");
     const { AbbyProvider, useAbby } = createAbby({
-      environments: [],
+      environments: [""],
+      currentEnvironment: "",
       projectId: "123",
       tests: {
         test: { variants: ["A", "B", "C"] },
@@ -123,7 +127,8 @@ describe("useAbby", () => {
   it("should notify the server with onAct", () => {
     const spy = vi.spyOn(HttpService, "sendData");
     const { AbbyProvider, useAbby } = createAbby({
-      environments: [],
+      environments: [""],
+      currentEnvironment: "",
       projectId: "123",
       tests: {
         test: { variants: ["A", "B", "C"] },
@@ -146,7 +151,8 @@ describe("useAbby", () => {
 
   it("should return the correct feature flags", () => {
     const { AbbyProvider, useFeatureFlag } = createAbby({
-      environments: [],
+      environments: [""],
+      currentEnvironment: "",
       projectId: "123",
       flags: ["flag1", "flag2"],
     });
@@ -299,7 +305,8 @@ describe("useAbby", () => {
 
   it("produces proper types with a a lookup object in the hook", () => {
     const { AbbyProvider, useAbby } = createAbby({
-      environments: [],
+      environments: [""],
+      currentEnvironment: "",
       projectId: "123",
       tests: {
         test: {
@@ -384,7 +391,8 @@ describe("useAbby", () => {
 
 it("has the correct types", () => {
   const { AbbyProvider, useAbby, useFeatureFlag } = createAbby({
-    environments: [],
+    environments: [""],
+    currentEnvironment: "",
     projectId: "123",
     tests: {
       test: { variants: ["OldFooter", "NewFooter"] },

@@ -17,7 +17,8 @@ describe("Abby", () => {
     const variants = ["variant1", "variant2"];
 
     const abby = new Abby({
-      environments: [],
+      environments: [""],
+      currentEnvironment: "",
       projectId: "",
       tests: {
         a: { variants },
@@ -34,7 +35,8 @@ describe("Abby", () => {
     const variants = ["variant1", "variant2"];
 
     const abby = new Abby({
-      environments: [],
+      environments: [""],
+      currentEnvironment: "",
       projectId: "",
       tests: {
         a: { variants },
@@ -48,7 +50,8 @@ describe("Abby", () => {
 
   it("gets a feature flag", async () => {
     const abby = new Abby({
-      environments: [],
+      environments: [""],
+      currentEnvironment: "",
       projectId: "abc",
       flags: ["flag1"],
     });
@@ -60,7 +63,8 @@ describe("Abby", () => {
 
   it("gets a remote config", async () => {
     const abby = new Abby({
-      environments: [],
+      environments: [""],
+      currentEnvironment: "",
       projectId: "foo",
       remoteConfig: { remoteConfig1: "String" },
     });
@@ -72,7 +76,8 @@ describe("Abby", () => {
 
   it("uses the devOverrides", () => {
     const abby = new Abby({
-      environments: [],
+      environments: [""],
+      currentEnvironment: "",
       projectId: "",
       flags: ["flag1"],
       remoteConfig: {
@@ -109,7 +114,8 @@ describe("Abby", () => {
 
   it("uses fallbacks", () => {
     const abby = new Abby({
-      environments: [],
+      environments: [""],
+      currentEnvironment: "",
       projectId: "",
       remoteConfig: {
         config1: "String",
@@ -159,9 +165,7 @@ describe("Abby", () => {
         flags: {
           fallbackValues: {
             flag1: false,
-            flag2: {
-              test: true,
-            },
+            flag2: true,
           },
         },
         remoteConfig: {
@@ -183,7 +187,7 @@ describe("Abby", () => {
 
     expect(abby.getFeatureFlag("flag1")).toBe(false);
 
-    expect(abby.getFeatureFlag("flag2")).toBe(false);
+    expect(abby.getFeatureFlag("flag2")).toBe(true);
 
     abby = new Abby({
       environments: ["development", "test"],
@@ -198,9 +202,7 @@ describe("Abby", () => {
         flags: {
           fallbackValues: {
             flag1: false,
-            flag2: {
-              test: true,
-            },
+            flag2: true,
           },
         },
         remoteConfig: {
@@ -222,7 +224,8 @@ describe("Abby", () => {
     process.env.NODE_ENV = "development";
 
     const abby = new Abby({
-      environments: [],
+      environments: [""],
+      currentEnvironment: "",
       projectId: "",
       tests: {
         a: { variants: ["variant1", "variant2"] },
@@ -241,7 +244,8 @@ describe("Abby", () => {
 
   it("updates local feature flag", () => {
     const abby = new Abby({
-      environments: [],
+      environments: [""],
+      currentEnvironment: "",
       projectId: "",
       flags: ["flag1"],
     });
@@ -257,7 +261,8 @@ describe("Abby", () => {
 
   it("updates local remote config", () => {
     const abby = new Abby({
-      environments: [],
+      environments: [""],
+      currentEnvironment: "",
       projectId: "",
       remoteConfig: { remoteConfig1: "String" },
     });

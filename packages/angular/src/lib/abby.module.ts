@@ -37,7 +37,7 @@ export class AbbyModule {
         {
           provide: AbbyService,
           useFactory: (config: AbbyConfig) => {
-            return new AbbyService(config as F.Narrow<AbbyConfig>, inject(AbbyLoggerService));
+            return new AbbyService(config, inject(AbbyLoggerService));
           },
           deps: [ABBY_CONFIG_TOKEN],
         },

@@ -11,7 +11,8 @@ const OLD_ENV = process.env;
 describe("useAbby working", () => {
   it("returns a valid variant", () => {
     const { useAbby } = createAbby({
-      environments: [],
+      environments: [""],
+      currentEnvironment: "",
       projectId: "123",
       tests: {
         test: { variants: ["OldFooter", "NewFooter"] },
@@ -34,7 +35,8 @@ describe("useAbby working", () => {
 
     getSpy.mockReturnValue(persistedValue);
     const { useAbby } = createAbby({
-      environments: [],
+      environments: [""],
+      currentEnvironment: "",
       projectId: "123",
       tests: {
         test: { variants },
@@ -59,7 +61,8 @@ describe("useAbby working", () => {
 
     getSpy.mockReturnValue(persistedValue);
     const { useAbby } = createAbby({
-      environments: [],
+      environments: [""],
+      currentEnvironment: "",
       projectId: "123",
       tests: {
         test: { variants },
@@ -79,7 +82,8 @@ describe("useAbby working", () => {
   it("should ping the current info on mount", () => {
     const spy = vi.spyOn(HttpService, "sendData");
     const { useAbby } = createAbby({
-      environments: [],
+      environments: [""],
+      currentEnvironment: "",
       projectId: "123",
       tests: {
         test: { variants: ["A", "B", "C"] },
@@ -95,7 +99,8 @@ describe("useAbby working", () => {
   it("should notify the server with onAct", () => {
     const spy = vi.spyOn(HttpService, "sendData");
     const { useAbby } = createAbby({
-      environments: [],
+      environments: [""],
+      currentEnvironment: "",
       projectId: "123",
       tests: {
         test: { variants: ["A", "B", "C"] },
@@ -116,7 +121,8 @@ describe("useAbby working", () => {
       "TimsText",
     ];
     const { getVariants } = createAbby({
-      environments: [],
+      environments: [""],
+      currentEnvironment: "",
       projectId: "123",
       tests: {
         test: {
@@ -130,7 +136,8 @@ describe("useAbby working", () => {
 
   it("uses lookup object when retrieving variant", async () => {
     const { getABTestValue } = createAbby({
-      environments: [],
+      environments: [""],
+      currentEnvironment: "",
       projectId: "123",
       tests: {
         lookupTest: {

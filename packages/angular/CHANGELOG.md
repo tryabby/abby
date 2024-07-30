@@ -1,5 +1,16 @@
 # @tryabby/angular
 
+## 3.0.0
+
+### Major Changes
+
+- use typescript 5
+
+### Patch Changes
+
+- Updated dependencies
+  - @tryabby/core@6.0.0
+
 ## 2.0.10
 
 ### Patch Changes

@@ -1,5 +1,16 @@
 # @tryabby/react
 
+## 6.0.0
+
+### Major Changes
+
+- use typescript 5
+
+### Patch Changes
+
+- Updated dependencies
+  - @tryabby/core@6.0.0
+
 ## 5.2.2
 
 ### Patch Changes

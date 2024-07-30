@@ -1,4 +1,3 @@
-import { F } from "ts-toolbelt";
 import { ABConfig, AbbyConfig, RemoteConfigValueString } from ".";
 
 export const DYNAMIC_ABBY_CONFIG_KEYS = [
@@ -12,16 +11,18 @@ export const DYNAMIC_ABBY_CONFIG_KEYS = [
 export type DynamicConfigKeys = (typeof DYNAMIC_ABBY_CONFIG_KEYS)[number];
 
 export function defineConfig<
-  FlagName extends string,
-  Tests extends Record<string, ABConfig>,
-  RemoteConfig extends Record<RemoteConfigName, RemoteConfigValueString>,
-  RemoteConfigName extends Extract<keyof RemoteConfig, string>,
+  const FlagName extends string,
+  const Tests extends Record<string, ABConfig>,
+  const RemoteConfig extends Record<RemoteConfigName, RemoteConfigValueString>,
+  const RemoteConfigName extends Extract<keyof RemoteConfig, string>,
 >(
-  dynamicConfig: F.Narrow<
-    Pick<AbbyConfig<FlagName, Tests, string[], RemoteConfigName, RemoteConfig>, DynamicConfigKeys>
+  dynamicConfig: Pick<
+    AbbyConfig<FlagName, Tests, string[], RemoteConfigName, RemoteConfig>,
+    DynamicConfigKeys
   >,
-  config: F.Narrow<
-    Omit<AbbyConfig<FlagName, Tests, string[], RemoteConfigName, RemoteConfig>, DynamicConfigKeys>
+  config: Omit<
+    AbbyConfig<FlagName, Tests, string[], RemoteConfigName, RemoteConfig>,
+    DynamicConfigKeys
   >
 ) {
   return { ...dynamicConfig, ...config };

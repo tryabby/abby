@@ -1,6 +1,6 @@
 {
   "name": "@tryabby/svelte",
-  "version": "2.2.2",
+  "version": "3.0.0",
   "main": "dist/index.umd.cjs",
   "homepage": "https://docs.tryabby.dev",
   "type": "module",
@@ -52,7 +52,7 @@
     "svelte": "^3.55.1",
     "svelte-check": "^2.10.3",
     "tslib": "^2.5.0",
-    "typescript": "^4.9.3",
+    "typescript": "5.5.4",
     "vite": "^5.2.10",
     "vite-plugin-dts": "3.9.0",
     "vitest": "^1.5.0"

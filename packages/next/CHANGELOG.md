@@ -1,5 +1,16 @@
 # @tryabby/next
 
+## 6.0.0
+
+### Major Changes
+
+- use typescript 5
+
+### Patch Changes
+
+- Updated dependencies
+  - @tryabby/react@6.0.0
+
 ## 5.1.3
 
 ### Patch Changes

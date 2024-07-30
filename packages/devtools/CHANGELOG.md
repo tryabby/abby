@@ -1,5 +1,17 @@
 # @tryabby/devtools
 
+## 7.0.0
+
+### Major Changes
+
+- use typescript 5
+
+## 6.0.0
+
+### Major Changes
+
+- use typescript 5 and remove ts-toolbelt
+
 ## 5.0.1
 
 ### Patch Changes

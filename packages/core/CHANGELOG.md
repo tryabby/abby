@@ -1,5 +1,11 @@
 # @tryabby/core
 
+## 6.0.0
+
+### Major Changes
+
+- use typescript 5
+
 ## 5.4.0
 
 ### Minor Changes

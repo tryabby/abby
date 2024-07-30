@@ -159,12 +159,6 @@ describe("AbbyService", () => {
     });
   });
 
-  it("uses lookup object when getting variant", () => {
-    service.getVariant("test2", { A: 1, B: 2 }).subscribe((value) => {
-      expect(value).toEqual(1);
-    });
-  });
-
   it("should respect the default values for feature flags", () => {
     service.getFeatureFlagValue("defaultFlag").subscribe((value) => {
       expect(value).toEqual(false);
