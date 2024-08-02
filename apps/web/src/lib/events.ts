@@ -1,8 +1,9 @@
+import { assertUnreachable } from "@tryabby/core";
 import dayjs from "dayjs";
 
 export enum SpecialTimeInterval {
   DAY = "day",
-  MONTH_TO_DATE = "month",
+  Last30DAYS = "30d",
   ALL_TIME = "all",
 }
 
@@ -11,22 +12,10 @@ export const INTERVALS = [
     label: "Today",
     value: SpecialTimeInterval.DAY,
   },
-  // {
-  //   label: "Last 7 days",
-  //   value: "7d",
-  // },
   {
     label: "Last 30 days",
-    value: "30d",
+    value: SpecialTimeInterval.Last30DAYS,
   },
-  // {
-  //   label: "Year to Date",
-  //   value: SpecialTimeInterval.MONTH_TO_DATE,
-  // },
-  // {
-  //   label: "Last 12 months",
-  //   value: "12mo",
-  // },
   {
     label: "All Time",
     value: SpecialTimeInterval.ALL_TIME,
@@ -54,12 +43,14 @@ export function getMSFromSpecialTimeInterval(
     case SpecialTimeInterval.DAY: {
       return 1000 * 60 * 60 * 24;
     }
-    case SpecialTimeInterval.MONTH_TO_DATE: {
-      return new Date().getTime() - new Date().setDate(1);
+    case SpecialTimeInterval.Last30DAYS: {
+      return 1000 * 60 * 60 * 24 * 30;
     }
     case SpecialTimeInterval.ALL_TIME: {
       return Infinity;
     }
+    default:
+      assertUnreachable(timeInterval);
   }
 }
 
@@ -80,26 +71,41 @@ export function getFormattingByInterval(interval: INTERVAL) {
 export function getLabelsByInterval(
   interval: (typeof INTERVALS)[number]["value"],
   fistEventDate: Date
-): Array<string> {
+): { labels: Array<string>; dates: Array<Date> } {
   const formatting = getFormattingByInterval(interval);
   switch (interval) {
     case SpecialTimeInterval.DAY: {
       const baseData = dayjs().set("minute", 0);
-      return [0, 3, 6, 9, 12, 15, 18, 21].map((hour) =>
-        baseData.set("hour", hour).format(formatting)
+      const dateArray = [0, 3, 6, 9, 12, 15, 18, 21].map((hour) =>
+        baseData.set("hour", hour)
       );
+      return {
+        labels: dateArray.map((date) => date.format(formatting)),
+        dates: dateArray.map((date) => date.toDate()),
+      };
     }
-    case "30d": {
-      return Array.from({ length: 30 }, (_, i) =>
-        dayjs().subtract(i, "day").format(formatting)
+
+    case SpecialTimeInterval.Last30DAYS: {
+      const dateArray = Array.from({ length: 30 }, (_, i) =>
+        dayjs().subtract(i, "day")
       ).reverse();
+      return {
+        labels: dateArray.map((date) => date.format(formatting)),
+        dates: dateArray.map((date) => date.set("minute", 0).toDate()),
+      };
     }
     case SpecialTimeInterval.ALL_TIME: {
       const diff = dayjs().diff(dayjs(fistEventDate), "month");
 
-      return Array.from({ length: Math.max(diff, 6) }, (_, i) =>
-        dayjs(fistEventDate).add(i, "month").format(formatting)
+      const dateArray = Array.from({ length: Math.max(diff, 6) }, (_, i) =>
+        dayjs(fistEventDate).add(i, "month")
       ).reverse();
+      return {
+        labels: dateArray.map((date) => date.format(formatting)),
+        dates: dateArray.map((date) => date.toDate()),
+      };
     }
+    default:
+      return assertUnreachable(interval);
   }
 }

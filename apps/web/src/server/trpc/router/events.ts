@@ -1,8 +1,9 @@
 import { TRPCError } from "@trpc/server";
-import { EventService } from "server/services/EventService";
 import { ProjectService } from "server/services/ProjectService";
 import { z } from "zod";
 import { protectedProcedure, router } from "../trpc";
+import { ClickHouseEventService } from "server/services/ClickHouseEventService";
+import { SpecialTimeInterval } from "lib/events";
 
 export const eventRouter = router({
   getEvents: protectedProcedure
@@ -17,13 +18,13 @@ export const eventRouter = router({
         throw new TRPCError({ code: "UNAUTHORIZED" });
       }
 
-      return EventService.getEventsByProjectId(input.projectId);
+      return ClickHouseEventService.getEventsByProjectId(input.projectId);
     }),
   getEventsByTestId: protectedProcedure
     .input(
       z.object({
         testId: z.string(),
-        interval: z.string(),
+        interval: z.nativeEnum(SpecialTimeInterval),
       })
     )
     .query(async ({ ctx, input }) => {
@@ -44,11 +45,11 @@ export const eventRouter = router({
         throw new TRPCError({ code: "UNAUTHORIZED" });
       }
 
-      const tests = await EventService.getEventsByTestId(
+      const clickhouseEvents = await ClickHouseEventService.getEventsByTestId(
         input.testId,
         input.interval
       );
 
-      return tests;
+      return clickhouseEvents;
     }),
 });

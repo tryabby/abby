@@ -57,28 +57,17 @@ export const OPTIONS: ChartOptions<"bar"> = {
 };
 
 const Serves = ({
-  pingEvents,
-  options,
+  visitData,
 }: {
-  pingEvents: Event[];
-  options: ClientOption[];
+  visitData: (ClientOption & { visitedEventCount: number })[];
 }) => {
-  const labels = options.map((option) => option.identifier);
-
-  const actualData = useMemo(() => {
-    return options.map((option) => {
-      return pingEvents.filter(
-        (event) => event.selectedVariant === option.identifier
-      ).length;
-    });
-  }, [options, pingEvents]);
-
-  const absPings = actualData.reduce((accumulator, value) => {
-    return accumulator + value;
+  const labels = visitData.map((data) => data.identifier);
+  const absPings = visitData.reduce((accumulator, value) => {
+    return accumulator + value.visitedEventCount;
   }, 0);
 
   return (
-    <div className="relative h-full w-full">
+    <div className="relative h-full w-full ">
       <Bar
         className="self-end"
         options={OPTIONS}
@@ -87,16 +76,16 @@ const Serves = ({
           datasets: [
             {
               label: "Target",
-              data: options.map(
-                (option) => parseFloat(option.chance.toString()) * 100
-              ),
+              data: visitData.map((data) => {
+                return parseFloat(data.chance.toString()) * 100;
+              }),
               backgroundColor: "#A9E4EF",
             },
             {
               label: "Actual",
-              data: actualData.map((data) =>
-                Math.round((data / absPings) * 100)
-              ),
+              data: visitData.map((data) => {
+                return Math.round((data.visitedEventCount / absPings) * 100);
+              }),
               backgroundColor: "#f472b6",
             },
           ],

@@ -1,11 +1,7 @@
 import { TRPCError } from "@trpc/server";
-import { ProjectService } from "server/services/ProjectService";
 import { z } from "zod";
 import { protectedProcedure, router } from "../trpc";
 import { prisma } from "server/db/client";
-import { getLimitByPlan } from "server/common/plans";
-import { getProjectPaidPlan } from "lib/stripe";
-import { EventService } from "server/services/EventService";
 import { TestService } from "server/services/TestService";
 import { ConfigCache } from "server/common/config-cache";
 

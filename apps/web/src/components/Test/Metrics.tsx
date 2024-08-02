@@ -30,10 +30,10 @@ export const OPTIONS: ChartOptions<"bar"> = {
   maintainAspectRatio: false,
   scales: {
     y: {
-      min: 0,
-      max: 100,
+      beginAtZero: true,
     },
   },
+
   plugins: {
     legend: {
       position: "top" as const,
@@ -42,27 +42,17 @@ export const OPTIONS: ChartOptions<"bar"> = {
 };
 
 const Metrics = ({
-  pingEvents,
-  options,
+  visitData,
 }: {
-  pingEvents: Event[];
-  options: ClientOption[];
+  visitData: (ClientOption & { actEventCount: number })[];
 }) => {
-  const labels = options.map((option) => option.identifier);
-  const actualData = useMemo(() => {
-    return options.map((option) => {
-      return {
-        pings: pingEvents.filter(
-          (event) => event.selectedVariant === option.identifier
-        ).length,
-        weight: option.chance,
-      };
-    });
-  }, [options, pingEvents]);
+  const labels = visitData.map((data) => data.identifier);
 
-  const absPings = actualData.reduce((accumulator, value) => {
-    return accumulator + value.pings;
+  const absPings = visitData.reduce((accumulator, value) => {
+    return accumulator + value.actEventCount;
   }, 0);
+
+  console.log(absPings, visitData);
 
   return (
     <div className="relative mb-6 h-full w-full">
@@ -74,12 +64,13 @@ const Metrics = ({
           datasets: [
             {
               label: "Actual",
-              data: actualData.map((d) => d.pings),
+              data: visitData.map((data) => data.actEventCount),
+
               backgroundColor: "#A9E4EF",
             },
             {
               label: "Expected",
-              data: actualData.map((data) => absPings * data.weight),
+              data: visitData.map((data) => absPings * data.chance),
               backgroundColor: "#f472b6",
             },
           ],

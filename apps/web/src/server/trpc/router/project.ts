@@ -2,10 +2,9 @@ import { Option, ROLE } from "@prisma/client";
 import { TRPCError } from "@trpc/server";
 import { PLANS, planNameSchema } from "server/common/plans";
 import { stripe } from "server/common/stripe";
-import { EventService } from "server/services/EventService";
 import { ProjectService } from "server/services/ProjectService";
 import { generateCodeSnippets } from "utils/snippets";
-import { z } from "zod";
+import { ParseStatus, z } from "zod";
 
 export type ClientOption = Omit<Option, "chance"> & {
   chance: number;
@@ -13,6 +12,8 @@ export type ClientOption = Omit<Option, "chance"> & {
 
 import { updateProjectsOnSession } from "utils/updateSession";
 import { protectedProcedure, router } from "../trpc";
+import { AbbyEventType } from "@tryabby/core";
+import { ClickHouseEventService } from "server/services/ClickHouseEventService";
 
 export const projectRouter = router({
   getProjectData: protectedProcedure
@@ -29,7 +30,7 @@ export const projectRouter = router({
         },
         include: {
           tests: {
-            include: { options: true, events: true },
+            include: { options: true },
           },
           environments: true,
           featureFlags: true,
@@ -41,19 +42,48 @@ export const projectRouter = router({
         throw new TRPCError({ code: "UNAUTHORIZED" });
       }
       const { events: eventsThisPeriod } =
-        await EventService.getEventsForCurrentPeriod(project.id);
+        await ClickHouseEventService.getEventsForCurrentPeriod(project.id);
+
+      const tests = await Promise.all(
+        project.tests.map(async (test) => {
+          const visitData = await Promise.all(
+            test.options.map(async (option) => {
+              const clickhouseResult =
+                await ClickHouseEventService.getGroupedEventsByTestId(test);
+
+              return {
+                variantName: option.identifier,
+                ...option,
+                chance: option.chance.toNumber(),
+                visitedEventCount:
+                  clickhouseResult.find(
+                    (res) =>
+                      res.variant === option.identifier &&
+                      res.type === AbbyEventType.PING
+                  )?.count ?? 0,
+                actEventCount:
+                  clickhouseResult.find(
+                    (res) =>
+                      res.variant === option.identifier &&
+                      res.type === AbbyEventType.ACT
+                  )?.count ?? 0,
+              };
+            })
+          );
+
+          return {
+            id: test.id,
+            name: test.name,
+            visitData,
+          };
+        })
+      );
 
       return {
         project: {
           ...project,
           eventsThisPeriod,
-          tests: project.tests.map((test) => ({
-            ...test,
-            options: test.options.map((option) => ({
-              ...option,
-              chance: option.chance.toNumber(),
-            })),
-          })),
+          tests,
         },
       };
     }),

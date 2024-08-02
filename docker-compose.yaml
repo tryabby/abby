@@ -34,6 +34,13 @@ services:
     ports:
       - "1025:1025"
       - "8025:8025"
+  clickhouse:
+    image: clickhouse/clickhouse-server
+    restart: always
+    ports:
+      - "8123:8123"
+      - "9000:9000"
+      - "9009:9009"
 # Names our volume
 volumes:
   my-db:
