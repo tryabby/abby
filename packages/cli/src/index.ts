@@ -13,6 +13,7 @@ import { initAbbyConfig } from "./init";
 import { addCommandTypeSchema } from "./schemas";
 import { addFlag } from "./add-flag";
 import { addRemoteConfig } from "./add-remote-config";
+import { removeFlagInstance } from "./ai";
 
 const program = new Command();
 
@@ -182,6 +183,26 @@ program
       );
       return;
     }
+  });
+
+const aiCommand = program.command("ai").description("Abby AI helpers");
+
+aiCommand
+  .command("remove")
+  .description("remove a flag from your code")
+  .argument("<dir>", "The directory to scan for")
+  .argument("<flag>", "The flag name to remove")
+  .addOption(ConfigOption)
+  .addOption(HostOption)
+  .action(async (dir: string, flagName: string, options: { config?: string; host?: string }) => {
+    const files = await removeFlagInstance({
+      apiKey: await getToken(),
+      flagName,
+      path: dir,
+      configPath: options.config,
+      host: options.host,
+    });
+    console.log(files);
   });
 
 program.parse(process.argv);
