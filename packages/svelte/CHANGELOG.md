@@ -1,5 +1,12 @@
 # @tryabby/svelte
 
+## 2.2.2
+
+### Patch Changes
+
+- Updated dependencies
+  - @tryabby/core@5.4.0
+
 ## 2.2.1
 
 ### Patch Changes

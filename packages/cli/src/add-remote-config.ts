@@ -9,9 +9,9 @@ export async function addRemoteConfig(options: {
   host?: string;
   configPath?: string;
 }) {
-  const { mutableConfig, saveMutableConfig, restoreConfig } = await loadLocalConfig(
-    options.configPath
-  );
+  const { mutableConfig, saveMutableConfig, restoreConfig } = await loadLocalConfig({
+    configPath: options.configPath,
+  });
 
   const { remoteConfigName, remoteConfigType } = await prompts([
     {

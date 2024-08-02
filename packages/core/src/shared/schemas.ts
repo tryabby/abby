@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { AbbyEventType } from "./types";
+import { AbbyConfig } from "..";
 
 export const abbyEventSchema = z.object({
   type: z.nativeEnum(AbbyEventType),
@@ -25,7 +26,7 @@ export const remoteConfigValueStringSchema = z.union([
 export const abbyConfigSchema = z.object({
   projectId: z.string(),
   apiUrl: z.string().optional(),
-  currentEnvironment: z.string().optional(),
+  currentEnvironment: z.string(),
   environments: z.array(z.string()),
   tests: z
     .record(
@@ -59,7 +60,14 @@ export const abbyConfigSchema = z.object({
     })
     .optional(),
   debug: z.boolean().optional(),
-});
+  cookies: z
+    .object({
+      disableByDefault: z.boolean().optional(),
+      expiresInDays: z.number().optional(),
+    })
+    .optional(),
+  __experimentalCdnUrl: z.string().optional(),
+}) satisfies z.ZodType<AbbyConfig>;
 
 export type AbbyConfigFile = z.infer<typeof abbyConfigSchema>;
 
@@ -75,7 +83,7 @@ export type RemoteConfigValueString = z.infer<typeof remoteConfigValueStringSche
 export type RemoteConfigValueStringToType<T extends RemoteConfigValueString> = T extends "String"
   ? string
   : T extends "Number"
-  ? number
-  : T extends "JSON"
-  ? Record<string, unknown>
-  : never;
+    ? number
+    : T extends "JSON"
+      ? Record<string, unknown>
+      : never;

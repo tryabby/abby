@@ -3,6 +3,7 @@ import { defineConfig } from "@tryabby/core";
 export default defineConfig(
   {
     projectId: process.env["ABBY_PROJECT_ID"]!,
+    currentEnvironment: "development",
   },
   {
     environments: [],
@@ -18,4 +19,3 @@ export default defineConfig(
     remoteConfig: { flag2: "Number" },
   }
 );
-

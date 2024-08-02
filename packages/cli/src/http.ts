@@ -104,9 +104,7 @@ export abstract class HttpService {
         if (!Array.isArray(res)) {
           throw new Error("Invalid response from server");
         }
-        console.log({ res, files });
         await Promise.all(res.map((file) => writeFile(file.filePath, file.fileContent)));
-        console.log(chalk.green("All files have been updated successfully"));
       } else if (status === 500) {
         throw new Error("Internal server error trying to update files");
       } else if (status === 401) {

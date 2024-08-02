@@ -16,7 +16,7 @@ export async function verifyLocalConfig({
   apiUrl?: string;
   configPath?: string;
 }) {
-  const { config: localConfig } = await loadLocalConfig(configPath);
+  const { config: localConfig } = await loadLocalConfig({ configPath });
 
   const remoteConfig = await HttpService.getConfigFromServer({
     projectId: localConfig.projectId,

@@ -4,6 +4,7 @@ import { getUseFeatureFlagRegex } from "@tryabby/core";
 import { readFile } from "fs/promises";
 import chalk from "chalk";
 import { HttpService } from "./http";
+import * as path from "path";
 
 export async function removeFlagInstance(options: {
   flagName: string;
@@ -13,8 +14,7 @@ export async function removeFlagInstance(options: {
   configPath?: string;
 }) {
   const files = await globby("**/*.tsx", {
-    cwd: options.path ?? process.cwd(),
-    absolute: true,
+    cwd: options.path,
     gitignore: true,
     onlyFiles: true,
   });
@@ -23,7 +23,8 @@ export async function removeFlagInstance(options: {
 
   const filesToUse = (
     await Promise.all(
-      files.flatMap(async (filePath) => {
+      files.flatMap(async (fp) => {
+        const filePath = path.join(options.path, fp);
         const content = await readFile(filePath, "utf-8").then((content) => {
           const matches = content.match(regex);
           return matches ? content : null;
@@ -45,14 +46,26 @@ export async function removeFlagInstance(options: {
     apiUrl: options.host,
   });
 
+  let updatedFileCount = filesToUse.length;
   try {
-    const { mutableConfig, saveMutableConfig } = await loadLocalConfig(
-      options.configPath
+    const { mutableConfig, saveMutableConfig } = await loadLocalConfig({
+      configPath: options.configPath,
+      cwd: options.path,
+    });
+
+    if (mutableConfig.flags === undefined) {
+      console.error("No flags found in the config file");
+      return;
+    }
+
+    mutableConfig.flags = Array.from(mutableConfig.flags).filter(
+      (flag) => flag !== options.flagName
     );
-    mutableConfig.flags = mutableConfig.flags.filter((flag: string) => flag !== options.flagName);
+    updatedFileCount++;
     await saveMutableConfig();
   } catch (e) {
+    console.error(e);
     // fail silently
   }
-  console.log(chalk.green("Flag removed successfully"));
+  return updatedFileCount;
 }
