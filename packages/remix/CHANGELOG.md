@@ -1,5 +1,11 @@
 # @tryabby/next
 
+## 1.0.4
+
+### Patch Changes
+
+- @tryabby/react@5.2.2
+
 ## 1.0.3
 
 ### Patch Changes

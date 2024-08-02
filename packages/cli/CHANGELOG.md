@@ -1,5 +1,11 @@
 # @tryabby/cli
 
+## 1.2.0
+
+### Minor Changes
+
+- update ai command
+
 ## 1.1.1
 
 ### Patch Changes

@@ -1,4 +1,4 @@
-import { abbyConfigSchema } from "@tryabby/core";
+import { AbbyConfig, abbyConfigSchema } from "@tryabby/core";
 import { loadConfig } from "unconfig";
 import { config as loadEnv } from "dotenv";
 import path from "path";
@@ -8,11 +8,18 @@ import { ABBY_BASE_URL } from "./consts";
 import cors from "cors";
 import fs from "fs/promises";
 import { writeFile, loadFile, parseModule } from "magicast";
+import { chownSync } from "fs";
 
-export async function loadLocalConfig(configPath?: string) {
-  loadEnv();
+export async function loadLocalConfig({
+  configPath,
+  cwd: initialCwd,
+}: {
+  configPath?: string;
+  cwd?: string;
+}) {
+  loadEnv({ path: initialCwd ? path.resolve(initialCwd, ".env") : "" });
 
-  let cwd = process.cwd();
+  let cwd = initialCwd ?? process.cwd();
   let fileName = "abby.config";
   let extensions = ["ts", "js", "mjs", "cjs"];
 
@@ -49,7 +56,7 @@ export async function loadLocalConfig(configPath?: string) {
   return {
     config: result.data,
     configFilePath: sources[0],
-    mutableConfig: mod.exports.default.$args[1],
+    mutableConfig: mod.exports.default.$args[1] as AbbyConfig,
     saveMutableConfig: () => writeFile(mod, sources[0]),
     restoreConfig: () => {
       const mod = parseModule(originalConfig);

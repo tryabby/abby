@@ -6,9 +6,9 @@ import { push } from "./push";
 import { updateConfigFile } from "./update-config-file";
 
 export async function addFlag(options: { apiKey: string; host?: string; configPath?: string }) {
-  const { mutableConfig, saveMutableConfig, restoreConfig } = await loadLocalConfig(
-    options.configPath
-  );
+  const { mutableConfig, saveMutableConfig, restoreConfig } = await loadLocalConfig({
+    configPath: options.configPath,
+  });
 
   const { flagName } = await prompts({
     type: "text",

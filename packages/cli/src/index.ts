@@ -14,6 +14,7 @@ import { addCommandTypeSchema } from "./schemas";
 import { addFlag } from "./add-flag";
 import { addRemoteConfig } from "./add-remote-config";
 import { removeFlagInstance } from "./ai";
+import ora from "ora";
 
 const program = new Command();
 
@@ -195,14 +196,17 @@ aiCommand
   .addOption(ConfigOption)
   .addOption(HostOption)
   .action(async (dir: string, flagName: string, options: { config?: string; host?: string }) => {
-    const files = await removeFlagInstance({
+    const spinner = ora("Removing feature flag with ✨AI✨").start();
+    const updatedFileCount = await removeFlagInstance({
       apiKey: await getToken(),
       flagName,
       path: dir,
       configPath: options.config,
       host: options.host,
     });
-    console.log(files);
+    spinner.succeed();
+    console.log(chalk.green("\nFlag removed successfully"));
+    console.log(chalk.green("Files updated:", updatedFileCount));
   });
 
 program.parse(process.argv);

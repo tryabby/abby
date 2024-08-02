@@ -29,6 +29,7 @@ const API_KEY = "test";
 const sampleLocalConfig = [
   {
     projectId: "test",
+    currentEnvironment: "development",
   },
   {
     environments: [],

@@ -10,7 +10,7 @@ export async function push({
   apiUrl?: string;
   configPath?: string;
 }) {
-  const { config } = await loadLocalConfig(configPath);
+  const { config } = await loadLocalConfig({ configPath });
 
   await HttpService.updateConfigOnServer({
     apiKey,

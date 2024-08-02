@@ -1,5 +1,11 @@
 # @tryabby/core
 
+## 5.4.0
+
+### Minor Changes
+
+- update ai command
+
 ## 5.3.1
 
 ### Patch Changes

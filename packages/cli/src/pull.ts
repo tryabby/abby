@@ -24,7 +24,7 @@ export async function pullAndMerge({
   apiUrl?: string;
   configPath?: string;
 }): Promise<void> {
-  const { config: localConfig, configFilePath } = await loadLocalConfig(configPath);
+  const { config: localConfig, configFilePath } = await loadLocalConfig({ configPath });
 
   const configFileContents = await fs.readFile(configFilePath, "utf-8");
 
