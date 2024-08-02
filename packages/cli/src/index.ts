@@ -15,12 +15,13 @@ import { addFlag } from "./add-flag";
 import { addRemoteConfig } from "./add-remote-config";
 import { removeFlagInstance } from "./ai";
 import ora from "ora";
+import packageJson from "../package.json";
 
 const program = new Command();
 
 console.log(chalk.magenta(figlet.textSync("abby-cli", { horizontalLayout: "full" })));
 
-program.name("abby-cli").description("CLI Tool for Abby").version("0.0.1");
+program.name("abby-cli").description("CLI Tool for Abby").version(packageJson.version);
 
 program
   .command("login")
