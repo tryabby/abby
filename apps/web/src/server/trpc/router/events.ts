@@ -3,6 +3,15 @@ import { EventService } from "server/services/EventService";
 import { ProjectService } from "server/services/ProjectService";
 import { z } from "zod";
 import { protectedProcedure, router } from "../trpc";
+import { groupBy, uniqBy } from "lodash-es";
+import dayjs from "dayjs";
+import {
+  getBaseEventsByInterval,
+  getFormattingByInterval,
+  INTERVALS,
+  TIME_INTERVAL,
+} from "lib/events";
+import { AbbyEventType } from "@tryabby/core";
 
 export const eventRouter = router({
   getEvents: protectedProcedure
@@ -27,7 +36,7 @@ export const eventRouter = router({
       })
     )
     .query(async ({ ctx, input }) => {
-      const currentTest = await ctx.prisma.test.count({
+      const currentTest = await ctx.prisma.test.findFirst({
         where: {
           id: input.testId,
           project: {
@@ -38,17 +47,98 @@ export const eventRouter = router({
             },
           },
         },
+        include: {
+          options: true,
+        },
       });
 
       if (!currentTest) {
         throw new TRPCError({ code: "UNAUTHORIZED" });
       }
 
-      const tests = await EventService.getEventsByTestId(
+      const events = await EventService.getEventsByTestId(
         input.testId,
         input.interval
       );
 
-      return tests;
+      const potentialVariants = currentTest.options.map((o) => o.identifier);
+
+      const eventsByDate = groupBy(events, (e) => {
+        const date = dayjs(e.createdAt);
+        // round by 3 hours
+        const hour = Math.floor(date.hour() / 3) * 3;
+
+        return date.set("hour", hour).set("minute", 0).toDate();
+      });
+
+      const baseEvents =
+        getBaseEventsByInterval(
+          input.interval,
+          potentialVariants,
+          events[0]?.createdAt ?? new Date()
+        ) ?? [];
+
+      const pingEvents = uniqBy(
+        [
+          ...Object.entries(eventsByDate).map(([date, events]) => {
+            const tests = groupBy(
+              events.filter((e) => e.type === AbbyEventType.PING),
+              (e) => e.selectedVariant
+            );
+            const testCount = Object.entries(tests).reduce(
+              (acc, [variant, events]) => {
+                acc[variant] = events.length;
+                return acc;
+              },
+              {} as Record<string, number>
+            );
+            potentialVariants.forEach((variant) => {
+              if (!testCount[variant]) {
+                testCount[variant] = 0;
+              }
+            });
+            return { date, ...testCount } as {
+              date: string;
+              [key: string]: number | string;
+            };
+          }),
+          ...baseEvents,
+        ],
+        (e) => e.date
+      ) as Array<{
+        date: Date;
+        [key: string]: Date | string;
+      }>;
+
+      const actEvents = uniqBy(
+        [
+          ...Object.entries(eventsByDate).map(([date, events]) => {
+            const tests = groupBy(
+              events.filter((e) => e.type === AbbyEventType.ACT),
+              (e) => e.selectedVariant
+            );
+            const testCount = Object.entries(tests).reduce(
+              (acc, [variant, events]) => {
+                acc[variant] = events.length;
+                return acc;
+              },
+              {} as Record<string, number>
+            );
+            potentialVariants.forEach((variant) => {
+              if (!testCount[variant]) {
+                testCount[variant] = 0;
+              }
+            });
+            return { date, ...testCount };
+          }),
+          ...baseEvents,
+        ],
+        (e) => e.date
+      ) as Array<{
+        date: Date;
+        [key: string]: Date | string;
+      }>;
+
+      return { currentTest, pingEvents, actEvents, potentialVariants };
     }),
 });

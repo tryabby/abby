@@ -141,3 +141,26 @@ html {
   z-index: -1;
   transform: rotate(-1deg);
 }
+
+/* charts */
+@layer base {
+  :root {
+    --chart-1: 173 58% 39%;
+    --chart-2: 12 76% 61%;
+    --chart-3: 197 37% 24%;
+    --chart-4: 43 74% 66%;
+    --chart-5: 27 87% 67%;
+  }
+
+  .dark {
+    --chart-1: 327.4, 70%, 50%;
+
+    --chart-2: 87.4, 75%, 55%;
+
+    --chart-3: 137.4, 80%, 55%;
+
+    --chart-4: 47.4, 65%, 60%;
+
+    --chart-5: 267.4, 60%, 45%;
+  }
+}

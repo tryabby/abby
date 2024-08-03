@@ -1,15 +1,14 @@
 import dayjs from "dayjs";
 
-export enum SpecialTimeInterval {
+export enum TIME_INTERVAL {
   DAY = "day",
-  MONTH_TO_DATE = "month",
   ALL_TIME = "all",
 }
 
 export const INTERVALS = [
   {
     label: "Today",
-    value: SpecialTimeInterval.DAY,
+    value: TIME_INTERVAL.DAY,
   },
   // {
   //   label: "Last 7 days",
@@ -29,50 +28,80 @@ export const INTERVALS = [
   // },
   {
     label: "All Time",
-    value: SpecialTimeInterval.ALL_TIME,
+    value: TIME_INTERVAL.ALL_TIME,
   },
 ] as const;
 
-type INTERVAL = (typeof INTERVALS)[number]["value"];
-
-export function isValidInterval(interval: string): interval is INTERVAL {
-  return INTERVALS.map((i) => i.value).includes(interval as INTERVAL);
+export function isValidInterval(interval: string): interval is TIME_INTERVAL {
+  return INTERVALS.map((i) => i.value).includes(interval as TIME_INTERVAL);
 }
 
 export function isSpecialTimeInterval(
   timeInterval: string
-): timeInterval is SpecialTimeInterval {
-  return Object.values(SpecialTimeInterval).includes(
-    timeInterval as SpecialTimeInterval
-  );
+): timeInterval is TIME_INTERVAL {
+  return Object.values(TIME_INTERVAL).includes(timeInterval as TIME_INTERVAL);
 }
 
 export function getMSFromSpecialTimeInterval(
-  timeInterval: SpecialTimeInterval
+  timeInterval: TIME_INTERVAL
 ): number {
   switch (timeInterval) {
-    case SpecialTimeInterval.DAY: {
+    case TIME_INTERVAL.DAY: {
       return 1000 * 60 * 60 * 24;
     }
-    case SpecialTimeInterval.MONTH_TO_DATE: {
-      return new Date().getTime() - new Date().setDate(1);
-    }
-    case SpecialTimeInterval.ALL_TIME: {
+    case TIME_INTERVAL.ALL_TIME: {
       return Infinity;
     }
   }
 }
 
-export function getFormattingByInterval(interval: INTERVAL) {
+export function getFormattingByInterval(interval: string) {
   switch (interval) {
-    case SpecialTimeInterval.DAY: {
+    case TIME_INTERVAL.DAY: {
       return "HH:mm";
     }
     case "30d": {
       return "DD MMM";
     }
-    case SpecialTimeInterval.ALL_TIME: {
+    case TIME_INTERVAL.ALL_TIME: {
       return "MMM YY";
+    }
+    default: {
+      return "DD MMM";
+    }
+  }
+}
+
+export function getBaseEventsByInterval(
+  interval: string,
+  variants: string[],
+  firstEventDate: Date
+) {
+  const variantData = variants.reduce((acc, variant) => {
+    acc[variant] = 0;
+    return acc;
+  }, {} as Record<string, number>);
+  switch (interval) {
+    case TIME_INTERVAL.DAY: {
+      const baseData = dayjs().set("minute", 0);
+      return [0, 3, 6, 9, 12, 15, 18, 21].map((hour) => ({
+        date: baseData.set("hour", hour).toDate(),
+        ...variantData,
+      }));
+    }
+    case "30d": {
+      return Array.from({ length: 30 }, (_, i) => ({
+        date: dayjs().subtract(i, "day").toDate(),
+        ...variantData,
+      })).reverse();
+    }
+    case TIME_INTERVAL.ALL_TIME: {
+      const diff = dayjs().diff(dayjs(firstEventDate), "month");
+
+      return Array.from({ length: Math.max(diff, 6) }, (_, i) => ({
+        date: dayjs(firstEventDate).add(i, "month").toDate(),
+        ...variantData,
+      })).reverse();
     }
   }
 }
@@ -83,7 +112,7 @@ export function getLabelsByInterval(
 ): Array<string> {
   const formatting = getFormattingByInterval(interval);
   switch (interval) {
-    case SpecialTimeInterval.DAY: {
+    case TIME_INTERVAL.DAY: {
       const baseData = dayjs().set("minute", 0);
       return [0, 3, 6, 9, 12, 15, 18, 21].map((hour) =>
         baseData.set("hour", hour).format(formatting)
@@ -94,7 +123,7 @@ export function getLabelsByInterval(
         dayjs().subtract(i, "day").format(formatting)
       ).reverse();
     }
-    case SpecialTimeInterval.ALL_TIME: {
+    case TIME_INTERVAL.ALL_TIME: {
       const diff = dayjs().diff(dayjs(fistEventDate), "month");
 
       return Array.from({ length: Math.max(diff, 6) }, (_, i) =>
