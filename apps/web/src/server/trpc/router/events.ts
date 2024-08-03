@@ -65,10 +65,13 @@ export const eventRouter = router({
 
       const eventsByDate = groupBy(events, (e) => {
         const date = dayjs(e.createdAt);
-        // round by 3 hours
-        const hour = Math.floor(date.hour() / 3) * 3;
+        if (input.interval === TIME_INTERVAL.DAY) {
+          // round by 3 hours
+          const hour = Math.floor(date.hour() / 3) * 3;
 
-        return date.set("hour", hour).set("minute", 0).toDate();
+          return date.set("hour", hour).set("minute", 0).toDate();
+        }
+        return date.startOf("day").toDate();
       });
 
       const baseEvents =

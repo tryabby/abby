@@ -20,7 +20,6 @@ import {
 } from "components/ui/chart";
 import dayjs from "dayjs";
 import { getFormattingByInterval } from "lib/events";
-import { date } from "zod";
 
 type EventList = Array<{
   date: Date;
@@ -110,12 +109,7 @@ export function EventGraph({
             <ChartTooltip
               cursor={false}
               labelFormatter={(value) => {
-                return new Intl.DateTimeFormat("en-US", {
-                  month: "short",
-                  day: "numeric",
-                  hour: "numeric",
-                  minute: "numeric",
-                }).format(new Date(value));
+                return dayjs(value).format(getFormattingByInterval(interval));
               }}
               content={<ChartTooltipContent indicator="dot" />}
             />

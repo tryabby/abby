@@ -1,5 +1,6 @@
 import { PrismaClient, Prisma } from "@prisma/client";
 import { AbbyEventType } from "@tryabby/core";
+import crypto from "crypto";
 
 const prisma = new PrismaClient();
 

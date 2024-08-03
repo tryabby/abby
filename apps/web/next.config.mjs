@@ -56,6 +56,8 @@ const config = {
     instrumentationHook: true,
   },
   async headers() {
+    const isProduction = process.env.NODE_ENV === "production";
+    if (!isProduction) return [];
     return [
       {
         source: "/(.*)",
