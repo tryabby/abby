@@ -2,7 +2,7 @@ import dayjs from "dayjs";
 import {
   getMSFromSpecialTimeInterval,
   isSpecialTimeInterval,
-  SpecialTimeInterval,
+  TIME_INTERVAL,
 } from "lib/events";
 import ms from "ms";
 import { getLimitByPlan, PlanName, PLANS } from "server/common/plans";
@@ -52,17 +52,20 @@ export abstract class EventService {
         where: {
           testId,
           ...(specialIntervalInMs !== Infinity &&
-            timeInterval !== SpecialTimeInterval.DAY && {
+            timeInterval !== TIME_INTERVAL.DAY && {
               createdAt: {
                 gte: new Date(now - getMSFromSpecialTimeInterval(timeInterval)),
               },
             }),
           // Special case for day, since we want to include the current day
-          ...(timeInterval === SpecialTimeInterval.DAY && {
+          ...(timeInterval === TIME_INTERVAL.DAY && {
             createdAt: {
               gte: dayjs().startOf("day").toDate(),
             },
           }),
+        },
+        orderBy: {
+          createdAt: "asc",
         },
       });
     }
@@ -77,8 +80,11 @@ export abstract class EventService {
       where: {
         testId,
         createdAt: {
-          gte: new Date(now - ms(timeInterval)),
+          gte: new Date(now - parsedInterval),
         },
+      },
+      orderBy: {
+        createdAt: "asc",
       },
     });
   }

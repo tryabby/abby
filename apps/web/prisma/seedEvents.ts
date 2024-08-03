@@ -3,6 +3,17 @@ import { AbbyEventType } from "@tryabby/core";
 
 const prisma = new PrismaClient();
 
+function randomDateFromLast30Days(): Date {
+  const today = new Date();
+  const millisecondsIn30Days = 30 * 24 * 60 * 60 * 1000;
+  const randomBuffer = new Uint32Array(1);
+  crypto.getRandomValues(randomBuffer);
+  /// @ts-expect-error
+  const randomMillisecondsOffset = randomBuffer[0] % millisecondsIn30Days;
+  const randomDate = new Date(today.getTime() - randomMillisecondsOffset);
+  return randomDate;
+}
+
 async function main() {
   const user = await prisma.user.findFirst({
     where: {},
@@ -81,6 +92,7 @@ async function main() {
             selectedVariant: "oldFooter",
             testId: footerTest.id,
             type: AbbyEventType.PING,
+            createdAt: randomDateFromLast30Days(),
           } as Prisma.EventCreateManyInput)
       ),
       ...Array.from<Prisma.EventCreateManyInput>({
@@ -91,6 +103,7 @@ async function main() {
             selectedVariant: "newFooter",
             testId: footerTest.id,
             type: AbbyEventType.PING,
+            createdAt: randomDateFromLast30Days(),
           } as Prisma.EventCreateManyInput)
       ),
       ...Array.from<Prisma.EventCreateManyInput>({
@@ -101,6 +114,7 @@ async function main() {
             selectedVariant: "oldFooter",
             testId: footerTest.id,
             type: AbbyEventType.ACT,
+            createdAt: randomDateFromLast30Days(),
           } as Prisma.EventCreateManyInput)
       ),
       ...Array.from<Prisma.EventCreateManyInput>({
@@ -111,6 +125,7 @@ async function main() {
             selectedVariant: "newFooter",
             testId: footerTest.id,
             type: AbbyEventType.ACT,
+            createdAt: randomDateFromLast30Days(),
           } as Prisma.EventCreateManyInput)
       ),
     ],
