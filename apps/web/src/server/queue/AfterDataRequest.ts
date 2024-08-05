@@ -1,5 +1,5 @@
 import { Worker } from "bullmq";
-import { ApiVersion } from "@prisma/client";
+import { ApiRequest, ApiVersion } from "@prisma/client";
 import { trackPlanOverage } from "lib/logsnag";
 import { RequestCache } from "server/services/RequestCache";
 import { RequestService } from "server/services/RequestService";
@@ -13,57 +13,49 @@ export type AfterRequestJobPayload = {
   apiVersion: ApiVersion;
 };
 
-const afterDataRequestWorker = new Worker<AfterRequestJobPayload>(
-  afterDataRequestQueue.name,
-  async ({ data: { apiVersion, functionDuration, projectId } }) => {
-    const { events, planLimits, plan, is80PercentOfLimit } =
-      await EventService.getEventsForCurrentPeriod(projectId);
+export type AfterDataEventBatchArray = Omit<ApiRequest, "id" | "createdAt">[];
 
-    if (events > planLimits.eventsPerMonth) {
-      // TODO: send email
-      // TODO: send email if 80% of limit reached
-      await trackPlanOverage(projectId, plan);
-    } else if (is80PercentOfLimit) {
-      await trackPlanOverage(projectId, plan, is80PercentOfLimit);
-    }
-
-    await Promise.all([
-      RequestCache.increment(projectId),
-      RequestService.storeRequest({
+export const afterDataRequestWorkerFactory = (
+  requestArray: AfterDataEventBatchArray
+) => {
+  const afterDataRequestWorker = new Worker<AfterRequestJobPayload>(
+    afterDataRequestQueue.name,
+    async ({ data: { apiVersion, functionDuration, projectId } }) => {
+      requestArray.push({
         projectId,
         type: "GET_CONFIG",
         durationInMs: functionDuration,
         apiVersion,
-      }),
-    ]);
-  },
-  {
-    connection: getQueueingRedisConnection(),
-    concurrency: 50,
-    removeOnComplete: { count: 100 },
-  }
-);
-
-afterDataRequestWorker.on("ready", () => {
-  console.log(`[${afterDataRequestQueue.name}]: Worker is ready`);
-});
-
-afterDataRequestWorker.on("completed", (job) => {
-  if (env.NODE_ENV === "development") {
-    console.log(`[${afterDataRequestQueue.name}]: Job completed`, job.id);
-  }
-});
-
-afterDataRequestWorker.on("failed", (job) => {
-  console.log(
-    `[${afterDataRequestQueue.name}]: Job failed`,
-    job?.id,
-    job?.failedReason
+      });
+    },
+    {
+      connection: getQueueingRedisConnection(),
+      concurrency: 50,
+      removeOnComplete: { count: 100 },
+    }
   );
-});
 
-afterDataRequestWorker.on("error", (error) => {
-  console.log(`[${afterDataRequestQueue.name}]: Error`, error);
-});
+  afterDataRequestWorker.on("ready", () => {
+    console.log(`[${afterDataRequestQueue.name}]: Worker is ready`);
+  });
 
-export default afterDataRequestWorker;
+  afterDataRequestWorker.on("completed", (job) => {
+    if (env.NODE_ENV === "development") {
+      console.log(`[${afterDataRequestQueue.name}]: Job completed`, job.id);
+    }
+  });
+
+  afterDataRequestWorker.on("failed", (job) => {
+    console.log(
+      `[${afterDataRequestQueue.name}]: Job failed`,
+      job?.id,
+      job?.failedReason
+    );
+  });
+
+  afterDataRequestWorker.on("error", (error) => {
+    console.log(`[${afterDataRequestQueue.name}]: Error`, error);
+  });
+
+  return afterDataRequestWorker;
+};

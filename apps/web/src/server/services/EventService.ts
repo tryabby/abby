@@ -11,25 +11,31 @@ import { AbbyEvent } from "@tryabby/core";
 import { RequestCache } from "./RequestCache";
 
 export abstract class EventService {
-  static async createEvent({
-    projectId,
-    selectedVariant,
-    testName,
-    type,
-  }: AbbyEvent) {
-    return prisma.event.create({
-      data: {
-        selectedVariant,
-        type,
-        test: {
-          connect: {
-            projectId_name: {
-              projectId,
-              name: testName,
-            },
-          },
+  static async createEvents(events: AbbyEvent[]) {
+    const testNameTestIdMap: Map<string, string> = new Map();
+
+    events.forEach(async (event) => {
+      const test = await prisma.test.findFirst({
+        where: {
+          name: event.testName,
         },
-      },
+      });
+      if (!test) {
+        throw new Error("Test not found");
+      }
+      testNameTestIdMap.set(event.testName, test.id);
+    });
+
+    const prismaEvents = events.map((event) => {
+      return {
+        type: event.type,
+        testId: testNameTestIdMap.get(event.testName)!,
+        selectedVariant: event.selectedVariant,
+      };
+    });
+
+    return prisma.event.createMany({
+      data: prismaEvents,
     });
   }
 
