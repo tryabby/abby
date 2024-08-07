@@ -14,8 +14,8 @@ import { Modal } from "components/Modal";
 import { Tooltip, TooltipContent, TooltipTrigger } from "components/Tooltip";
 import { Input } from "components/ui/input";
 import { useProjectId } from "lib/hooks/useProjectId";
-import { EditIcon, FileEditIcon, TrashIcon } from "lucide-react";
-import { useState } from "react";
+import { EditIcon, FileEditIcon, Search, TrashIcon } from "lucide-react";
+import { useMemo, useState } from "react";
 import { toast } from "react-hot-toast";
 import { AiOutlinePlus } from "react-icons/ai";
 import { BiInfoCircle } from "react-icons/bi";
@@ -23,6 +23,7 @@ import { BsThreeDotsVertical } from "react-icons/bs";
 import type { appRouter } from "server/trpc/router/_app";
 import { trpc } from "utils/trpc";
 import { Button } from "./ui/button";
+import Fuse from "fuse.js";
 
 const EditTitleModal = ({
   flagId,
@@ -165,10 +166,27 @@ export const FeatureFlagPageContent = ({
     action: "editDescription" | "editName" | "delete";
   } | null>(null);
 
+  const [flags, setFlags] = useState(data.flags);
+
   const [isCreateEnvironmentModalOpen, setIsCreateEnvironmentModalOpen] =
     useState(false);
 
   const projectId = useProjectId();
+
+  const fuse = useMemo(
+    () => new Fuse(data.flags, { keys: ["name"] }),
+    [data.flags]
+  );
+
+  const onSearch = (query: string) => {
+    if (!query) {
+      setFlags(data.flags);
+      return;
+    }
+
+    const results = fuse.search(query);
+    setFlags(results.map((result) => result.item));
+  };
 
   const activeFlag = data.flags.find((flag) => flag.id === activeFlagInfo?.id);
 
@@ -199,36 +217,49 @@ export const FeatureFlagPageContent = ({
   return (
     <>
       <div>
-        <div className="flex justify-end space-x-2">
-          <Button
-            className="mb-4 flex items-center space-x-2"
-            onClick={() => setIsCreateEnvironmentModalOpen(true)}
-            variant="secondary"
-          >
-            <AiOutlinePlus /> <span>Add Env</span>
-          </Button>
-          <Button
-            className="mb-4 flex items-center space-x-2 text-primary-foreground"
-            onClick={() => setIsCreateFlagModalOpen(true)}
-          >
-            <AiOutlinePlus />{" "}
-            <span>Add {type === "Flags" ? "Flag" : "Config"}</span>
-          </Button>
-          <AddFeatureFlagModal
-            isOpen={isCreateFlagModalOpen}
-            onClose={() => setIsCreateFlagModalOpen(false)}
-            projectId={projectId}
-            isRemoteConfig={type === "Remote Config"}
-          />
-          <CreateEnvironmentModal
-            isOpen={isCreateEnvironmentModalOpen}
-            onClose={() => setIsCreateEnvironmentModalOpen(false)}
-            projectId={projectId}
-          />
+        <div className="flex justify-between">
+          <div>
+            <div className="relative">
+              <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
+              <Input
+                type="search"
+                placeholder="Search..."
+                className="pl-8 min-w-[250px]"
+                onChange={(e) => onSearch(e.target.value)}
+              />
+            </div>
+          </div>
+          <div className="flex  space-x-2">
+            <Button
+              className="mb-4 flex items-center space-x-2"
+              onClick={() => setIsCreateEnvironmentModalOpen(true)}
+              variant="secondary"
+            >
+              <AiOutlinePlus /> <span>Add Env</span>
+            </Button>
+            <Button
+              className="mb-4 flex items-center space-x-2 text-primary-foreground"
+              onClick={() => setIsCreateFlagModalOpen(true)}
+            >
+              <AiOutlinePlus />{" "}
+              <span>Add {type === "Flags" ? "Flag" : "Config"}</span>
+            </Button>
+            <AddFeatureFlagModal
+              isOpen={isCreateFlagModalOpen}
+              onClose={() => setIsCreateFlagModalOpen(false)}
+              projectId={projectId}
+              isRemoteConfig={type === "Remote Config"}
+            />
+            <CreateEnvironmentModal
+              isOpen={isCreateEnvironmentModalOpen}
+              onClose={() => setIsCreateEnvironmentModalOpen(false)}
+              projectId={projectId}
+            />
+          </div>
         </div>
 
         <div className="space-y-3">
-          {data.flags.map((currentFlag) => {
+          {flags.map((currentFlag) => {
             return (
               <section
                 key={currentFlag.id}

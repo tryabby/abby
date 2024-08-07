@@ -81,6 +81,7 @@
     "csstype": "^3.1.2",
     "dayjs": "^1.11.7",
     "framer-motion": "^10.12.7",
+    "fuse.js": "^7.0.0",
     "hono": "^4.2.7",
     "immer": "^9.0.21",
     "ioredis": "^5.4.1",
