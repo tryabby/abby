@@ -14,7 +14,6 @@ import {
   StorageServiceOptions,
 } from "./shared/";
 import { HttpService } from "./shared";
-import { F } from "ts-toolbelt";
 import { getVariantWithHeighestWeightOrFirst, getWeightedRandomVariant } from "./mathHelpers";
 import { parseCookies } from "./helpers";
 
@@ -93,7 +92,7 @@ export type AbbyConfig<
   tests?: Tests;
   flags?: FlagName[];
   remoteConfig?: RemoteConfig;
-  settings?: Settings<F.NoInfer<FlagName>, F.NoInfer<RemoteConfigName>, F.NoInfer<RemoteConfig>>;
+  settings?: Settings<FlagName, RemoteConfigName, RemoteConfig>;
   debug?: boolean;
   fetch?: (typeof globalThis)["fetch"];
   cookies?: {
@@ -104,12 +103,12 @@ export type AbbyConfig<
 };
 
 export class Abby<
-  FlagName extends string,
-  TestName extends string,
-  Tests extends Record<string, ABConfig>,
-  RemoteConfig extends Record<RemoteConfigName, RemoteConfigValueString>,
-  RemoteConfigName extends Extract<keyof RemoteConfig, string>,
-  Environments extends Array<string> = Array<string>,
+  const FlagName extends string,
+  const TestName extends string,
+  const Tests extends Record<string, ABConfig>,
+  const RemoteConfig extends Record<RemoteConfigName, RemoteConfigValueString>,
+  const RemoteConfigName extends Extract<keyof RemoteConfig, string>,
+  const Environments extends Array<string> = Array<string>,
 > {
   private log = (...args: any[]) =>
     this.config.debug ? console.log(`core.Abby`, ...args) : () => {};
@@ -133,9 +132,7 @@ export class Abby<
   private COOKIE_CONSENT_KEY = "$_abcc_$";
 
   constructor(
-    private config: F.Narrow<
-      AbbyConfig<FlagName, Tests, Environments, RemoteConfigName, RemoteConfig>
-    >,
+    private config: AbbyConfig<FlagName, Tests, Environments, RemoteConfigName, RemoteConfig>,
     private persistantTestStorage?: PersistentStorage,
     private persistantFlagStorage?: PersistentStorage,
     private persistentRemoteConfigStorage?: PersistentStorage

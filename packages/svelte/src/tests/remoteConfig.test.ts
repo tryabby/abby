@@ -7,7 +7,8 @@ describe("remoteConfig", () => {
     const { useRemoteConfig, __abby__ } = createAbby({
       projectId: "123",
       remoteConfig: { remoteConfig1: "String" },
-      environments: [],
+      environments: [""],
+      currentEnvironment: "",
     });
 
     await __abby__.loadProjectData();
@@ -20,7 +21,8 @@ describe("remoteConfig", () => {
     const { useRemoteConfig, __abby__ } = createAbby({
       projectId: "123",
       remoteConfig: { remoteConfig1: "String" },
-      environments: [],
+      environments: [""],
+      currentEnvironment: "",
       settings: {
         remoteConfig: {
           defaultValues: {

@@ -15,7 +15,8 @@ afterAll(() => {
 describe("withAbby", () => {
   it("works properly", async () => {
     const { getFeatureFlagValue, withAbby } = createAbby({
-      environments: [],
+      environments: [""],
+      currentEnvironment: "",
       projectId: "123",
       tests: {},
       flags: ["flag1"],
@@ -41,7 +42,8 @@ describe("withAbby", () => {
     /// @ts-ignore
     process.env.NODE_ENV = "development";
     const { getFeatureFlagValue, withAbby } = createAbby({
-      environments: [],
+      environments: [""],
+      currentEnvironment: "",
       projectId: "123",
       tests: {},
       flags: ["flag1"],
@@ -67,7 +69,8 @@ describe("withAbby", () => {
 
   it("returns correct value for remoteConfig", async () => {
     const { withAbby, getRemoteConfig } = createAbby({
-      environments: [],
+      environments: [""],
+      currentEnvironment: "",
       projectId: "123",
       remoteConfig: {
         remoteConfig1: "String",

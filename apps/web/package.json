@@ -1,6 +1,6 @@
 {
   "name": "web",
-  "version": "0.2.38",
+  "version": "0.2.39",
   "private": true,
   "scripts": {
     "build": "next build",
@@ -135,7 +135,7 @@
     "@types/react-dom": "18.0.05",
     "@typescript-eslint/eslint-plugin": "^5.58.0",
     "@typescript-eslint/parser": "^5.58.0",
-    "@vitejs/plugin-react": "^4.2.1",
+    "@vitejs/plugin-react": "4.2.1",
     "autoprefixer": "^10.4.14",
     "eslint": "^8.38.0",
     "eslint-config-next": "13.0.2",
@@ -147,9 +147,9 @@
     "tailwindcss": "^3.3.1",
     "ts-node": "^10.9.1",
     "tsconfig-paths": "^4.2.0",
-    "typescript": "^4.9.5",
+    "typescript": "5.5.4",
     "vite-tsconfig-paths": "^4.3.2",
-    "vitest": "1.5.0"
+    "vitest": "2.0.4"
   },
   "ct3aMetadata": {
     "initVersion": "6.11.1"

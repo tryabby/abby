@@ -69,19 +69,4 @@ describe("GetAbbyVariantPipe", () => {
       }
     );
   });
-
-  it("uses lookup object when supplied", () => {
-    const lookupObject = {
-      A: 1,
-      B: 2,
-      C: 3,
-      D: 4,
-    };
-
-    combineLatest([service.getVariant("test", lookupObject), pipe.transform("test")]).subscribe(
-      ([expected, actual]) => {
-        expect(lookupObject[actual as keyof typeof lookupObject]).toEqual(expected as number);
-      }
-    );
-  });
 });

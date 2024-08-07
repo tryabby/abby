@@ -8,7 +8,6 @@ import {
 import React, { useCallback, useEffect, useRef, useState, type PropsWithChildren } from "react";
 import { HttpService } from "@tryabby/core";
 import { AbbyDataResponse, AbbyEventType } from "@tryabby/core";
-import { F } from "ts-toolbelt";
 import {
   FlagStorageService,
   RemoteConfigStorageService,
@@ -30,19 +29,12 @@ export type ABTestReturnValue<Lookup, TestVariant> = Lookup extends undefined
     : never;
 
 export function createAbby<
-  FlagName extends string,
-  TestName extends string,
-  Tests extends Record<TestName, ABConfig>,
-  RemoteConfig extends Record<RemoteConfigName, RemoteConfigValueString>,
-  RemoteConfigName extends Extract<keyof RemoteConfig, string>,
-  ConfigType extends AbbyConfig<
-    FlagName,
-    Tests,
-    string[],
-    RemoteConfigName,
-    RemoteConfig
-  > = AbbyConfig<FlagName, Tests, string[], RemoteConfigName, RemoteConfig>,
->(abbyConfig: F.Narrow<AbbyConfig<FlagName, Tests, string[], RemoteConfigName, RemoteConfig>>) {
+  const FlagName extends string,
+  const TestName extends string,
+  const Tests extends Record<TestName, ABConfig>,
+  const RemoteConfig extends Record<RemoteConfigName, RemoteConfigValueString>,
+  const RemoteConfigName extends Extract<keyof RemoteConfig, string>,
+>(abbyConfig: AbbyConfig<FlagName, Tests, string[], RemoteConfigName, RemoteConfig>) {
   const abby = new Abby<FlagName, TestName, Tests, RemoteConfig, RemoteConfigName>(
     abbyConfig,
     {
@@ -94,16 +86,16 @@ export function createAbby<
   };
 
   // we need to return the config as a const so that the types are narrowed
-  const config = abbyConfig as unknown as ConfigType;
+  const config = abbyConfig;
 
   const useAbby = <
     K extends keyof Tests,
     TestVariant extends Tests[K]["variants"][number],
     LookupValue,
-    Lookup extends Record<TestVariant, LookupValue> | undefined = undefined,
+    const Lookup extends Record<TestVariant, LookupValue> | undefined = undefined,
   >(
     name: K,
-    lookupObject?: F.Narrow<Lookup>
+    lookupObject?: Lookup
   ): {
     variant: ABTestReturnValue<Lookup, TestVariant>;
     onAct: () => void;
@@ -168,7 +160,7 @@ export function createAbby<
        */
       onAct: onAct,
       variant: lookupObject
-        ? lookupObject[selectedVariant as keyof typeof lookupObject]
+        ? lookupObject[selectedVariant as TestVariant]
         : // Typescript fails here. If we cast selectedVariant to TestVariant
           // it still assumes that it is a string. So we cast it to any instead
           (selectedVariant as any),
@@ -262,10 +254,10 @@ export function createAbby<
     TestName extends keyof Tests,
     TestVariant extends Tests[TestName]["variants"][number],
     LookupValue,
-    Lookup extends Record<TestVariant, LookupValue> | undefined = undefined,
+    const Lookup extends Record<TestVariant, LookupValue> | undefined = undefined,
   >(
     testName: TestName,
-    lookupObject?: F.Narrow<Lookup>
+    lookupObject?: Lookup
   ): ABTestReturnValue<Lookup, TestVariant> => {
     const variant = abby.getTestVariant(testName);
     // Typescript looses its typing here, so we cast as any in favor of having
@@ -274,7 +266,7 @@ export function createAbby<
       return variant as any;
     }
 
-    return lookupObject[variant as keyof typeof lookupObject] as any;
+    return lookupObject[variant as TestVariant] as any;
   };
 
   const withDevtools: withDevtoolsFunction = (factory, props) => {

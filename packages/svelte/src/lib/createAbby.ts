@@ -7,7 +7,6 @@ import {
 } from "@tryabby/core";
 import { HttpService, AbbyEventType } from "@tryabby/core";
 import { derived, type Readable } from "svelte/store";
-import type { F } from "ts-toolbelt";
 // import type { LayoutServerLoad, LayoutServerLoadEvent } from "../routes/$types"; TODO fix import
 import {
   FlagStorageService,
@@ -24,19 +23,12 @@ type ABTestReturnValue<Lookup, TestVariant> = Lookup extends undefined
   : never;
 
 export function createAbby<
-  FlagName extends string,
-  TestName extends string,
-  Tests extends Record<TestName, ABConfig>,
-  RemoteConfig extends Record<RemoteConfigName, RemoteConfigValueString>,
-  RemoteConfigName extends Extract<keyof RemoteConfig, string>,
-  ConfigType extends AbbyConfig<FlagName, Tests> = AbbyConfig<
-    FlagName,
-    Tests,
-    string[],
-    RemoteConfigName,
-    RemoteConfig
-  >
->(config: F.Narrow<AbbyConfig<FlagName, Tests, string[], RemoteConfigName, RemoteConfig>>) {
+  const FlagName extends string,
+  const TestName extends string,
+  const Tests extends Record<TestName, ABConfig>,
+  const RemoteConfig extends Record<RemoteConfigName, RemoteConfigValueString>,
+  const RemoteConfigName extends Extract<keyof RemoteConfig, string>
+>(config: AbbyConfig<FlagName, Tests, string[], RemoteConfigName, RemoteConfig>) {
   const abby = new Abby<FlagName, TestName, Tests, RemoteConfig, RemoteConfigName>(
     config,
     {
@@ -75,8 +67,6 @@ export function createAbby<
     return abby;
   });
 
-  const abbyConfig = config as unknown as ConfigType;
-
   const notify = <N extends keyof Tests>(name: N, selectedVariant: string) => {
     if (!name || !selectedVariant) return;
     HttpService.sendData({
@@ -94,10 +84,10 @@ export function createAbby<
     TestName extends keyof Tests,
     TestVariant extends Tests[TestName]["variants"][number],
     LookupValue,
-    Lookup extends Record<TestVariant, LookupValue> | undefined = undefined
+    const Lookup extends Record<TestVariant, LookupValue> | undefined = undefined
   >(
     testName: TestName,
-    lookupObject?: F.Narrow<Lookup>
+    lookupObject?: Lookup
   ): {
     variant: Readable<ABTestReturnValue<Lookup, TestVariant>>;
     onAct: () => void;
@@ -146,10 +136,10 @@ export function createAbby<
     TestName extends keyof Tests,
     TestVariant extends Tests[TestName]["variants"][number],
     LookupValue,
-    Lookup extends Record<TestVariant, LookupValue> | undefined = undefined
+    const Lookup extends Record<TestVariant, LookupValue> | undefined = undefined
   >(
     testName: TestName,
-    lookupObject?: F.Narrow<Lookup>
+    lookupObject?: Lookup
   ): ABTestReturnValue<Lookup, TestVariant> => {
     const variant = abby.getTestVariant(testName);
     // Typescript looses its typing here, so we cast as any in favor of having

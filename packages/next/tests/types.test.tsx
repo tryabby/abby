@@ -20,7 +20,8 @@ describe("useAbby", () => {
     const test2Variants = ["SimonsText", "MatthiasText", "TomsText", "TimsText"] as const;
 
     const { AbbyProvider, useAbby } = createAbby({
-      environments: [],
+      environments: [""],
+      currentEnvironment: "",
       projectId: "123",
       tests: {
         test: { variants: ["ONLY_ONE_VARIANT"] },
@@ -53,7 +54,8 @@ describe("useAbby", () => {
 describe("useFeatureFlag", () => {
   it("returns the correct types", () => {
     const { AbbyProvider, useFeatureFlag } = createAbby({
-      environments: [],
+      environments: [""],
+      currentEnvironment: "",
       projectId: "123",
       flags: ["test"],
     });
@@ -144,7 +146,8 @@ describe("useFeatureFlag", () => {
 describe("useRemoteConfig", () => {
   it.skip("has the correct typings", () => {
     const { AbbyProvider, useRemoteConfig } = createAbby({
-      environments: [],
+      environments: [""],
+      currentEnvironment: "",
       projectId: "123",
       remoteConfig: {
         stringRc: "String",

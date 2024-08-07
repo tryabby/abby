@@ -1,4 +1,3 @@
-import { Key } from "ts-toolbelt/out/Any/Key";
 import { ABConfig, RemoteConfigValue } from "..";
 
 export enum AbbyEventType {
@@ -27,6 +26,6 @@ export type LegacyAbbyDataResponse = {
 };
 
 export type ExtractVariants<
-  TestName extends Key,
+  TestName extends string,
   Tests extends Record<TestName, ABConfig>,
 > = Tests[TestName]["variants"][number];

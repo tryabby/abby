@@ -18,7 +18,8 @@ describe("useAbby", () => {
     const test2Variants = ["SimonsText", "MatthiasText", "TomsText", "TimsText"] as const;
 
     const { AbbyProvider, useAbby } = createAbby({
-      environments: [],
+      environments: [""],
+      currentEnvironment: "",
       projectId: "123",
       tests: {
         test: { variants: ["ONLY_ONE_VARIANT"] },
@@ -51,7 +52,8 @@ describe("useAbby", () => {
 describe("useFeatureFlag", () => {
   it("returns the correct types", () => {
     const { AbbyProvider, useFeatureFlag } = createAbby({
-      environments: [],
+      environments: [""],
+      currentEnvironment: "",
       projectId: "123",
       flags: ["test"],
     });
@@ -103,7 +105,7 @@ describe("useFeatureFlag", () => {
           },
         },
       });
-      expectTypeOf(getVariants("test")).toEqualTypeOf<["ONLY_ONE_VARIANT"]>();
+      expectTypeOf(getVariants("test")).toEqualTypeOf<readonly ["ONLY_ONE_VARIANT"]>();
     });
   });
 });
@@ -111,7 +113,8 @@ describe("useFeatureFlag", () => {
 describe("useRemoteConfig", () => {
   it("uses correct typings", () => {
     const { AbbyProvider, useRemoteConfig } = createAbby({
-      environments: [],
+      environments: [""],
+      currentEnvironment: "",
       projectId: "123",
       remoteConfig: {
         stringRc: "String",

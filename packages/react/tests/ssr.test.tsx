@@ -20,7 +20,8 @@ afterAll(() => {
 describe("useAbby", () => {
   it("doesn't render a variant on the server", () => {
     const { AbbyProvider, useAbby } = createAbby({
-      environments: [],
+      environments: [""],
+      currentEnvironment: "",
       projectId: "123",
       tests: {
         showFooter: {
@@ -69,7 +70,8 @@ describe("useAbby", () => {
 describe("useFeatureFlag", () => {
   it("renders the correct feature flag on the server", () => {
     const { AbbyProvider, useFeatureFlag } = createAbby({
-      environments: [],
+      environments: [""],
+      currentEnvironment: "",
       projectId: "123",
       flags: ["test", "test2"],
     });
@@ -115,7 +117,8 @@ describe("useFeatureFlag", () => {
 describe("getRemoteConfig", () => {
   it("renders the correct remoteConfig value on the server", () => {
     const { AbbyProvider, useRemoteConfig } = createAbby({
-      environments: [],
+      environments: [""],
+      currentEnvironment: "",
       projectId: "123",
       remoteConfig: { remoteConfig1: "String" },
     });

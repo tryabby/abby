@@ -1,5 +1,11 @@
 # @tryabby/cli
 
+## 2.0.0
+
+### Major Changes
+
+- use typescript 5
+
 ## 1.2.1
 
 ### Patch Changes

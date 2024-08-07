@@ -9,7 +9,8 @@ describe("featureFlags working", () => {
     const FLAG1 = "flag1";
 
     const { useFeatureFlag, __abby__ } = createAbby({
-      environments: [],
+      environments: [""],
+      currentEnvironment: "",
       projectId: "123",
       flags: [FLAG1],
     });

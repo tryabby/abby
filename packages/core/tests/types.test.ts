@@ -5,6 +5,7 @@ describe("types", () => {
   it("produces proper types", () => {
     const abby = new Abby({
       environments: [""],
+      currentEnvironment: "",
       projectId: "",
       flags: ["flag1"],
       tests: {

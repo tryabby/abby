@@ -5,7 +5,8 @@ import { createAbby } from "../src";
 describe("useAbby", () => {
   it("returns the correct amount of options", () => {
     const { AbbyProvider, useAbby } = createAbby({
-      environments: [],
+      environments: [""],
+      currentEnvironment: "",
       projectId: "123",
       tests: {
         test: { variants: ["OldFooter", "NewFooter"] },
@@ -26,7 +27,8 @@ describe("useAbby", () => {
 
   it("has the correct types", () => {
     const { AbbyProvider, useAbby, useFeatureFlag } = createAbby({
-      environments: [],
+      environments: [""],
+      currentEnvironment: "",
       projectId: "123",
       tests: {
         test: { variants: ["OldFooter", "NewFooter"] },
@@ -58,7 +60,8 @@ describe("useAbby", () => {
 
   it("uses lookup object when retrieving AB test variant", () => {
     const { getABTestValue } = createAbby({
-      environments: [],
+      environments: [""],
+      currentEnvironment: "",
       projectId: "123",
       tests: {
         test2: {
@@ -103,7 +106,8 @@ describe("useAbby", () => {
 
   it("produces proper types with a a lookup object in the hook", () => {
     const { AbbyProvider, useAbby } = createAbby({
-      environments: [],
+      environments: [""],
+      currentEnvironment: "",
       projectId: "123",
       tests: {
         test: {
