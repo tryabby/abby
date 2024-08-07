@@ -16,9 +16,7 @@
     "@tryabby/core": "workspace:*",
     "tslib": "^2.3.0"
   },
-  "files": [
-    "dist"
-  ],
+  "files": ["dist"],
   "main": "./dist/esm2020/tryabby-angular.mjs",
   "module": "./dist/esm2020/tryabby-angular.mjs",
   "types": "./dist/index.d.ts",

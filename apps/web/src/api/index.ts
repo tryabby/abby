@@ -4,8 +4,8 @@ import { Hono } from "hono";
 import { cors } from "hono/cors";
 import { logger } from "hono/logger";
 import { makeHealthRoute } from "./routes/health";
-import { makeEventRoute } from "./routes/v1_event";
 import { makeLegacyProjectDataRoute } from "./routes/legacy_project_data";
+import { makeEventRoute } from "./routes/v1_event";
 
 export const app = new Hono()
   .basePath("/api")

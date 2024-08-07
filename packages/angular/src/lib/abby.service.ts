@@ -1,30 +1,35 @@
 import { Inject, Injectable } from "@angular/core";
-import { Route } from "@angular/router";
-import {
-  ExtractVariants,
+import type { Route } from "@angular/router";
+import type {
   RemoteConfigValue,
   RemoteConfigValueString,
   RemoteConfigValueStringToType,
 } from "@tryabby/core";
-import { Abby, AbbyConfig, AbbyEventType, ABConfig, HttpService } from "@tryabby/core";
 import {
+  type ABConfig,
+  Abby,
+  type AbbyConfig,
+  AbbyEventType,
+  HttpService,
+} from "@tryabby/core";
+import {
+  type Observable,
+  Subject,
   from,
   map,
   merge,
-  Observable,
   of,
   shareReplay,
   startWith,
-  Subject,
   switchMap,
   tap,
 } from "rxjs";
-import { AbbyLoggerService } from "./abby-logger.service";
 import {
   FlagStorageService,
   RemoteConfigStorageService,
   TestStorageService,
 } from "./StorageService";
+import type { AbbyLoggerService } from "./abby-logger.service";
 
 type LocalData<
   FlagName extends string = string,
@@ -43,12 +48,20 @@ type LocalData<
 };
 
 export type InferFlagNames<C extends AbbyConfig> = InferFlags<C>[number];
-export type InferTestNames<C extends AbbyConfig> =
-  InferTests<C> extends Record<infer T, any> ? T : never;
+export type InferTestNames<C extends AbbyConfig> = InferTests<C> extends Record<
+  infer T,
+  any
+>
+  ? T
+  : never;
 export type InferTests<C extends AbbyConfig> = NonNullable<C["tests"]>;
 export type InferFlags<C extends AbbyConfig> = NonNullable<C["flags"]>;
-export type InferRemoteConfig<C extends AbbyConfig> = NonNullable<C["remoteConfig"]>;
-export type InferRemoteConfigName<C extends AbbyConfig> = keyof NonNullable<C["remoteConfig"]>;
+export type InferRemoteConfig<C extends AbbyConfig> = NonNullable<
+  C["remoteConfig"]
+>;
+export type InferRemoteConfigName<C extends AbbyConfig> = keyof NonNullable<
+  C["remoteConfig"]
+>;
 
 type PossibleFlagName<FlagName extends string> = FlagName | `!${FlagName}`;
 
@@ -57,10 +70,10 @@ export class AbbyService<
   const FlagName extends string = string,
   const TestName extends string = string,
   const Tests extends Record<TestName, ABConfig> = Record<TestName, ABConfig>,
-  const RemoteConfig extends Record<RemoteConfigName, RemoteConfigValueString> = Record<
-    string,
+  const RemoteConfig extends Record<
+    RemoteConfigName,
     RemoteConfigValueString
-  >,
+  > = Record<string, RemoteConfigValueString>,
   const RemoteConfigName extends Extract<keyof RemoteConfig, string> = Extract<
     keyof RemoteConfig,
     string
@@ -70,7 +83,13 @@ export class AbbyService<
 
   private selectedVariants: { [key: string]: string } = {};
 
-  private config: AbbyConfig<FlagName, Tests, string[], RemoteConfigName, RemoteConfig>;
+  private config: AbbyConfig<
+    FlagName,
+    Tests,
+    string[],
+    RemoteConfigName,
+    RemoteConfig
+  >;
 
   private projectData$?: Observable<LocalData<FlagName, TestName>>;
 
@@ -78,7 +97,13 @@ export class AbbyService<
 
   constructor(
     @Inject(AbbyService)
-    config: AbbyConfig<FlagName, Tests, string[], RemoteConfigName, RemoteConfig>,
+    config: AbbyConfig<
+      FlagName,
+      Tests,
+      string[],
+      RemoteConfigName,
+      RemoteConfig
+    >,
     private abbyLogger: AbbyLoggerService
   ) {
     this.abby = new Abby(
@@ -129,9 +154,12 @@ export class AbbyService<
     this.abbyLogger.log(`getVariant(${testName as string})`);
 
     return this.resolveData().pipe(
-      map((data) => this.abby.getTestVariant(testName)),
+      map((_data) => this.abby.getTestVariant(testName)),
+      // biome-ignore lint/suspicious/noAssignInExpressions:>
       tap((variant) => (this.selectedVariants[testName as string] = variant)),
-      tap((variant) => this.abbyLogger.log(`getVariant(${testName as string}) =>`, variant)),
+      tap((variant) =>
+        this.abbyLogger.log(`getVariant(${testName as string}) =>`, variant)
+      ),
       shareReplay(1)
     );
   }
@@ -162,7 +190,9 @@ export class AbbyService<
     });
   }
 
-  public getFeatureFlagValue<F extends PossibleFlagName<FlagName>>(name: F): Observable<boolean> {
+  public getFeatureFlagValue<F extends PossibleFlagName<FlagName>>(
+    name: F
+  ): Observable<boolean> {
     const isFeatureFlagInverted = name.startsWith("!");
     const strippedFlagName = isFeatureFlagInverted
       ? (name.slice(1) as FlagName)
@@ -174,7 +204,9 @@ export class AbbyService<
 
     return this.resolveData().pipe(
       map(() => this.abby.getFeatureFlag(strippedFlagName)),
-      tap((value) => this.abbyLogger.log(`getFeatureFlagValue(${name}) =>`, value)),
+      tap((value) =>
+        this.abbyLogger.log(`getFeatureFlagValue(${name}) =>`, value)
+      ),
       map((featureFlagValue) => {
         return (
           (!featureFlagValue && isFeatureFlagInverted) ||
@@ -190,7 +222,9 @@ export class AbbyService<
   ): Observable<RemoteConfigValueStringToType<RemoteConfig[T]>> {
     return this.resolveData().pipe(
       map(() => this.abby.getRemoteConfig(name)),
-      tap((value) => this.abbyLogger.log(`getRemoteConfig(${name}) => ${value}`))
+      tap((value) =>
+        this.abbyLogger.log(`getRemoteConfig(${name}) => ${value}`)
+      )
     );
   }
 
@@ -209,7 +243,13 @@ export class AbbyService<
     return this.projectData$;
   }
 
-  public getAbbyInstance(): Abby<FlagName, TestName, Tests, RemoteConfig, RemoteConfigName> {
+  public getAbbyInstance(): Abby<
+    FlagName,
+    TestName,
+    Tests,
+    RemoteConfig,
+    RemoteConfigName
+  > {
     return this.abby;
   }
 
@@ -226,7 +266,7 @@ export class AbbyService<
   }
 
   public getVariants = <T extends keyof Tests>(name: T) => {
-    return this.resolveData().pipe(map((data) => this.abby.getVariants(name)));
+    return this.resolveData().pipe(map((_data) => this.abby.getVariants(name)));
   };
 
   public resetAB = <T extends keyof Tests>(name: T) => {

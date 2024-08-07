@@ -1,13 +1,13 @@
-import { Prisma, Event } from "@prisma/client";
+import type { Event } from "@prisma/client";
 import {
-  Chart as ChartJS,
   BarElement,
   CategoryScale,
+  Chart as ChartJS,
+  type ChartOptions,
   Legend,
   LinearScale,
   Title,
   Tooltip,
-  ChartOptions,
 } from "chart.js";
 import { useMemo } from "react";
 import { Bar } from "react-chartjs-2";

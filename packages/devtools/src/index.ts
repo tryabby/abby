@@ -1,5 +1,5 @@
-import DevtoolsComponent from "./Devtools.svelte";
 import type { ComponentProps } from "svelte";
+import DevtoolsComponent from "./Devtools.svelte";
 
 export class DevtoolsFactory {
   create(props: AbbyDevtoolProps) {

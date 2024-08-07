@@ -1,7 +1,7 @@
+import dayjs from "dayjs";
+import { generateRandomString, hashString } from "utils/apiKey";
 import { z } from "zod";
 import { protectedProcedure, router } from "../trpc";
-import { generateRandomString, hashString } from "utils/apiKey";
-import dayjs from "dayjs";
 
 export const apiKeyRouter = router({
   createApiKey: protectedProcedure

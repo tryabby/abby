@@ -275,13 +275,21 @@
       }
     },
     {
-      "scope": ["storage.modifier.package", "storage.modifier.import", "storage.type.java"],
+      "scope": [
+        "storage.modifier.package",
+        "storage.modifier.import",
+        "storage.type.java"
+      ],
       "settings": {
         "foreground": "#dbd7caee"
       }
     },
     {
-      "scope": ["string", "string punctuation.section.embedded source", "attribute.value"],
+      "scope": [
+        "string",
+        "string punctuation.section.embedded source",
+        "attribute.value"
+      ],
       "settings": {
         "foreground": "#c98a7d"
       }
@@ -497,14 +505,22 @@
       }
     },
     {
-      "scope": ["markup.deleted", "meta.diff.header.from-file", "punctuation.definition.deleted"],
+      "scope": [
+        "markup.deleted",
+        "meta.diff.header.from-file",
+        "punctuation.definition.deleted"
+      ],
       "settings": {
         "background": "#86181d",
         "foreground": "#fdaeb7"
       }
     },
     {
-      "scope": ["markup.inserted", "meta.diff.header.to-file", "punctuation.definition.inserted"],
+      "scope": [
+        "markup.inserted",
+        "meta.diff.header.to-file",
+        "punctuation.definition.inserted"
+      ],
       "settings": {
         "background": "#144620",
         "foreground": "#85e89d"

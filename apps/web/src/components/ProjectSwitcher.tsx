@@ -1,13 +1,12 @@
 "use client";
 
-import * as React from "react";
 import {
   CaretSortIcon,
   CheckIcon,
   PlusCircledIcon,
 } from "@radix-ui/react-icons";
+import * as React from "react";
 
-import { cn } from "lib/utils";
 import { Avatar, AvatarFallback, AvatarImage } from "components/ui/avatar";
 import { Button } from "components/ui/button";
 import {
@@ -32,9 +31,10 @@ import { Input } from "components/ui/input";
 import { Label } from "components/ui/label";
 import { Popover, PopoverContent, PopoverTrigger } from "components/ui/popover";
 import { useProjectId } from "lib/hooks/useProjectId";
-import { trpc } from "utils/trpc";
+import { cn } from "lib/utils";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/router";
+import { trpc } from "utils/trpc";
 
 type PopoverTriggerProps = React.ComponentPropsWithoutRef<
   typeof PopoverTrigger

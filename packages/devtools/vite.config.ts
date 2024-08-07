@@ -1,5 +1,5 @@
-import { defineConfig } from "vite";
 import { svelte } from "@sveltejs/vite-plugin-svelte";
+import { defineConfig } from "vite";
 import dts from "vite-plugin-dts";
 
 // https://vitejs.dev/config/
@@ -16,10 +16,6 @@ export default defineConfig({
     dts(),
     svelte({
       include: ["src/**/*.svelte"],
-      compilerOptions: {
-        // eslint-disable-next-line turbo/no-undeclared-env-vars
-        // customElement: process.env.STORYBOOK !== "1",
-      },
       emitCss: false,
       prebundleSvelteLibraries: true,
     }),

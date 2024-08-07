@@ -1,16 +1,16 @@
-import { Context, Hono } from "hono";
+import { type Context, Hono } from "hono";
 import { endTime, startTime, timing } from "hono/timing";
 
 import { zValidator } from "@hono/zod-validator";
 import { cors } from "hono/cors";
 import { prisma } from "server/db/client";
 
-import { LegacyAbbyDataResponse } from "@tryabby/core";
+import type { LegacyAbbyDataResponse } from "@tryabby/core";
 import { transformFlagValue } from "lib/flags";
 import createCache from "server/common/memory-cache";
 
-import { z } from "zod";
 import { afterDataRequestQueue } from "server/queue/queues";
+import { z } from "zod";
 
 const configCache = createCache<string, LegacyAbbyDataResponse>({
   name: "legacyConfigCache",

@@ -1,4 +1,4 @@
-import { AbbyDataResponse } from "@tryabby/core";
+import type { AbbyDataResponse } from "@tryabby/core";
 import createCache from "./memory-cache";
 
 const configCache = createCache<string, AbbyDataResponse>({

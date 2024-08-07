@@ -1,13 +1,13 @@
 import clsx from "clsx";
 import { useState } from "react";
 import toast from "react-hot-toast";
-import { FaAngular, FaCopy, FaReact } from "react-icons/fa";
+import { FaCopy, FaReact } from "react-icons/fa";
 import { TbBrandAngular, TbBrandSvelte } from "react-icons/tb";
 import { TbBrandNextjs } from "react-icons/tb";
+import { twMerge } from "tailwind-merge";
 import type { CodeSnippetData, Integrations } from "utils/snippets";
 import { trpc } from "utils/trpc";
 import { LoadingSpinner } from "./LoadingSpinner";
-import { twMerge } from "tailwind-merge";
 
 const INTEGRATIONS: Record<
   Integrations,
@@ -62,6 +62,7 @@ export function BaseCodeSnippet(
         </div>
         <div className="mt-2 flex w-full overflow-x-auto bg-gray-800">
           {Object.entries(INTEGRATIONS).map(([key, { icon: Icon, name }]) => (
+            // biome-ignore lint/a11y/useKeyWithClickEvents:>
             <div
               key={name}
               role="button"
@@ -79,6 +80,7 @@ export function BaseCodeSnippet(
       </div>
 
       <button
+        type="button"
         title="Copy code snippet"
         aria-label="Copy code snippet"
         onClick={onCopyClick}
@@ -88,6 +90,7 @@ export function BaseCodeSnippet(
       </button>
 
       <div
+        // biome-ignore lint/security/noDangerouslySetInnerHtml:>
         dangerouslySetInnerHTML={{ __html: props[currentIntegration].html }}
       />
     </div>

@@ -1,6 +1,6 @@
-import { GetServerSideProps, type NextPage } from "next";
+import type { GetServerSideProps, NextPage } from "next";
 
-export const getServerSideProps: GetServerSideProps = async (ctx) => {
+export const getServerSideProps: GetServerSideProps = async (_ctx) => {
   return {
     props: {},
     redirect: {

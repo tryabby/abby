@@ -1,13 +1,13 @@
-import { Event } from "@prisma/client";
+import type { Event } from "@prisma/client";
 import {
-  Chart as ChartJS,
   BarElement,
   CategoryScale,
+  Chart as ChartJS,
+  type ChartOptions,
   Legend,
   LinearScale,
   Title,
   Tooltip,
-  ChartOptions,
 } from "chart.js";
 import { useMemo } from "react";
 import { Bar } from "react-chartjs-2";
@@ -40,7 +40,7 @@ export const OPTIONS: ChartOptions<"bar"> = {
     },
     tooltip: {
       callbacks: {
-        label: function (context) {
+        label: (context) => {
           let label = context.dataset.label || "";
 
           if (label) {
@@ -88,7 +88,7 @@ const Serves = ({
             {
               label: "Target",
               data: options.map(
-                (option) => parseFloat(option.chance.toString()) * 100
+                (option) => Number.parseFloat(option.chance.toString()) * 100
               ),
               backgroundColor: "#A9E4EF",
             },

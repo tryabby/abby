@@ -1,6 +1,10 @@
-import { AbbyConfig, DYNAMIC_ABBY_CONFIG_KEYS, DynamicConfigKeys } from "@tryabby/core";
+import * as fs from "node:fs/promises";
+import {
+  type AbbyConfig,
+  DYNAMIC_ABBY_CONFIG_KEYS,
+  type DynamicConfigKeys,
+} from "@tryabby/core";
 import * as prettier from "prettier";
-import * as fs from "fs/promises";
 
 export async function updateConfigFile(
   updatedConfig: Omit<AbbyConfig, DynamicConfigKeys>,
@@ -28,6 +32,7 @@ function updateConfigFileContent(
   // filter out keys that are marked as dynamic. Those are set in the
   // first parameter of `defineConfig`, but we are only updating the
   // second parameter.
+  // biome-ignore lint:
   updatedConfig = Object.fromEntries(
     Object.entries(updatedConfig).filter(
       ([key]) => !(DYNAMIC_ABBY_CONFIG_KEYS as readonly string[]).includes(key)
@@ -36,6 +41,7 @@ function updateConfigFileContent(
 
   // replaces newlines inside the `defineConfig(...)` part of the config
   const defineConfigRegex = /defineConfig\(\s*{([\s\S]*?)}[\s\S]*\)/;
+  // biome-ignore lint:
   configFileString = configFileString.replace(defineConfigRegex, (match) => {
     const replacedParameters = match.replace(/(?:\r\n|\r|\n)/g, " ");
     return replacedParameters;

@@ -1,11 +1,5 @@
-import { FeatureFlagType } from "@prisma/client";
-import {
-  Baseline,
-  Hash,
-  LucideProps,
-  ToggleLeft,
-  CurlyBraces,
-} from "lucide-react";
+import type { FeatureFlagType } from "@prisma/client";
+import { Baseline, CurlyBraces, Hash, ToggleLeft } from "lucide-react";
 import { match } from "ts-pattern";
 import { Tooltip, TooltipContent, TooltipTrigger } from "./Tooltip";
 

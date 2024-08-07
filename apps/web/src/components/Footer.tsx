@@ -1,8 +1,8 @@
+import { DOCS_URL } from "@tryabby/core";
 import { Github } from "lucide-react";
+import Link from "next/link";
 import { BsDiscord, BsLinkedin } from "react-icons/bs";
 import { RiTwitterXLine } from "react-icons/ri";
-import Link from "next/link";
-import { DOCS_URL } from "@tryabby/core";
 
 const GITHUB_URL = "https://github.com/tryabby/abby";
 const LINKEDIN_URL = "https://www.linkedin.com/company/tryabby/";
@@ -28,14 +28,14 @@ export function Footer() {
             >
               Integrations
             </Link>
-            <Link href={`/integrations/react`}>React</Link>
-            <Link href={`/integrations/nextjs`}>Next.js</Link>
-            <Link href={`/integrations/svelte`}>Svelte</Link>
-            <Link href={`/integrations/angular`}>Angular</Link>
+            <Link href={"/integrations/react"}>React</Link>
+            <Link href={"/integrations/nextjs"}>Next.js</Link>
+            <Link href={"/integrations/svelte"}>Svelte</Link>
+            <Link href={"/integrations/angular"}>Angular</Link>
           </div>
           <div className="flex flex-col gap-y-4 md:gap-0">
             <h1 className="mb-2 text-2xl font-bold md:mb-3">Links</h1>
-            <Link href={`/tips-and-insights`}>Blog</Link>
+            <Link href={"/tips-and-insights"}>Blog</Link>
             <Link href={DOCS_URL}>Documentation</Link>
             <Link href={GITHUB_URL}>Github</Link>
             <Link href={DISCORD_INVITE_URL}>Discord</Link>

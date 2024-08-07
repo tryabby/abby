@@ -1,8 +1,8 @@
-import Koa from "koa";
-import { Server } from "http";
-import { createAbbyMiddleWare } from "../src/koa";
+import type { Server } from "node:http";
 import { ABBY_AB_STORAGE_PREFIX } from "@tryabby/core";
+import Koa from "koa";
 import fetch from "node-fetch";
+import { createAbbyMiddleWare } from "../src/koa";
 
 const app = new Koa();
 const PORT = 5556;
@@ -11,7 +11,12 @@ const SERVER_URL = `http://localhost:${PORT}`;
 let server: Server | undefined = undefined;
 
 const testVariants = ["OldFooter", "NewFooter"] as const;
-const test2Variants = ["SimonsText", "MatthiasText", "TomsText", "TimsText"] as const;
+const test2Variants = [
+  "SimonsText",
+  "MatthiasText",
+  "TomsText",
+  "TimsText",
+] as const;
 
 const { middleware, abby } = createAbbyMiddleWare({
   environments: [],

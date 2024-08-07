@@ -46,10 +46,10 @@ export const getLimitByPlan = (plan: PlanName | null): Limit => {
     case "BETA":
     case "ENTERPRISE": {
       return {
-        eventsPerMonth: Infinity,
-        tests: Infinity,
-        environments: Infinity,
-        flags: Infinity,
+        eventsPerMonth: Number.POSITIVE_INFINITY,
+        tests: Number.POSITIVE_INFINITY,
+        environments: Number.POSITIVE_INFINITY,
+        flags: Number.POSITIVE_INFINITY,
       };
     }
     // free plan

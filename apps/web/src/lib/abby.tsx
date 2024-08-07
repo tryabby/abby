@@ -1,6 +1,5 @@
-/* eslint-disable turbo/no-undeclared-env-vars */
-import { createAbby } from "@tryabby/next";
 import abbyDevtools from "@tryabby/devtools";
+import { createAbby } from "@tryabby/next";
 import abbyConfig from "../../abby.config";
 
 export const {

@@ -277,7 +277,10 @@
     },
     {
       "name": "[Custom] Markdown links",
-      "scope": ["markup.underline.link", "punctuation.definition.metadata.markdown"],
+      "scope": [
+        "markup.underline.link",
+        "punctuation.definition.metadata.markdown"
+      ],
       "settings": {
         "foreground": "#22863a"
       }

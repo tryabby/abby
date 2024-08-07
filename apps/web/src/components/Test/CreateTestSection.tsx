@@ -1,7 +1,12 @@
 import { Button } from "components/ui/button";
 import produce from "immer";
 import { getUpdatedWeights } from "lib/helper";
-import { ChangeEvent, Dispatch, Fragment, SetStateAction } from "react";
+import {
+  type ChangeEvent,
+  type Dispatch,
+  Fragment,
+  type SetStateAction,
+} from "react";
 import { BiTrash } from "react-icons/bi";
 import { Card } from "./Section";
 
@@ -38,7 +43,7 @@ function getMaxDefaultVariantNameIndex(variants: Props["variants"]): number {
         return 0;
       }
 
-      return parseInt(index);
+      return Number.parseInt(index);
     });
 
   if (variantsIndexes.length === 0) {
@@ -89,6 +94,8 @@ export function CreateTestSection({
   const weightSum = Math.round(
     variants
       .map(({ weight }) => weight)
+      // biome-ignore lint/suspicious/noAssignInExpressions:
+      // biome-ignore lint/style/noParameterAssign:
       .reduce((sum, weight) => (sum += weight), 0)
   );
 
@@ -101,9 +108,9 @@ export function CreateTestSection({
     const eventValue =
       typeof rawEventValue === "number"
         ? rawEventValue
-        : parseInt(rawEventValue);
+        : Number.parseInt(rawEventValue);
 
-    if (isNaN(eventValue)) {
+    if (Number.isNaN(eventValue)) {
       return;
     }
 
@@ -139,7 +146,7 @@ export function CreateTestSection({
           <div className="flex flex-col gap-4">
             {variants.map(({ name, weight }, i) => {
               return (
-                <Fragment key={i}>
+                <Fragment key={name}>
                   <label
                     htmlFor={name}
                     className="mb-0 mt-2 grid grid-cols-3 grid-rows-[auto_auto] items-center text-sm font-medium text-pink-100 dark:text-white"
@@ -152,7 +159,7 @@ export function CreateTestSection({
                         setVariants(
                           produce(variants, (draft) => {
                             if (draft[i]) {
-                              draft[i]!.name = e.target.value;
+                              draft[i].name = e.target.value;
                             }
                           })
                         );
@@ -169,6 +176,7 @@ export function CreateTestSection({
                       </span>
                     </span>
                     <button
+                      type="button"
                       className="flex aspect-square h-full items-center justify-center justify-self-end rounded-md bg-gray-700 transition-colors duration-200 ease-in-out hover:bg-red-700/40"
                       title="Delete this Variant"
                       onClick={() => removeVariant(i)}
@@ -191,19 +199,19 @@ export function CreateTestSection({
                     value={weight}
                     onChange={(e) => handleWeightChange(i, e)}
                     className="h-2 w-full cursor-pointer"
-                  ></input>
+                  />
                 </Fragment>
               );
             })}
             <div className="grid grid-cols-[1fr_auto_1fr]">
-              <span></span>
+              <span />
               {weightSum !== 100 ? (
                 <p className="text-center text-ab_accent-background">
                   Your weights must add up to 100%. Your weights currently make
                   up {weightSum}%
                 </p>
               ) : (
-                <span></span>
+                <span />
               )}
               <Button
                 type="button"

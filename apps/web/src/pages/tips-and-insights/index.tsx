@@ -1,11 +1,11 @@
-import { MarketingLayout } from "components/MarketingLayout";
-import { NextPageWithLayout } from "../_app";
-import { GetStaticProps } from "next";
 import fs from "node:fs/promises";
 import path from "node:path";
+import { MarketingLayout } from "components/MarketingLayout";
 import dayjs from "dayjs";
-import Link from "next/link";
+import type { GetStaticProps } from "next";
 import Image from "next/image";
+import Link from "next/link";
+import type { NextPageWithLayout } from "../_app";
 
 export type PostMeta = {
   title: string;

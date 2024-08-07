@@ -1,7 +1,12 @@
 import { createAbby } from "../src/index";
 
 const testVariants = ["OldFooter", "NewFooter"] as const;
-const test2Variants = ["SimonsText", "MatthiasText", "TomsText", "TimsText"] as const;
+const test2Variants = [
+  "SimonsText",
+  "MatthiasText",
+  "TomsText",
+  "TimsText",
+] as const;
 
 it("should work properly", async () => {
   const abby = createAbby({

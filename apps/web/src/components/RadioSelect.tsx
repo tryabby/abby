@@ -1,6 +1,6 @@
-import React from "react";
 import * as RadioGroup from "@radix-ui/react-radio-group";
 import { cn } from "lib/utils";
+import React from "react";
 
 type RadioSelectProps<T extends string> = {
   options: Array<{ label: string | React.ReactNode; value: T }>;
@@ -41,7 +41,8 @@ export function RadioSelect<T extends string = string>({
           }
           className={cn(
             "flex h-[150px] flex-1 items-center justify-center gap-2.5 rounded-md border-2 border-white border-opacity-20 opacity-30 px-2.5 py-1.5 text-sm font-medium text-white disabled:opacity-40",
-            selected === option.value && "border-green-600 border-opacity-100 opacity-100 text-pink-100"
+            selected === option.value &&
+              "border-green-600 border-opacity-100 opacity-100 text-pink-100"
           )}
         >
           {option.label}

@@ -1,5 +1,5 @@
 const pkg = require("./package.json");
-const fs = require("fs");
+const fs = require("node:fs");
 
 const basePkgJson = {
   main: "index.js",
@@ -14,7 +14,10 @@ function main() {
 
     const newPath = key.replace("./", "dist/");
 
-    fs.writeFileSync(`./${newPath}/package.json`, JSON.stringify(basePkgJson, null, 2));
+    fs.writeFileSync(
+      `./${newPath}/package.json`,
+      JSON.stringify(basePkgJson, null, 2)
+    );
   });
 }
 

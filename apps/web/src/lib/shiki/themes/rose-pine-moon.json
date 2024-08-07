@@ -472,7 +472,11 @@
       }
     },
     {
-      "scope": ["constant.numeric", "constant.language", "constant.charcter.escape"],
+      "scope": [
+        "constant.numeric",
+        "constant.language",
+        "constant.charcter.escape"
+      ],
       "settings": {
         "foreground": "#ea9a97"
       }
@@ -637,7 +641,12 @@
       }
     },
     {
-      "scope": ["variable.other", "variable.language", "variable.function", "variable.argument"],
+      "scope": [
+        "variable.other",
+        "variable.language",
+        "variable.function",
+        "variable.argument"
+      ],
       "settings": {
         "foreground": "#e0def4"
       }

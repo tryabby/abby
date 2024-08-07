@@ -1,10 +1,10 @@
+import { FeatureFlagType } from "@prisma/client";
 import { TRPCError } from "@trpc/server";
+import { ConfigCache } from "server/common/config-cache";
 import { FlagService } from "server/services/FlagService";
+import { validateFlag } from "utils/validateFlags";
 import { z } from "zod";
 import { protectedProcedure, router } from "../trpc";
-import { FeatureFlagType } from "@prisma/client";
-import { validateFlag } from "utils/validateFlags";
-import { ConfigCache } from "server/common/config-cache";
 
 export const flagRouter = router({
   getFlags: protectedProcedure

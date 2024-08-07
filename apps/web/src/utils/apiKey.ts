@@ -1,4 +1,4 @@
-import { createHmac, randomBytes } from "crypto";
+import { createHmac, randomBytes } from "node:crypto";
 import { env } from "env/server.mjs";
 
 export function generateRandomString(length = 32): string {

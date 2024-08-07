@@ -1,5 +1,5 @@
-import { AbbyConfigFile, DynamicConfigKeys } from "@tryabby/core";
-import fs from "fs/promises";
+import fs from "node:fs/promises";
+import type { AbbyConfigFile, DynamicConfigKeys } from "@tryabby/core";
 import * as prettier from "prettier";
 
 export async function initAbbyConfig({ path }: { path: string }) {
@@ -23,5 +23,8 @@ export async function initAbbyConfig({ path }: { path: string }) {
     )});
   `;
 
-  await fs.writeFile(path, await prettier.format(fileContent, { parser: "typescript" }));
+  await fs.writeFile(
+    path,
+    await prettier.format(fileContent, { parser: "typescript" })
+  );
 }

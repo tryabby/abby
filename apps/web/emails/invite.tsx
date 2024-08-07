@@ -1,15 +1,12 @@
-import { Project } from "@prisma/client";
+import type { Project } from "@prisma/client";
 import { Button } from "@react-email/button";
 import { Container } from "@react-email/container";
 import { Head } from "@react-email/head";
-import { Hr } from "@react-email/hr";
 import { Html } from "@react-email/html";
-import { Img } from "@react-email/img";
 import { Link } from "@react-email/link";
 import { Preview } from "@react-email/preview";
 import { Section } from "@react-email/section";
 import { Text } from "@react-email/text";
-import * as React from "react";
 import { ABBY_BASE_URL } from "@tryabby/core";
 
 export type Props = {
@@ -88,7 +85,7 @@ const container = {
   width: "465px",
 };
 
-const logo = {
+const _logo = {
   margin: "0 auto",
 };
 
@@ -103,7 +100,7 @@ const h1 = {
   padding: "0",
 };
 
-const avatar = {
+const _avatar = {
   borderRadius: "100%",
 };
 
@@ -120,11 +117,11 @@ const text = {
   lineHeight: "24px",
 };
 
-const black = {
+const _black = {
   color: "black",
 };
 
-const center = {
+const _center = {
   verticalAlign: "middle",
 };
 
@@ -141,6 +138,6 @@ const btn = {
   textAlign: "center" as const,
 };
 
-const spacing = {
+const _spacing = {
   marginBottom: "26px",
 };

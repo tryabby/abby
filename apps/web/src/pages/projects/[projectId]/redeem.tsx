@@ -1,11 +1,11 @@
-import { Button } from "components/ui/button";
 import { DashboardHeader } from "components/DashboardHeader";
 import { Layout } from "components/Layout";
+import { Button } from "components/ui/button";
 import { Input } from "components/ui/input";
 import { useProjectId } from "lib/hooks/useProjectId";
 import { cn } from "lib/utils";
 import { useRouter } from "next/router";
-import { NextPageWithLayout } from "pages/_app";
+import type { NextPageWithLayout } from "pages/_app";
 import { useForm } from "react-hook-form";
 import { toast } from "react-hot-toast";
 import { trpc } from "utils/trpc";
@@ -22,7 +22,7 @@ const CodeRedemptionPage: NextPageWithLayout = () => {
   const redeemCodeMutation = trpc.coupons.redeemCode.useMutation();
 
   const onSubmit = handleSubmit(async (values) => {
-    let toastId = toast.loading("Redeeming...");
+    const toastId = toast.loading("Redeeming...");
     try {
       await redeemCodeMutation.mutateAsync({
         code: values.code,
@@ -30,7 +30,7 @@ const CodeRedemptionPage: NextPageWithLayout = () => {
       });
       toast.success("Code redeemed!", { id: toastId });
       router.push(`/projects/${projectId}/settings`);
-    } catch (e) {
+    } catch (_e) {
       toast.error("Invalid Code", { id: toastId });
     }
   });

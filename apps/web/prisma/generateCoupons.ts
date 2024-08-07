@@ -1,6 +1,6 @@
-import { PrismaClient } from "@prisma/client";
 import fs from "node:fs/promises";
 import path from "node:path";
+import { PrismaClient } from "@prisma/client";
 
 const prisma = new PrismaClient();
 
@@ -10,9 +10,7 @@ async function main() {
   const fileName = path.join(__dirname, "./coupons.csv");
 
   const items = Array.from({ length: COUPON_CODE_AMOUNT }).map(() => ({
-    stripePriceId:
-      // eslint-disable-next-line turbo/no-undeclared-env-vars
-      "STARTUP_LIFETIME",
+    stripePriceId: "STARTUP_LIFETIME",
   }));
 
   const codes = await prisma.$transaction(

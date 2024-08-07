@@ -3,12 +3,8 @@ import { Layout } from "components/Layout";
 import { FullPageLoadingSpinner } from "components/LoadingSpinner";
 
 import { Avatar } from "components/Avatar";
-import dayjs from "dayjs";
-import relativeTime from "dayjs/plugin/relativeTime";
-import { useProjectId } from "lib/hooks/useProjectId";
-import { GetStaticPaths, GetStaticProps } from "next";
-import { NextPageWithLayout } from "pages/_app";
-import { trpc } from "utils/trpc";
+import { Tooltip, TooltipContent, TooltipTrigger } from "components/Tooltip";
+import { Button } from "components/ui/button";
 import {
   Table,
   TableBody,
@@ -18,9 +14,13 @@ import {
   TableHeader,
   TableRow,
 } from "components/ui/table";
-import { Button } from "components/ui/button";
-import { Tooltip, TooltipContent, TooltipTrigger } from "components/Tooltip";
+import dayjs from "dayjs";
+import relativeTime from "dayjs/plugin/relativeTime";
+import { useProjectId } from "lib/hooks/useProjectId";
+import type { GetStaticPaths, GetStaticProps } from "next";
+import type { NextPageWithLayout } from "pages/_app";
 import toast from "react-hot-toast";
+import { trpc } from "utils/trpc";
 
 dayjs.extend(relativeTime);
 
@@ -101,7 +101,7 @@ const EventsPage: NextPageWithLayout = () => {
                           event.createdAt.toISOString()
                         );
                         toast.success("Copied date to clipboard");
-                      } catch (e) {
+                      } catch (_e) {
                         toast.error("Failed to copy date to clipboard");
                       }
                     }}

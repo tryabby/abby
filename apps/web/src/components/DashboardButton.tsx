@@ -1,4 +1,4 @@
-import { ComponentPropsWithRef } from "react";
+import type { ComponentPropsWithRef } from "react";
 import { Button } from "./ui/button";
 
 type Props = ComponentPropsWithRef<"button">;

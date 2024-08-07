@@ -1,6 +1,7 @@
 export class PromiseCache<T> {
   private ttl: number;
-  private cache: Map<string, { storedAt: number; value: Promise<T> }> = new Map();
+  private cache: Map<string, { storedAt: number; value: Promise<T> }> =
+    new Map();
 
   constructor(ttl = 1000 * 60) {
     this.ttl = ttl;

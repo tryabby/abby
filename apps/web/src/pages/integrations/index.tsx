@@ -1,8 +1,8 @@
-import { MarketingLayout } from "components/MarketingLayout";
-import { NextPageWithLayout } from "../_app";
 import { INTEGRATIONS } from "components/Integrations";
+import { MarketingLayout } from "components/MarketingLayout";
 import { Button } from "components/ui/button";
 import Link from "next/link";
+import type { NextPageWithLayout } from "../_app";
 
 const IntegrationsMainPage: NextPageWithLayout = () => {
   return (
@@ -17,8 +17,11 @@ const IntegrationsMainPage: NextPageWithLayout = () => {
         </p>
       </div>
       <div className="container mt-24 grid gap-8 px-4 sm:grid-cols-2 md:px-6 lg:grid-cols-3 ">
-        {INTEGRATIONS.map((integration, index) => (
-          <div className="flex flex-col items-center space-y-4">
+        {INTEGRATIONS.map((integration) => (
+          <div
+            key={integration.name}
+            className="flex flex-col items-center space-y-4"
+          >
             <div className="text-5xl" style={{ color: integration.logoFill }}>
               {integration.logo}
             </div>

@@ -1,5 +1,5 @@
 import { env } from "env/client.mjs";
-import { PlausibleEvents } from "types/plausible-events";
+import type { PlausibleEvents } from "types/plausible-events";
 
 export abstract class PlausibleService {
   private static readonly PLAUSIBLE_API_URL = "https://plausible.io/api";
@@ -16,20 +16,23 @@ export abstract class PlausibleService {
     props?: PlausibleEvents[EventName],
     url?: string
   ) {
-    if (process.env.NODE_ENV !== "production" || !this.SITE_DOMAIN) {
+    if (
+      process.env.NODE_ENV !== "production" ||
+      !PlausibleService.SITE_DOMAIN
+    ) {
       return;
     }
 
-    const res = await fetch(`${this.PLAUSIBLE_API_URL}/event`, {
+    const res = await fetch(`${PlausibleService.PLAUSIBLE_API_URL}/event`, {
       method: "POST",
       headers: {
-        "User-Agent": this.BACKEND_USER_AGENT,
+        "User-Agent": PlausibleService.BACKEND_USER_AGENT,
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
         name: eventName,
-        domain: this.SITE_DOMAIN,
-        url: url ?? `${this.SITE_DOMAIN}/api`,
+        domain: PlausibleService.SITE_DOMAIN,
+        url: url ?? `${PlausibleService.SITE_DOMAIN}/api`,
         props,
       }),
     });

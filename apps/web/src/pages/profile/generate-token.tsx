@@ -1,11 +1,12 @@
 import { useQuery } from "@tanstack/react-query";
+import type { CreateNextContextOptions } from "@trpc/server/adapters/next";
 import { Layout } from "components/Layout";
-import { GetServerSideProps, InferGetServerSidePropsType } from "next";
+import Logo from "components/Logo";
+import type { GetServerSideProps, InferGetServerSidePropsType } from "next";
 import { createContext } from "server/trpc/context";
 import { appRouter } from "server/trpc/router/_app";
-import { NextPageWithLayout } from "../_app";
-import Logo from "components/Logo";
 import { match } from "ts-pattern";
+import type { NextPageWithLayout } from "../_app";
 
 const GenerateTokenPage: NextPageWithLayout<
   InferGetServerSidePropsType<typeof getServerSideProps>
@@ -35,13 +36,15 @@ const GenerateTokenPage: NextPageWithLayout<
 GenerateTokenPage.getLayout = (page) => <Layout>{page}</Layout>;
 
 export const getServerSideProps = (async (ctx) => {
-  const trpc = appRouter.createCaller(await createContext(ctx as any));
+  const trpc = appRouter.createCaller(
+    await createContext(ctx as unknown as CreateNextContextOptions)
+  );
 
   const token = await trpc.apikey.createApiKey({
     name: "CLI Token",
   });
 
-  if (typeof ctx.query.callbackUrl != "string") {
+  if (typeof ctx.query.callbackUrl !== "string") {
     throw new Error("Missing callbackUrl");
   }
 

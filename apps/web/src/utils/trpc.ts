@@ -1,9 +1,9 @@
 import { httpLink, loggerLink } from "@trpc/client";
 import { createTRPCNext } from "@trpc/next";
-import { type inferRouterInputs, type inferRouterOutputs } from "@trpc/server";
+import type { inferRouterInputs, inferRouterOutputs } from "@trpc/server";
 import superjson from "superjson";
 
-import { type AppRouter } from "../server/trpc/router/_app";
+import type { AppRouter } from "../server/trpc/router/_app";
 
 const getBaseUrl = () => {
   if (typeof window !== "undefined") return ""; // browser should use relative url
@@ -17,7 +17,7 @@ export const trpc = createTRPCNext<AppRouter>({
       transformer: superjson,
       links: [
         loggerLink({
-          enabled: (opts) => process.env.NODE_ENV === "development",
+          enabled: (_opts) => process.env.NODE_ENV === "development",
         }),
         httpLink({
           url: `${getBaseUrl()}/api/trpc`,

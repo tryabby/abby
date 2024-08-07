@@ -1,5 +1,5 @@
+import { ABBY_BASE_URL, type AbbyDataResponse } from "@tryabby/core";
 import { rest } from "msw";
-import { type AbbyDataResponse, ABBY_BASE_URL } from "@tryabby/core";
 
 const returnData: AbbyDataResponse = {
   tests: [
@@ -26,10 +26,13 @@ const returnData: AbbyDataResponse = {
   ],
 };
 export const handlers = [
-  rest.get(`${ABBY_BASE_URL}api/dashboard/:projectId/data`, (req, res, ctx) => {
-    return res(ctx.json(returnData));
-  }),
-  rest.get(`${ABBY_BASE_URL}api/v1/data/:projectId`, (req, res, ctx) => {
+  rest.get(
+    `${ABBY_BASE_URL}api/dashboard/:projectId/data`,
+    (_req, res, ctx) => {
+      return res(ctx.json(returnData));
+    }
+  ),
+  rest.get(`${ABBY_BASE_URL}api/v1/data/:projectId`, (_req, res, ctx) => {
     return res(ctx.json(returnData));
   }),
 ];

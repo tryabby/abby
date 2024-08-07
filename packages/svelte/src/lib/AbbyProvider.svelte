@@ -11,14 +11,14 @@
 	} | null;
 
 	onMount(async () => {
-		if (data && data.__abby__data) {
+		if (data?.__abby__data) {
 			abby.init(data.__abby__data);
 		} else {
 			await abby.loadProjectData();
 		}
 	});
 
-	if (typeof window === 'undefined' && data?.__abby__data != undefined) {
+	if (typeof window === 'undefined' && data?.__abby__data !== undefined) {
 		abby.init(data.__abby__data);
 		abby.setLocalOverrides(data.__abby_cookie ?? '');
 	}

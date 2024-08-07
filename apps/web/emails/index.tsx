@@ -1,10 +1,10 @@
 import { render } from "@react-email/render";
 import { env } from "env/server.mjs";
 import { createTransport } from "nodemailer";
-import InviteEmail, { Props as InviteEmailProps } from "./invite";
 import ContactFormularEmail, {
-  Props as ContactMailProps,
+  type Props as ContactMailProps,
 } from "./ContactFormularEmail";
+import InviteEmail, { type Props as InviteEmailProps } from "./invite";
 
 const transporter = createTransport({
   pool: true,

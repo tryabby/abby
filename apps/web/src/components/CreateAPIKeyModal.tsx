@@ -2,7 +2,6 @@ import { TRPCClientError } from "@trpc/client";
 import { TRPC_ERROR_CODES_BY_KEY } from "@trpc/server/rpc";
 import { useRef, useState } from "react";
 import { toast } from "react-hot-toast";
-import { trpc } from "utils/trpc";
 import { Modal } from "./Modal";
 import { Input } from "./ui/input";
 
@@ -12,17 +11,10 @@ type Props = {
   projectId: string;
 };
 
-export const CreateAPIKeyModal = ({ onClose, isOpen, projectId }: Props) => {
+export const CreateAPIKeyModal = ({ onClose, isOpen }: Props) => {
   const inputRef = useRef<HTMLInputElement>(null);
-  const ctx = trpc.useContext();
   const [name, setName] = useState<string>("");
   const trimmedName = name.trim();
-
-  const { mutate: createApiKey } = trpc.apikey.createApiKey.useMutation({
-    onSuccess() {
-      toast.success("API Key created");
-    },
-  });
 
   return (
     <Modal

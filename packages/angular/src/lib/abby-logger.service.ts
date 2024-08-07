@@ -1,10 +1,10 @@
 import { Inject, Injectable } from "@angular/core";
-import { AbbyConfig } from "@tryabby/core";
+import type { AbbyConfig } from "@tryabby/core";
 import { ABBY_CONFIG_TOKEN } from "./abby.module";
 
 @Injectable()
 export class AbbyLoggerService {
-  readonly LOGGER_SCOPE = 'ng.Abby';
+  readonly LOGGER_SCOPE = "ng.Abby";
 
   constructor(@Inject(ABBY_CONFIG_TOKEN) private config: AbbyConfig) {}
 

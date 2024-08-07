@@ -1,8 +1,8 @@
-import { testClient } from "hono/testing";
-import { makeEventRoute } from "./v1_event";
 import { AbbyEventType } from "@tryabby/core";
+import { testClient } from "hono/testing";
 import { prisma } from "server/db/client";
 import { redis } from "server/db/redis";
+import { makeEventRoute } from "./v1_event";
 
 vi.mock("server/common/plans", () => ({
   getLimitByPlan: vi.fn(() => {}),
@@ -34,7 +34,7 @@ afterEach(() => {
 it("should work with correct PING events", async () => {
   const app = makeEventRoute();
 
-  const res = await testClient(app).index.$post({
+  const _res = await testClient(app).index.$post({
     json: {
       projectId: "test",
       selectedVariant: "test",

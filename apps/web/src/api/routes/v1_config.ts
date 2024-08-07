@@ -1,10 +1,10 @@
-import { Hono, MiddlewareHandler } from "hono";
 import { zValidator } from "@hono/zod-validator";
-import { prisma } from "server/db/client";
-import { hashString } from "utils/apiKey";
-import * as ConfigService from "server/services/ConfigService";
-import { ApiKey } from "@prisma/client";
+import type { ApiKey } from "@prisma/client";
 import { abbyConfigSchema } from "@tryabby/core";
+import { Hono, type MiddlewareHandler } from "hono";
+import { prisma } from "server/db/client";
+import * as ConfigService from "server/services/ConfigService";
+import { hashString } from "utils/apiKey";
 
 const apiKeyMiddleware: MiddlewareHandler<{
   Variables: {

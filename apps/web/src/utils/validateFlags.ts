@@ -6,7 +6,7 @@ export function validateFlag(flagType: FeatureFlagType, value: string) {
       return value === "true" || value === "false";
     }
     case FeatureFlagType.NUMBER: {
-      return !isNaN(Number(value));
+      return !Number.isNaN(Number(value));
     }
     case FeatureFlagType.STRING: {
       return true;
@@ -15,7 +15,7 @@ export function validateFlag(flagType: FeatureFlagType, value: string) {
       try {
         JSON.parse(value);
         return true;
-      } catch (e) {
+      } catch (_e) {
         return false;
       }
     }

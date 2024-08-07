@@ -1,5 +1,5 @@
 import { TestBed } from "@angular/core/testing";
-import { AbbyConfig } from "@tryabby/core";
+import type { AbbyConfig } from "@tryabby/core";
 import { AbbyModule } from "./abby.module";
 import { GetRemoteConfigPipe } from "./get-remote-config.pipe";
 

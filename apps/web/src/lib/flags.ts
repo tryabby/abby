@@ -1,14 +1,14 @@
-import { FeatureFlag, FeatureFlagType } from "@prisma/client";
+import { type FeatureFlag, FeatureFlagType } from "@prisma/client";
 import {
-  assertUnreachable,
   DEFAULT_FEATURE_FLAG_VALUE,
+  type RemoteConfigValue,
+  type RemoteConfigValueString,
+  assertUnreachable,
   getDefaultRemoteConfigValue,
-  RemoteConfigValue,
-  RemoteConfigValueString,
   stringifyRemoteConfigValue,
 } from "@tryabby/core";
 import { groupBy } from "lodash-es";
-import { FlagValueString } from "../types/flags";
+import type { FlagValueString } from "../types/flags";
 
 export function getFlagCount(flags: Array<FeatureFlag>) {
   return Object.keys(groupBy(flags, (f) => f.name)).length;
@@ -22,7 +22,7 @@ export function transformFlagValue(value: string, type: FeatureFlagType) {
     case FeatureFlagType.BOOLEAN:
       return value === "true";
     case FeatureFlagType.NUMBER:
-      return parseInt(value);
+      return Number.parseInt(value);
     case FeatureFlagType.JSON:
       return JSON.parse(value);
     case FeatureFlagType.STRING:

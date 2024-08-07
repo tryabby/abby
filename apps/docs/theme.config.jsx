@@ -1,4 +1,3 @@
-/* eslint-disable import/no-anonymous-default-export */
 import { useRouter } from "next/router";
 
 export default {

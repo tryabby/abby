@@ -1,12 +1,11 @@
-import { TestStorageService } from "../lib/StorageService";
-import { HttpService, AbbyEventType, getABStorageKey } from "@tryabby/core";
-import { createAbby } from "../lib/createAbby";
-import { it, describe, expect, afterEach, vi, beforeAll, afterAll } from "vitest";
+import { AbbyEventType, HttpService } from "@tryabby/core";
 /// @ts-ignore it doesn't have types
 import { get } from "svelte/store";
-import Cookies from "js-cookie";
+import { describe, expect, it, vi } from "vitest";
+import { TestStorageService } from "../lib/StorageService";
+import { createAbby } from "../lib/createAbby";
 
-const OLD_ENV = process.env;
+const _OLD_ENV = process.env;
 
 describe("useAbby working", () => {
   it("returns a valid variant", () => {
@@ -43,7 +42,7 @@ describe("useAbby working", () => {
       },
     });
 
-    const { variant, onAct } = useAbby("test");
+    const { variant } = useAbby("test");
     const result = get(variant);
     // the stored value should not be overwritten
     expect(setSpy).not.toHaveBeenCalled();
@@ -55,7 +54,12 @@ describe("useAbby working", () => {
 
   it("should look up the return value", () => {
     const persistedValue = "SimonsText";
-    const variants = ["SimonsText", "MatthiasText", "TomsText", "TimsText"] as const;
+    const variants = [
+      "SimonsText",
+      "MatthiasText",
+      "TomsText",
+      "TimsText",
+    ] as const;
 
     const getSpy = vi.spyOn(TestStorageService, "get");
 
@@ -90,10 +94,12 @@ describe("useAbby working", () => {
       },
     });
 
-    const { variant, onAct } = useAbby("test");
+    useAbby("test");
 
     //onAct();
-    expect(spy).toHaveBeenCalledWith(expect.objectContaining({ type: AbbyEventType.PING }));
+    expect(spy).toHaveBeenCalledWith(
+      expect.objectContaining({ type: AbbyEventType.PING })
+    );
   });
 
   it("should notify the server with onAct", () => {
@@ -107,10 +113,12 @@ describe("useAbby working", () => {
       },
     });
 
-    const { variant, onAct } = useAbby("test");
+    const { onAct } = useAbby("test");
 
     onAct();
-    expect(spy).toHaveBeenCalledWith(expect.objectContaining({ type: AbbyEventType.PING }));
+    expect(spy).toHaveBeenCalledWith(
+      expect.objectContaining({ type: AbbyEventType.PING })
+    );
   });
 
   it("returns the correct possible variant values", async () => {

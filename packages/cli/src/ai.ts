@@ -1,10 +1,9 @@
-import { loadLocalConfig } from "./util";
-import { globby } from "globby";
+import { readFile } from "node:fs/promises";
+import * as path from "node:path";
 import { getUseFeatureFlagRegex } from "@tryabby/core";
-import { readFile } from "fs/promises";
-import chalk from "chalk";
+import { globby } from "globby";
 import { HttpService } from "./http";
-import * as path from "path";
+import { loadLocalConfig } from "./util";
 
 export async function removeFlagInstance(options: {
   flagName: string;

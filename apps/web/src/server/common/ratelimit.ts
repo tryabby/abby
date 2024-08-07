@@ -12,7 +12,7 @@ export const checkRateLimit = async (ip: string) => {
   try {
     await rateLimiter.consume(ip);
     return true;
-  } catch (rateLimiterRes) {
+  } catch (_rateLimiterRes) {
     return false;
   }
 };

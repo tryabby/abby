@@ -100,8 +100,8 @@ export const Integrations = () => {
               (integration, index) =>
                 index === currentIntegrationIndex && (
                   <motion.p
+                    key={integration.name}
                     className="absolute left-0 top-0"
-                    key={index}
                     style={{ color: integration.logoFill }}
                     initial={{ opacity: 0, y: 50 }}
                     animate={{ opacity: 1, y: 0 }}
@@ -116,8 +116,9 @@ export const Integrations = () => {
       </div>
       <div className="mx-auto my-24 flex max-w-md justify-between">
         {INTEGRATIONS.map((integration, index) => (
-          <div>
+          <div key={integration.name}>
             <button
+              type="button"
               onClick={() => {
                 setCurrentIntegrationIndex(index);
                 clearInterval(intervalRef.current);

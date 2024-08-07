@@ -1,5 +1,5 @@
 import { ABBY_BASE_URL } from "./constants";
-import type { AbbyEventType, AbbyEvent, AbbyDataResponse } from "./index";
+import type { AbbyDataResponse, AbbyEvent, AbbyEventType } from "./index";
 
 export abstract class HttpService {
   static async getProjectData({
@@ -26,8 +26,10 @@ export abstract class HttpService {
       if (!res.ok) return null;
       const data = (await res.json()) as AbbyDataResponse;
       return data;
-    } catch (err) {
-      console.error("[ABBY]: failed to load project data, falling back to defaults");
+    } catch (_err) {
+      console.error(
+        "[ABBY]: failed to load project data, falling back to defaults"
+      );
       return null;
     }
   }
@@ -41,7 +43,10 @@ export abstract class HttpService {
     type: AbbyEventType;
     data: Omit<AbbyEvent, "type">;
   }) {
-    if (typeof window === "undefined" || window.location.hostname === "localhost") {
+    if (
+      typeof window === "undefined" ||
+      window.location.hostname === "localhost"
+    ) {
       // don't send data in development
       return;
     }

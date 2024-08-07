@@ -1,5 +1,10 @@
+import type {
+  ABConfig,
+  Abby,
+  AbbyConfig,
+  RemoteConfigValueString,
+} from "@tryabby/core";
 import type { NextFunction, Request, Response } from "express";
-import { ABConfig, Abby, AbbyConfig, RemoteConfigValueString } from "@tryabby/core";
 import { createAbby } from "../index";
 
 const instanceMap = new Map<string, Abby<any, any, any, any, any>>();
@@ -11,7 +16,9 @@ export function createAbbyMiddleWare<
   const Tests extends Record<TestName, ABConfig>,
   const RemoteConfig extends Record<RemoteConfigName, RemoteConfigValueString>,
   const RemoteConfigName extends Extract<keyof RemoteConfig, string>,
->(config: AbbyConfig<FlagName, Tests, string[], RemoteConfigName, RemoteConfig>) {
+>(
+  config: AbbyConfig<FlagName, Tests, string[], RemoteConfigName, RemoteConfig>
+) {
   let abbyInstance = instanceMap.get(config.projectId);
 
   if (!abbyInstance) {
@@ -19,7 +26,11 @@ export function createAbbyMiddleWare<
     instanceMap.set(config.projectId, abbyInstance);
   }
 
-  const middleware = async (req: Request, _res: Response, next: NextFunction) => {
+  const middleware = async (
+    req: Request,
+    _res: Response,
+    next: NextFunction
+  ) => {
     if (!abbyInstance) {
       throw new Error("Abby is undefined");
     }
@@ -33,6 +44,13 @@ export function createAbbyMiddleWare<
 
   return {
     middleware,
-    abby: abbyInstance as Abby<FlagName, TestName, Tests, RemoteConfig, RemoteConfigName, any>,
+    abby: abbyInstance as Abby<
+      FlagName,
+      TestName,
+      Tests,
+      RemoteConfig,
+      RemoteConfigName,
+      any
+    >,
   };
 }

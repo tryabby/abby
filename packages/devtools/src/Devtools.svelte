@@ -15,7 +15,7 @@
 
   export let position: "top-left" | "top-right" | "bottom-left" | "bottom-right" = "bottom-right";
 
-  export let defaultShow: boolean = false;
+  export let defaultShow = false;
 
   export let shortcut: Shortcut | Array<Shortcut> = ["command+.", "ctrl+."];
 
@@ -68,7 +68,7 @@
     easing: quintInOut,
   });
 
-  let key = "devtools";
+  const key = "devtools";
 </script>
 
 {#if show}

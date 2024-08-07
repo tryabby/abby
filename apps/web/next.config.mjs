@@ -1,8 +1,8 @@
+import { remarkCodeHike } from "@code-hike/mdx";
 // @ts-check
 import bundleAnalzyer from "@next/bundle-analyzer";
-import { withPlausibleProxy } from "next-plausible";
 import mdx from "@next/mdx";
-import { remarkCodeHike } from "@code-hike/mdx";
+import { withPlausibleProxy } from "next-plausible";
 import theme from "shiki/themes/poimandres.json" assert { type: "json" };
 
 const withMDX = mdx({

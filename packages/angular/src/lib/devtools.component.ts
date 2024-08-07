@@ -1,8 +1,9 @@
-import { Input, OnInit, ViewChild } from "@angular/core";
-import { ElementRef, Component } from "@angular/core";
-import { AbbyDevtoolProps } from "@tryabby/devtools";
-import { AbbyService } from "./abby.service";
+import { Input, type OnInit, ViewChild } from "@angular/core";
+import { Component, type ElementRef } from "@angular/core";
+import type { AbbyDevtoolProps } from "@tryabby/devtools";
 import abbyDevTool from "@tryabby/devtools";
+// biome-ignore lint/style/useImportType: angular
+import { AbbyService } from "./abby.service";
 
 @Component({
   selector: "abby-devtools",
@@ -17,7 +18,9 @@ export class DevtoolsComponent implements OnInit {
 
   ngOnInit(): void {
     if (
+      // biome-ignore lint/complexity/useLiteralKeys: angular
       this.props?.["dangerouslyForceShow"] ||
+      // biome-ignore lint/complexity/useLiteralKeys: angular
       process.env["NODE_ENV"] === "development"
     ) {
       const abbyInstance = this.abby.getAbbyInstance();

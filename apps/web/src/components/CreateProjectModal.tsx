@@ -1,10 +1,10 @@
+import { useTracking } from "lib/tracking";
+import { useSession } from "next-auth/react";
 import { useRouter } from "next/router";
-import { ChangeEvent, useRef, useState } from "react";
+import { type ChangeEvent, useRef, useState } from "react";
 import toast from "react-hot-toast";
 import { trpc } from "utils/trpc";
 import { Modal } from "./Modal";
-import { useSession } from "next-auth/react";
-import { useTracking } from "lib/tracking";
 import { Input } from "./ui/input";
 
 type Props = {

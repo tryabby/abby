@@ -1,6 +1,6 @@
 import { env } from "env/server.mjs";
 import { LogSnag } from "logsnag";
-import { PlanName } from "server/common/plans";
+import type { PlanName } from "server/common/plans";
 
 const logsnag = new LogSnag({
   token: env.LOGSNAG_API_KEY,

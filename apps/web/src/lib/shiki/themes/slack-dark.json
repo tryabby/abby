@@ -351,7 +351,10 @@
       }
     },
     {
-      "scope": ["punctuation.section.embedded.begin.php", "punctuation.section.embedded.end.php"],
+      "scope": [
+        "punctuation.section.embedded.begin.php",
+        "punctuation.section.embedded.end.php"
+      ],
       "settings": {
         "foreground": "#569cd6"
       }
@@ -388,7 +391,11 @@
     },
     {
       "name": "Function declarations",
-      "scope": ["entity.name.function", "support.function", "support.constant.handlebars"],
+      "scope": [
+        "entity.name.function",
+        "support.function",
+        "support.constant.handlebars"
+      ],
       "settings": {
         "foreground": "#DCDCAA"
       }

@@ -11,6 +11,9 @@ export function Progress({ currentValue, maxValue }: Props) {
     <div
       className="relative h-6 w-full rounded-full bg-background"
       role="progressbar"
+      aria-valuemin={0}
+      aria-valuemax={100}
+      aria-valuenow={currentValuePercentage}
     >
       <div
         className={twMerge("h-full rounded-full bg-primary text-center")}

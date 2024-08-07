@@ -1,8 +1,8 @@
-import React from "react";
 import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
+import { cn } from "lib/utils";
+import type React from "react";
 import { BsThreeDotsVertical } from "react-icons/bs";
 import { twMerge } from "tailwind-merge";
-import { cn } from "lib/utils";
 
 type Props = {
   triggerIcon?: React.ReactNode;
@@ -15,6 +15,7 @@ export const Dropdown = ({ triggerIcon: Icon, children, className }: Props) => {
     <DropdownMenu.Root>
       <DropdownMenu.Trigger asChild>
         <button
+          type="button"
           className={cn(
             "inline-flex h-[35px] w-[35px] items-center justify-center rounded-md bg-transparent text-pink-50 outline-none hover:bg-gray-800 focus:bg-gray-800",
             className

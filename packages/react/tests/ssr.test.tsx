@@ -1,8 +1,3 @@
-/**
- * @vitest-environment node
- */
-
-import { useEffect, useState } from "react";
 import { renderToString } from "react-dom/server";
 import { createAbby } from "../src";
 

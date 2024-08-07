@@ -1,10 +1,10 @@
-import type { PostMeta } from "pages/tips-and-insights";
-import { MarketingLayout, MarketingLayoutProps } from "./MarketingLayout";
 import dayjs from "dayjs";
-import Image from "next/image";
-import { SignupButton } from "./SignupButton";
-import { Divider } from "./Divider";
 import { NextSeo } from "next-seo";
+import Image from "next/image";
+import type { PostMeta } from "pages/tips-and-insights";
+import { Divider } from "./Divider";
+import { MarketingLayout, type MarketingLayoutProps } from "./MarketingLayout";
+import { SignupButton } from "./SignupButton";
 
 type Props = Pick<MarketingLayoutProps, "children" | "seoTitle"> & {
   meta: PostMeta;

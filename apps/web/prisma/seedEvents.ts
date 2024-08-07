@@ -1,6 +1,6 @@
-import { PrismaClient, Prisma } from "@prisma/client";
+import crypto from "node:crypto";
+import { type Prisma, PrismaClient } from "@prisma/client";
 import { AbbyEventType } from "@tryabby/core";
-import crypto from "crypto";
 
 const prisma = new PrismaClient();
 
@@ -94,7 +94,7 @@ async function main() {
             testId: footerTest.id,
             type: AbbyEventType.PING,
             createdAt: randomDateFromLast30Days(),
-          } as Prisma.EventCreateManyInput)
+          }) as Prisma.EventCreateManyInput
       ),
       ...Array.from<Prisma.EventCreateManyInput>({
         length: Math.floor(Math.random() * 200),
@@ -105,7 +105,7 @@ async function main() {
             testId: footerTest.id,
             type: AbbyEventType.PING,
             createdAt: randomDateFromLast30Days(),
-          } as Prisma.EventCreateManyInput)
+          }) as Prisma.EventCreateManyInput
       ),
       ...Array.from<Prisma.EventCreateManyInput>({
         length: Math.floor(Math.random() * 200),
@@ -116,7 +116,7 @@ async function main() {
             testId: footerTest.id,
             type: AbbyEventType.ACT,
             createdAt: randomDateFromLast30Days(),
-          } as Prisma.EventCreateManyInput)
+          }) as Prisma.EventCreateManyInput
       ),
       ...Array.from<Prisma.EventCreateManyInput>({
         length: Math.floor(Math.random() * 200),
@@ -127,7 +127,7 @@ async function main() {
             testId: footerTest.id,
             type: AbbyEventType.ACT,
             createdAt: randomDateFromLast30Days(),
-          } as Prisma.EventCreateManyInput)
+          }) as Prisma.EventCreateManyInput
       ),
     ],
   });

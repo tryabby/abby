@@ -1,7 +1,7 @@
 import { testClient } from "hono/testing";
-import { makeConfigRoute } from "./v1_config";
-import { handleGET, handlePUT } from "server/services/ConfigService";
 import { prisma } from "server/db/client";
+import { type handleGET, handlePUT } from "server/services/ConfigService";
+import { makeConfigRoute } from "./v1_config";
 
 vi.mock("../../env/server.mjs", () => ({
   env: {

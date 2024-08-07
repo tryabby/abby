@@ -1,6 +1,6 @@
 import { z } from "zod";
+import type { AbbyConfig } from "..";
 import { AbbyEventType } from "./types";
-import { AbbyConfig } from "..";
 
 export const abbyEventSchema = z.object({
   type: z.nativeEnum(AbbyEventType),
@@ -78,12 +78,15 @@ export type PullAbbyConfigResponse = Pick<
 
 export type RemoteConfigValue = z.infer<typeof remoteConfigValue>;
 
-export type RemoteConfigValueString = z.infer<typeof remoteConfigValueStringSchema>;
+export type RemoteConfigValueString = z.infer<
+  typeof remoteConfigValueStringSchema
+>;
 
-export type RemoteConfigValueStringToType<T extends RemoteConfigValueString> = T extends "String"
-  ? string
-  : T extends "Number"
-    ? number
-    : T extends "JSON"
-      ? Record<string, unknown>
-      : never;
+export type RemoteConfigValueStringToType<T extends RemoteConfigValueString> =
+  T extends "String"
+    ? string
+    : T extends "Number"
+      ? number
+      : T extends "JSON"
+        ? Record<string, unknown>
+        : never;

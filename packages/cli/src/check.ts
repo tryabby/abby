@@ -26,15 +26,15 @@ export async function verifyLocalConfig({
 
   const invalidTests = Object.keys(remoteConfig.tests ?? {}).filter((key) => {
     return (
-      localConfig.tests[key] == undefined &&
-      localConfig.tests[key] != (remoteConfig.tests ?? {})[key]
+      localConfig.tests[key] === undefined &&
+      localConfig.tests[key] !== remoteConfig.tests?.[key]
     );
   });
 
   const invalidFlags = Object.keys(remoteConfig.flags ?? {}).filter((key) => {
     return (
-      localConfig.flags[key] == undefined &&
-      localConfig.flags[key] != (remoteConfig.flags ?? {})[key]
+      localConfig.flags[key] === undefined &&
+      localConfig.flags[key] !== remoteConfig.flags?.[key]
     );
   });
 

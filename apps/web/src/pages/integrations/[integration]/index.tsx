@@ -2,10 +2,14 @@ import { DOCS_URL } from "@tryabby/core";
 import { INTEGRATIONS } from "components/Integrations";
 import { MarketingLayout } from "components/MarketingLayout";
 import { SignupButton } from "components/SignupButton";
-import { GetStaticPaths, GetStaticProps, InferGetStaticPropsType } from "next";
+import type {
+  GetStaticPaths,
+  GetStaticProps,
+  InferGetStaticPropsType,
+} from "next";
 import { NextSeo } from "next-seo";
 import Link from "next/link";
-import { NextPageWithLayout } from "pages/_app";
+import type { NextPageWithLayout } from "pages/_app";
 
 const IntegrationPage: NextPageWithLayout<
   InferGetStaticPropsType<typeof getStaticProps>
@@ -53,7 +57,7 @@ const IntegrationPage: NextPageWithLayout<
                 </li>
                 <li>Devtools for managing flags, configs, and experiments</li>
                 {integration.additionalFeatures?.map((feature) => (
-                  <li>{feature}</li>
+                  <li key={feature}>{feature}</li>
                 ))}
               </ul>
             </div>

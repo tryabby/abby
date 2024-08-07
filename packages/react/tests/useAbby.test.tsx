@@ -1,8 +1,8 @@
-import { renderHook, act, waitFor } from "@testing-library/react";
-import { PropsWithChildren } from "react";
+import { act, renderHook, waitFor } from "@testing-library/react";
 import { AbbyEventType } from "@tryabby/core";
-import { createAbby } from "../src";
 import { HttpService } from "@tryabby/core";
+import type { PropsWithChildren } from "react";
+import { createAbby } from "../src";
 import { TestStorageService } from "../src/StorageService";
 
 const OLD_ENV = process.env;
@@ -33,7 +33,9 @@ describe("useAbby", () => {
       },
     });
 
-    const wrapper = ({ children }: PropsWithChildren) => <AbbyProvider>{children}</AbbyProvider>;
+    const wrapper = ({ children }: PropsWithChildren) => (
+      <AbbyProvider>{children}</AbbyProvider>
+    );
 
     const { result } = renderHook(() => useAbby("test"), {
       wrapper,
@@ -61,7 +63,9 @@ describe("useAbby", () => {
       },
     });
 
-    const wrapper = ({ children }: PropsWithChildren) => <AbbyProvider>{children}</AbbyProvider>;
+    const wrapper = ({ children }: PropsWithChildren) => (
+      <AbbyProvider>{children}</AbbyProvider>
+    );
 
     const { result } = renderHook(() => useAbby("test"), {
       wrapper,
@@ -76,7 +80,12 @@ describe("useAbby", () => {
 
   it("looks up the selected variant in the lookup object", () => {
     const persistedValue = "SimonsText";
-    const variants = ["SimonsText", "MatthiasText", "TomsText", "TimsText"] as const;
+    const variants = [
+      "SimonsText",
+      "MatthiasText",
+      "TomsText",
+      "TimsText",
+    ] as const;
 
     const getSpy = vi.spyOn(TestStorageService, "get");
     getSpy.mockReturnValue(persistedValue);
@@ -90,9 +99,17 @@ describe("useAbby", () => {
       },
     });
 
-    const wrapper = ({ children }: PropsWithChildren) => <AbbyProvider>{children}</AbbyProvider>;
+    const wrapper = ({ children }: PropsWithChildren) => (
+      <AbbyProvider>{children}</AbbyProvider>
+    );
     const { result } = renderHook(
-      () => useAbby("test", { SimonsText: "a", MatthiasText: "b", TomsText: "c", TimsText: "d" }),
+      () =>
+        useAbby("test", {
+          SimonsText: "a",
+          MatthiasText: "b",
+          TomsText: "c",
+          TimsText: "d",
+        }),
       {
         wrapper,
       }
@@ -113,14 +130,18 @@ describe("useAbby", () => {
       },
     });
 
-    const wrapper = ({ children }: PropsWithChildren) => <AbbyProvider>{children}</AbbyProvider>;
+    const wrapper = ({ children }: PropsWithChildren) => (
+      <AbbyProvider>{children}</AbbyProvider>
+    );
 
     renderHook(() => useAbby("test"), {
       wrapper,
     });
 
     act(() => {
-      expect(spy).toHaveBeenCalledWith(expect.objectContaining({ type: AbbyEventType.PING }));
+      expect(spy).toHaveBeenCalledWith(
+        expect.objectContaining({ type: AbbyEventType.PING })
+      );
     });
   });
 
@@ -135,7 +156,9 @@ describe("useAbby", () => {
       },
     });
 
-    const wrapper = ({ children }: PropsWithChildren) => <AbbyProvider>{children}</AbbyProvider>;
+    const wrapper = ({ children }: PropsWithChildren) => (
+      <AbbyProvider>{children}</AbbyProvider>
+    );
 
     const { result } = renderHook(() => useAbby("test"), {
       wrapper,
@@ -146,7 +169,10 @@ describe("useAbby", () => {
     });
 
     // first call is tested above
-    expect(spy).toHaveBeenNthCalledWith(2, expect.objectContaining({ type: AbbyEventType.ACT }));
+    expect(spy).toHaveBeenNthCalledWith(
+      2,
+      expect.objectContaining({ type: AbbyEventType.ACT })
+    );
   });
 
   it("should return the correct feature flags", () => {
@@ -157,7 +183,9 @@ describe("useAbby", () => {
       flags: ["flag1", "flag2"],
     });
 
-    const wrapper = ({ children }: PropsWithChildren) => <AbbyProvider>{children}</AbbyProvider>;
+    const wrapper = ({ children }: PropsWithChildren) => (
+      <AbbyProvider>{children}</AbbyProvider>
+    );
 
     const { result: flag1 } = renderHook(() => useFeatureFlag("flag1"), {
       wrapper,
@@ -184,7 +212,9 @@ describe("useAbby", () => {
       currentEnvironment: "a",
     });
 
-    const wrapper = ({ children }: PropsWithChildren) => <AbbyProvider>{children}</AbbyProvider>;
+    const wrapper = ({ children }: PropsWithChildren) => (
+      <AbbyProvider>{children}</AbbyProvider>
+    );
 
     const { result: flag1 } = renderHook(() => useFeatureFlag("flag1"), {
       wrapper,
@@ -212,7 +242,9 @@ describe("useAbby", () => {
       },
     });
 
-    const wrapper = ({ children }: PropsWithChildren) => <AbbyProvider>{children}</AbbyProvider>;
+    const wrapper = ({ children }: PropsWithChildren) => (
+      <AbbyProvider>{children}</AbbyProvider>
+    );
 
     const { result: flag1 } = renderHook(() => useFeatureFlag("flag1"), {
       wrapper,
@@ -279,7 +311,9 @@ describe("useAbby", () => {
       C: 3,
     };
 
-    expect(getABTestValue("test", lookupObject)).toEqual(lookupObject[activeVariant]);
+    expect(getABTestValue("test", lookupObject)).toEqual(
+      lookupObject[activeVariant]
+    );
   });
 
   it("produces proper types with a lookup objects", () => {
@@ -315,7 +349,9 @@ describe("useAbby", () => {
       },
     });
 
-    const wrapper = ({ children }: PropsWithChildren) => <AbbyProvider>{children}</AbbyProvider>;
+    const wrapper = ({ children }: PropsWithChildren) => (
+      <AbbyProvider>{children}</AbbyProvider>
+    );
 
     const { result } = renderHook(
       () =>
@@ -329,7 +365,9 @@ describe("useAbby", () => {
       }
     );
 
-    expectTypeOf(result.current.variant).toEqualTypeOf<"Hello" | "Bonjour" | "Hola">();
+    expectTypeOf(result.current.variant).toEqualTypeOf<
+      "Hello" | "Bonjour" | "Hola"
+    >();
   });
 
   it("returns correct remoteConfigValue", () => {
@@ -364,7 +402,9 @@ describe("useAbby", () => {
     });
 
     // await server fetch
-    waitFor(() => expect(useRemoteConfig("unsetRemoteConfig")).toEqual("defaultValue"));
+    waitFor(() =>
+      expect(useRemoteConfig("unsetRemoteConfig")).toEqual("defaultValue")
+    );
   });
 
   it("uses devOverride for remoteConfig", () => {
@@ -385,7 +425,9 @@ describe("useAbby", () => {
     });
 
     // await server fetch
-    waitFor(() => expect(useRemoteConfig("remoteConfig1")).toEqual("overwrittenValue"));
+    waitFor(() =>
+      expect(useRemoteConfig("remoteConfig1")).toEqual("overwrittenValue")
+    );
   });
 });
 
@@ -403,7 +445,9 @@ it("has the correct types", () => {
     flags: ["flag1"],
   });
 
-  const wrapper = ({ children }: PropsWithChildren) => <AbbyProvider>{children}</AbbyProvider>;
+  const wrapper = ({ children }: PropsWithChildren) => (
+    <AbbyProvider>{children}</AbbyProvider>
+  );
 
   expectTypeOf(useAbby).parameter(0).toEqualTypeOf<"test" | "test2">();
 
@@ -411,7 +455,9 @@ it("has the correct types", () => {
     wrapper,
   });
 
-  expectTypeOf(result.current.variant).toEqualTypeOf<"OldFooter" | "NewFooter">();
+  expectTypeOf(result.current.variant).toEqualTypeOf<
+    "OldFooter" | "NewFooter"
+  >();
 
   expectTypeOf(useFeatureFlag).parameters.toEqualTypeOf<["flag1"]>();
 
@@ -437,7 +483,9 @@ describe("useFeatureFlags()", () => {
       flags: ["flag1"],
     });
 
-    const wrapper = ({ children }: PropsWithChildren) => <AbbyProvider>{children}</AbbyProvider>;
+    const wrapper = ({ children }: PropsWithChildren) => (
+      <AbbyProvider>{children}</AbbyProvider>
+    );
     expectTypeOf(useFeatureFlags).parameter(0).toEqualTypeOf<undefined>();
 
     const { result } = renderHook(() => useFeatureFlags(), {
@@ -472,8 +520,12 @@ describe("useRemoteConfigVariables()", () => {
       },
     });
 
-    const wrapper = ({ children }: PropsWithChildren) => <AbbyProvider>{children}</AbbyProvider>;
-    expectTypeOf(useRemoteConfigVariables).parameter(0).toEqualTypeOf<undefined>();
+    const wrapper = ({ children }: PropsWithChildren) => (
+      <AbbyProvider>{children}</AbbyProvider>
+    );
+    expectTypeOf(useRemoteConfigVariables)
+      .parameter(0)
+      .toEqualTypeOf<undefined>();
 
     const { result } = renderHook(() => useRemoteConfigVariables(), {
       wrapper,

@@ -1,10 +1,10 @@
+import { FeatureFlagType } from "@prisma/client";
 import { TRPCError } from "@trpc/server";
 import { getProjectPaidPlan } from "lib/stripe";
+import { ConfigCache } from "server/common/config-cache";
 import { getLimitByPlan } from "server/common/plans";
 import { z } from "zod";
 import { protectedProcedure, router } from "../trpc";
-import { FeatureFlagType } from "@prisma/client";
-import { ConfigCache } from "server/common/config-cache";
 
 export const environmentRouter = router({
   addEnvironment: protectedProcedure
@@ -66,8 +66,8 @@ export const environmentRouter = router({
                   flag.type === FeatureFlagType.BOOLEAN
                     ? "false"
                     : flag.type === FeatureFlagType.STRING
-                    ? "new value"
-                    : "0",
+                      ? "new value"
+                      : "0",
               },
             })
           )

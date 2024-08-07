@@ -1,17 +1,22 @@
-import { loadStripe, Stripe } from "@stripe/stripe-js";
+import { type Stripe, loadStripe } from "@stripe/stripe-js";
 
 let stripePromise: Promise<Stripe | null> | null = null;
 
 const getStripe = () => {
   if (!stripePromise) {
-    stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!);
+    if (!process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY) return;
+    stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY);
   }
   return stripePromise as Promise<Stripe>;
 };
 
-export async function checkout({ lineItems }: any) {
+export async function checkout({
+  lineItems,
+}: {
+  lineItems: { price: string; quantity: number }[];
+}) {
   const stripe = await getStripe();
-
+  if (!stripe) return;
   await stripe.redirectToCheckout({
     mode: "payment",
     lineItems,

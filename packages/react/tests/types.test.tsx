@@ -1,5 +1,5 @@
 import { renderHook } from "@testing-library/react";
-import { PropsWithChildren } from "react";
+import type { PropsWithChildren } from "react";
 import { createAbby } from "../src";
 
 const OLD_ENV = process.env;
@@ -15,7 +15,12 @@ afterAll(() => {
 
 describe("useAbby", () => {
   it("returns the correct types", () => {
-    const test2Variants = ["SimonsText", "MatthiasText", "TomsText", "TimsText"] as const;
+    const test2Variants = [
+      "SimonsText",
+      "MatthiasText",
+      "TomsText",
+      "TimsText",
+    ] as const;
 
     const { AbbyProvider, useAbby } = createAbby({
       environments: [""],
@@ -29,7 +34,9 @@ describe("useAbby", () => {
       },
     });
 
-    const wrapper = ({ children }: PropsWithChildren) => <AbbyProvider>{children}</AbbyProvider>;
+    const wrapper = ({ children }: PropsWithChildren) => (
+      <AbbyProvider>{children}</AbbyProvider>
+    );
 
     const { result: test1Result } = renderHook(() => useAbby("test"), {
       wrapper,
@@ -58,11 +65,16 @@ describe("useFeatureFlag", () => {
       flags: ["test"],
     });
 
-    const wrapper = ({ children }: PropsWithChildren) => <AbbyProvider>{children}</AbbyProvider>;
+    const wrapper = ({ children }: PropsWithChildren) => (
+      <AbbyProvider>{children}</AbbyProvider>
+    );
 
-    const { result: testFlagResult } = renderHook(() => useFeatureFlag("test"), {
-      wrapper,
-    });
+    const { result: testFlagResult } = renderHook(
+      () => useFeatureFlag("test"),
+      {
+        wrapper,
+      }
+    );
 
     expectTypeOf(testFlagResult.current).toEqualTypeOf<boolean>();
     expectTypeOf(useFeatureFlag).parameter(0).toEqualTypeOf<"test">();
@@ -70,7 +82,7 @@ describe("useFeatureFlag", () => {
 
   // TODO: the types don't work for this yet
   it.skip("has the correct type for devOverrides", () => {
-    const {} = createAbby({
+    createAbby({
       environments: [],
       projectId: "123",
       currentEnvironment: "test",
@@ -105,7 +117,9 @@ describe("useFeatureFlag", () => {
           },
         },
       });
-      expectTypeOf(getVariants("test")).toEqualTypeOf<readonly ["ONLY_ONE_VARIANT"]>();
+      expectTypeOf(getVariants("test")).toEqualTypeOf<
+        readonly ["ONLY_ONE_VARIANT"]
+      >();
     });
   });
 });
@@ -123,18 +137,31 @@ describe("useRemoteConfig", () => {
       },
     });
 
-    expectTypeOf(useRemoteConfig).parameter(0).toEqualTypeOf<"stringRc" | "numberRc" | "jsonRc">();
+    expectTypeOf(useRemoteConfig)
+      .parameter(0)
+      .toEqualTypeOf<"stringRc" | "numberRc" | "jsonRc">();
 
-    const wrapper = ({ children }: PropsWithChildren) => <AbbyProvider>{children}</AbbyProvider>;
-    const { result: stringRcResult } = renderHook(() => useRemoteConfig("stringRc"), {
-      wrapper,
-    });
-    const { result: numberRcResult } = renderHook(() => useRemoteConfig("numberRc"), {
-      wrapper,
-    });
-    const { result: jsonRcResult } = renderHook(() => useRemoteConfig("jsonRc"), {
-      wrapper,
-    });
+    const wrapper = ({ children }: PropsWithChildren) => (
+      <AbbyProvider>{children}</AbbyProvider>
+    );
+    const { result: stringRcResult } = renderHook(
+      () => useRemoteConfig("stringRc"),
+      {
+        wrapper,
+      }
+    );
+    const { result: numberRcResult } = renderHook(
+      () => useRemoteConfig("numberRc"),
+      {
+        wrapper,
+      }
+    );
+    const { result: jsonRcResult } = renderHook(
+      () => useRemoteConfig("jsonRc"),
+      {
+        wrapper,
+      }
+    );
 
     expectTypeOf(stringRcResult.current).toEqualTypeOf<string>();
     expectTypeOf(numberRcResult.current).toEqualTypeOf<number>();

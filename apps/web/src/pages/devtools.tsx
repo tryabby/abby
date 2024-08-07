@@ -1,12 +1,12 @@
 import { HttpService } from "@tryabby/core";
-import { MarketingLayout } from "components/MarketingLayout";
-import { NextPageWithLayout } from "./_app";
 import abbyDevtools from "@tryabby/devtools";
 import { createAbby } from "@tryabby/next";
 import { DevtoolsArrow } from "components/DevtoolsArrow";
+import { MarketingLayout } from "components/MarketingLayout";
 import { SignupButton } from "components/SignupButton";
 import { cn } from "lib/utils";
-import { InferGetStaticPropsType } from "next";
+import type { InferGetStaticPropsType } from "next";
+import type { NextPageWithLayout } from "./_app";
 
 const { useAbby, AbbyProvider, useFeatureFlag, withDevtools, __abby__ } =
   createAbby({
@@ -30,7 +30,7 @@ const DevtoolsPage = () => {
   const showEasterEgg = useFeatureFlag("showEasterEgg");
   const showHeading = useFeatureFlag("showHeading");
   const isExcited = useFeatureFlag("ToggleMeIfYoureExcited");
-  const { variant, onAct } = useAbby("MarketingButton");
+  const { variant } = useAbby("MarketingButton");
 
   return (
     <>
@@ -43,7 +43,8 @@ const DevtoolsPage = () => {
             </h1>
             <div className="space-y-4 text-center text-lg font-medium lg:text-2xl">
               <h2>
-                Debugging is already hard, Debugging a Service is even harder 😮‍💨
+                Debugging is already hard, Debugging a Service is even harder
+                😮‍💨
               </h2>
               <h2 className="font-semibold">
                 Abby is here to help you with that
@@ -188,7 +189,7 @@ const OuterPage: NextPageWithLayout<
   InferGetStaticPropsType<typeof getStaticProps>
 > = ({ abbyData }) => {
   return (
-    <AbbyProvider initialData={abbyData!}>
+    <AbbyProvider initialData={abbyData ?? undefined}>
       <AbbyProdDevtools />
       <DevtoolsPage />
     </AbbyProvider>

@@ -7,7 +7,7 @@ if (process.browser)
   );
 
 if (!env.STRIPE_SECRET_KEY)
-  throw new Error(`Please provide a STRIPE_SECRET_KEY environment variable!`);
+  throw new Error("Please provide a STRIPE_SECRET_KEY environment variable!");
 
 const stripe = new Stripe(env.STRIPE_SECRET_KEY, {
   // @ts-ignore The Stripe docs state that null denotes the Stripe account's default version and to use ts-ignore

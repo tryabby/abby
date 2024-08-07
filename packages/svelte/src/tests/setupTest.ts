@@ -1,7 +1,7 @@
-import { expect, afterEach } from "vitest";
+import fetch from "node-fetch";
+import { afterEach } from "vitest";
 /// @ts-ignore it doesn't have types
 import { server } from "./mocks/server";
-import fetch from "node-fetch";
 
 /// @ts-ignore
 global.fetch = fetch;

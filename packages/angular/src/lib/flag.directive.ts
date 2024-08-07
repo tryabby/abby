@@ -1,6 +1,15 @@
-import { Directive, Input, OnDestroy, TemplateRef, ViewContainerRef } from "@angular/core";
-import { distinctUntilChanged, Subject, switchMap, takeUntil } from "rxjs";
+import {
+  Directive,
+  Input,
+  OnDestroy,
+  TemplateRef,
+  // biome-ignore lint/style/useImportType: angular needs this
+  ViewContainerRef,
+} from "@angular/core";
+import { Subject, distinctUntilChanged, switchMap, takeUntil } from "rxjs";
+// biome-ignore lint/style/useImportType: angular needs this
 import { AbbyLoggerService } from "./abby-logger.service";
+// biome-ignore lint/style/useImportType: angular needs this
 import { AbbyService } from "./abby.service";
 
 @Directive({
@@ -11,7 +20,9 @@ export class AbbyFlag implements OnDestroy {
   set abbyFlag(featureFlag: string) {
     // ensure featureFlag is a string to quit gracefully
     if (typeof featureFlag !== "string") {
-      this.abbyLogger.warn(`Expected a string as featureFlag. Got ${featureFlag}`);
+      this.abbyLogger.warn(
+        `Expected a string as featureFlag. Got ${featureFlag}`
+      );
       return;
     }
 

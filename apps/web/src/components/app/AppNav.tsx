@@ -1,7 +1,7 @@
 import Link from "next/link";
 
-import { cn } from "lib/utils";
 import { useProjectId } from "lib/hooks/useProjectId";
+import { cn } from "lib/utils";
 import { useRouter } from "next/router";
 
 const getItemClassName = (isActive: boolean) =>

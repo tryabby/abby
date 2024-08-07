@@ -2,10 +2,7 @@
   "name": "abby",
   "version": "0.0.0",
   "private": true,
-  "workspaces": [
-    "apps/*",
-    "packages/*"
-  ],
+  "workspaces": ["apps/*", "packages/*"],
   "scripts": {
     "build": "turbo run build",
     "build:prod": "turbo run build:prod",
@@ -16,8 +13,8 @@
     "dev:docs": "turbo run dev --filter=./apps/docs",
     "dev:angular": "turbo run dev --filter=./apps/angular-example",
     "dev:all": "turbo run dev --filter=!./apps/docs",
-    "lint": "turbo run lint",
-    "format": "prettier --write \"**/*.{ts,tsx,md}\"",
+    "lint": "biome lint --fix",
+    "format": "biome format --write",
     "db:start": "docker-compose up -d",
     "db:migrate": "turbo run db:migrate --filter=./apps/web",
     "db:generate": "turbo run db:generate --filter=./apps/web",
@@ -25,8 +22,8 @@
     "ci:publish": "pnpm publish -r --access public"
   },
   "devDependencies": {
+    "@biomejs/biome": "1.8.3",
     "@changesets/cli": "^2.26.0",
-    "eslint-config-custom": "workspace:*",
     "prettier": "latest",
     "turbo": "^2.0.4"
   },

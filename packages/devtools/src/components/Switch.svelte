@@ -1,7 +1,7 @@
 <script lang="ts">
   export let id: string;
   export let label: string;
-  export let checked: boolean = false;
+  export let checked = false;
   export let onChange: (newValue: boolean) => void;
 </script>
 

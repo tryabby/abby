@@ -1,6 +1,6 @@
 import { get } from "svelte/store";
+import { describe, expect, it } from "vitest";
 import { createAbby } from "../lib/createAbby";
-import { it, describe, expect } from "vitest";
 
 describe("remoteConfig", () => {
   it("returns the correct remoteConfig value", async () => {

@@ -1,6 +1,3 @@
-import { type AbbyDataResponse } from "@tryabby/core";
-import { type AbbyConfig } from "./index";
-
 // taken from https://stackoverflow.com/questions/52489261/typescript-can-i-define-an-n-length-tuple-type
 export type Tuple<T, N extends number> = N extends N
   ? number extends N
@@ -34,22 +31,25 @@ function weightedRand2<T extends Record<string, number>>(spec: T): keyof T {
     sum += spec[i];
     if (r <= sum) break;
   }
-
+  // biome-ignore lint/style/noNonNullAssertion:>
   return i!;
 }
 
 export function getWeightedRandomVariant<
-  Variants extends ReadonlyArray<string>
+  Variants extends ReadonlyArray<string>,
 >(
   variants: Variants,
   weights?: Tuple<number, Variants["length"]>
 ): Variants[number] {
   const validatedWeights = validateWeights(variants, weights);
   return weightedRand2(
-    variants.reduce((acc, variant, index) => {
-      acc[variant as Variants[number]] = validatedWeights[index];
-      return acc;
-    }, {} as Record<Variants[number], number>)
+    variants.reduce(
+      (acc, variant, index) => {
+        acc[variant as Variants[number]] = validatedWeights[index];
+        return acc;
+      },
+      {} as Record<Variants[number], number>
+    )
   );
 }
 
@@ -63,7 +63,7 @@ const getDefaultWeights = <Variants extends ReadonlyArray<string>>(
 
 export function validateWeights<
   Variants extends ReadonlyArray<string>,
-  Weights extends Tuple<number, Variants["length"]>
+  Weights extends Tuple<number, Variants["length"]>,
 >(variants: Variants, weights?: Weights): Weights {
   const sum = weights?.reduce((acc, weight) => acc + weight, 0);
   return weights != null && sum === 1 && variants.length === weights.length

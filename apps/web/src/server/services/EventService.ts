@@ -1,13 +1,13 @@
+import type { AbbyEvent } from "@tryabby/core";
 import dayjs from "dayjs";
 import {
+  TIME_INTERVAL,
   getMSFromSpecialTimeInterval,
   isSpecialTimeInterval,
-  TIME_INTERVAL,
 } from "lib/events";
 import ms from "ms";
-import { getLimitByPlan, PlanName, PLANS } from "server/common/plans";
+import { PLANS, type PlanName, getLimitByPlan } from "server/common/plans";
 import { prisma } from "server/db/client";
-import { AbbyEvent } from "@tryabby/core";
 import { RequestCache } from "./RequestCache";
 
 export abstract class EventService {
@@ -51,7 +51,7 @@ export abstract class EventService {
       return prisma.event.findMany({
         where: {
           testId,
-          ...(specialIntervalInMs !== Infinity &&
+          ...(specialIntervalInMs !== Number.POSITIVE_INFINITY &&
             timeInterval !== TIME_INTERVAL.DAY && {
               createdAt: {
                 gte: new Date(now - getMSFromSpecialTimeInterval(timeInterval)),

@@ -1,6 +1,6 @@
+import { env } from "node:process";
 import { ROLE } from "@prisma/client";
 import { BETA_PRICE_ID } from "lib/stripe";
-import { env } from "process";
 import { prisma } from "server/db/client";
 
 export abstract class ProjectService {
