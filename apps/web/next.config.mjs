@@ -31,14 +31,7 @@ const withBundleAnalyzer = bundleAnalzyer({
 !process.env.SKIP_ENV_VALIDATION && (await import("./src/env/server.mjs"));
 
 const cspHeader = `
-    default-src 'self';
-    style-src 'self' 'unsafe-inline';
-    font-src 'self';
-    object-src 'none';
-    base-uri 'self';
-    form-action 'self';
     frame-ancestors 'none';
-    upgrade-insecure-requests;
 `;
 
 /** @type {import("next").NextConfig} */
