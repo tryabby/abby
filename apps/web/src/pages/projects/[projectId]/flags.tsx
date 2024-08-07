@@ -2,11 +2,11 @@ import { DashboardHeader } from "components/DashboardHeader";
 import { Layout } from "components/Layout";
 import { FullPageLoadingSpinner } from "components/LoadingSpinner";
 import { useProjectId } from "lib/hooks/useProjectId";
-import { NextPageWithLayout } from "pages/_app";
+import type { NextPageWithLayout } from "pages/_app";
 import { trpc } from "utils/trpc";
 
 import { FeatureFlagPageContent } from "components/FlagPage";
-import { GetStaticPaths, GetStaticProps } from "next";
+import type { GetStaticPaths, GetStaticProps } from "next";
 
 const FeatureFlagsPage: NextPageWithLayout = () => {
   const projectId = useProjectId();

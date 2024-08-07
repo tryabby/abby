@@ -1,7 +1,7 @@
-import { z } from "zod";
-import { protectedProcedure, router } from "../trpc";
 import { TRPCError } from "@trpc/server";
 import dayjs from "dayjs";
+import { z } from "zod";
+import { protectedProcedure, router } from "../trpc";
 
 export const couponRouter = router({
   redeemCode: protectedProcedure

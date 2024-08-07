@@ -1,11 +1,11 @@
+import type { ApiVersion } from "@prisma/client";
 import { Worker } from "bullmq";
-import { ApiVersion } from "@prisma/client";
+import { env } from "env/server.mjs";
 import { trackPlanOverage } from "lib/logsnag";
+import { EventService } from "server/services/EventService";
 import { RequestCache } from "server/services/RequestCache";
 import { RequestService } from "server/services/RequestService";
-import { EventService } from "server/services/EventService";
 import { afterDataRequestQueue, getQueueingRedisConnection } from "./queues";
-import { env } from "env/server.mjs";
 
 export type AfterRequestJobPayload = {
   functionDuration: number;

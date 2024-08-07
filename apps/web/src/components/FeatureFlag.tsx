@@ -1,21 +1,20 @@
 import { Popover, PopoverContent, PopoverTrigger } from "components/ui/popover";
 import dayjs from "dayjs";
 import { FaHistory } from "react-icons/fa";
-import { match, P } from "ts-pattern";
+import { P, match } from "ts-pattern";
 
-import { FeatureFlagHistory, FeatureFlagType } from "@prisma/client";
+import type { FeatureFlagHistory, FeatureFlagType } from "@prisma/client";
 import { Tooltip, TooltipContent, TooltipTrigger } from "components/Tooltip";
 import relativeTime from "dayjs/plugin/relativeTime";
+import { cn } from "lib/utils";
+import { Edit } from "lucide-react";
 import { useState } from "react";
 import { toast } from "react-hot-toast";
-import { RouterOutputs, trpc } from "utils/trpc";
+import { type RouterOutputs, trpc } from "utils/trpc";
+import { ChangeFlagForm, type FlagFormValues } from "./AddFeatureFlagModal";
 import { Avatar } from "./Avatar";
 import { LoadingSpinner } from "./LoadingSpinner";
 import { Modal } from "./Modal";
-import { Edit } from "lucide-react";
-import { ChangeFlagForm, FlagFormValues } from "./AddFeatureFlagModal";
-import { Switch } from "./ui/switch";
-import { cn } from "lib/utils";
 
 dayjs.extend(relativeTime);
 
@@ -53,6 +52,7 @@ const HistoryButton = ({ flagValueId }: { flagValueId: string }) => {
         <PopoverTrigger asChild>
           <TooltipTrigger asChild>
             <button
+              type="button"
               onClick={() => loadHistory()}
               className="focus:outline-none focus:ring-0"
             >
@@ -176,6 +176,7 @@ const ConfirmUpdateModal = ({
       {!description ? (
         "No description provided"
       ) : (
+        // biome-ignore lint/security/noDangerouslySetInnerHtml:>
         <p dangerouslySetInnerHTML={{ __html: description }} />
       )}
     </Modal>
@@ -227,7 +228,10 @@ export function FeatureFlag({
           </code>
         </div>
         <div className="flex space-x-2">
-          <button onClick={() => setIsUpdateConfirmationModalOpen(true)}>
+          <button
+            type="button"
+            onClick={() => setIsUpdateConfirmationModalOpen(true)}
+          >
             <Edit size={18} />
           </button>
           <HistoryButton flagValueId={flagValueId} />

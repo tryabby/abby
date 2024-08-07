@@ -1,3 +1,4 @@
+// biome-ignore lint/style/useImportType: angular needs this
 import {
   Directive,
   Input,
@@ -6,8 +7,9 @@ import {
   TemplateRef,
   ViewContainerRef,
 } from "@angular/core";
-import { distinctUntilChanged, map, Subject, takeUntil } from "rxjs";
+import { Subject, distinctUntilChanged, map, takeUntil } from "rxjs";
 
+// biome-ignore lint/style/useImportType: angular needs this
 import { AbbyService } from "./abby.service";
 
 @Directive({
@@ -33,7 +35,7 @@ export class AbbyTest implements OnInit, OnDestroy {
         takeUntil(this.destroy$)
       )
       .subscribe((visible) => {
-        if(visible) {
+        if (visible) {
           this._viewContainer.createEmbeddedView(this._templateRef);
         } else {
           this._viewContainer.clear();
@@ -41,8 +43,8 @@ export class AbbyTest implements OnInit, OnDestroy {
       });
   }
 
-    ngOnDestroy(): void {
-      this.destroy$.next();
-      this.destroy$.complete();
-    }
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
+  }
 }

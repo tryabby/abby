@@ -50,7 +50,7 @@ export function getMSFromSpecialTimeInterval(
       return 1000 * 60 * 60 * 24;
     }
     case TIME_INTERVAL.ALL_TIME: {
-      return Infinity;
+      return Number.POSITIVE_INFINITY;
     }
   }
 }
@@ -77,10 +77,13 @@ export function getBaseEventsByInterval(
   variants: string[],
   firstEventDate: Date
 ) {
-  const variantData = variants.reduce((acc, variant) => {
-    acc[variant] = 0;
-    return acc;
-  }, {} as Record<string, number>);
+  const variantData = variants.reduce(
+    (acc, variant) => {
+      acc[variant] = 0;
+      return acc;
+    },
+    {} as Record<string, number>
+  );
   switch (interval) {
     case TIME_INTERVAL.DAY: {
       const baseData = dayjs().set("minute", 0);

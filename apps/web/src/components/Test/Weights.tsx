@@ -1,7 +1,7 @@
 import { Button } from "components/ui/button";
 import { getUpdatedWeights } from "lib/helper";
 import { useRouter } from "next/router";
-import { ChangeEvent, useState } from "react";
+import { type ChangeEvent, useState } from "react";
 import { toast } from "react-hot-toast";
 import type { ClientOption } from "server/trpc/router/project";
 import { trpc } from "utils/trpc";
@@ -9,7 +9,6 @@ import { trpc } from "utils/trpc";
 const Weight = ({
   option,
   value,
-  index,
   onChange,
 }: {
   option: ClientOption;
@@ -34,7 +33,7 @@ const Weight = ({
         value={value}
         className="h-2 w-full cursor-pointer"
         onChange={onChange}
-      ></input>
+      />
     </>
   );
 };
@@ -43,7 +42,7 @@ const Weights = ({ options }: { options: ClientOption[] }) => {
   const router = useRouter();
   const trpcContext = trpc.useContext();
   const [weights, setWeights] = useState(
-    options.map((option) => parseFloat(option.chance.toString()) * 100)
+    options.map((option) => Number.parseFloat(option.chance.toString()) * 100)
   );
 
   const { mutateAsync } = trpc.tests.updateWeights.useMutation();
@@ -59,6 +58,8 @@ const Weights = ({ options }: { options: ClientOption[] }) => {
   };
 
   const weightsSum = Math.round(
+    // biome-ignore lint/suspicious/noAssignInExpressions:
+    // biome-ignore lint/style/noParameterAssign:
     weights.reduce((sum, curr) => (sum += curr), 0)
   );
 
@@ -69,6 +70,7 @@ const Weights = ({ options }: { options: ClientOption[] }) => {
       await mutateAsync({
         testId: options[0].testId,
         weights: weights.map((weight, index) => ({
+          // biome-ignore lint/style/noNonNullAssertion:
           variantId: options[index]!.id,
           weight: weight / 100,
         })),
@@ -92,7 +94,9 @@ const Weights = ({ options }: { options: ClientOption[] }) => {
           key={option.id}
           value={weights[index] || 0}
           index={index}
-          onChange={(e) => updateWeight(index, parseInt(e.target.value, 10))}
+          onChange={(e) =>
+            updateWeight(index, Number.parseInt(e.target.value, 10))
+          }
           option={option}
         />
       ))}
@@ -103,7 +107,7 @@ const Weights = ({ options }: { options: ClientOption[] }) => {
             {weightsSum}%
           </p>
         ) : (
-          <span></span>
+          <span />
         )}
         <Button onClick={onSave} disabled={weightsSum !== 100}>
           Save

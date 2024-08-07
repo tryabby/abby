@@ -1,6 +1,7 @@
-import { EventGraph } from "components/analytics/EventGraph";
 import { Layout } from "components/Layout";
 import { LoadingSpinner } from "components/LoadingSpinner";
+import { EventGraph } from "components/analytics/EventGraph";
+import { Button } from "components/ui/button";
 import {
   Select,
   SelectContent,
@@ -8,13 +9,12 @@ import {
   SelectTrigger,
   SelectValue,
 } from "components/ui/select";
-import { Button } from "components/ui/button";
 import { INTERVALS, isValidInterval } from "lib/events";
 import { useProjectId } from "lib/hooks/useProjectId";
 import { useQueryParam, useUnsafeQueryParam } from "lib/hooks/useQueryParam";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { NextPageWithLayout } from "pages/_app";
+import type { NextPageWithLayout } from "pages/_app";
 import { BiArrowBack } from "react-icons/bi";
 import { trpc } from "utils/trpc";
 
@@ -87,7 +87,11 @@ const TestDetailPage: NextPageWithLayout = () => {
             </SelectTrigger>
             <SelectContent className="rounded-xl">
               {INTERVALS.map((i) => (
-                <SelectItem value={i.value} className="rounded-lg">
+                <SelectItem
+                  key={i.value}
+                  value={i.value}
+                  className="rounded-lg"
+                >
                   {i.label}
                 </SelectItem>
               ))}

@@ -1,10 +1,8 @@
-
 import { Container } from "@react-email/container";
 import { Head } from "@react-email/head";
 import { Html } from "@react-email/html";
 import { Preview } from "@react-email/preview";
 import { Section } from "@react-email/section";
-import * as React from "react";
 import { ABBY_BASE_URL } from "@tryabby/core";
 
 export type Props = {
@@ -20,7 +18,7 @@ export default function ContactFormularEmail({
   name,
   message,
 }: Props) {
-  const baseUrl =
+  const _baseUrl =
     process.env.NODE_ENV === "development"
       ? "http://localhost:3000/"
       : ABBY_BASE_URL;
@@ -60,11 +58,11 @@ const container = {
   width: "465px",
 };
 
-const logo = {
+const _logo = {
   margin: "0 auto",
 };
 
-const h1 = {
+const _h1 = {
   color: "#000",
   fontFamily:
     "-apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif",
@@ -75,16 +73,16 @@ const h1 = {
   padding: "0",
 };
 
-const avatar = {
+const _avatar = {
   borderRadius: "100%",
 };
 
-const link = {
+const _link = {
   color: "#067df7",
   textDecoration: "none",
 };
 
-const text = {
+const _text = {
   color: "#000",
   fontFamily:
     "-apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif",
@@ -92,15 +90,15 @@ const text = {
   lineHeight: "24px",
 };
 
-const black = {
+const _black = {
   color: "black",
 };
 
-const center = {
+const _center = {
   verticalAlign: "middle",
 };
 
-const btn = {
+const _btn = {
   backgroundColor: "#000",
   borderRadius: "5px",
   color: "#fff",
@@ -113,6 +111,6 @@ const btn = {
   textAlign: "center" as const,
 };
 
-const spacing = {
+const _spacing = {
   marginBottom: "26px",
 };

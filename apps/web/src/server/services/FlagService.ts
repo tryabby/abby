@@ -1,4 +1,4 @@
-import { FeatureFlagType, Prisma } from "@prisma/client";
+import type { FeatureFlagType, Prisma } from "@prisma/client";
 import { TRPCError } from "@trpc/server";
 import { getFlagCount } from "lib/flags";
 import { getProjectPaidPlan } from "lib/stripe";

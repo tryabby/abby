@@ -1,4 +1,4 @@
-import { ROLE, User } from "@prisma/client";
+import { ROLE, type User } from "@prisma/client";
 import clsx from "clsx";
 import { DashboardButton } from "components/DashboardButton";
 import {
@@ -17,14 +17,13 @@ import dayjs from "dayjs";
 import { getFlagCount } from "lib/flags";
 import { getProjectPaidPlan, useAbbyStripe } from "lib/stripe";
 import { useTracking } from "lib/tracking";
-import { GetStaticProps, GetStaticPaths } from "next";
+import type { GetStaticPaths, GetStaticProps } from "next";
 import { useSession } from "next-auth/react";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { NextPageWithLayout } from "pages/_app";
-import { FormEvent, useRef, useState } from "react";
+import type { NextPageWithLayout } from "pages/_app";
+import { type FormEvent, useRef, useState } from "react";
 import { toast } from "react-hot-toast";
-import { BsX } from "react-icons/bs";
 import { getLimitByPlan } from "server/common/plans";
 import { trpc } from "utils/trpc";
 
@@ -82,7 +81,8 @@ const SettingsPage: NextPageWithLayout = () => {
           projectId,
           email,
         });
-        inviteEmailRef.current!.value = "";
+        if (!inviteEmailRef.current) return;
+        inviteEmailRef.current.value = "";
       })(),
       {
         error: "Failed to send invite",
@@ -248,11 +248,14 @@ const SettingsPage: NextPageWithLayout = () => {
                 <h3 className="mb-1">A/B Tests:</h3>
                 <Progress
                   currentValue={data.project.tests.length}
-                  maxValue={limits?.tests ?? Infinity}
+                  maxValue={limits?.tests ?? Number.POSITIVE_INFINITY}
                 />
                 <p className="mt-2">
                   {data.project.tests.length} /{" "}
-                  {limits?.tests === Infinity ? "∞" : limits?.tests} A/B Test
+                  {limits?.tests === Number.POSITIVE_INFINITY
+                    ? "∞"
+                    : limits?.tests}{" "}
+                  A/B Test
                   {data.project.tests.length === 1 ? "" : "s"} used
                 </p>
               </div>
@@ -260,11 +263,14 @@ const SettingsPage: NextPageWithLayout = () => {
                 <h3 className="mb-1">Flags:</h3>
                 <Progress
                   currentValue={getFlagCount(data.project.featureFlags ?? [])}
-                  maxValue={limits?.flags ?? Infinity}
+                  maxValue={limits?.flags ?? Number.POSITIVE_INFINITY}
                 />
                 <p className="mt-2">
                   {getFlagCount(data.project.featureFlags ?? [])} /{" "}
-                  {limits?.flags === Infinity ? "∞" : limits?.flags} Flag
+                  {limits?.flags === Number.POSITIVE_INFINITY
+                    ? "∞"
+                    : limits?.flags}{" "}
+                  Flag
                   {getFlagCount(data.project.featureFlags ?? []) === 1
                     ? ""
                     : "s"}{" "}
@@ -275,11 +281,11 @@ const SettingsPage: NextPageWithLayout = () => {
                 <h3 className="mb-1">Environments:</h3>
                 <Progress
                   currentValue={data.project.environments.length}
-                  maxValue={limits?.environments ?? Infinity}
+                  maxValue={limits?.environments ?? Number.POSITIVE_INFINITY}
                 />
                 <p className="mt-2">
                   {data.project.environments.length} /{" "}
-                  {limits?.environments === Infinity
+                  {limits?.environments === Number.POSITIVE_INFINITY
                     ? "∞"
                     : limits?.environments}{" "}
                   Environment
@@ -290,11 +296,11 @@ const SettingsPage: NextPageWithLayout = () => {
                 <h3 className="mb-1">Monthly Events:</h3>
                 <Progress
                   currentValue={data.project.eventsThisPeriod}
-                  maxValue={limits?.eventsPerMonth ?? Infinity}
+                  maxValue={limits?.eventsPerMonth ?? Number.POSITIVE_INFINITY}
                 />
                 <p className="mt-2">
                   {data.project.eventsThisPeriod} /{" "}
-                  {limits?.eventsPerMonth === Infinity
+                  {limits?.eventsPerMonth === Number.POSITIVE_INFINITY
                     ? "∞"
                     : limits?.eventsPerMonth}{" "}
                   Events

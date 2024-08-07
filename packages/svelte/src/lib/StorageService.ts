@@ -1,8 +1,8 @@
 import {
+  type IStorageService,
   getABStorageKey,
   getFFStorageKey,
   getRCStorageKey,
-  type IStorageService,
 } from "@tryabby/core";
 import type { StorageServiceOptions } from "@tryabby/core/dist/shared/interfaces";
 import Cookie from "js-cookie";
@@ -15,7 +15,12 @@ class ABStorageService implements IStorageService {
     return retrievedValue;
   }
 
-  set(projectId: string, testName: string, value: string, options?: StorageServiceOptions): void {
+  set(
+    projectId: string,
+    testName: string,
+    value: string,
+    options?: StorageServiceOptions
+  ): void {
     Cookie.set(getABStorageKey(projectId, testName), value, {
       expires: options?.expiresInDays ? options.expiresInDays : 365,
     });

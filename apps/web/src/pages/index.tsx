@@ -2,35 +2,33 @@ import { DOCS_URL, HttpService } from "@tryabby/core";
 import DevtoolsFactory from "@tryabby/devtools";
 import { createAbby } from "@tryabby/next";
 import { BaseCodeSnippet } from "components/CodeSnippet";
+import { DevtoolsArrow } from "components/DevtoolsArrow";
 import { Divider } from "components/Divider";
 import { Feature } from "components/Feature";
+import { Integrations } from "components/Integrations";
 import { MarketingLayout } from "components/MarketingLayout";
 import { PricingTable } from "components/Pricing";
+import { UsedBy } from "components/UsedBy";
+import { useTracking } from "lib/tracking";
 import {
+  Blocks,
   Clock,
+  Code2,
   ExternalLink,
   FlaskConical,
-  Shield,
-  Blocks,
   Server,
-  Code2,
+  Shield,
 } from "lucide-react";
-import { InferGetStaticPropsType } from "next";
+import type { InferGetStaticPropsType } from "next";
 import { useTheme } from "next-themes";
 import Image from "next/image";
 import Link from "next/link";
 import { useEffect } from "react";
-import { BsBarChartFill, BsCodeSlash } from "react-icons/bs";
 import { FaQuestion } from "react-icons/fa";
-import { GiPadlock } from "react-icons/gi";
 import { twMerge } from "tailwind-merge";
 import { generateCodeSnippets } from "utils/snippets";
 import abbyScreenshot from "../../public/screenshot.png";
-import { NextPageWithLayout } from "./_app";
-import { DevtoolsArrow } from "components/DevtoolsArrow";
-import { useTracking } from "lib/tracking";
-import { Integrations } from "components/Integrations";
-import { UsedBy } from "components/UsedBy";
+import type { NextPageWithLayout } from "./_app";
 
 const { useAbby, AbbyProvider, useFeatureFlag, __abby__, withDevtools } =
   createAbby({
@@ -62,6 +60,7 @@ const AmpersandIcon = ({ className }: { className?: string }) => (
     xmlns="http://www.w3.org/2000/svg"
     className={className}
   >
+    <title>Ampersand</title>
     <path
       fillRule="evenodd"
       clipRule="evenodd"
@@ -259,7 +258,7 @@ const Home: NextPageWithLayout<
 
           <div className="flex items-center">
             <Link
-              href={`/devtools`}
+              href={"/devtools"}
               className="mx-auto mt-8 rounded-lg bg-ab_accent-background px-4 py-2 font-semibold uppercase text-ab_accent-foreground transition-transform duration-200 ease-in-out hover:scale-110"
             >
               Learn More about our Devtools
@@ -327,7 +326,7 @@ const Home: NextPageWithLayout<
           </h2>
           <div className="flex items-center">
             <Link
-              href={`/contact`}
+              href={"/contact"}
               className="mx-auto mt-8 rounded-lg bg-ab_accent-background px-4 py-2 font-semibold text-ab_accent-foreground transition-transform duration-200 ease-in-out hover:scale-110"
             >
               Contact us
@@ -353,7 +352,7 @@ const Home: NextPageWithLayout<
           </h2>
           <div className="flex items-center">
             <Link
-              href={`/tips-and-insights`}
+              href={"/tips-and-insights"}
               className="mx-auto mt-8 rounded-lg bg-ab_accent-background px-4 py-2 font-semibold uppercase text-ab_accent-foreground transition-transform duration-200 ease-in-out hover:scale-110"
             >
               Discover Tips & Insights

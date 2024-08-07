@@ -1,11 +1,11 @@
-import { MarketingLayout } from "../components/MarketingLayout";
-import { useForm } from "react-hook-form";
 import clsx from "clsx";
-import { trpc } from "utils/trpc";
-import { toast } from "react-hot-toast";
-import { Label } from "components/ui/label";
-import { Input } from "components/ui/input";
 import { Button } from "components/ui/button";
+import { Input } from "components/ui/input";
+import { Label } from "components/ui/label";
+import { useForm } from "react-hook-form";
+import { toast } from "react-hot-toast";
+import { trpc } from "utils/trpc";
+import { MarketingLayout } from "../components/MarketingLayout";
 
 export default function ContactPage() {
   const { register, handleSubmit, formState } = useForm<{
@@ -29,11 +29,11 @@ export default function ContactPage() {
       const { name, mailadress, surname, message } = values;
       await sendData({ name, mailadress, surname, message });
       toast.success("Send!");
-    } catch (error) {
+    } catch (_error) {
       toast.error("Please try again!");
     }
   });
-  const inputFieldStyle =
+  const _inputFieldStyle =
     "text border-2 border-width border-solid rounded w-full pl-2 mr-5 py-1 bg-inherit text-sm";
 
   return (
@@ -50,6 +50,7 @@ export default function ContactPage() {
                 viewBox="0 0 120 90"
                 fill="none"
               >
+                <title>Envelope</title>
                 <path
                   d="M59.2441 60.5857L59.6913 60.8093L60.1385 60.5857L118.383 31.4637V88.5369H1V31.4637L59.2441 60.5857ZM59.6913 43.6504L1 14.3048V1H118.383V14.3048L59.6913 43.6504Z"
                   stroke="#F9A8D4"
@@ -73,7 +74,7 @@ export default function ContactPage() {
                 })}
                 className={clsx(formState.errors.name && "border-red-500")}
                 placeholder="First Name"
-              ></Input>
+              />
               {formState.errors.name && (
                 <p className="mb-3 text-center text-xs text-red-500">
                   {formState.errors.name.message}
@@ -88,7 +89,7 @@ export default function ContactPage() {
                 })}
                 className={clsx(formState.errors.surname && "border-red-500")}
                 placeholder="Last Name"
-              ></Input>
+              />
               {formState.errors.surname && (
                 <p className="mb-3 text-center text-xs text-red-500">
                   {formState.errors.surname.message}
@@ -108,7 +109,7 @@ export default function ContactPage() {
                 )}
                 autoComplete="email"
                 placeholder="your@mailadress.com"
-              ></Input>
+              />
               {formState.errors.mailadress && (
                 <p className="mb-3 text-center text-xs text-red-500">
                   {formState.errors.mailadress.message}
@@ -129,7 +130,7 @@ export default function ContactPage() {
                   formState.errors.message && "border-red-500"
                 )}
                 placeholder="Your message text here"
-              ></textarea>
+              />
               {formState.errors.message && (
                 <p className="mb-3 text-center text-xs text-red-500">
                   {formState.errors.message.message}
@@ -142,8 +143,13 @@ export default function ContactPage() {
           </form>
           <span className="max-auto inline max-w-sm text-xs text-ab_primary-foreground">
             By submitting this form you agree to our{" "}
-            <a className="text-pink-300">Terms of use</a> and{" "}
-            <a className="text-pink-300">Privacy Policy</a>
+            <a href="/terms" className="text-pink-300">
+              Terms of use
+            </a>{" "}
+            and{" "}
+            <a href="/privacy" className="text-pink-300">
+              Privacy Policy
+            </a>
           </span>
         </main>
       </MarketingLayout>

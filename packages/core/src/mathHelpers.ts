@@ -12,7 +12,9 @@ function getRandomDecimal() {
   return Math.random();
 }
 
-function getWeightedRandomNumber<T extends Record<string, number>>(spec: T): keyof T {
+function getWeightedRandomNumber<T extends Record<string, number>>(
+  spec: T
+): keyof T {
   let i: keyof T;
   let sum = 0;
   const r = getRandomDecimal();
@@ -22,11 +24,16 @@ function getWeightedRandomNumber<T extends Record<string, number>>(spec: T): key
     if (r <= sum) break;
   }
 
+  // biome-ignore lint/style/noNonNullAssertion:>
   return i!;
 }
 
-function getDefaultWeights<Variants extends ReadonlyArray<string>>(variants: Variants) {
-  return Array.from<number>({ length: variants.length }).fill(1 / variants.length);
+function getDefaultWeights<Variants extends ReadonlyArray<string>>(
+  variants: Variants
+) {
+  return Array.from<number>({ length: variants.length }).fill(
+    1 / variants.length
+  );
 }
 
 export function validateWeights<
@@ -39,10 +46,9 @@ export function validateWeights<
     : (getDefaultWeights(variants) as Weights);
 }
 
-export function getWeightedRandomVariant<Variants extends ReadonlyArray<string>>(
-  variants: Variants,
-  weights?: Array<number>
-): Variants[number] {
+export function getWeightedRandomVariant<
+  Variants extends ReadonlyArray<string>,
+>(variants: Variants, weights?: Array<number>): Variants[number] {
   const validatedWeights = validateWeights(variants, weights);
   return getWeightedRandomNumber(
     variants.reduce(
@@ -55,10 +61,9 @@ export function getWeightedRandomVariant<Variants extends ReadonlyArray<string>>
   );
 }
 
-export function getVariantWithHeighestWeightOrFirst<Variants extends ReadonlyArray<string>>(
-  variants: Variants,
-  weights?: Array<number>
-): Variants[number] {
+export function getVariantWithHeighestWeightOrFirst<
+  Variants extends ReadonlyArray<string>,
+>(variants: Variants, weights?: Array<number>): Variants[number] {
   const validatedWeights = validateWeights(variants, weights);
   let variantWithHeighestWeight = variants[0];
 

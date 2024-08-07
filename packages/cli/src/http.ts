@@ -1,9 +1,9 @@
-import { AbbyConfig, PullAbbyConfigResponse } from "@tryabby/core";
-import { ABBY_BASE_URL } from "./consts";
-import fetch from "node-fetch";
-import { multiLineLog } from "./util";
+import { writeFile } from "node:fs/promises";
+import type { AbbyConfig, PullAbbyConfigResponse } from "@tryabby/core";
 import chalk from "chalk";
-import { writeFile } from "fs/promises";
+import fetch from "node-fetch";
+import { ABBY_BASE_URL } from "./consts";
+import { multiLineLog } from "./util";
 
 export abstract class HttpService {
   static async getConfigFromServer({
@@ -20,7 +20,7 @@ export abstract class HttpService {
     const response = await fetch(`${url}/api/v1/config/${projectId}`, {
       method: "GET",
       headers: {
-        Authorization: "Bearer " + apiKey,
+        Authorization: `Bearer ${apiKey}`,
         "Content-Type": "application/json",
       },
     });
@@ -45,14 +45,17 @@ export abstract class HttpService {
     const url = apiUrl ?? ABBY_BASE_URL;
 
     try {
-      const response = await fetch(`${url}/api/v1/config/${localAbbyConfig.projectId}`, {
-        method: "PUT",
-        headers: {
-          Authorization: "Bearer " + apiKey,
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(localAbbyConfig),
-      });
+      const response = await fetch(
+        `${url}/api/v1/config/${localAbbyConfig.projectId}`,
+        {
+          method: "PUT",
+          headers: {
+            Authorization: `Bearer ${apiKey}`,
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(localAbbyConfig),
+        }
+      );
 
       const status = response.status;
 
@@ -66,7 +69,7 @@ export abstract class HttpService {
         throw new Error("Push failed");
       }
     } catch (e) {
-      console.log(chalk.red(multiLineLog("Error: " + e)));
+      console.log(chalk.red(multiLineLog(`Error: ${e}`)));
       throw e;
     }
   }
@@ -88,7 +91,7 @@ export abstract class HttpService {
       const response = await fetch(`${url}/api/ee/v1/abby-ai/flag-removal`, {
         method: "POST",
         headers: {
-          Authorization: "Bearer " + apiKey,
+          Authorization: `Bearer ${apiKey}`,
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
@@ -104,7 +107,9 @@ export abstract class HttpService {
         if (!Array.isArray(res)) {
           throw new Error("Invalid response from server");
         }
-        await Promise.all(res.map((file) => writeFile(file.filePath, file.fileContent)));
+        await Promise.all(
+          res.map((file) => writeFile(file.filePath, file.fileContent))
+        );
       } else if (status === 500) {
         throw new Error("Internal server error trying to update files");
       } else if (status === 401) {
@@ -113,7 +118,7 @@ export abstract class HttpService {
         throw new Error("Unable to update files");
       }
     } catch (e) {
-      console.log(chalk.red(multiLineLog("Error: " + e)));
+      console.log(chalk.red(multiLineLog(`Error: ${e}`)));
       throw e;
     }
   }

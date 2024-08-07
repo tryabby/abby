@@ -1,5 +1,5 @@
 import { renderHook } from "@testing-library/react";
-import { PropsWithChildren } from "react";
+import type { PropsWithChildren } from "react";
 import { createAbby } from "../src";
 
 const OLD_ENV = process.env;
@@ -19,7 +19,12 @@ afterAll(() => {
 
 describe("useAbby", () => {
   it("returns the correct types", () => {
-    const test2Variants = ["SimonsText", "MatthiasText", "TomsText", "TimsText"] as const;
+    const test2Variants = [
+      "SimonsText",
+      "MatthiasText",
+      "TomsText",
+      "TimsText",
+    ] as const;
 
     const { AbbyProvider, useAbby } = createAbby({
       currentEnvironment: "",
@@ -33,7 +38,9 @@ describe("useAbby", () => {
       },
     });
 
-    const wrapper = ({ children }: PropsWithChildren) => <AbbyProvider>{children}</AbbyProvider>;
+    const wrapper = ({ children }: PropsWithChildren) => (
+      <AbbyProvider>{children}</AbbyProvider>
+    );
 
     const { result: test1Result } = renderHook(() => useAbby("test"), {
       wrapper,
@@ -62,7 +69,9 @@ describe("useFeatureFlag", () => {
       flags: ["test"],
     });
 
-    const wrapper = ({ children }: PropsWithChildren) => <AbbyProvider>{children}</AbbyProvider>;
+    const wrapper = ({ children }: PropsWithChildren) => (
+      <AbbyProvider>{children}</AbbyProvider>
+    );
 
     renderHook(() => useFeatureFlag("test"), {
       wrapper,
@@ -83,19 +92,32 @@ describe("useRemoteConfig", () => {
       },
     });
 
-    expectTypeOf(useRemoteConfig).parameter(0).toEqualTypeOf<"stringRc" | "numberRc" | "jsonRc">();
+    expectTypeOf(useRemoteConfig)
+      .parameter(0)
+      .toEqualTypeOf<"stringRc" | "numberRc" | "jsonRc">();
 
-    const wrapper = ({ children }: PropsWithChildren) => <AbbyProvider>{children}</AbbyProvider>;
+    const wrapper = ({ children }: PropsWithChildren) => (
+      <AbbyProvider>{children}</AbbyProvider>
+    );
 
-    const { result: stringRcResult } = renderHook(() => useRemoteConfig("stringRc"), {
-      wrapper,
-    });
-    const { result: numberRcResult } = renderHook(() => useRemoteConfig("numberRc"), {
-      wrapper,
-    });
-    const { result: jsonRcResult } = renderHook(() => useRemoteConfig("jsonRc"), {
-      wrapper,
-    });
+    const { result: stringRcResult } = renderHook(
+      () => useRemoteConfig("stringRc"),
+      {
+        wrapper,
+      }
+    );
+    const { result: numberRcResult } = renderHook(
+      () => useRemoteConfig("numberRc"),
+      {
+        wrapper,
+      }
+    );
+    const { result: jsonRcResult } = renderHook(
+      () => useRemoteConfig("jsonRc"),
+      {
+        wrapper,
+      }
+    );
 
     expectTypeOf(stringRcResult.current).toEqualTypeOf<string>();
     expectTypeOf(numberRcResult.current).toEqualTypeOf<number>();

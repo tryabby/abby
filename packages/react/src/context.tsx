@@ -1,19 +1,25 @@
 import {
+  type ABConfig,
   Abby,
-  AbbyConfig,
-  ABConfig,
-  RemoteConfigValueString,
-  RemoteConfigValueStringToType,
+  type AbbyConfig,
+  type RemoteConfigValueString,
+  type RemoteConfigValueStringToType,
 } from "@tryabby/core";
-import React, { useCallback, useEffect, useRef, useState, type PropsWithChildren } from "react";
 import { HttpService } from "@tryabby/core";
-import { AbbyDataResponse, AbbyEventType } from "@tryabby/core";
+import { type AbbyDataResponse, AbbyEventType } from "@tryabby/core";
+import type { AbbyDevtoolProps, DevtoolsFactory } from "@tryabby/devtools";
+import React, {
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+  type PropsWithChildren,
+} from "react";
 import {
   FlagStorageService,
   RemoteConfigStorageService,
   TestStorageService,
 } from "./StorageService";
-import type { AbbyDevtoolProps, DevtoolsFactory } from "@tryabby/devtools";
 
 export type withDevtoolsFunction = (
   factory: DevtoolsFactory,
@@ -34,8 +40,22 @@ export function createAbby<
   const Tests extends Record<TestName, ABConfig>,
   const RemoteConfig extends Record<RemoteConfigName, RemoteConfigValueString>,
   const RemoteConfigName extends Extract<keyof RemoteConfig, string>,
->(abbyConfig: AbbyConfig<FlagName, Tests, string[], RemoteConfigName, RemoteConfig>) {
-  const abby = new Abby<FlagName, TestName, Tests, RemoteConfig, RemoteConfigName>(
+>(
+  abbyConfig: AbbyConfig<
+    FlagName,
+    Tests,
+    string[],
+    RemoteConfigName,
+    RemoteConfig
+  >
+) {
+  const abby = new Abby<
+    FlagName,
+    TestName,
+    Tests,
+    RemoteConfig,
+    RemoteConfigName
+  >(
     abbyConfig,
     {
       get: (key: string) => {
@@ -43,7 +63,8 @@ export function createAbby<
         return TestStorageService.get(abbyConfig.projectId, key);
       },
       set: (key: string, value: any) => {
-        if (typeof window === "undefined" || config.cookies?.disableByDefault) return;
+        if (typeof window === "undefined" || config.cookies?.disableByDefault)
+          return;
         TestStorageService.set(abbyConfig.projectId, key, value);
       },
     },
@@ -92,7 +113,9 @@ export function createAbby<
     K extends keyof Tests,
     TestVariant extends Tests[K]["variants"][number],
     LookupValue,
-    const Lookup extends Record<TestVariant, LookupValue> | undefined = undefined,
+    const Lookup extends
+      | Record<TestVariant, LookupValue>
+      | undefined = undefined,
   >(
     name: K,
     lookupObject?: Lookup
@@ -107,6 +130,7 @@ export function createAbby<
     const [selectedVariant, setSelectedVariant] = useState("");
 
     // listen to changes in for the current variant
+    // biome-ignore lint/correctness/useExhaustiveDependencies:>
     useEffect(() => {
       const newVariant = tests[name as unknown as TestName]?.selectedVariant;
 
@@ -114,13 +138,13 @@ export function createAbby<
       if (newVariant !== undefined) {
         setSelectedVariant(newVariant);
       }
-      // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [tests[name as unknown as TestName]?.selectedVariant]);
 
     // lazily get the tests
     useEffect(() => {
       setSelectedVariant(
-        abby.getProjectData().tests[name as unknown as TestName]?.selectedVariant ?? ""
+        abby.getProjectData().tests[name as unknown as TestName]
+          ?.selectedVariant ?? ""
       );
     }, [name]);
 
@@ -188,10 +212,12 @@ export function createAbby<
    */
   const useRemoteConfigVariables = () => {
     const data = useAbbyData();
-    return (Object.keys(data.remoteConfig) as Array<RemoteConfigName>).map((configName) => ({
-      name: configName,
-      value: data.remoteConfig[configName],
-    })) as Array<{
+    return (Object.keys(data.remoteConfig) as Array<RemoteConfigName>).map(
+      (configName) => ({
+        name: configName,
+        value: data.remoteConfig[configName],
+      })
+    ) as Array<{
       name: RemoteConfigName;
       value: RemoteConfigValueStringToType<RemoteConfig[RemoteConfigName]>;
     }>;
@@ -210,6 +236,7 @@ export function createAbby<
     });
 
     // load the project data if it hasn't been passed in
+    // biome-ignore lint/correctness/useExhaustiveDependencies:>
     useEffect(() => {
       if (initialData || isMountedRef.current) return;
       isMountedRef.current = true;
@@ -219,7 +246,6 @@ export function createAbby<
         if (!data) return;
         setData(data);
       });
-      // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
     // subscribe to changes in the project data
@@ -237,14 +263,22 @@ export function createAbby<
     return abby.getFeatureFlag(name);
   };
 
-  const useRemoteConfig = <T extends RemoteConfigName, Config extends RemoteConfig[T]>(
+  const useRemoteConfig = <
+    T extends RemoteConfigName,
+    Config extends RemoteConfig[T],
+  >(
     remoteConfigName: T
   ): RemoteConfigValueStringToType<Config> => {
     const abby = useAbbyData();
-    return abby.remoteConfig[remoteConfigName] as RemoteConfigValueStringToType<Config>;
+    return abby.remoteConfig[
+      remoteConfigName
+    ] as RemoteConfigValueStringToType<Config>;
   };
 
-  const getRemoteConfig = <T extends RemoteConfigName, Config extends RemoteConfig[T]>(
+  const getRemoteConfig = <
+    T extends RemoteConfigName,
+    Config extends RemoteConfig[T],
+  >(
     remoteConfigName: T
   ): RemoteConfigValueStringToType<Config> => {
     return abby.getRemoteConfig(remoteConfigName);
@@ -254,7 +288,9 @@ export function createAbby<
     TestName extends keyof Tests,
     TestVariant extends Tests[TestName]["variants"][number],
     LookupValue,
-    const Lookup extends Record<TestVariant, LookupValue> | undefined = undefined,
+    const Lookup extends
+      | Record<TestVariant, LookupValue>
+      | undefined = undefined,
   >(
     testName: TestName,
     lookupObject?: Lookup
@@ -274,12 +310,16 @@ export function createAbby<
     return () => {
       const initedRef = useRef(false);
 
+      // biome-ignore lint/correctness/useExhaustiveDependencies:>
       useEffect(() => {
         if (initedRef.current) {
           return;
         }
 
-        if (!props?.dangerouslyForceShow && process.env.NODE_ENV !== "development") {
+        if (
+          !props?.dangerouslyForceShow &&
+          process.env.NODE_ENV !== "development"
+        ) {
           return;
         }
 

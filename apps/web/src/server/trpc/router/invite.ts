@@ -1,10 +1,10 @@
 import { TRPCError } from "@trpc/server";
-import { z } from "zod";
-import { protectedProcedure, router } from "../trpc";
 import { prisma } from "server/db/client";
 import { InviteService } from "server/services/InviteService";
-import { sendInviteEmail } from "../../../../emails";
 import { updateProjectsOnSession } from "utils/updateSession";
+import { z } from "zod";
+import { sendInviteEmail } from "../../../../emails";
+import { protectedProcedure, router } from "../trpc";
 
 export const inviteRouter = router({
   getInviteData: protectedProcedure

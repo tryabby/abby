@@ -1,17 +1,12 @@
 import { TRPCError } from "@trpc/server";
+import { AbbyEventType } from "@tryabby/core";
+import dayjs from "dayjs";
+import { TIME_INTERVAL, getBaseEventsByInterval } from "lib/events";
+import { groupBy, uniqBy } from "lodash-es";
 import { EventService } from "server/services/EventService";
 import { ProjectService } from "server/services/ProjectService";
 import { z } from "zod";
 import { protectedProcedure, router } from "../trpc";
-import { groupBy, uniqBy } from "lodash-es";
-import dayjs from "dayjs";
-import {
-  getBaseEventsByInterval,
-  getFormattingByInterval,
-  INTERVALS,
-  TIME_INTERVAL,
-} from "lib/events";
-import { AbbyEventType } from "@tryabby/core";
 
 export const eventRouter = router({
   getEvents: protectedProcedure

@@ -272,7 +272,11 @@
       }
     },
     {
-      "scope": ["entity.name", "meta.export.default", "meta.definition.variable"],
+      "scope": [
+        "entity.name",
+        "meta.export.default",
+        "meta.definition.variable"
+      ],
       "settings": {
         "foreground": "#f69d50"
       }
@@ -316,7 +320,11 @@
       }
     },
     {
-      "scope": ["storage.modifier.package", "storage.modifier.import", "storage.type.java"],
+      "scope": [
+        "storage.modifier.package",
+        "storage.modifier.import",
+        "storage.type.java"
+      ],
       "settings": {
         "foreground": "#adbac7"
       }
@@ -500,7 +508,11 @@
       }
     },
     {
-      "scope": ["markup.deleted", "meta.diff.header.from-file", "punctuation.definition.deleted"],
+      "scope": [
+        "markup.deleted",
+        "meta.diff.header.from-file",
+        "punctuation.definition.deleted"
+      ],
       "settings": {
         "background": "#5d0f12",
         "foreground": "#ff938a"
@@ -513,7 +525,11 @@
       }
     },
     {
-      "scope": ["markup.inserted", "meta.diff.header.to-file", "punctuation.definition.inserted"],
+      "scope": [
+        "markup.inserted",
+        "meta.diff.header.to-file",
+        "punctuation.definition.inserted"
+      ],
       "settings": {
         "background": "#113417",
         "foreground": "#8ddb8c"

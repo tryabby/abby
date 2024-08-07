@@ -1,9 +1,9 @@
+import { resolve } from "node:path";
 // vite.config.ts
 import { svelte } from "@sveltejs/vite-plugin-svelte";
 import type { UserConfig } from "vite";
-import { resolve } from "path";
-import { configDefaults, type UserConfig as VitestConfig } from "vitest/config";
 import dts from "vite-plugin-dts";
+import { type UserConfig as VitestConfig, configDefaults } from "vitest/config";
 
 const config: UserConfig & { test: VitestConfig["test"] } = {
   build: {

@@ -1,13 +1,13 @@
 import clsx from "clsx";
+import { AnimatePresence, motion } from "framer-motion";
+import { cn } from "lib/utils";
+import { ArrowUpCircle } from "lucide-react";
 import { NextSeo } from "next-seo";
-import { PropsWithChildren, useEffect, useState } from "react";
+import { useRouter } from "next/router";
+import { type PropsWithChildren, useEffect, useState } from "react";
+import { getSeo } from "seo/SeoDescriptions";
 import { Footer } from "./Footer";
 import { Navbar } from "./Navbar";
-import { cn } from "lib/utils";
-import { useRouter } from "next/router";
-import { getSeo } from "seo/SeoDescriptions";
-import { ArrowUpCircle } from "lucide-react";
-import { AnimatePresence, motion } from "framer-motion";
 
 export type MarketingLayoutProps = PropsWithChildren<{
   isMarkdown?: boolean;

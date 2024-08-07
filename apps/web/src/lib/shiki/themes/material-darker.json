@@ -518,7 +518,9 @@
     },
     {
       "name": "JSON Key - Level 0",
-      "scope": ["meta.structure.dictionary.json support.type.property-name.json"],
+      "scope": [
+        "meta.structure.dictionary.json support.type.property-name.json"
+      ],
       "settings": {
         "foreground": "#C792EA"
       }

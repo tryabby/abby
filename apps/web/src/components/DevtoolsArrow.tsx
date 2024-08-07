@@ -2,7 +2,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import { useTracking } from "lib/tracking";
 import { CornerRightDown } from "lucide-react";
 
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
 
 const DEVTOOLS_ID = "abby-devtools-collapsed";
 

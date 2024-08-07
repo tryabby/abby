@@ -1,4 +1,7 @@
-import { RadioGroup, RadioGroupItem } from "components/ui/radio-group";
+import {
+  RadioGroup,
+  RadioGroupItem as RadixRadioGroupItem,
+} from "components/ui/radio-group";
 
 export type RadioGroupItem = {
   label: string;
@@ -15,13 +18,7 @@ type Props = {
   label?: string;
 };
 
-export function RadioGroupComponent({
-  items,
-  onChange,
-  value,
-  isLoading,
-  label,
-}: Props) {
+export function RadioGroupComponent({ items, onChange, value }: Props) {
   return (
     <RadioGroup
       onValueChange={onChange}
@@ -29,8 +26,8 @@ export function RadioGroupComponent({
       defaultValue={value}
     >
       {items.map((item) => (
-        <div className="flex items-center space-x-2">
-          <RadioGroupItem value={item.value} id={item.value} />
+        <div key={item.value} className="flex items-center space-x-2">
+          <RadixRadioGroupItem value={item.value} id={item.value} />
           <div>{item.label}</div>
         </div>
       ))}

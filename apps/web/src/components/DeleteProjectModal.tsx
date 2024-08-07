@@ -1,9 +1,9 @@
 import { useProjectId } from "lib/hooks/useProjectId";
+import { useSession } from "next-auth/react";
+import { useRouter } from "next/router";
 import { toast } from "react-hot-toast";
 import { trpc } from "utils/trpc";
 import { Modal } from "./Modal";
-import { useRouter } from "next/router";
-import { useSession } from "next-auth/react";
 
 type Props = {
   isOpen: boolean;
@@ -32,7 +32,7 @@ export function DeleteProjectModal({ isOpen, onClose }: Props) {
         lastOpenProjectId: newProjectIds?.[0],
       });
 
-      await router.push(`/projects`);
+      await router.push("/projects");
 
       trpcContext.project.getProjectData.invalidate();
       trpcContext.user.getProjects.invalidate();

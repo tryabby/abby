@@ -1,8 +1,8 @@
 import { Queue } from "bullmq";
+import { env } from "env/server.mjs";
+import { Redis } from "ioredis";
 import type { AfterRequestJobPayload } from "./AfterDataRequest";
 import type { EventJobPayload } from "./event";
-import { Redis } from "ioredis";
-import { env } from "env/server.mjs";
 
 // enforce the queue names to be in the format {name}
 // https://docs.bullmq.io/guide/redis-tm-compatibility/dragonfly

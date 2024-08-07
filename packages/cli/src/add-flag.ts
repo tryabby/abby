@@ -1,14 +1,17 @@
-import * as fs from "fs/promises";
-import { default as prompts } from "prompts";
-import { loadLocalConfig } from "./util";
 import chalk from "chalk";
+import { default as prompts } from "prompts";
 import { push } from "./push";
-import { updateConfigFile } from "./update-config-file";
+import { loadLocalConfig } from "./util";
 
-export async function addFlag(options: { apiKey: string; host?: string; configPath?: string }) {
-  const { mutableConfig, saveMutableConfig, restoreConfig } = await loadLocalConfig({
-    configPath: options.configPath,
-  });
+export async function addFlag(options: {
+  apiKey: string;
+  host?: string;
+  configPath?: string;
+}) {
+  const { mutableConfig, saveMutableConfig, restoreConfig } =
+    await loadLocalConfig({
+      configPath: options.configPath,
+    });
 
   const { flagName } = await prompts({
     type: "text",
@@ -33,7 +36,11 @@ export async function addFlag(options: { apiKey: string; host?: string; configPa
     console.log(chalk.green("Local config updated successfully"));
 
     console.log(chalk.blue("Updating remote config..."));
-    await push({ apiKey: options.apiKey, configPath: options.configPath, apiUrl: options.host });
+    await push({
+      apiKey: options.apiKey,
+      configPath: options.configPath,
+      apiUrl: options.host,
+    });
   } catch (error) {
     console.log(chalk.red("Pushing flag failed, restoring old config file..."));
 

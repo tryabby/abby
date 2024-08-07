@@ -1,8 +1,13 @@
+import type {
+  FeatureFlag,
+  FeatureFlagValue,
+  Option,
+  Test,
+} from "@prisma/client";
+import type { Decimal } from "@prisma/client/runtime/library";
 import { testClient } from "hono/testing";
-import { makeProjectDataRoute } from "./v1_project_data";
 import { jobManager } from "server/queue/Manager";
-import { FeatureFlag, FeatureFlagValue, Option, Test } from "@prisma/client";
-import { Decimal } from "@prisma/client/runtime/library";
+import { makeProjectDataRoute } from "./v1_project_data";
 
 vi.mock("../../env/server.mjs", () => ({
   env: {},
@@ -38,7 +43,9 @@ vi.mock("server/db/client", () => ({
           id: "",
           value: "2",
         },
-      ] satisfies Array<FeatureFlagValue & { flag: Pick<FeatureFlag, "name" | "type"> }>),
+      ] satisfies Array<
+        FeatureFlagValue & { flag: Pick<FeatureFlag, "name" | "type"> }
+      >),
     },
     test: {
       findMany: vi.fn().mockResolvedValue([

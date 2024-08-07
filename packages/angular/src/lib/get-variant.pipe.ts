@@ -1,7 +1,8 @@
-import { Pipe, PipeTransform } from "@angular/core";
-import { ABConfig } from "@tryabby/core";
-import { Observable } from "rxjs";
-import { Key } from "ts-toolbelt/out/Any/Key";
+import { Pipe, type PipeTransform } from "@angular/core";
+import type { ABConfig } from "@tryabby/core";
+import type { Observable } from "rxjs";
+import type { Key } from "ts-toolbelt/out/Any/Key";
+// biome-ignore lint/style/useImportType: angular needs this
 import { AbbyService } from "./abby.service";
 
 @Pipe({

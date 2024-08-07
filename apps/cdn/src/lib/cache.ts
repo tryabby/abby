@@ -45,12 +45,16 @@ export class ZoneCache<TNamespaces extends Record<string, unknown>> {
   }
 
   public async get<TName extends keyof TNamespaces>(
-    c: Context,
+    _c: Context,
     namespace: TName,
     key: string
-  ): Promise<[TNamespaces[TName] | undefined, "stale" | "hit" | "miss" | "error"]> {
+  ): Promise<
+    [TNamespaces[TName] | undefined, "stale" | "hit" | "miss" | "error"]
+  > {
     try {
-      const res = await caches.default.match(new Request(this.createCacheKey(namespace, key)));
+      const res = await caches.default.match(
+        new Request(this.createCacheKey(namespace, key))
+      );
       if (!res) {
         return [undefined, "miss"];
       }
@@ -76,7 +80,7 @@ export class ZoneCache<TNamespaces extends Record<string, unknown>> {
     const res = new Response(JSON.stringify(entry), {
       headers: {
         "Content-Type": "application/json",
-        "Cache-Control": `public, s-maxage=60`,
+        "Cache-Control": "public, s-maxage=60",
       },
     });
 

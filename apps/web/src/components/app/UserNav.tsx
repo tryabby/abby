@@ -1,5 +1,4 @@
-import { Avatar, AvatarFallback, AvatarImage } from "components/ui/avatar";
-import { Button } from "components/ui/button";
+import { DOCS_URL } from "@tryabby/core";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -9,9 +8,10 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "components/DropdownMenu";
+import { Avatar, AvatarFallback, AvatarImage } from "components/ui/avatar";
+import { Button } from "components/ui/button";
 import { signOut, useSession } from "next-auth/react";
 import Link from "next/link";
-import { DOCS_URL } from "@tryabby/core";
 
 export function UserNav() {
   const { data } = useSession();

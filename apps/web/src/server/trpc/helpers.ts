@@ -1,8 +1,8 @@
 import { createServerSideHelpers } from "@trpc/react-query/server";
-import superjson from "superjson";
-import { appRouter } from "./router/_app";
-import { createContext } from "./context";
 import type { CreateNextContextOptions } from "@trpc/server/adapters/next";
+import superjson from "superjson";
+import { createContext } from "./context";
+import { appRouter } from "./router/_app";
 
 export async function getSSRTrpc(opts: CreateNextContextOptions) {
   return createServerSideHelpers({

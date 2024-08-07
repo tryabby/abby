@@ -1,6 +1,10 @@
 import { Dialog } from "@headlessui/react";
+import { useProjectId } from "lib/hooks/useProjectId";
+import { useTracking } from "lib/tracking";
+import { Code, Copy } from "lucide-react";
 import { useRouter } from "next/router";
 import { useState } from "react";
+import { toast } from "react-hot-toast";
 import { BsCodeSlash } from "react-icons/bs";
 import { CodeSnippet } from "./CodeSnippet";
 import {
@@ -9,10 +13,6 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "./DropdownMenu";
-import { Code, Copy } from "lucide-react";
-import { useProjectId } from "lib/hooks/useProjectId";
-import { toast } from "react-hot-toast";
-import { useTracking } from "lib/tracking";
 import { Button } from "./ui/button";
 
 function CodeSnippetModal({

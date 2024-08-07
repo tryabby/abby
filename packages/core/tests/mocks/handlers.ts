@@ -1,5 +1,5 @@
-import { compose, rest } from "msw";
-import { AbbyDataResponse, ABBY_BASE_URL } from "../../src/shared";
+import { rest } from "msw";
+import { ABBY_BASE_URL, type AbbyDataResponse } from "../../src/shared";
 
 const returnData: AbbyDataResponse = {
   tests: [
@@ -22,10 +22,13 @@ const returnData: AbbyDataResponse = {
 };
 
 export const handlers = [
-  rest.get(`${ABBY_BASE_URL}api/dashboard/:projectId/data`, (req, res, ctx) => {
-    return res(ctx.json(returnData));
-  }),
-  rest.get(`${ABBY_BASE_URL}api/v1/data/:projectId`, (req, res, ctx) => {
+  rest.get(
+    `${ABBY_BASE_URL}api/dashboard/:projectId/data`,
+    (_req, res, ctx) => {
+      return res(ctx.json(returnData));
+    }
+  ),
+  rest.get(`${ABBY_BASE_URL}api/v1/data/:projectId`, (_req, res, ctx) => {
     return res(ctx.json(returnData));
   }),
 ];

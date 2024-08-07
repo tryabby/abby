@@ -1,9 +1,9 @@
-import Link from "next/link";
-import IgusLogo from "../../public/img/companies/igus.svg";
-import DynabaseLogo from "../../public/img/companies/dynabase.svg";
-import RBTXLogo from "../../public/img/companies/rbtx.svg";
-import MavenoidLogo from "../../public/img/companies/mavenoid.svg";
 import Image from "next/image";
+import Link from "next/link";
+import DynabaseLogo from "../../public/img/companies/dynabase.svg";
+import IgusLogo from "../../public/img/companies/igus.svg";
+import MavenoidLogo from "../../public/img/companies/mavenoid.svg";
+import RBTXLogo from "../../public/img/companies/rbtx.svg";
 
 const COMPANIES = [
   {
@@ -40,8 +40,9 @@ export function UsedBy() {
       </h1>
 
       <div className="mx-auto mt-24 grid grid-cols-1 items-center justify-between sm:grid-cols-2 md:grid-cols-4 ">
-        {COMPANIES.map((company, index) => (
+        {COMPANIES.map((company) => (
           <Link
+            key={company.name}
             href={company.companyUrl}
             className={
               "aspect-video h-20 cursor-pointer justify-self-center opacity-50 grayscale transition-all duration-300 ease-in-out hover:opacity-100 hover:grayscale-0"

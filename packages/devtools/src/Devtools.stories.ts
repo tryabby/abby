@@ -15,7 +15,7 @@ const abbyMock = {
     remoteConfig: {
       "config-1": "string-value",
       "config-2": 42,
-      "config-3": {type: "object/json"}
+      "config-3": { type: "object/json" },
     },
     tests: {
       "test-1": { selectedVariant: "A", variants: ["A", "B"] },

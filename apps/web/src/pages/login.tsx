@@ -1,11 +1,10 @@
-import { Metadata } from "next";
 import Link from "next/link";
 
-import { cn } from "lib/utils";
-import { buttonVariants } from "components/ui/button";
-import { UserAuthForm } from "components/UserAuthForm";
-import { useRouter } from "next/router";
 import Logo from "components/Logo";
+import { UserAuthForm } from "components/UserAuthForm";
+import { buttonVariants } from "components/ui/button";
+import { cn } from "lib/utils";
+import { useRouter } from "next/router";
 
 const DEFAULT_CALLBACK_URL = "/projects";
 

@@ -9,7 +9,6 @@ import {
   NavigationMenuLink,
   NavigationMenuList,
   NavigationMenuTrigger,
-  navigationMenuTriggerStyle,
 } from "components/ui/navigation-menu";
 
 import { cn } from "lib/utils";
@@ -222,7 +221,7 @@ const ListItem = React.forwardRef<
 });
 ListItem.displayName = "ListItem";
 
-export function Navbar({ isInverted }: { isInverted?: boolean }) {
+export function Navbar() {
   const { data: userSession, status } = useSession();
   const { data: starsCount, isLoading: isStarsLoading } =
     trpc.misc.getStars.useQuery();

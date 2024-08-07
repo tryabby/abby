@@ -1,9 +1,9 @@
 import { TestBed } from "@angular/core/testing";
+import type { AbbyConfig } from "@tryabby/core";
 import { combineLatest } from "rxjs";
 import { AbbyModule } from "./abby.module";
 import { AbbyService } from "./abby.service";
 import { GetAbbyVariantPipe } from "./get-variant.pipe";
-import { AbbyConfig } from "@tryabby/core";
 
 const mockConfig = {
   projectId: "mock-project-id",
@@ -30,7 +30,10 @@ const mockedData = {
 };
 
 describe("GetAbbyVariantPipe", () => {
-  let pipe: GetAbbyVariantPipe<keyof (typeof mockConfig)["tests"], (typeof mockConfig)["tests"]>;
+  let pipe: GetAbbyVariantPipe<
+    keyof (typeof mockConfig)["tests"],
+    (typeof mockConfig)["tests"]
+  >;
   let service: AbbyService<
     (typeof mockConfig)["flags"][number],
     keyof (typeof mockConfig)["tests"],
@@ -63,10 +66,11 @@ describe("GetAbbyVariantPipe", () => {
   });
 
   it("returns currently active variant", () => {
-    combineLatest([service.getVariant("test"), pipe.transform("test")]).subscribe(
-      ([expected, actual]) => {
-        expect(actual).toEqual(expected);
-      }
-    );
+    combineLatest([
+      service.getVariant("test"),
+      pipe.transform("test"),
+    ]).subscribe(([expected, actual]) => {
+      expect(actual).toEqual(expected);
+    });
   });
 });

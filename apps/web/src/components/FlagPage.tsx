@@ -1,5 +1,5 @@
-import { FeatureFlagType } from "@prisma/client";
-import { InferQueryResult } from "@trpc/react-query/dist/utils/inferReactQueryProcedure";
+import type { FeatureFlagType } from "@prisma/client";
+import type { InferQueryResult } from "@trpc/react-query/dist/utils/inferReactQueryProcedure";
 import { AddFeatureFlagModal } from "components/AddFeatureFlagModal";
 import { CreateEnvironmentModal } from "components/CreateEnvironmentModal";
 import {
@@ -10,9 +10,9 @@ import {
 } from "components/DropdownMenu";
 import { Editor } from "components/Editor";
 import { FeatureFlag } from "components/FeatureFlag";
-import { Input } from "components/ui/input";
 import { Modal } from "components/Modal";
 import { Tooltip, TooltipContent, TooltipTrigger } from "components/Tooltip";
+import { Input } from "components/ui/input";
 import { useProjectId } from "lib/hooks/useProjectId";
 import { EditIcon, FileEditIcon, TrashIcon } from "lucide-react";
 import { useState } from "react";
@@ -20,7 +20,7 @@ import { toast } from "react-hot-toast";
 import { AiOutlinePlus } from "react-icons/ai";
 import { BiInfoCircle } from "react-icons/bi";
 import { BsThreeDotsVertical } from "react-icons/bs";
-import { appRouter } from "server/trpc/router/_app";
+import type { appRouter } from "server/trpc/router/_app";
 import { trpc } from "utils/trpc";
 import { Button } from "./ui/button";
 
@@ -242,7 +242,7 @@ export const FeatureFlagPageContent = ({
 
                     <Tooltip>
                       <TooltipTrigger asChild>
-                        <button>
+                        <button type="button">
                           <BiInfoCircle />
                         </button>
                       </TooltipTrigger>
@@ -256,6 +256,7 @@ export const FeatureFlagPageContent = ({
                         <h1 className="mb-4 font-semibold">Description:</h1>
                         <p
                           className="prose prose-invert text-pink-50"
+                          // biome-ignore lint/security/noDangerouslySetInnerHtml:
                           dangerouslySetInnerHTML={{
                             __html:
                               currentFlag.description ??

@@ -1,16 +1,15 @@
 import { TRPCClientError } from "@trpc/client";
 import { TRPC_ERROR_CODES_BY_KEY } from "@trpc/server/rpc";
 
+import { useTracking } from "lib/tracking";
 import { useState } from "react";
 import { toast } from "react-hot-toast";
-import { PlausibleEvents } from "types/plausible-events";
 import { trpc } from "utils/trpc";
 import { Modal } from "./Modal";
 import {
   CreateTestSection,
   DEFAULT_NEW_VARIANT_PREFIX,
 } from "./Test/CreateTestSection";
-import { useTracking } from "lib/tracking";
 
 type UIVariant = { name: string; weight: number };
 
@@ -42,6 +41,8 @@ export const AddABTestModal = ({ onClose, isOpen, projectId }: Props) => {
 
   const variantsWeightSum = variants
     .map(({ weight }) => weight)
+    // biome-ignore lint/suspicious/noAssignInExpressions:
+    // biome-ignore lint/style/noParameterAssign:
     .reduce((sum, weight) => (sum += weight), 0);
 
   const isConfirmButtonDisabled =

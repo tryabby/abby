@@ -1,9 +1,3 @@
-import { Transition } from "@headlessui/react";
-import clsx from "clsx";
-import { Loader2 } from "lucide-react";
-import { Fragment, useRef } from "react";
-import { twMerge } from "tailwind-merge";
-import { Button } from "./ui/button";
 import {
   Dialog,
   DialogContent,
@@ -12,6 +6,8 @@ import {
   DialogTitle,
 } from "components/ui/dialog";
 import { cn } from "lib/utils";
+import { Loader2 } from "lucide-react";
+import { Button } from "./ui/button";
 
 type Props = {
   onClose: () => void;

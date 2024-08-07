@@ -1,37 +1,34 @@
-import { CreateEnvironmentModal } from "components/CreateEnvironmentModal";
-import { DashboardHeader } from "components/DashboardHeader";
-import { Layout } from "components/Layout";
-import { Modal } from "components/Modal";
 import {
-  FullPageLoadingSpinner,
-  LoadingSpinner,
-} from "components/LoadingSpinner";
-import { toast } from "react-hot-toast";
-import { TitleEdit } from "components/TitleEdit";
-import { useProjectId } from "lib/hooks/useProjectId";
-import { NextPageWithLayout } from "pages/_app";
-import { useState } from "react";
-import { AiOutlineDelete, AiOutlineEdit, AiOutlinePlus } from "react-icons/ai";
-import { trpc } from "utils/trpc";
-import {
-  closestCenter,
   DndContext,
-  DragEndEvent,
+  type DragEndEvent,
   PointerSensor,
+  closestCenter,
   useSensor,
   useSensors,
 } from "@dnd-kit/core";
 import {
-  arrayMove,
   SortableContext,
+  arrayMove,
   useSortable,
   verticalListSortingStrategy,
 } from "@dnd-kit/sortable";
-import { Environment, FeatureFlagType } from "@prisma/client";
 import { CSS } from "@dnd-kit/utilities";
-import { MdDragIndicator } from "react-icons/md";
+import { type Environment, FeatureFlagType } from "@prisma/client";
+import { CreateEnvironmentModal } from "components/CreateEnvironmentModal";
+import { DashboardHeader } from "components/DashboardHeader";
+import { Layout } from "components/Layout";
+import { FullPageLoadingSpinner } from "components/LoadingSpinner";
+import { Modal } from "components/Modal";
+import { TitleEdit } from "components/TitleEdit";
 import { Button } from "components/ui/button";
-import { GetStaticProps, GetStaticPaths } from "next";
+import { useProjectId } from "lib/hooks/useProjectId";
+import type { GetStaticPaths, GetStaticProps } from "next";
+import type { NextPageWithLayout } from "pages/_app";
+import { useState } from "react";
+import { toast } from "react-hot-toast";
+import { AiOutlineDelete, AiOutlinePlus } from "react-icons/ai";
+import { MdDragIndicator } from "react-icons/md";
+import { trpc } from "utils/trpc";
 
 function EnvironmentItem({
   environment,
@@ -43,12 +40,6 @@ function EnvironmentItem({
   setDeleteState: () => void;
 }) {
   const trpcContext = trpc.useContext();
-  const { mutate: deleteEnvironment } =
-    trpc.environments.deleteEnvironment.useMutation({
-      onSuccess: () => {
-        trpcContext.flags.getFlags.invalidate({ projectId });
-      },
-    });
 
   const { mutate: renameEnvironment } =
     trpc.environments.updateName.useMutation({
@@ -74,7 +65,10 @@ function EnvironmentItem({
       {...listeners}
     >
       <div className="flex items-center space-x-2">
-        <button className="cursor-grab text-pink-50/60 focus:cursor-grabbing">
+        <button
+          type="button"
+          className="cursor-grab text-pink-50/60 focus:cursor-grabbing"
+        >
           <MdDragIndicator />
         </button>
         <TitleEdit

@@ -2,26 +2,31 @@
 import chalk from "chalk";
 import { Command } from "commander";
 import * as figlet from "figlet";
-import { getToken, writeTokenFile } from "./auth";
-import { verifyLocalConfig } from "./check";
-import { ABBY_BASE_URL, getTokenFilePath } from "./consts";
-import { pullAndMerge } from "./pull";
-import { push } from "./push";
-import { ConfigOption, HostOption } from "./sharedOptions";
-import { multiLineLog, startServerAndGetToken } from "./util";
-import { initAbbyConfig } from "./init";
-import { addCommandTypeSchema } from "./schemas";
+import ora from "ora";
+import packageJson from "../package.json";
 import { addFlag } from "./add-flag";
 import { addRemoteConfig } from "./add-remote-config";
 import { removeFlagInstance } from "./ai";
-import ora from "ora";
-import packageJson from "../package.json";
+import { getToken, writeTokenFile } from "./auth";
+import { verifyLocalConfig } from "./check";
+import { ABBY_BASE_URL, getTokenFilePath } from "./consts";
+import { initAbbyConfig } from "./init";
+import { pullAndMerge } from "./pull";
+import { push } from "./push";
+import { addCommandTypeSchema } from "./schemas";
+import { ConfigOption, HostOption } from "./sharedOptions";
+import { multiLineLog, startServerAndGetToken } from "./util";
 
 const program = new Command();
 
-console.log(chalk.magenta(figlet.textSync("abby-cli", { horizontalLayout: "full" })));
+console.log(
+  chalk.magenta(figlet.textSync("abby-cli", { horizontalLayout: "full" }))
+);
 
-program.name("abby-cli").description("CLI Tool for Abby").version(packageJson.version);
+program
+  .name("abby-cli")
+  .description("CLI Tool for Abby")
+  .version(packageJson.version);
 
 program
   .command("login")
@@ -37,10 +42,12 @@ program
 
     if (typeof tokenToUse === "string") {
       await writeTokenFile(tokenToUse);
-      console.log(chalk.green(`Token successfully written to ${getTokenFilePath()}`));
+      console.log(
+        chalk.green(`Token successfully written to ${getTokenFilePath()}`)
+      );
     } else {
       console.log(
-        chalk.red(`You need to provide a token to log in.`),
+        chalk.red("You need to provide a token to log in."),
         chalk.green(`\nYou can get one at ${ABBY_BASE_URL}/profile`)
       );
     }
@@ -79,7 +86,11 @@ program
   .action(async (options: { config?: string; host?: string }) => {
     try {
       const token = await getToken();
-      await push({ apiKey: token, apiUrl: options.host, configPath: options.config });
+      await push({
+        apiKey: token,
+        apiUrl: options.host,
+        configPath: options.config,
+      });
     } catch (e) {
       console.log(
         chalk.red(
@@ -99,38 +110,42 @@ program
   .argument("<entryType>", "Whether you want to create a `flag` or `config`")
   .addOption(HostOption)
   .addOption(ConfigOption)
-  .action(async (entryType, options: { configPath?: string; host?: string }) => {
-    let parsedEntryType = addCommandTypeSchema.safeParse(entryType);
+  .action(
+    async (entryType, options: { configPath?: string; host?: string }) => {
+      const parsedEntryType = addCommandTypeSchema.safeParse(entryType);
 
-    if (!parsedEntryType.success) {
-      console.log(
-        chalk.red("Invalid type. Only `flag` or `config` are possible or leave the option empty")
-      );
-      return;
-    }
-
-    try {
-      const token = await getToken();
-      switch (parsedEntryType.data) {
-        case "flag":
-          await addFlag({ ...options, apiKey: token });
-          break;
-        case "config":
-          await addRemoteConfig({ ...options, apiKey: token });
-          break;
-      }
-    } catch (e) {
-      console.log(
-        chalk.red(
-          multiLineLog(
-            e instanceof Error
-              ? e.message
-              : "Something went wrong. Please check your internet connection"
+      if (!parsedEntryType.success) {
+        console.log(
+          chalk.red(
+            "Invalid type. Only `flag` or `config` are possible or leave the option empty"
           )
-        )
-      );
+        );
+        return;
+      }
+
+      try {
+        const token = await getToken();
+        switch (parsedEntryType.data) {
+          case "flag":
+            await addFlag({ ...options, apiKey: token });
+            break;
+          case "config":
+            await addRemoteConfig({ ...options, apiKey: token });
+            break;
+        }
+      } catch (e) {
+        console.log(
+          chalk.red(
+            multiLineLog(
+              e instanceof Error
+                ? e.message
+                : "Something went wrong. Please check your internet connection"
+            )
+          )
+        );
+      }
     }
-  });
+  );
 
 program
   .command("check")
@@ -174,7 +189,9 @@ program
     try {
       const configPath = options.config ?? "./abby.config.ts";
       await initAbbyConfig({ path: configPath });
-      console.log(chalk.green(`Config file created successfully at ${configPath}`));
+      console.log(
+        chalk.green(`Config file created successfully at ${configPath}`)
+      );
     } catch (e) {
       console.log(
         chalk.red(
@@ -196,18 +213,24 @@ aiCommand
   .argument("<flag>", "The flag name to remove")
   .addOption(ConfigOption)
   .addOption(HostOption)
-  .action(async (dir: string, flagName: string, options: { config?: string; host?: string }) => {
-    const spinner = ora("Removing feature flag with ✨AI✨").start();
-    const updatedFileCount = await removeFlagInstance({
-      apiKey: await getToken(),
-      flagName,
-      path: dir,
-      configPath: options.config,
-      host: options.host,
-    });
-    spinner.succeed();
-    console.log(chalk.green("\nFlag removed successfully"));
-    console.log(chalk.green("Files updated:", updatedFileCount));
-  });
+  .action(
+    async (
+      dir: string,
+      flagName: string,
+      options: { config?: string; host?: string }
+    ) => {
+      const spinner = ora("Removing feature flag with ✨AI✨").start();
+      const updatedFileCount = await removeFlagInstance({
+        apiKey: await getToken(),
+        flagName,
+        path: dir,
+        configPath: options.config,
+        host: options.host,
+      });
+      spinner.succeed();
+      console.log(chalk.green("\nFlag removed successfully"));
+      console.log(chalk.green("Files updated:", updatedFileCount));
+    }
+  );
 
 program.parse(process.argv);

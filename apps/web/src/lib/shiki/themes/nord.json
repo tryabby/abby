@@ -521,7 +521,10 @@
     },
     {
       "name": "Punctuation Section Embedded",
-      "scope": ["punctuation.section.embedded.begin", "punctuation.section.embedded.end"],
+      "scope": [
+        "punctuation.section.embedded.begin",
+        "punctuation.section.embedded.end"
+      ],
       "settings": {
         "foreground": "#81A1C1"
       }
@@ -661,7 +664,10 @@
     },
     {
       "name": "[C/CPP] Meta Preprocessor Include",
-      "scope": ["source.c meta.preprocessor.include", "source.c string.quoted.other.lt-gt.include"],
+      "scope": [
+        "source.c meta.preprocessor.include",
+        "source.c string.quoted.other.lt-gt.include"
+      ],
       "settings": {
         "foreground": "#8FBCBB"
       }
@@ -1176,7 +1182,10 @@
     },
     {
       "name": "[PHP] Meta Function-Call Object",
-      "scope": ["source.php meta.function-call", "source.php meta.function-call.object"],
+      "scope": [
+        "source.php meta.function-call",
+        "source.php meta.function-call.object"
+      ],
       "settings": {
         "foreground": "#88C0D0"
       }
@@ -1295,7 +1304,10 @@
     },
     {
       "name": "[TypeScript] Object-literal keys",
-      "scope": ["source.ts meta.object-literal.key", "source.tsx meta.object-literal.key"],
+      "scope": [
+        "source.ts meta.object-literal.key",
+        "source.tsx meta.object-literal.key"
+      ],
       "settings": {
         "foreground": "#D8DEE9"
       }

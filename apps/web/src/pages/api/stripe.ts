@@ -1,11 +1,11 @@
-import { env as serverEnv } from "env/server.mjs";
-import { NextApiRequest, NextApiResponse } from "next";
-import { buffer } from "micro";
-import Stripe from "stripe";
-import { prisma } from "server/db/client";
-import { stripe } from "server/common/stripe";
 import dayjs from "dayjs";
+import { env as serverEnv } from "env/server.mjs";
+import { buffer } from "micro";
+import type { NextApiRequest, NextApiResponse } from "next";
+import { stripe } from "server/common/stripe";
+import { prisma } from "server/db/client";
 import { RequestCache } from "server/services/RequestCache";
+import type Stripe from "stripe";
 
 const secondsToMsDate = (seconds: number) => new Date(seconds * 1000);
 
@@ -39,7 +39,7 @@ export default async function handleStripeWebhook(
   const sig = req.headers["stripe-signature"];
 
   if (!sig) {
-    return res.status(400).send(`Webhook Error: Missing signature`);
+    return res.status(400).send("Webhook Error: Missing signature");
   }
 
   let event: Stripe.Event;

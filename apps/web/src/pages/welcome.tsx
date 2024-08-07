@@ -1,11 +1,11 @@
-import { Button } from "components/ui/button";
 import { DISCORD_INVITE_URL } from "components/Footer";
 import { Input } from "components/Input";
-import { Select } from "components/Select";
 import { RadioGroupComponent } from "components/RadioGroup";
+import { Select } from "components/Select";
+import { Button } from "components/ui/button";
 import { AnimatePresence, motion } from "framer-motion";
 import { cn } from "lib/utils";
-import { GetServerSideProps, InferGetServerSidePropsType } from "next";
+import type { GetServerSideProps, InferGetServerSidePropsType } from "next";
 import { useSession } from "next-auth/react";
 import Link from "next/link";
 import { useEffect } from "react";
@@ -250,6 +250,7 @@ function Step3() {
         <div className="grid grid-cols-4 gap-4">
           {TECHNOLOGIES.map(({ name, icon: Icon }) => (
             <button
+              key={name}
               type="button"
               className={cn(
                 "flex aspect-square w-full flex-col items-center justify-center space-y-3 rounded-sm border border-gray-100 p-2 transition-colors",
@@ -374,7 +375,7 @@ export const getServerSideProps = (async (ctx) => {
         },
       },
     };
-  } catch (error) {
+  } catch (_error) {
     return {
       redirect: {
         destination: "/login",

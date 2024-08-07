@@ -6,7 +6,7 @@ type Props = {
 };
 
 export function DashboardHeader({ title }: Props) {
-  const trackEvent = useTracking();
+  const _trackEvent = useTracking();
   return (
     <div className="mb-4 flex items-center justify-between">
       <h1 className="text-3xl font-bold">{title}</h1>

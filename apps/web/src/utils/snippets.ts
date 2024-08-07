@@ -1,10 +1,10 @@
-import { Test, Option, FeatureFlag, Environment } from "@prisma/client";
-import prettier from "prettier";
-import path from "path";
-import * as fs from "fs/promises";
-import { getHighlighter } from "shiki";
-import { AbbyConfig, RemoteConfigValueString } from "@tryabby/core";
+import * as fs from "node:fs/promises";
+import path from "node:path";
+import type { FeatureFlag, Option, Test } from "@prisma/client";
+import type { AbbyConfig, RemoteConfigValueString } from "@tryabby/core";
 import { transformDBFlagTypeToclient } from "lib/flags";
+import prettier from "prettier";
+import { getHighlighter } from "shiki";
 
 // Shiki loads languages and themes using "fs" instead of "import", so Next.js
 // doesn't bundle them into production build. To work around, we manually copy
@@ -65,20 +65,26 @@ export async function generateCodeSnippets({
       flags: flags
         .filter((flag) => flag.type === "BOOLEAN")
         .map((flag) => flag.name),
-      remoteConfig: flags.reduce((acc, flag) => {
-        if (flag.type !== "BOOLEAN") {
-          acc[flag.name] = transformDBFlagTypeToclient(
-            flag.type
-          ) as RemoteConfigValueString;
-        }
-        return acc;
-      }, {} as Record<string, RemoteConfigValueString>),
-      tests: tests.reduce((acc, test) => {
-        acc[test.name] = {
-          variants: test.options.map((option) => option.identifier),
-        };
-        return acc;
-      }, {} as Record<string, any>),
+      remoteConfig: flags.reduce(
+        (acc, flag) => {
+          if (flag.type !== "BOOLEAN") {
+            acc[flag.name] = transformDBFlagTypeToclient(
+              flag.type
+            ) as RemoteConfigValueString;
+          }
+          return acc;
+        },
+        {} as Record<string, RemoteConfigValueString>
+      ),
+      tests: tests.reduce(
+        (acc, test) => {
+          acc[test.name] = {
+            variants: test.options.map((option) => option.identifier),
+          };
+          return acc;
+        },
+        {} as NonNullable<AbbyConfig["tests"]>
+      ),
     } as AbbyConfig,
     null,
     2

@@ -1,11 +1,10 @@
-import { Layout } from "components/Layout";
-import { GetServerSideProps, type NextPage } from "next";
+import type { GetServerSideProps, NextPage } from "next";
 import { getSession, useSession } from "next-auth/react";
 import { useRouter } from "next/router";
 import { prisma } from "../../server/db/client";
 
-import { trpc } from "utils/trpc";
 import Link from "next/link";
+import { trpc } from "utils/trpc";
 
 export const getServerSideProps: GetServerSideProps = async (ctx) => {
   const session = await getSession(ctx);
@@ -63,12 +62,17 @@ const Projects: NextPage = () => {
     <main className="flex h-screen w-screen items-center justify-center bg-pink-100">
       <div className="max-w-2xl rounded-md bg-white p-8 text-gray-900 shadow-2xl">
         <div className="mb-12 flex justify-center">
-          <img src={session.user?.image} className="h-24 w-24 rounded-full" />
+          <img
+            src={session.user?.image}
+            className="h-24 w-24 rounded-full"
+            alt=""
+          />
         </div>
         <div className="text-center text-lg">
           <h2>You have been invited to</h2>
           <p className="my-3 text-xl font-bold">{data?.project?.name}</p>
           <button
+            type="button"
             className="rounded-lg bg-gray-900 px-3 py-2 font-semibold text-white transition-transform duration-150 ease-in-out hover:scale-110"
             onClick={acceptInvite}
           >

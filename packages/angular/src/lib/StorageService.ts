@@ -1,8 +1,8 @@
 import {
+  type IStorageService,
   getABStorageKey,
   getFFStorageKey,
   getRCStorageKey,
-  type IStorageService,
 } from "@tryabby/core";
 
 class ABStorageService implements IStorageService {

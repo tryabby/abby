@@ -1,16 +1,11 @@
-import { type NextPage } from "next";
-import { useRouter } from "next/router";
+import type { NextPage } from "next";
 import { checkout } from "pages/api/checkout";
 
-import { trpc } from "utils/trpc";
-
 const Projects: NextPage = () => {
-  const router = useRouter();
-  const { projectId } = router.query;
-
   return (
     <>
       <button
+        type="button"
         onClick={() => {
           checkout({
             lineItems: [

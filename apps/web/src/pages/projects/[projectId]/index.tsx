@@ -3,13 +3,13 @@ import { DashboardHeader } from "components/DashboardHeader";
 import { Layout } from "components/Layout";
 import { FullPageLoadingSpinner } from "components/LoadingSpinner";
 import Section from "components/Test/Section";
+import { Button } from "components/ui/button";
 import { useProjectId } from "lib/hooks/useProjectId";
-import { NextPageWithLayout } from "pages/_app";
+import type { GetStaticPaths, GetStaticProps } from "next";
+import type { NextPageWithLayout } from "pages/_app";
 import { useState } from "react";
 import { AiOutlinePlus } from "react-icons/ai";
 import { trpc } from "utils/trpc";
-import { Button } from "components/ui/button";
-import { GetStaticProps, GetStaticPaths } from "next";
 
 const Projects: NextPageWithLayout = () => {
   const [isCreateTestModalOpen, setIsCreateTestModalOpen] = useState(false);
@@ -59,7 +59,7 @@ const Projects: NextPageWithLayout = () => {
       </div>
       <div className="space-y-8">
         {data?.project?.tests.map((test) => (
-          <Section key={test.id} {...test} events={test.events}></Section>
+          <Section key={test.id} {...test} events={test.events} />
         ))}
       </div>
     </>

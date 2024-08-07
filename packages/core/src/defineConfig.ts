@@ -1,4 +1,4 @@
-import { ABConfig, AbbyConfig, RemoteConfigValueString } from ".";
+import type { ABConfig, AbbyConfig, RemoteConfigValueString } from ".";
 
 export const DYNAMIC_ABBY_CONFIG_KEYS = [
   "projectId",

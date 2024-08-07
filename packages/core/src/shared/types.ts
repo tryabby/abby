@@ -1,8 +1,8 @@
-import { ABConfig, RemoteConfigValue } from "..";
+import type { ABConfig, RemoteConfigValue } from "..";
 
 export enum AbbyEventType {
-  PING,
-  ACT,
+  PING = 0,
+  ACT = 1,
 }
 
 export type AbbyDataResponse = {

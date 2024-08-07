@@ -1,5 +1,5 @@
 import { renderHook } from "@testing-library/react";
-import { PropsWithChildren } from "react";
+import type { PropsWithChildren } from "react";
 import { createAbby } from "../src";
 
 describe("useAbby", () => {
@@ -16,7 +16,9 @@ describe("useAbby", () => {
       },
     });
 
-    const wrapper = ({ children }: PropsWithChildren) => <AbbyProvider>{children}</AbbyProvider>;
+    const wrapper = ({ children }: PropsWithChildren) => (
+      <AbbyProvider>{children}</AbbyProvider>
+    );
 
     const { result } = renderHook(() => useAbby("test"), {
       wrapper,
@@ -39,7 +41,9 @@ describe("useAbby", () => {
       flags: ["flag1"],
     });
 
-    const wrapper = ({ children }: PropsWithChildren) => <AbbyProvider>{children}</AbbyProvider>;
+    const wrapper = ({ children }: PropsWithChildren) => (
+      <AbbyProvider>{children}</AbbyProvider>
+    );
 
     expectTypeOf(useAbby).parameter(0).toEqualTypeOf<"test" | "test2">();
 
@@ -47,7 +51,9 @@ describe("useAbby", () => {
       wrapper,
     });
 
-    expectTypeOf(result.current.variant).toEqualTypeOf<"OldFooter" | "NewFooter">();
+    expectTypeOf(result.current.variant).toEqualTypeOf<
+      "OldFooter" | "NewFooter"
+    >();
 
     expectTypeOf(useFeatureFlag).parameters.toEqualTypeOf<["flag1"]>();
 
@@ -116,7 +122,9 @@ describe("useAbby", () => {
       },
     });
 
-    const wrapper = ({ children }: PropsWithChildren) => <AbbyProvider>{children}</AbbyProvider>;
+    const wrapper = ({ children }: PropsWithChildren) => (
+      <AbbyProvider>{children}</AbbyProvider>
+    );
 
     const { result } = renderHook(
       () =>
@@ -130,6 +138,8 @@ describe("useAbby", () => {
       }
     );
 
-    expectTypeOf(result.current.variant).toEqualTypeOf<"Hello" | "Bonjour" | "Hola">();
+    expectTypeOf(result.current.variant).toEqualTypeOf<
+      "Hello" | "Bonjour" | "Hola"
+    >();
   });
 });

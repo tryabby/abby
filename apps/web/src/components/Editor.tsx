@@ -6,7 +6,19 @@ import {
 } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
 import clsx from "clsx";
-import { AlignCenter, AlignJustify, AlignLeft, AlignRight, Bold, Heading1, Heading2, Heading3, Italic, Pilcrow, Strikethrough } from "lucide-react";
+import {
+  AlignCenter,
+  AlignJustify,
+  AlignLeft,
+  AlignRight,
+  Bold,
+  Heading1,
+  Heading2,
+  Heading3,
+  Italic,
+  Pilcrow,
+  Strikethrough,
+} from "lucide-react";
 import { twMerge } from "tailwind-merge";
 import { Tooltip, TooltipContent, TooltipTrigger } from "./Tooltip";
 
@@ -47,7 +59,10 @@ const MenuBar = ({ editor }: { editor: TipTapEditor | null }) => {
 
         <TooltipTrigger asChild>
           <button
-            onClick={() => editor.chain().focus().toggleHeading({ level: 1 }).run()}
+            type="button"
+            onClick={() =>
+              editor.chain().focus().toggleHeading({ level: 1 }).run()
+            }
             className={getMenuButtonClass({
               roundCorners: "left",
               isActive: editor.isActive("heading", { level: 1 }),
@@ -64,7 +79,10 @@ const MenuBar = ({ editor }: { editor: TipTapEditor | null }) => {
 
         <TooltipTrigger asChild>
           <button
-            onClick={() => editor.chain().focus().toggleHeading({ level: 2 }).run()}
+            type="button"
+            onClick={() =>
+              editor.chain().focus().toggleHeading({ level: 2 }).run()
+            }
             className={getMenuButtonClass({
               isActive: editor.isActive("heading", { level: 2 }),
             })}
@@ -80,7 +98,10 @@ const MenuBar = ({ editor }: { editor: TipTapEditor | null }) => {
 
         <TooltipTrigger asChild>
           <button
-            onClick={() => editor.chain().focus().toggleHeading({ level: 3 }).run()}
+            type="button"
+            onClick={() =>
+              editor.chain().focus().toggleHeading({ level: 3 }).run()
+            }
             className={getMenuButtonClass({
               isActive: editor.isActive("heading", { level: 3 }),
             })}
@@ -96,6 +117,7 @@ const MenuBar = ({ editor }: { editor: TipTapEditor | null }) => {
 
         <TooltipTrigger asChild>
           <button
+            type="button"
             onClick={() => editor.chain().focus().setParagraph().run()}
             className={getMenuButtonClass({
               isActive: editor.isActive("paragraph"),
@@ -105,7 +127,7 @@ const MenuBar = ({ editor }: { editor: TipTapEditor | null }) => {
           </button>
         </TooltipTrigger>
       </Tooltip>
-      <span className="p-2 bg-primary"></span>
+      <span className="bg-primary p-2" />
       <Tooltip>
         <TooltipContent>
           <span>Bold</span>
@@ -113,6 +135,7 @@ const MenuBar = ({ editor }: { editor: TipTapEditor | null }) => {
 
         <TooltipTrigger asChild>
           <button
+            type="button"
             onClick={() => editor.chain().focus().toggleBold().run()}
             className={getMenuButtonClass({
               isActive: editor.isActive("bold"),
@@ -129,6 +152,7 @@ const MenuBar = ({ editor }: { editor: TipTapEditor | null }) => {
 
         <TooltipTrigger asChild>
           <button
+            type="button"
             onClick={() => editor.chain().focus().toggleItalic().run()}
             className={getMenuButtonClass({
               isActive: editor.isActive("italic"),
@@ -145,6 +169,7 @@ const MenuBar = ({ editor }: { editor: TipTapEditor | null }) => {
 
         <TooltipTrigger asChild>
           <button
+            type="button"
             onClick={() => editor.chain().focus().toggleStrike().run()}
             className={getMenuButtonClass({
               isActive: editor.isActive("strike"),
@@ -154,7 +179,7 @@ const MenuBar = ({ editor }: { editor: TipTapEditor | null }) => {
           </button>
         </TooltipTrigger>
       </Tooltip>
-      <span className="p-2 bg-primary"></span>
+      <span className="bg-primary p-2" />
       <Tooltip>
         <TooltipContent>
           <span>Align Left</span>
@@ -162,6 +187,7 @@ const MenuBar = ({ editor }: { editor: TipTapEditor | null }) => {
 
         <TooltipTrigger asChild>
           <button
+            type="button"
             onClick={() => editor.chain().focus().setTextAlign("left").run()}
             className={getMenuButtonClass({
               isActive: editor.isActive({ textAlign: "left" }),
@@ -178,6 +204,7 @@ const MenuBar = ({ editor }: { editor: TipTapEditor | null }) => {
 
         <TooltipTrigger asChild>
           <button
+            type="button"
             onClick={() => editor.chain().focus().setTextAlign("center").run()}
             className={getMenuButtonClass({
               isActive: editor.isActive({ textAlign: "center" }),
@@ -194,6 +221,7 @@ const MenuBar = ({ editor }: { editor: TipTapEditor | null }) => {
 
         <TooltipTrigger asChild>
           <button
+            type="button"
             onClick={() => editor.chain().focus().setTextAlign("right").run()}
             className={getMenuButtonClass({
               isActive: editor.isActive({ textAlign: "right" }),
@@ -210,6 +238,7 @@ const MenuBar = ({ editor }: { editor: TipTapEditor | null }) => {
 
         <TooltipTrigger asChild>
           <button
+            type="button"
             onClick={() => editor.chain().focus().setTextAlign("justify").run()}
             className={getMenuButtonClass({
               isActive: editor.isActive({ textAlign: "justify" }),

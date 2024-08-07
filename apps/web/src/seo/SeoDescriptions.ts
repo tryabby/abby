@@ -9,14 +9,13 @@ export function getSeo(pageName: string, layoutName: Layouts) {
   switch (layoutName) {
     case "Blog":
       return getBlogLayout(pageName);
-    case "Marketing":
     default:
       return getMarketingSeo(pageName);
   }
 }
 
 export function getMarketingSeo(pageName: string): SeoProps {
-  const normalizedKey = pageName.startsWith("/") ? pageName : "/" + pageName;
+  const normalizedKey = pageName.startsWith("/") ? pageName : `/${pageName}`;
   switch (normalizedKey) {
     case "/":
       return {

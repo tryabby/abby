@@ -1,6 +1,6 @@
-import { getTokenFilePath } from "./consts";
-import fs from "fs/promises";
+import fs from "node:fs/promises";
 import { z } from "zod";
+import { getTokenFilePath } from "./consts";
 
 export const tokenFileSchema = z.object({
   token: z.string(),

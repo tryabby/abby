@@ -1,4 +1,5 @@
-import {
+import { FeatureFlagType } from "@prisma/client";
+import type {
   AbbyConfigFile,
   PullAbbyConfigResponse,
   RemoteConfigValueString,
@@ -10,10 +11,9 @@ import {
   transformDBFlagTypeToclient,
 } from "lib/flags";
 import { prisma } from "server/db/client";
-import { TestService } from "./TestService";
+import type { FlagValueString } from "types/flags";
 import { FlagService } from "./FlagService";
-import { FeatureFlagType } from "@prisma/client";
-import { FlagValueString } from "types/flags";
+import { TestService } from "./TestService";
 
 export async function handleGET({ projectId }: { projectId: string }) {
   const projectData = await prisma.project.findUnique({
@@ -37,24 +37,30 @@ export async function handleGET({ projectId }: { projectId: string }) {
     environments: projectData.environments.map(
       (environment) => environment.name
     ),
-    tests: projectData.tests.reduce((acc, test) => {
-      acc[test.name] = {
-        variants: test.options.map((option) => option.identifier),
-      };
-      return acc;
-    }, {} as Record<string, any>),
+    tests: projectData.tests.reduce(
+      (acc, test) => {
+        acc[test.name] = {
+          variants: test.options.map((option) => option.identifier),
+        };
+        return acc;
+      },
+      {} as NonNullable<PullAbbyConfigResponse["tests"]>
+    ),
     flags: projectData.featureFlags
       .filter((flag) => flag.type === FeatureFlagType.BOOLEAN)
       .map((flag) => flag.name),
-    remoteConfig: projectData.featureFlags.reduce((acc, flag) => {
-      if (flag.type !== FeatureFlagType.BOOLEAN) {
-        acc[flag.name] = transformDBFlagTypeToclient(flag.type) as Exclude<
-          FlagValueString,
-          "Boolean"
-        >;
-      }
-      return acc;
-    }, {} as Record<string, RemoteConfigValueString>),
+    remoteConfig: projectData.featureFlags.reduce(
+      (acc, flag) => {
+        if (flag.type !== FeatureFlagType.BOOLEAN) {
+          acc[flag.name] = transformDBFlagTypeToclient(flag.type) as Exclude<
+            FlagValueString,
+            "Boolean"
+          >;
+        }
+        return acc;
+      },
+      {} as Record<string, RemoteConfigValueString>
+    ),
   } satisfies PullAbbyConfigResponse;
 
   return config;
@@ -102,7 +108,7 @@ export async function handlePUT({
           },
         });
 
-        const variants: Array<string> = test["variants"];
+        const variants: Array<string> = test.variants;
         const weightedVariants = variants.map((variant) => ({
           name: variant,
           weight: 1 / variants.length,

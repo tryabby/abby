@@ -1,12 +1,17 @@
-import express from "express";
-import { createAbbyMiddleWare } from "../src/express";
 import { ABBY_AB_STORAGE_PREFIX } from "@tryabby/core";
+import express from "express";
 import request from "supertest";
+import { createAbbyMiddleWare } from "../src/express";
 
 const app = express();
 
 const testVariants = ["OldFooter", "NewFooter"] as const;
-const test2Variants = ["SimonsText", "MatthiasText", "TomsText", "TimsText"] as const;
+const test2Variants = [
+  "SimonsText",
+  "MatthiasText",
+  "TomsText",
+  "TimsText",
+] as const;
 
 const { middleware, abby } = createAbbyMiddleWare({
   environments: [],
@@ -20,7 +25,7 @@ const { middleware, abby } = createAbbyMiddleWare({
   flags: ["flag1", "flag2"],
 });
 
-app.get("/", middleware, (req, res) => {
+app.get("/", middleware, (_req, res) => {
   const flag1 = abby.getFeatureFlag("flag1");
   const flag2 = abby.getFeatureFlag("flag2");
   res.json({
@@ -29,7 +34,7 @@ app.get("/", middleware, (req, res) => {
   });
 });
 
-app.get("/fail", (req, res) => {
+app.get("/fail", (_req, res) => {
   const flag1 = abby.getFeatureFlag("flag1");
   const flag2 = abby.getFeatureFlag("flag2");
   res.json({
@@ -38,7 +43,7 @@ app.get("/fail", (req, res) => {
   });
 });
 
-app.get("/test", middleware, (req, res) => {
+app.get("/test", middleware, (_req, res) => {
   const test = abby.getTestVariant("test");
   const test2 = abby.getTestVariant("test2");
   res.json({

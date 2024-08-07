@@ -1,7 +1,7 @@
 import "@testing-library/jest-dom";
-import { findByText, render, waitFor } from "@testing-library/svelte";
-import testPage from "./pages/+test.svelte";
+import { render, waitFor } from "@testing-library/svelte";
 import { abby } from "./abby";
+import testPage from "./pages/+test.svelte";
 
 import { HttpService } from "@tryabby/core";
 

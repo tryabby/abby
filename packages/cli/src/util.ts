@@ -1,14 +1,13 @@
-import { AbbyConfig, abbyConfigSchema } from "@tryabby/core";
-import { loadConfig } from "unconfig";
-import { config as loadEnv } from "dotenv";
-import path from "path";
-import portFinder from "portfinder";
-import polka from "polka";
-import { ABBY_BASE_URL } from "./consts";
+import fs from "node:fs/promises";
+import path from "node:path";
+import { type AbbyConfig, abbyConfigSchema } from "@tryabby/core";
 import cors from "cors";
-import fs from "fs/promises";
-import { writeFile, loadFile, parseModule } from "magicast";
-import { chownSync } from "fs";
+import { config as loadEnv } from "dotenv";
+import { loadFile, parseModule, writeFile } from "magicast";
+import polka from "polka";
+import portFinder from "portfinder";
+import { loadConfig } from "unconfig";
+import { ABBY_BASE_URL } from "./consts";
 
 export async function loadLocalConfig({
   configPath,
@@ -51,7 +50,8 @@ export async function loadLocalConfig({
   }
   const originalConfig = await fs.readFile(sources[0], "utf-8");
   const mod = await loadFile(sources[0]);
-  if (mod.exports.default.$type !== "function-call") throw new Error("Invalid config file");
+  if (mod.exports.default.$type !== "function-call")
+    throw new Error("Invalid config file");
 
   return {
     config: result.data,
@@ -77,7 +77,7 @@ export async function startServerAndGetToken(host?: string) {
   url.searchParams.set("callbackUrl", `http://localhost:${freePort}`);
   console.log(`Please open the following URL in your Browser: ${url}`);
 
-  return new Promise<string>(async (resolve) => {
+  return new Promise<string>((resolve) => {
     const server = polka()
       .use(
         cors({

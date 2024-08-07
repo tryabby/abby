@@ -91,7 +91,7 @@ export function ChangeFlagForm({
               .filter(
                 ([, flagType]) => isRemoteConfig && flagType !== "BOOLEAN"
               )
-              .map(([key, flagType]) => ({
+              .map(([_key, flagType]) => ({
                 label: (
                   <div
                     className={cn(
@@ -168,7 +168,7 @@ export const AddFeatureFlagModal = ({
   projectId,
   isRemoteConfig,
 }: Props) => {
-  const inputRef = useRef<HTMLInputElement>(null);
+  const _inputRef = useRef<HTMLInputElement>(null);
   const ctx = trpc.useContext();
   const stateRef = useRef<FlagFormValues>();
   const trackEvent = useTracking();
@@ -235,7 +235,9 @@ export const AddFeatureFlagModal = ({
           type: isRemoteConfig ? "STRING" : "BOOLEAN",
           value: isRemoteConfig ? "" : "false",
         }}
-        onChange={(newState) => (stateRef.current = newState)}
+        onChange={(newState) => {
+          stateRef.current = newState;
+        }}
         canChangeType
         isRemoteConfig={isRemoteConfig}
       />

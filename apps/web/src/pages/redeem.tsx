@@ -1,6 +1,6 @@
 import { MarketingLayout } from "components/MarketingLayout";
-import { NextPageWithLayout } from "./_app";
 import Link from "next/link";
+import type { NextPageWithLayout } from "./_app";
 
 const RedemptionPage: NextPageWithLayout = () => {
   return (

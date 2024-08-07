@@ -3,16 +3,15 @@ import { cn } from "lib/utils";
 import { Info } from "lucide-react";
 import { useSession } from "next-auth/react";
 
+import { useTracking } from "lib/tracking";
 import Link from "next/link";
-import { useRouter } from "next/router";
+import { Fragment, useState } from "react";
 import { AiOutlineCheckCircle } from "react-icons/ai";
 import { getLimitByPlan } from "server/common/plans";
-import { Plan } from "types/plausible-events";
+import type { Plan } from "types/plausible-events";
 import { Tooltip, TooltipContent, TooltipTrigger } from "./Tooltip";
-import { useTracking } from "lib/tracking";
-import { Fragment, useState } from "react";
-import { Switch } from "./ui/switch";
 import { Label } from "./ui/label";
+import { Switch } from "./ui/switch";
 
 type PricingElementProps = {
   price: string;
@@ -30,7 +29,6 @@ type PricingElementProps = {
 function PricingElement({
   features,
   price,
-  subtitle,
   title,
   priceSuffix,
   ctaText,

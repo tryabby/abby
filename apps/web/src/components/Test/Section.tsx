@@ -1,22 +1,22 @@
-import { Event, Test } from "@prisma/client";
-import { ReactNode, useId, useState } from "react";
-import { AbbyEventType } from "@tryabby/core";
-import { Serves } from "./Serves";
-import { Metrics } from "./Metrics";
-import Weights from "./Weights";
-import type { ClientOption } from "server/trpc/router/project";
-import { BiInfoCircle } from "react-icons/bi";
+import type { Event, Test } from "@prisma/client";
 import * as Popover from "@radix-ui/react-popover";
-import { AiOutlineDelete } from "react-icons/ai";
-import { trpc } from "utils/trpc";
-import { toast } from "react-hot-toast";
+import { AbbyEventType } from "@tryabby/core";
+import { Modal } from "components/Modal";
+import { TitleEdit } from "components/TitleEdit";
 import { Button } from "components/ui/button";
+import { useFeatureFlag } from "lib/abby";
+import { cn } from "lib/utils";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { useFeatureFlag } from "lib/abby";
-import { TitleEdit } from "components/TitleEdit";
-import { Modal } from "components/Modal";
-import { cn } from "lib/utils";
+import { type ReactNode, useState } from "react";
+import { toast } from "react-hot-toast";
+import { AiOutlineDelete } from "react-icons/ai";
+import { BiInfoCircle } from "react-icons/bi";
+import type { ClientOption } from "server/trpc/router/project";
+import { trpc } from "utils/trpc";
+import { Metrics } from "./Metrics";
+import { Serves } from "./Serves";
+import Weights from "./Weights";
 
 function getBestVariant({
   absPings,
@@ -104,7 +104,7 @@ export const Card = ({
         {tooltip && (
           <Popover.Root>
             <Popover.Trigger asChild>
-              <button>
+              <button type="button">
                 <BiInfoCircle />
               </button>
             </Popover.Trigger>

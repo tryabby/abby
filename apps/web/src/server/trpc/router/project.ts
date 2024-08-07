@@ -1,4 +1,4 @@
-import { Option, ROLE } from "@prisma/client";
+import { type Option, ROLE } from "@prisma/client";
 import { TRPCError } from "@trpc/server";
 import { PLANS, planNameSchema } from "server/common/plans";
 import { stripe } from "server/common/stripe";
@@ -106,6 +106,7 @@ export const projectRouter = router({
             customer: project.stripeCustomerId,
           }
         : {
+            // biome-ignore lint/style/noNonNullAssertion:>
             customer_email: ctx.session.user.email!,
           };
 
@@ -276,7 +277,7 @@ export const projectRouter = router({
       let nextCursor: typeof cursor | undefined = undefined;
       if (logItems.length > limit) {
         const nextItem = logItems.pop();
-        nextCursor = nextItem!.id;
+        nextCursor = nextItem?.id;
       }
       return {
         items: logItems,

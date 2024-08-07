@@ -1,7 +1,7 @@
 import { renderHook } from "@testing-library/react";
-import { NextApiRequest, NextApiResponse } from "next";
-import { NextFetchEvent, NextRequest, NextResponse } from "next/server";
-import { PropsWithChildren } from "react";
+import type { NextApiRequest, NextApiResponse } from "next";
+import type { NextFetchEvent, NextRequest, NextResponse } from "next/server";
+import type { PropsWithChildren } from "react";
 import { createAbby } from "../src";
 
 const OLD_ENV = process.env;
@@ -17,7 +17,12 @@ afterAll(() => {
 
 describe("useAbby", () => {
   it("returns the correct types", () => {
-    const test2Variants = ["SimonsText", "MatthiasText", "TomsText", "TimsText"] as const;
+    const test2Variants = [
+      "SimonsText",
+      "MatthiasText",
+      "TomsText",
+      "TimsText",
+    ] as const;
 
     const { AbbyProvider, useAbby } = createAbby({
       environments: [""],
@@ -31,7 +36,9 @@ describe("useAbby", () => {
       },
     });
 
-    const wrapper = ({ children }: PropsWithChildren) => <AbbyProvider>{children}</AbbyProvider>;
+    const wrapper = ({ children }: PropsWithChildren) => (
+      <AbbyProvider>{children}</AbbyProvider>
+    );
 
     const { result: test1Result } = renderHook(() => useAbby("test"), {
       wrapper,
@@ -60,7 +67,9 @@ describe("useFeatureFlag", () => {
       flags: ["test"],
     });
 
-    const wrapper = ({ children }: PropsWithChildren) => <AbbyProvider>{children}</AbbyProvider>;
+    const wrapper = ({ children }: PropsWithChildren) => (
+      <AbbyProvider>{children}</AbbyProvider>
+    );
 
     renderHook(() => useFeatureFlag("test"), {
       wrapper,
@@ -69,7 +78,7 @@ describe("useFeatureFlag", () => {
 
   // TODO: the types don't work for this yet
   it.skip("has the correct type for devOverrides", () => {
-    const { useAbby } = createAbby({
+    createAbby({
       environments: [],
       projectId: "123",
       currentEnvironment: "test",
@@ -122,7 +131,9 @@ describe("useFeatureFlag", () => {
     // on server -> res is NextApiResponse
     const [, setCookieOnServer] = getABTestValue("a", {} as NextApiRequest);
 
-    expectTypeOf(setCookieOnServer).toEqualTypeOf<(res: NextApiResponse) => void>();
+    expectTypeOf(setCookieOnServer).toEqualTypeOf<
+      (res: NextApiResponse) => void
+    >();
   });
 
   // we only need typesafety here
@@ -133,13 +144,17 @@ describe("useFeatureFlag", () => {
       currentEnvironment: "test",
     });
 
-    const edgeHandler = withAbbyEdge((req) => {});
+    const edgeHandler = withAbbyEdge((_req) => {});
 
-    expectTypeOf(edgeHandler).parameters.toEqualTypeOf<[NextRequest, NextFetchEvent]>();
+    expectTypeOf(edgeHandler).parameters.toEqualTypeOf<
+      [NextRequest, NextFetchEvent]
+    >();
 
-    const apiHandler = withAbbyApiHandler((req, res) => {});
+    const apiHandler = withAbbyApiHandler((_req, _res) => {});
 
-    expectTypeOf(apiHandler).parameters.toEqualTypeOf<[NextApiRequest, NextApiResponse]>();
+    expectTypeOf(apiHandler).parameters.toEqualTypeOf<
+      [NextApiRequest, NextApiResponse]
+    >();
   });
 });
 
@@ -156,19 +171,32 @@ describe("useRemoteConfig", () => {
       },
     });
 
-    expectTypeOf(useRemoteConfig).parameter(0).toEqualTypeOf<"stringRc" | "numberRc" | "jsonRc">();
+    expectTypeOf(useRemoteConfig)
+      .parameter(0)
+      .toEqualTypeOf<"stringRc" | "numberRc" | "jsonRc">();
 
-    const wrapper = ({ children }: PropsWithChildren) => <AbbyProvider>{children}</AbbyProvider>;
+    const wrapper = ({ children }: PropsWithChildren) => (
+      <AbbyProvider>{children}</AbbyProvider>
+    );
 
-    const { result: stringRcResult } = renderHook(() => useRemoteConfig("stringRc"), {
-      wrapper,
-    });
-    const { result: numberRcResult } = renderHook(() => useRemoteConfig("numberRc"), {
-      wrapper,
-    });
-    const { result: jsonRcResult } = renderHook(() => useRemoteConfig("jsonRc"), {
-      wrapper,
-    });
+    const { result: stringRcResult } = renderHook(
+      () => useRemoteConfig("stringRc"),
+      {
+        wrapper,
+      }
+    );
+    const { result: numberRcResult } = renderHook(
+      () => useRemoteConfig("numberRc"),
+      {
+        wrapper,
+      }
+    );
+    const { result: jsonRcResult } = renderHook(
+      () => useRemoteConfig("jsonRc"),
+      {
+        wrapper,
+      }
+    );
 
     expectTypeOf(stringRcResult.current).toEqualTypeOf<string>();
     expectTypeOf(numberRcResult.current).toEqualTypeOf<number>();

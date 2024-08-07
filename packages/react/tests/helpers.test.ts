@@ -1,4 +1,4 @@
-import { getWeightedRandomVariant, getRandomDecimal } from "../src/helpers";
+import { getRandomDecimal, getWeightedRandomVariant } from "../src/helpers";
 
 describe("getWeightedRandomVariant", () => {
   it("should only return valid values", () => {

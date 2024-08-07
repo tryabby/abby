@@ -1,7 +1,4 @@
-import React, {
-  type PropsWithChildren,
-  type ComponentPropsWithoutRef,
-} from "react";
+import type React from "react";
 import { twMerge } from "tailwind-merge";
 
 interface ButtonProps<T extends React.ElementType = React.ElementType> {

@@ -11,7 +11,7 @@ import {
   CardTitle,
 } from "components/ui/card";
 import {
-  ChartConfig,
+  type ChartConfig,
   ChartContainer,
   ChartLegend,
   ChartLegendContent,
@@ -40,16 +40,16 @@ export function EventGraph({
   interval: string;
 }) {
   const chartConfig = React.useMemo(() => {
-    const variantsConfig = variants.reduce((acc, variant, index) => {
-      acc[variant] = {
-        label: variant,
-        color: `hsl(var(--chart-${index + 1}))`,
-      };
-      return acc;
-    }, {} as Record<string, { label: string; color: string }>) as Record<
-      string,
-      { label: string; color: string }
-    >;
+    const variantsConfig = variants.reduce(
+      (acc, variant, index) => {
+        acc[variant] = {
+          label: variant,
+          color: `hsl(var(--chart-${index + 1}))`,
+        };
+        return acc;
+      },
+      {} as Record<string, { label: string; color: string }>
+    ) as Record<string, { label: string; color: string }>;
 
     return {
       visitors: {
@@ -76,6 +76,7 @@ export function EventGraph({
             <defs>
               {variants.map((variant) => (
                 <linearGradient
+                  key={variant}
                   id={`fill${variant}`}
                   x1="0"
                   y1="0"
@@ -115,6 +116,7 @@ export function EventGraph({
             />
             {variants.map((variant) => (
               <Area
+                key={variant}
                 dataKey={variant}
                 type="natural"
                 fill={`url(#fill${variant})`}

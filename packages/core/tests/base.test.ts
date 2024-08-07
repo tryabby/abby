@@ -43,7 +43,11 @@ describe("Abby", () => {
       },
     });
 
-    abby.init({ flags: [], tests: [{ name: "a", weights: [0, 1] }], remoteConfig: [] });
+    abby.init({
+      flags: [],
+      tests: [{ name: "a", weights: [0, 1] }],
+      remoteConfig: [],
+    });
     // const variant = abby.getTestVariant("a");
     expect(abby.getTestVariant("a")).toBe(variants[1]);
   });
@@ -250,7 +254,11 @@ describe("Abby", () => {
       flags: ["flag1"],
     });
 
-    abby.init({ flags: [{ name: "flag1", value: true }], tests: [], remoteConfig: [] });
+    abby.init({
+      flags: [{ name: "flag1", value: true }],
+      tests: [],
+      remoteConfig: [],
+    });
 
     expect(abby.getFeatureFlag("flag1")).toBe(true);
 
@@ -267,7 +275,11 @@ describe("Abby", () => {
       remoteConfig: { remoteConfig1: "String" },
     });
 
-    abby.init({ flags: [], tests: [], remoteConfig: [{ name: "remoteConfig1", value: "foo" }] });
+    abby.init({
+      flags: [],
+      tests: [],
+      remoteConfig: [{ name: "remoteConfig1", value: "foo" }],
+    });
 
     expect(abby.getRemoteConfig("remoteConfig1")).toBe("foo");
 
@@ -339,7 +351,7 @@ describe("Abby", () => {
     });
     expect(abby.getRemoteConfigVariables()).toEqual(configInit);
 
-    const d = abby.getRemoteConfigVariables();
+    const _d = abby.getRemoteConfigVariables();
   });
 });
 

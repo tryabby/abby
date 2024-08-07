@@ -1,8 +1,8 @@
-import { AbbyDataResponse, HttpService } from "@tryabby/core";
+import { type AbbyDataResponse, HttpService } from "@tryabby/core";
 
-import type { ZoneCache } from "./cache";
-import { Context } from "hono";
+import type { Context } from "hono";
 import { endTime, startTime } from "hono/timing";
+import type { ZoneCache } from "./cache";
 
 export class ConfigService {
   constructor(

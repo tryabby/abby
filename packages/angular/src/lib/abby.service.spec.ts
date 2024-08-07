@@ -1,13 +1,13 @@
-import { ComponentFixture, TestBed } from "@angular/core/testing";
+import { type ComponentFixture, TestBed } from "@angular/core/testing";
 
-import { AbbyService } from "./abby.service";
 import { AbbyModule } from "./abby.module";
+import { AbbyService } from "./abby.service";
 
 import { Component, Injectable } from "@angular/core";
-import { TestStorageService } from "./StorageService";
+import type { Routes } from "@angular/router";
 import type { AbbyConfig } from "@tryabby/core";
 import { zip } from "rxjs";
-import { Routes } from "@angular/router";
+import { TestStorageService } from "./StorageService";
 
 const mockConfig = {
   projectId: "mock-project-id",
@@ -79,6 +79,7 @@ const mockedData = {
     { name: "overwrittenRemoteConfig", value: "foobar" },
   ],
 };
+// biome-ignore lint/suspicious/noExportsInTest:>
 @Injectable({
   providedIn: "root",
   useExisting: AbbyService,
@@ -183,7 +184,7 @@ describe("AbbyService", () => {
 
   it("should use the persistedValue", () => {
     const persistedValue = "A";
-    const variants = ["A", "B", "C", "D"];
+    const _variants = ["A", "B", "C", "D"];
 
     const getSpy = spyOn(TestStorageService, "get");
     const setSpy = spyOn(TestStorageService, "set");
@@ -227,45 +228,46 @@ describe("AbbyService", () => {
 
     let routes: Routes = [];
 
-    zip(service.getVariant("test"), service.getFeatureFlagValue("flag1")).subscribe(
-      ([angularTest, angularFlag]) => {
-        routes = [
-          service.getRouterVariant(angularTest, {
-            path: "test",
-            outlet: "test",
-            abbyVariants: {
-              A: {
-                title: "TEST A",
-                component: ATestComponent,
-              },
-              B: {
-                title: "TEST B",
-                component: BTestComponent,
-              },
-              C: {
-                title: "TEST C",
-                component: CTestComponent,
-              },
-              D: {
-                title: "TEST D",
-                component: DTestComponent,
-              },
+    zip(
+      service.getVariant("test"),
+      service.getFeatureFlagValue("flag1")
+    ).subscribe(([angularTest, angularFlag]) => {
+      routes = [
+        service.getRouterVariant(angularTest, {
+          path: "test",
+          outlet: "test",
+          abbyVariants: {
+            A: {
+              title: "TEST A",
+              component: ATestComponent,
             },
-          }),
-          ...(angularFlag
-            ? [
-                {
-                  path: "flag",
-                  title: "Flag",
-                  component: FlagComponent,
-                },
-              ]
-            : []),
-        ];
+            B: {
+              title: "TEST B",
+              component: BTestComponent,
+            },
+            C: {
+              title: "TEST C",
+              component: CTestComponent,
+            },
+            D: {
+              title: "TEST D",
+              component: DTestComponent,
+            },
+          },
+        }),
+        ...(angularFlag
+          ? [
+              {
+                path: "flag",
+                title: "Flag",
+                component: FlagComponent,
+              },
+            ]
+          : []),
+      ];
 
-        expect(routes).not.toEqual([]);
-      }
-    );
+      expect(routes).not.toEqual([]);
+    });
   });
 
   it("returns the correct possible variant values", () => {
@@ -276,9 +278,9 @@ describe("AbbyService", () => {
 
   it("directives should work", () => {
     const compiled = fixture.nativeElement as HTMLElement;
-    let flagElement = compiled.querySelector("h1");
-    let testAElement = compiled.querySelector("h2");
-    let testBElement = compiled.querySelector("h3");
+    const flagElement = compiled.querySelector("h1");
+    const testAElement = compiled.querySelector("h2");
+    const _testBElement = compiled.querySelector("h3");
 
     if (flagElement) {
       expect(flagElement.textContent).toEqual("Flag 1");
@@ -290,7 +292,7 @@ describe("AbbyService", () => {
 
   it("evaluates flag directives with property bound values", () => {
     const compiled = fixture.nativeElement as HTMLElement;
-    let flagElement = compiled.querySelector("h4");
+    const flagElement = compiled.querySelector("h4");
     expect(flagElement?.textContent).toEqual("Dynamic Flag");
   });
 });

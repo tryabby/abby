@@ -27,7 +27,9 @@ describe("defineConfig", () => {
     expectTypeOf(abby.getFeatureFlag("a")).toEqualTypeOf<boolean>();
     expectTypeOf(abby.getRemoteConfig("b")).toEqualTypeOf<string>();
     expectTypeOf(abby.getRemoteConfig("c")).toEqualTypeOf<number>();
-    expectTypeOf(abby.getRemoteConfig("d")).toEqualTypeOf<Record<string, unknown>>();
+    expectTypeOf(abby.getRemoteConfig("d")).toEqualTypeOf<
+      Record<string, unknown>
+    >();
 
     expectTypeOf(abby.getVariants).parameter(0).toEqualTypeOf<"abTest">();
   });

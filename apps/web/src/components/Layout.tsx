@@ -1,24 +1,24 @@
+import { DOCS_URL } from "@tryabby/core";
+import { Button } from "components/ui/button";
 import { useProjectId } from "lib/hooks/useProjectId";
+import { useTracking } from "lib/tracking";
+import { Book, HelpCircle, Mail, Video } from "lucide-react";
 import { NextSeo } from "next-seo";
-import { ReactNode } from "react";
+import Link from "next/link";
+import type { ReactNode } from "react";
+import { FaDiscord } from "react-icons/fa";
 import { twMerge } from "tailwind-merge";
 import { trpc } from "../utils/trpc";
-import { AppNav } from "./app/AppNav";
-import { UserNav } from "./app/UserNav";
-import ProjectSwitcher from "./ProjectSwitcher";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "./DropdownMenu";
-import { Button } from "components/ui/button";
-import { DOCS_URL } from "@tryabby/core";
-import { HelpCircle, Book, Mail, Video } from "lucide-react";
-import { FaDiscord } from "react-icons/fa";
 import { DISCORD_INVITE_URL } from "./Footer";
-import { useTracking } from "lib/tracking";
-import Link from "next/link";
+import ProjectSwitcher from "./ProjectSwitcher";
+import { AppNav } from "./app/AppNav";
+import { UserNav } from "./app/UserNav";
 
 export const Layout = ({ children }: { children: ReactNode }) => {
   const trackEvent = useTracking();

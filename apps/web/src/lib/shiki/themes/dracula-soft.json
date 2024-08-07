@@ -478,7 +478,12 @@
     },
     {
       "name": "Comments",
-      "scope": ["comment", "punctuation.definition.comment", "unused.comment", "wildcard.comment"],
+      "scope": [
+        "comment",
+        "punctuation.definition.comment",
+        "unused.comment",
+        "wildcard.comment"
+      ],
       "settings": {
         "foreground": "#7b7f8b"
       }
@@ -504,7 +509,9 @@
     },
     {
       "name": "JSDoc-style type brackets",
-      "scope": ["comment.block.documentation entity.name.type punctuation.definition.bracket"],
+      "scope": [
+        "comment.block.documentation entity.name.type punctuation.definition.bracket"
+      ],
       "settings": {
         "foreground": "#97e1f1"
       }
@@ -526,7 +533,11 @@
     },
     {
       "name": "Constant escape sequences",
-      "scope": ["constant.character.escape", "constant.character.string.escape", "constant.regexp"],
+      "scope": [
+        "constant.character.escape",
+        "constant.character.string.escape",
+        "constant.regexp"
+      ],
       "settings": {
         "foreground": "#f286c4"
       }
@@ -633,7 +644,11 @@
     },
     {
       "name": "Built-in magic functions and constants",
-      "scope": ["support.function.magic", "support.variable", "variable.other.predefined"],
+      "scope": [
+        "support.function.magic",
+        "support.variable",
+        "variable.other.predefined"
+      ],
       "settings": {
         "fontStyle": "regular",
         "foreground": "#bf9eee"
@@ -876,7 +891,10 @@
     },
     {
       "name": "String quotes (temporary vscode fix)",
-      "scope": ["punctuation.definition.string.begin", "punctuation.definition.string.end"],
+      "scope": [
+        "punctuation.definition.string.begin",
+        "punctuation.definition.string.end"
+      ],
       "settings": {
         "foreground": "#dee492"
       }

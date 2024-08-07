@@ -1,4 +1,4 @@
-import { CreateNextContextOptions } from "@trpc/server/adapters/next";
+import type { CreateNextContextOptions } from "@trpc/server/adapters/next";
 import { Avatar } from "components/Avatar";
 import { DashboardButton } from "components/DashboardButton";
 import {
@@ -10,21 +10,20 @@ import { Input } from "components/Input";
 import { Layout } from "components/Layout";
 import { FullPageLoadingSpinner } from "components/LoadingSpinner";
 import { Modal } from "components/Modal";
+import { Button } from "components/ui/button";
 import { ArrowLeft } from "lucide-react";
-import { GetServerSideProps } from "next";
+import type { GetServerSideProps } from "next";
 import { useRouter } from "next/router";
 import { useRef, useState } from "react";
 import { toast } from "react-hot-toast";
 import { BsX } from "react-icons/bs";
 import { getSSRTrpc } from "server/trpc/helpers";
 import { trpc } from "utils/trpc";
-import { NextPageWithLayout } from "../_app";
-import { Button } from "components/ui/button";
+import type { NextPageWithLayout } from "../_app";
 
 const CreateApiKeyModal = ({
   isOpen,
   onClose,
-  name,
   apiKey,
 }: {
   isOpen: boolean;
@@ -264,6 +263,7 @@ const ProfilePage: NextPageWithLayout = () => {
                     placeholder="API Key name"
                   />{" "}
                   <button
+                    type="button"
                     onClick={async () => {
                       const name =
                         apiKeyNameRef.current?.value ?? "New Api Key";

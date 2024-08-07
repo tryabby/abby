@@ -3,7 +3,7 @@ import {
   ABBY_FF_STORAGE_PREFIX,
   ABBY_RC_STORAGE_PREFIX,
 } from "./constants";
-import { RemoteConfigValue, RemoteConfigValueString } from "./schemas";
+import type { RemoteConfigValue, RemoteConfigValueString } from "./schemas";
 
 export function getABStorageKey(projectId: string, testName: string): string {
   return `${ABBY_AB_STORAGE_PREFIX}${projectId}_${testName}`;
@@ -13,11 +13,14 @@ export function getFFStorageKey(projectId: string, flagName: string): string {
   return `${ABBY_FF_STORAGE_PREFIX}${projectId}_${flagName}`;
 }
 
-export function getRCStorageKey(projectId: string, remoteConfigName: string): string {
+export function getRCStorageKey(
+  projectId: string,
+  remoteConfigName: string
+): string {
   return `${ABBY_RC_STORAGE_PREFIX}${projectId}_${remoteConfigName}`;
 }
 
-export function assertUnreachable(x: never): never {
+export function assertUnreachable(_x: never): never {
   throw new Error("Reached unreachable code");
 }
 
@@ -32,7 +35,7 @@ export function remoteConfigStringToType({
     case "String":
       return stringifiedValue;
     case "Number":
-      return parseInt(stringifiedValue, 10);
+      return Number.parseInt(stringifiedValue, 10);
     case "JSON":
       return JSON.parse(stringifiedValue);
     default:

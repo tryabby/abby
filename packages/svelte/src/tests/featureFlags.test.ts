@@ -1,8 +1,8 @@
-import { createAbby } from "../lib/createAbby";
 import { get } from "svelte/store";
-import { it, describe, expect } from "vitest";
+import { describe, expect, it } from "vitest";
+import { createAbby } from "../lib/createAbby";
 
-const OLD_ENV = process.env;
+const _OLD_ENV = process.env;
 
 describe("featureFlags working", () => {
   it("should return the correct feature flags", async () => {
