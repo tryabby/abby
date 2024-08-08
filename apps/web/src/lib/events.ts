@@ -86,25 +86,28 @@ export function getBaseEventsByInterval(
   );
   switch (interval) {
     case TIME_INTERVAL.DAY: {
-      const baseData = dayjs().set("minute", 0);
+      const baseData = dayjs().startOf("day");
       return [0, 3, 6, 9, 12, 15, 18, 21].map((hour) => ({
-        date: baseData.set("hour", hour).toDate(),
+        date: baseData.set("hour", hour).toISOString(),
         ...variantData,
       }));
     }
     case "30d": {
       return Array.from({ length: 30 }, (_, i) => ({
-        date: dayjs().subtract(i, "day").toDate(),
+        date: dayjs().subtract(i, "day").startOf("day").toISOString(),
         ...variantData,
-      })).reverse();
+      })).toReversed();
     }
     case TIME_INTERVAL.ALL_TIME: {
       const diff = dayjs().diff(dayjs(firstEventDate), "month");
 
       return Array.from({ length: Math.max(diff, 6) }, (_, i) => ({
-        date: dayjs(firstEventDate).add(i, "month").toDate(),
+        date: dayjs(firstEventDate)
+          .add(i, "month")
+          .startOf("day")
+          .toISOString(),
         ...variantData,
-      })).reverse();
+      })).toReversed();
     }
   }
 }

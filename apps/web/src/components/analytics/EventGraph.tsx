@@ -22,8 +22,8 @@ import dayjs from "dayjs";
 import { getFormattingByInterval } from "lib/events";
 
 type EventList = Array<{
-  date: Date;
-  [key: string]: Date | string;
+  date: string;
+  [key: string]: string;
 }>;
 
 export function EventGraph({

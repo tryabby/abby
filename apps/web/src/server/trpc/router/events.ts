@@ -64,9 +64,9 @@ export const eventRouter = router({
           // round by 3 hours
           const hour = Math.floor(date.hour() / 3) * 3;
 
-          return date.set("hour", hour).set("minute", 0).toDate();
+          return date.set("hour", hour).set("minute", 0).toISOString();
         }
-        return date.startOf("day").toDate();
+        return date.startOf("day").toISOString();
       });
 
       const baseEvents =
@@ -75,6 +75,8 @@ export const eventRouter = router({
           potentialVariants,
           events[0]?.createdAt ?? new Date()
         ) ?? [];
+
+      console.dir(baseEvents, { depth: null });
 
       const pingEvents = uniqBy(
         [
@@ -104,8 +106,8 @@ export const eventRouter = router({
         ],
         (e) => e.date
       ) as Array<{
-        date: Date;
-        [key: string]: Date | string;
+        date: string;
+        [key: string]: string;
       }>;
 
       const actEvents = uniqBy(
@@ -133,8 +135,8 @@ export const eventRouter = router({
         ],
         (e) => e.date
       ) as Array<{
-        date: Date;
-        [key: string]: Date | string;
+        date: string;
+        [key: string]: string;
       }>;
 
       return { currentTest, pingEvents, actEvents, potentialVariants };

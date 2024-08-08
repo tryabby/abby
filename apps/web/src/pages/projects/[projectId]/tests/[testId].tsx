@@ -31,7 +31,7 @@ const TestDetailPage: NextPageWithLayout = () => {
       ? intervalParam
       : INTERVALS[1].value;
 
-  const testQuery = trpc.events.getEventsByTestId.useQuery(
+  const getEventsQuery = trpc.events.getEventsByTestId.useQuery(
     {
       testId,
       interval,
@@ -41,7 +41,7 @@ const TestDetailPage: NextPageWithLayout = () => {
     }
   );
 
-  if (testQuery.isLoading || testQuery.isError) {
+  if (getEventsQuery.isLoading || getEventsQuery.isError) {
     return <LoadingSpinner />;
   }
 
@@ -60,7 +60,7 @@ const TestDetailPage: NextPageWithLayout = () => {
           </Button>
         </Link>
         <h1 className="justify-self-end text-2xl font-bold text-pink-100 md:justify-self-auto">
-          {testQuery.data.currentTest.name}
+          {getEventsQuery.data.currentTest.name}
         </h1>
         <div className="col-span-2 w-48 justify-self-end md:col-span-1">
           <Select
@@ -104,15 +104,15 @@ const TestDetailPage: NextPageWithLayout = () => {
         <EventGraph
           title="Visits"
           subtitle="The amount of times a user has seen this test"
-          events={testQuery.data.pingEvents ?? []}
-          variants={testQuery.data.potentialVariants}
+          events={getEventsQuery.data.pingEvents ?? []}
+          variants={getEventsQuery.data.potentialVariants}
           interval={interval}
         />
         <EventGraph
           title="Conversions"
           subtitle="The amount of times a user has converted in this test"
-          events={testQuery.data.actEvents ?? []}
-          variants={testQuery.data.potentialVariants}
+          events={getEventsQuery.data.actEvents ?? []}
+          variants={getEventsQuery.data.potentialVariants}
           interval={interval}
         />
       </div>
