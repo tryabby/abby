@@ -30,10 +30,14 @@ export const projectRouter = router({
         },
         include: {
           tests: {
-            include: { options: true, events: true },
-            where: {
-              createdAt: {
-                gte: new Date(Date.now() - ms("30d")),
+            include: {
+              options: true,
+              events: {
+                where: {
+                  createdAt: {
+                    gte: new Date(Date.now() - ms("30d")),
+                  },
+                },
               },
             },
           },
