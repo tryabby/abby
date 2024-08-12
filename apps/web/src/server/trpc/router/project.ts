@@ -13,6 +13,7 @@ export type ClientOption = Omit<Option, "chance"> & {
 
 import { updateProjectsOnSession } from "utils/updateSession";
 import { protectedProcedure, router } from "../trpc";
+import ms from "ms";
 
 export const projectRouter = router({
   getProjectData: protectedProcedure
@@ -30,6 +31,11 @@ export const projectRouter = router({
         include: {
           tests: {
             include: { options: true, events: true },
+            where: {
+              createdAt: {
+                gte: new Date(Date.now() - ms("30d")),
+              },
+            },
           },
           environments: true,
           featureFlags: true,

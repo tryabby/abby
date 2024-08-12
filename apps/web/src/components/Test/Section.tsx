@@ -222,7 +222,7 @@ const Section = ({
         >
           <Metrics
             options={options}
-            pingEvents={events.filter(
+            actEvents={events.filter(
               (event) => event.type === AbbyEventType.ACT
             )}
           />
