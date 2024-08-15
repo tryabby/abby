@@ -13,7 +13,11 @@
   import Modal from "./components/Modal.svelte";
   import { getShowDevtools, setShowDevtools } from "./lib/storage";
 
-  export let position: "top-left" | "top-right" | "bottom-left" | "bottom-right" = "bottom-right";
+  export let position:
+    | "top-left"
+    | "top-right"
+    | "bottom-left"
+    | "bottom-right" = "bottom-right";
 
   export let defaultShow = false;
 
@@ -76,10 +80,18 @@
     in:send={{ key }}
     out:receive={{ key }}
     id="abby-devtools"
-    style:--right={position === "top-right" || position === "bottom-right" ? "1rem" : "auto"}
-    style:--bottom={position === "bottom-left" || position === "bottom-right" ? "1rem" : "auto"}
-    style:--left={position === "top-left" || position === "bottom-left" ? "1rem" : "auto"}
-    style:--top={position === "top-left" || position === "top-right" ? "1rem" : "auto"}
+    style:--right={position === "top-right" || position === "bottom-right"
+      ? "1rem"
+      : "auto"}
+    style:--bottom={position === "bottom-left" || position === "bottom-right"
+      ? "1rem"
+      : "auto"}
+    style:--left={position === "top-left" || position === "bottom-left"
+      ? "1rem"
+      : "auto"}
+    style:--top={position === "top-left" || position === "top-right"
+      ? "1rem"
+      : "auto"}
   >
     <div class="header">
       <h1 class="logo">Abby Devtools</h1>
@@ -98,10 +110,13 @@
       {#each Object.entries(flags) as [flagName, flagValue]}
         <Switch
           id={flagName}
-          label={flagName}
+          label={abby.__internal_getNameMatch(flagName, "flags")}
           checked={flagValue}
           onChange={(newValue) => {
-            window.postMessage({ type: "abby:update-flag", flagName, newValue }, "*");
+            window.postMessage(
+              { type: "abby:update-flag", flagName, newValue },
+              "*"
+            );
             abby.updateFlag(flagName, newValue);
           }}
         />
@@ -112,11 +127,17 @@
         {#if typeof remoteConfigValue === "string" || typeof remoteConfigValue === "number"}
           <Input
             id={remoteConfigName}
-            label={remoteConfigName}
+            label={abby.__internal_getNameMatch(
+              remoteConfigName,
+              "remoteConfig"
+            )}
             type={typeof remoteConfigValue === "string" ? "text" : "number"}
             value={remoteConfigValue}
             onChange={(newValue) => {
-              window.postMessage({ type: "abby:update-flag", remoteConfigName, newValue }, "*");
+              window.postMessage(
+                { type: "abby:update-flag", remoteConfigName, newValue },
+                "*"
+              );
               abby.updateRemoteConfig(remoteConfigName, newValue);
             }}
           />
@@ -126,7 +147,10 @@
             <Modal
               value={remoteConfigValue}
               onChange={(newValue) => {
-                window.postMessage({ type: "abby:update-flag", remoteConfigName, newValue }, "*");
+                window.postMessage(
+                  { type: "abby:update-flag", remoteConfigName, newValue },
+                  "*"
+                );
                 abby.updateRemoteConfig(remoteConfigName, newValue);
               }}
             />
@@ -137,14 +161,17 @@
       <h2>A/B Tests:</h2>
       {#each Object.entries(tests) as [testName, { selectedVariant, variants }]}
         <Select
-          label={testName}
+          label={abby.__internal_getNameMatch(testName, "tests")}
           value={selectedVariant}
           options={variants.map((v) => ({
             label: v,
             value: v,
           }))}
           onChange={(newValue) => {
-            window.postMessage({ type: "abby:select-variant", testName, newValue }, "*");
+            window.postMessage(
+              { type: "abby:select-variant", testName, newValue },
+              "*"
+            );
             abby.updateLocalVariant(testName, newValue);
           }}
         />
@@ -158,10 +185,18 @@
     out:receive={{ key }}
     on:click={onToggleVisibility}
     id="abby-devtools-collapsed"
-    style:--right={position === "top-right" || position === "bottom-right" ? "1rem" : "auto"}
-    style:--bottom={position === "bottom-left" || position === "bottom-right" ? "1rem" : "auto"}
-    style:--left={position === "top-left" || position === "bottom-left" ? "1rem" : "auto"}
-    style:--top={position === "top-left" || position === "top-right" ? "1rem" : "auto"}
+    style:--right={position === "top-right" || position === "bottom-right"
+      ? "1rem"
+      : "auto"}
+    style:--bottom={position === "bottom-left" || position === "bottom-right"
+      ? "1rem"
+      : "auto"}
+    style:--left={position === "top-left" || position === "bottom-left"
+      ? "1rem"
+      : "auto"}
+    style:--top={position === "top-left" || position === "top-right"
+      ? "1rem"
+      : "auto"}
   >
     Ab
   </button>
@@ -180,8 +215,8 @@
     font-weight: bold;
     font-size: 20px;
     background: #121929;
-    font-family: ui-monospace, "Cascadia Code", "Source Code Pro", Menlo, Consolas,
-      "DejaVu Sans Mono", monospace;
+    font-family: ui-monospace, "Cascadia Code", "Source Code Pro", Menlo,
+      Consolas, "DejaVu Sans Mono", monospace;
 
     width: 50px;
     height: 50px;
@@ -197,8 +232,8 @@
 
   #abby-devtools {
     --pink: rgb(249, 168, 212);
-    font-family: ui-monospace, "Cascadia Code", "Source Code Pro", Menlo, Consolas,
-      "DejaVu Sans Mono", monospace;
+    font-family: ui-monospace, "Cascadia Code", "Source Code Pro", Menlo,
+      Consolas, "DejaVu Sans Mono", monospace;
     position: fixed;
     bottom: var(--bottom);
     right: var(--right);

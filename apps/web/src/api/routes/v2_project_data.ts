@@ -1,5 +1,10 @@
 import { zValidator } from "@hono/zod-validator";
-import { ABBY_WINDOW_KEY, type AbbyDataResponse } from "@tryabby/core";
+import {
+  ABBY_WINDOW_KEY,
+  type AbbyData,
+  hashStringToInt32,
+  serializeAbbyData,
+} from "@tryabby/core";
 import { type Context, Hono } from "hono";
 import { cors } from "hono/cors";
 import { endTime, startTime, timing } from "hono/timing";
@@ -24,17 +29,17 @@ async function getAbbyResponseWithCache({
   const cachedConfig = ConfigCache.getConfig({
     environment,
     projectId,
-    apiVersion: "v1",
+    apiVersion: "v2",
   });
   endTime(c, "readCache");
 
   c.header(X_ABBY_CACHE_HEADER, cachedConfig !== undefined ? "HIT" : "MISS");
   if (cachedConfig) {
-    return cachedConfig;
+    return serializeAbbyData(cachedConfig as AbbyData);
   }
 
   startTime(c, "db");
-  const [tests, flags] = await Promise.all([
+  const [dbTests, dbFlags] = await Promise.all([
     prisma.test.findMany({
       where: {
         projectId,
@@ -53,39 +58,39 @@ async function getAbbyResponseWithCache({
   ]);
   endTime(c, "db");
 
+  const flags = dbFlags.filter(({ flag }) => flag.type === "BOOLEAN");
+
+  const remoteConfigs = dbFlags.filter(({ flag }) => flag.type !== "BOOLEAN");
+
   const response = {
-    tests: tests.map((test) => ({
-      name: test.name,
+    tests: dbTests.map((test) => ({
+      name: hashStringToInt32(test.name).toString(),
       weights: test.options.map((o) => o.chance.toNumber()),
     })),
-    flags: flags
-      .filter(({ flag }) => flag.type === "BOOLEAN")
-      .map((flagValue) => {
-        return {
-          name: flagValue.flag.name,
-          value: transformFlagValue(flagValue.value, flagValue.flag.type),
-        };
-      }),
-    remoteConfig: flags
-      .filter(({ flag }) => flag.type !== "BOOLEAN")
-      .map((flagValue) => {
-        return {
-          name: flagValue.flag.name,
-          value: transformFlagValue(flagValue.value, flagValue.flag.type),
-        };
-      }),
-  } satisfies AbbyDataResponse;
+    flags: flags.map((flagValue) => {
+      return {
+        name: hashStringToInt32(flagValue.flag.name).toString(),
+        value: transformFlagValue(flagValue.value, flagValue.flag.type),
+      };
+    }),
+    remoteConfig: remoteConfigs.map((flagValue) => {
+      return {
+        name: hashStringToInt32(flagValue.flag.name).toString(),
+        value: transformFlagValue(flagValue.value, flagValue.flag.type),
+      };
+    }),
+  } satisfies AbbyData;
 
   ConfigCache.setConfig({
     environment,
     projectId,
     value: response,
-    apiVersion: "v1",
+    apiVersion: "v2",
   });
-  return response;
+  return serializeAbbyData(response);
 }
 
-export function makeProjectDataRoute() {
+export function makeV2ProjectDataRoute() {
   const app = new Hono()
     .get(
       "/:projectId",
@@ -118,7 +123,7 @@ export function makeProjectDataRoute() {
           const duration = performance.now() - now;
 
           afterDataRequestQueue.add("after-data-request", {
-            apiVersion: "V1",
+            apiVersion: "V2",
             functionDuration: duration,
             projectId,
           });
@@ -165,7 +170,7 @@ export function makeProjectDataRoute() {
           const duration = performance.now() - now;
 
           afterDataRequestQueue.add("after-data-request", {
-            apiVersion: "V1",
+            apiVersion: "V2",
             functionDuration: duration,
             projectId,
           });

@@ -13,6 +13,7 @@ export const {
   getABTestValue,
   withAbbyApiHandler,
   getABResetFunction,
+  useRemoteConfig,
 } = createAbby(abbyConfig);
 
 export const AbbyDevtools = withDevtools(abbyDevtools, {});

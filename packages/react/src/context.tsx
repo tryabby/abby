@@ -11,6 +11,7 @@ import type { AbbyDevtoolProps, DevtoolsFactory } from "@tryabby/devtools";
 import React, {
   useCallback,
   useEffect,
+  useMemo,
   useRef,
   useState,
   type PropsWithChildren,
@@ -63,8 +64,7 @@ export function createAbby<
         return TestStorageService.get(abbyConfig.projectId, key);
       },
       set: (key: string, value: any) => {
-        if (typeof window === "undefined" || config.cookies?.disableByDefault)
-          return;
+        if (typeof window === "undefined") return;
         TestStorageService.set(abbyConfig.projectId, key, value);
       },
     },
@@ -110,7 +110,7 @@ export function createAbby<
   const config = abbyConfig;
 
   const useAbby = <
-    K extends keyof Tests,
+    K extends TestName,
     TestVariant extends Tests[K]["variants"][number],
     LookupValue,
     const Lookup extends
@@ -125,53 +125,41 @@ export function createAbby<
   } => {
     const { tests } = useAbbyData();
 
-    // always render an empty string on the first render to avoid SSR mismatches
-    // because the server doesn't know which variant to render
-    const [selectedVariant, setSelectedVariant] = useState("");
-
-    // listen to changes in for the current variant
-    // biome-ignore lint/correctness/useExhaustiveDependencies:>
-    useEffect(() => {
-      const newVariant = tests[name as unknown as TestName]?.selectedVariant;
-
-      // should never be undefined after mount
-      if (newVariant !== undefined) {
-        setSelectedVariant(newVariant);
-      }
-    }, [tests[name as unknown as TestName]?.selectedVariant]);
-
-    // lazily get the tests
-    useEffect(() => {
-      setSelectedVariant(
-        abby.getProjectData().tests[name as unknown as TestName]
+    // fall back to rendering an empty string on the client if
+    // we don't have a selected variant yet
+    const selectedVariant = useMemo(() => {
+      return (
+        tests[abby.__internal_getInternalName(name) as TestName]
           ?.selectedVariant ?? ""
       );
-    }, [name]);
+    }, [tests, name]);
 
     useEffect(() => {
       if (!name || !selectedVariant) return;
-
+      const humanReadableTestName = abby.__internal_getNameMatch(name, "tests");
+      if (!humanReadableTestName) return;
       HttpService.sendData({
         url: config.apiUrl,
         type: AbbyEventType.PING,
         data: {
           projectId: config.projectId,
           selectedVariant,
-          testName: name as string,
+          testName: humanReadableTestName,
         },
       });
     }, [name, selectedVariant]);
 
     const onAct = useCallback(() => {
       if (!selectedVariant) return;
-
+      const humanReadableTestName = abby.__internal_getNameMatch(name, "tests");
+      if (!humanReadableTestName) return;
       HttpService.sendData({
         url: config.apiUrl,
         type: AbbyEventType.ACT,
         data: {
           projectId: config.projectId,
           selectedVariant,
-          testName: name as string,
+          testName: humanReadableTestName,
         },
       });
     }, [name, selectedVariant]);
@@ -193,7 +181,7 @@ export function createAbby<
 
   const useFeatureFlag = (name: FlagName) => {
     const data = useAbbyData();
-    return data.flags[name];
+    return data.flags[abby.__internal_getInternalName(name)];
   };
 
   /**
@@ -208,7 +196,7 @@ export function createAbby<
   };
 
   /**
-   * Retruns an Array of all rmeote config variables with their name and value
+   * Retruns an Array of all remote config variables with their name and value
    */
   const useRemoteConfigVariables = () => {
     const data = useAbbyData();
@@ -242,7 +230,8 @@ export function createAbby<
       isMountedRef.current = true;
 
       // seed the data with the initial data
-      abby.loadProjectData().then((data) => {
+      abby.loadProjectData().then(() => {
+        const data = abby.getProjectData();
         if (!data) return;
         setData(data);
       });
@@ -269,9 +258,10 @@ export function createAbby<
   >(
     remoteConfigName: T
   ): RemoteConfigValueStringToType<Config> => {
-    const abby = useAbbyData();
-    return abby.remoteConfig[
-      remoteConfigName
+    const data = useAbbyData();
+
+    return data.remoteConfig[
+      abby.__internal_getInternalName(remoteConfigName)
     ] as RemoteConfigValueStringToType<Config>;
   };
 
@@ -285,14 +275,14 @@ export function createAbby<
   };
 
   const getABTestValue = <
-    TestName extends keyof Tests,
-    TestVariant extends Tests[TestName]["variants"][number],
+    T extends TestName,
+    TestVariant extends Tests[T]["variants"][number],
     LookupValue,
     const Lookup extends
       | Record<TestVariant, LookupValue>
       | undefined = undefined,
   >(
-    testName: TestName,
+    testName: T,
     lookupObject?: Lookup
   ): ABTestReturnValue<Lookup, TestVariant> => {
     const variant = abby.getTestVariant(testName);

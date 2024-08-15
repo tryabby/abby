@@ -8,7 +8,6 @@ import { trpc } from "../utils/trpc";
 
 import { TooltipProvider } from "components/Tooltip";
 import { env } from "env/client.mjs";
-import { AbbyDevtools, AbbyProvider, withAbby } from "lib/abby";
 import type { NextPage } from "next";
 import { useRouter } from "next/router";
 import type { ReactElement, ReactNode } from "react";
@@ -16,6 +15,7 @@ import "@fontsource/martian-mono/600.css";
 
 import "../styles/shadcn.css";
 import "@code-hike/mdx/dist/index.css";
+import { AbbyDevtools, AbbyProvider, withAbby } from "lib/abby";
 import PlausibleProvider from "next-plausible";
 
 export type NextPageWithLayout<P = unknown, IP = P> = NextPage<P, IP> & {

@@ -16,6 +16,6 @@ export class GetAbbyVariantPipe<
   constructor(private abbyService: AbbyService<string, string, Tests>) {}
 
   transform(testName: TestName): Observable<string> {
-    return this.abbyService.getVariant(testName);
+    return this.abbyService.getVariant(testName as any);
   }
 }

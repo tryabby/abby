@@ -1,4 +1,5 @@
 import { TRPCError } from "@trpc/server";
+import { safeNameSchema } from "@tryabby/core";
 import { ConfigCache } from "server/common/config-cache";
 import { prisma } from "server/db/client";
 import { TestService } from "server/services/TestService";
@@ -9,7 +10,7 @@ export const testRouter = router({
   createTest: protectedProcedure
     .input(
       z.object({
-        name: z.string(),
+        name: safeNameSchema,
         projectId: z.string(),
         variants: z.array(
           z.object({
@@ -31,7 +32,7 @@ export const testRouter = router({
     .input(
       z.object({
         testId: z.string(),
-        name: z.string(),
+        name: safeNameSchema,
       })
     )
     .mutation(async ({ input, ctx }) => {

@@ -77,14 +77,15 @@ export function createAbby<
       [
         config.projectId,
         config.currentEnvironment,
-        config.__experimentalCdnUrl,
         config.apiUrl,
+        config.experimental?.cdnUrl ?? "null",
+        config.experimental?.apiVersion ?? "null",
       ].join("-"),
       () =>
         HttpService.getProjectData({
           projectId: config.projectId,
           environment: config.currentEnvironment,
-          __experimentalCdnUrl: config.__experimentalCdnUrl,
+          experimental: config.experimental,
           url: config.apiUrl,
         })
     );

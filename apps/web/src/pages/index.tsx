@@ -380,6 +380,7 @@ export const getStaticProps = async () => {
   const data = await HttpService.getProjectData({
     projectId: config.projectId,
     environment: config.currentEnvironment,
+    experimental: config.experimental,
   });
   const codeSnippet = await generateCodeSnippets({
     projectId: "<PROJECT_ID>",

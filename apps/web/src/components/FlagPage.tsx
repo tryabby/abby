@@ -16,7 +16,7 @@ import { Input } from "components/ui/input";
 import Fuse from "fuse.js";
 import { useProjectId } from "lib/hooks/useProjectId";
 import { EditIcon, FileEditIcon, Search, TrashIcon } from "lucide-react";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { toast } from "react-hot-toast";
 import { AiOutlinePlus } from "react-icons/ai";
 import { BiInfoCircle } from "react-icons/bi";
@@ -187,6 +187,10 @@ export const FeatureFlagPageContent = ({
     const results = fuse.search(query);
     setFlags(results.map((result) => result.item));
   };
+
+  useEffect(() => {
+    setFlags(data.flags);
+  }, [data.flags]);
 
   const activeFlag = data.flags.find((flag) => flag.id === activeFlagInfo?.id);
 

@@ -15,10 +15,10 @@ export const ABBY_DATA_KEY = "__ABBY_PROJECT_DATA__";
 export function withAbby<
   Config extends Pick<
     AbbyConfig,
-    "apiUrl" | "projectId" | "currentEnvironment"
+    "apiUrl" | "projectId" | "currentEnvironment" | "experimental"
   >,
 >(
-  { apiUrl, projectId, currentEnvironment }: Config,
+  { apiUrl, projectId, currentEnvironment, experimental }: Config,
   abbyInstance: Abby<any, any, any, any, any>,
   preloadAll = true
 ) {
@@ -41,6 +41,7 @@ export function withAbby<
             projectId,
             environment: currentEnvironment,
             url: apiUrl,
+            experimental,
           })
         );
 
