@@ -13,6 +13,7 @@ import { FeatureFlag } from "components/FeatureFlag";
 import { Modal } from "components/Modal";
 import { Tooltip, TooltipContent, TooltipTrigger } from "components/Tooltip";
 import { Input } from "components/ui/input";
+import Fuse from "fuse.js";
 import { useProjectId } from "lib/hooks/useProjectId";
 import { EditIcon, FileEditIcon, Search, TrashIcon } from "lucide-react";
 import { useMemo, useState } from "react";
@@ -23,7 +24,6 @@ import { BsThreeDotsVertical } from "react-icons/bs";
 import type { appRouter } from "server/trpc/router/_app";
 import { trpc } from "utils/trpc";
 import { Button } from "./ui/button";
-import Fuse from "fuse.js";
 
 const EditTitleModal = ({
   flagId,

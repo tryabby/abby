@@ -3,7 +3,7 @@
   "[svelte]": {
     "editor.defaultFormatter": "svelte.svelte-vscode"
   },
-  "[typescript][typescriptreact][typescriptangular]": {
+  "[typescript][typescriptreact][typescriptangular][json]": {
     "editor.defaultFormatter": "biomejs.biome"
   },
   "editor.codeActionsOnSave": {

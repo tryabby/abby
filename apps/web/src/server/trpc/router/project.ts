@@ -11,9 +11,9 @@ export type ClientOption = Omit<Option, "chance"> & {
   chance: number;
 };
 
+import ms from "ms";
 import { updateProjectsOnSession } from "utils/updateSession";
 import { protectedProcedure, router } from "../trpc";
-import ms from "ms";
 
 export const projectRouter = router({
   getProjectData: protectedProcedure
