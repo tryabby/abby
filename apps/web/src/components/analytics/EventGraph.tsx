@@ -1,7 +1,7 @@
 "use client";
 
 import * as React from "react";
-import { Area, AreaChart, CartesianGrid, XAxis } from "recharts";
+import { LineChart, CartesianGrid, XAxis, YAxis, Line } from "recharts";
 
 import {
   Card,
@@ -52,9 +52,6 @@ export function EventGraph({
     ) as Record<string, { label: string; color: string }>;
 
     return {
-      visitors: {
-        label: "Visitors",
-      },
       ...variantsConfig,
     } satisfies ChartConfig;
   }, [variants]);
@@ -72,7 +69,7 @@ export function EventGraph({
           config={chartConfig}
           className="aspect-auto h-[250px] w-full"
         >
-          <AreaChart data={events}>
+          <LineChart data={events} accessibilityLayer syncId="events">
             <defs>
               {variants.map((variant) => (
                 <linearGradient
@@ -99,34 +96,35 @@ export function EventGraph({
             <CartesianGrid vertical={false} />
             <XAxis
               dataKey="date"
-              tickLine={false}
-              axisLine={false}
+              // tickLine={false}
+              // axisLine={false}
               tickMargin={8}
               minTickGap={32}
               tickFormatter={(value) => {
                 return dayjs(value).format(getFormattingByInterval(interval));
               }}
             />
+            <YAxis />
             <ChartTooltip
-              cursor={false}
               labelFormatter={(value) => {
                 return dayjs(value).format(getFormattingByInterval(interval));
               }}
-              content={<ChartTooltipContent indicator="dot" />}
+              content={<ChartTooltipContent indicator="line" />}
             />
             {variants.map((variant) => (
-              <Area
+              <Line
                 key={variant}
                 dataKey={variant}
-                type="natural"
+                type="monotone"
                 fill={`url(#fill${variant})`}
                 stroke={`var(--color-${variant})`}
-                stackId="a"
+                strokeWidth={2}
+                dot={false}
               />
             ))}
 
             <ChartLegend content={<ChartLegendContent />} />
-          </AreaChart>
+          </LineChart>
         </ChartContainer>
       </CardContent>
     </Card>

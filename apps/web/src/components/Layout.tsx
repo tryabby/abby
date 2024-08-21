@@ -96,7 +96,7 @@ export const Layout = ({ children }: { children: ReactNode }) => {
           />
         </nav>
         <main className="relative w-full flex-1 overflow-y-auto overflow-x-hidden text-white">
-          <div className="p-8 lg:p-10">{children}</div>
+          <div className="p-8 lg:p-10 h-full">{children}</div>
         </main>
       </div>
     </>

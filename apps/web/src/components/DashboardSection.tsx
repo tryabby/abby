@@ -9,7 +9,7 @@ export function DashboardSection({
 }) {
   return (
     <section
-      className={twMerge("rounded-lg bg-secondary px-6 py-3", className)}
+      className={twMerge("rounded-lg bg-secondary p-6 h-full", className)}
     >
       {children}
     </section>
