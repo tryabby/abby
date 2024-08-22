@@ -1,5 +1,10 @@
 import { ABBY_BASE_URL } from "./constants";
-import type { AbbyDataResponse, AbbyEvent, AbbyEventType } from "./index";
+import type {
+  AbbyConfigFile,
+  AbbyDataResponse,
+  AbbyEvent,
+  AbbyEventType,
+} from "./index";
 
 export abstract class HttpService {
   static async getProjectData({
@@ -7,18 +12,17 @@ export abstract class HttpService {
     environment,
     url,
     fetch = globalThis.fetch,
-    __experimentalCdnUrl,
+    experimental: { apiVersion, cdnUrl } = {},
   }: {
     projectId: string;
     environment?: string;
     url?: string;
-    __experimentalCdnUrl?: string;
-    fetch?: (typeof globalThis)["fetch"];
-  }) {
+    fetch?: typeof globalThis.fetch;
+  } & Pick<AbbyConfigFile, "experimental">) {
     try {
       const res = await fetch(
-        __experimentalCdnUrl ??
-          `${url ?? ABBY_BASE_URL}api/v1/data/${projectId}${
+        cdnUrl ??
+          `${url ?? ABBY_BASE_URL}api/${apiVersion ?? "v1"}/data/${projectId}${
             environment ? `?environment=${environment}` : ""
           }`
       );

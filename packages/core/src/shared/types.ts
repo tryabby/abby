@@ -1,11 +1,15 @@
-import type { ABConfig, RemoteConfigValue } from "..";
+import type {
+  ABConfig,
+  RemoteConfigValue,
+  SerializedAbbyDataResponse,
+} from "..";
 
 export enum AbbyEventType {
   PING = 0,
   ACT = 1,
 }
 
-export type AbbyDataResponse = {
+export type AbbyData = {
   tests: Array<{
     name: string;
     weights: number[];
@@ -16,6 +20,8 @@ export type AbbyDataResponse = {
   }>;
   remoteConfig: Array<{ name: string; value: RemoteConfigValue }>;
 };
+
+export type AbbyDataResponse = SerializedAbbyDataResponse | AbbyData;
 
 export type LegacyAbbyDataResponse = {
   tests: Array<{

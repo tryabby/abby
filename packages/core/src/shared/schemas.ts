@@ -9,6 +9,9 @@ export const abbyEventSchema = z.object({
   selectedVariant: z.string(),
 });
 
+export const SAFE_NAME_REGEX = /^[a-zA-Z0-9-_]+$/;
+export const safeNameSchema = z.string().regex(SAFE_NAME_REGEX);
+
 export type AbbyEvent = z.infer<typeof abbyEventSchema>;
 
 export const remoteConfigValue = z.union([
@@ -31,18 +34,20 @@ export const abbyConfigSchema = z.object({
   tests: z
     .record(
       z.object({
-        variants: z.array(z.string()),
+        variants: z.array(safeNameSchema),
       })
     )
     .optional(),
-  flags: z.array(z.string()).optional(),
-  remoteConfig: z.record(remoteConfigValueStringSchema).optional(),
+  flags: z.array(safeNameSchema).optional(),
+  remoteConfig: z
+    .record(safeNameSchema, remoteConfigValueStringSchema)
+    .optional(),
   settings: z
     .object({
       flags: z
         .object({
           defaultValue: z.boolean().optional(),
-          devOverrides: z.record(z.string(), z.boolean()).optional(),
+          devOverrides: z.record(safeNameSchema, z.boolean()).optional(),
         })
         .optional(),
       remoteConfig: z
@@ -64,9 +69,15 @@ export const abbyConfigSchema = z.object({
     .object({
       disableByDefault: z.boolean().optional(),
       expiresInDays: z.number().optional(),
+      disableInDevelopment: z.boolean().optional(),
     })
     .optional(),
-  __experimentalCdnUrl: z.string().optional(),
+  experimental: z
+    .object({
+      cdnUrl: z.string().optional(),
+      apiVersion: z.enum(["v1", "v2"]).optional(),
+    })
+    .optional(),
 }) satisfies z.ZodType<AbbyConfig>;
 
 export type AbbyConfigFile = z.infer<typeof abbyConfigSchema>;

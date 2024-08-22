@@ -150,7 +150,7 @@ export class AbbyService<
     return this.resolveData().pipe(map(() => void 0));
   }
 
-  public getVariant<T extends keyof Tests>(testName: T): Observable<string> {
+  public getVariant<T extends TestName>(testName: T): Observable<string> {
     this.abbyLogger.log(`getVariant(${testName as string})`);
 
     return this.resolveData().pipe(

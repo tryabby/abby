@@ -205,6 +205,7 @@ export const getStaticProps = async () => {
   const data = await HttpService.getProjectData({
     projectId: config.projectId,
     environment: config.currentEnvironment,
+    experimental: config.experimental,
   });
   return {
     props: { abbyData: data },

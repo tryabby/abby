@@ -1,4 +1,4 @@
-import type { AbbyDataResponse } from "@tryabby/core";
+import type { AbbyConfigFile, AbbyDataResponse } from "@tryabby/core";
 import createCache from "./memory-cache";
 
 const configCache = createCache<string, AbbyDataResponse>({
@@ -10,24 +10,37 @@ const configCache = createCache<string, AbbyDataResponse>({
 type ConfigCacheKey = {
   environment: string;
   projectId: string;
+  apiVersion: NonNullable<AbbyConfigFile["experimental"]>["apiVersion"];
 };
 
 export abstract class ConfigCache {
-  static getConfig({ environment, projectId }: ConfigCacheKey) {
-    return configCache.get(projectId + environment);
+  private static getCacheKey({
+    apiVersion,
+    environment,
+    projectId,
+  }: ConfigCacheKey) {
+    return [projectId, environment, apiVersion].join(":");
+  }
+  static getConfig(opts: ConfigCacheKey) {
+    return configCache.get(ConfigCache.getCacheKey(opts));
   }
 
   static setConfig({
-    environment,
-    projectId,
     value,
+    ...opts
   }: ConfigCacheKey & {
     value: AbbyDataResponse;
   }) {
-    configCache.set(projectId + environment, value);
+    configCache.set(ConfigCache.getCacheKey(opts), value);
   }
 
-  static deleteConfig({ environment, projectId }: ConfigCacheKey) {
-    configCache.delete(projectId + environment);
+  static deleteConfig(opts: Omit<ConfigCacheKey, "apiVersion">) {
+    const apiVersionsToClear: Array<ConfigCacheKey["apiVersion"]> = [
+      "v1",
+      "v2",
+    ];
+    for (const apiVersion of apiVersionsToClear) {
+      configCache.delete(ConfigCache.getCacheKey({ ...opts, apiVersion }));
+    }
   }
 }

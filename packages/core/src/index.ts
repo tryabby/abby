@@ -3,7 +3,12 @@ import {
   getVariantWithHeighestWeightOrFirst,
   getWeightedRandomVariant,
 } from "./mathHelpers";
-import { HttpService } from "./shared";
+import {
+  HttpService,
+  hashStringToInt32,
+  isSerializedAbbyDataResponse,
+  parseAbbyData,
+} from "./shared";
 import {
   ABBY_AB_STORAGE_PREFIX,
   ABBY_FF_STORAGE_PREFIX,
@@ -107,8 +112,12 @@ export type AbbyConfig<
   cookies?: {
     disableByDefault?: boolean;
     expiresInDays?: number;
+    disableInDevelopment?: boolean;
   };
-  __experimentalCdnUrl?: string;
+  experimental?: {
+    cdnUrl?: string;
+    apiVersion?: "v1" | "v2";
+  };
 };
 
 export class Abby<
@@ -131,8 +140,6 @@ export class Abby<
   private listeners = new Set<
     (newData: LocalData<FlagName, TestName>) => void
   >();
-
-  private _cfg: AbbyConfig<FlagName, Tests>;
 
   private dataInitialized = false;
 
@@ -157,35 +164,111 @@ export class Abby<
     private persistantFlagStorage?: PersistentStorage,
     private persistentRemoteConfigStorage?: PersistentStorage
   ) {
-    this._cfg = config as AbbyConfig<FlagName, Tests, Environments>;
-    this.#data.flags = Object.values(this._cfg.flags ?? {}).reduce(
+    this.#data.flags = Object.values(this.config.flags ?? {}).reduce(
       (acc, flagName) => {
-        acc[flagName as FlagName] = DEFAULT_FEATURE_FLAG_VALUE;
+        const internalFlagName = this.__internal_getInternalName(flagName);
+        acc[internalFlagName] = DEFAULT_FEATURE_FLAG_VALUE;
         return acc;
       },
       {} as Record<FlagName, boolean>
     );
-    this.#data.tests = config.tests ?? ({} as any);
+    this.#data.tests = Object.keys(this.config.tests ?? {}).reduce(
+      (acc, _testName) => {
+        const testName = _testName as TestName;
+        const internalTestName = this.__internal_getInternalName(testName);
+        if (this.config.tests) {
+          acc[internalTestName as TestName] =
+            this.config.tests[testName as TestName];
+        }
+        return acc;
+      },
+      {} as Record<TestName, ABConfig>
+    );
     this.#data.remoteConfig = Object.keys(config.remoteConfig ?? {}).reduce(
-      (acc, remoteConfigName) => {
-        acc[remoteConfigName as RemoteConfigName] =
-          this.getDefaultRemoteConfigValue(
-            remoteConfigName,
-            config.remoteConfig as any
-          );
+      (acc, _remoteConfigName) => {
+        const remoteConfigName = _remoteConfigName as RemoteConfigName;
+        const internalConfigName =
+          this.__internal_getInternalName(remoteConfigName);
+
+        acc[internalConfigName] = this.getDefaultRemoteConfigValue(
+          remoteConfigName,
+          config.remoteConfig as any
+        );
 
         return acc;
       },
       {} as Record<RemoteConfigName, RemoteConfigValue>
     );
-
     if (persistantTestStorage) {
       this.persistantTestStorage = {
-        get: (...args) => persistantTestStorage.get(...args),
+        get: (...args) => {
+          const [key] = args;
+          const humanReadableName = this.__internal_getNameMatch(
+            key as TestName,
+            "tests"
+          );
+          if (!humanReadableName) return null;
+          return persistantTestStorage.get(humanReadableName as TestName);
+        },
         set: (...args) => {
-          if (config.cookies?.disableByDefault) return;
+          if (!this.canUseCookies()) return;
           const [key, value] = args;
-          persistantTestStorage.set(key, value, {
+          const humanReadableName = this.__internal_getNameMatch(
+            key as TestName,
+            "tests"
+          );
+          if (!humanReadableName) return;
+          persistantTestStorage.set(humanReadableName, value, {
+            expiresInDays: config.cookies?.expiresInDays,
+          });
+        },
+      };
+    }
+    if (persistantFlagStorage) {
+      this.persistantFlagStorage = {
+        get: (...args) => {
+          const [key] = args;
+          const humanReadableName = this.__internal_getNameMatch(
+            key as FlagName,
+            "flags"
+          );
+          if (!humanReadableName) return null;
+          return persistantFlagStorage.get(humanReadableName);
+        },
+        set: (...args) => {
+          if (!this.canUseCookies()) return;
+          const [key, value] = args;
+          const humanReadableName = this.__internal_getNameMatch(
+            key as FlagName,
+            "flags"
+          );
+          if (!humanReadableName) return;
+          persistantFlagStorage.set(humanReadableName, value, {
+            expiresInDays: config.cookies?.expiresInDays,
+          });
+        },
+      };
+    }
+    if (persistentRemoteConfigStorage) {
+      this.persistentRemoteConfigStorage = {
+        get: (...args) => {
+          const [key] = args;
+          const humanReadableName = this.__internal_getNameMatch(
+            key as RemoteConfigName,
+            "remoteConfig"
+          );
+          if (!humanReadableName) return null;
+          return persistentRemoteConfigStorage.get(humanReadableName);
+        },
+        set: (...args) => {
+          if (!this.canUseCookies()) return;
+          const [key, value] = args;
+          const humanReadableName = this.__internal_getNameMatch(
+            key as RemoteConfigName,
+            "remoteConfig"
+          );
+          if (!humanReadableName) return;
+          persistentRemoteConfigStorage.set(humanReadableName, value, {
             expiresInDays: config.cookies?.expiresInDays,
           });
         },
@@ -215,10 +298,13 @@ export class Abby<
       projectId: this.config.projectId,
       environment: this.config.currentEnvironment as string,
       url: this.config.apiUrl,
-      fetch: this._cfg.fetch,
-      __experimentalCdnUrl: this._cfg.__experimentalCdnUrl
-        ? `${this._cfg.__experimentalCdnUrl}/${this.config.projectId}/${this.config.currentEnvironment}`
-        : undefined,
+      fetch: this.config.fetch,
+      experimental: {
+        cdnUrl: this.config.experimental?.cdnUrl
+          ? `${this.config.experimental?.cdnUrl}/${this.config.projectId}/${this.config.currentEnvironment}`
+          : undefined,
+        apiVersion: this.config.experimental?.apiVersion,
+      },
     });
     if (!data) {
       this.log("loadProjectData() => no data");
@@ -244,38 +330,65 @@ export class Abby<
    * Helper function to transform the data which is fetched from the server
    * to the local data structure
    */
-  private responseToLocalData<FlagName extends string, TestName extends string>(
-    data: AbbyDataResponse
+  private responseToLocalData(
+    res: AbbyDataResponse
   ): LocalData<FlagName, TestName> {
+    const data = isSerializedAbbyDataResponse(res) ? parseAbbyData(res) : res;
     return {
       tests: data.tests.reduce(
-        (acc, { name, weights }) => {
-          if (!acc[name as keyof Tests]) {
-            return acc;
-          }
-
+        (acc, { name: _name, weights }) => {
+          const name = _name as TestName;
+          const currentTest = this.#data.tests[name];
           // assigned the fetched weights to the initial config
-          acc[name as keyof Tests] = {
-            ...acc[name as keyof Tests],
+          acc[name] = {
+            ...currentTest,
+            // this could be potentially undefined
+            variants: currentTest?.variants ?? [],
             weights,
           };
           return acc;
         },
-        (this.config.tests ?? {}) as any
+        Object.entries(this.#data.tests).reduce(
+          (acc, cur) => {
+            const [name, test] = cur;
+            acc[this.__internal_getInternalName(name as TestName)] =
+              test as ABConfig;
+            return acc;
+          },
+          {} as Record<TestName, ABConfig>
+        ) as Record<TestName, ABConfig>
       ),
       flags: data.flags.reduce(
-        (acc, { name, value }) => {
+        (acc, { name: _name, value }) => {
+          const name = _name as FlagName;
           acc[name] = value;
           return acc;
         },
-        {} as Record<string, boolean>
+        Object.entries(this.#data.tests).reduce(
+          (acc, cur) => {
+            const [name, value] = cur;
+            acc[this.__internal_getInternalName(name as FlagName)] =
+              value as boolean;
+            return acc;
+          },
+          {} as Record<FlagName, boolean>
+        ) as Record<FlagName, boolean>
       ),
       remoteConfig: (data.remoteConfig ?? []).reduce(
-        (acc, { name, value }) => {
+        (acc, { name: _name, value }) => {
+          const name = _name as RemoteConfigName;
           acc[name] = value;
           return acc;
         },
-        {} as Record<string, RemoteConfigValue>
+        Object.entries(this.#data.tests).reduce(
+          (acc, cur) => {
+            const [name, value] = cur;
+            acc[this.__internal_getInternalName(name as RemoteConfigName)] =
+              value as RemoteConfigValue;
+            return acc;
+          },
+          {} as Record<RemoteConfigName, RemoteConfigValue>
+        ) as Record<RemoteConfigName, RemoteConfigValue>
       ),
     };
   }
@@ -286,31 +399,37 @@ export class Abby<
    * @returns the local data
    */
   getProjectData(): LocalData<FlagName, TestName, RemoteConfigName> {
-    this.log("getProjectData()");
-
     return {
       tests: Object.entries(this.#data.tests).reduce(
-        (acc, [testName, test]) => {
-          acc[testName as TestName] = {
-            ...(test as Tests[TestName]),
-            selectedVariant: this.getTestVariant(testName as TestName),
+        (acc, [_testName, test]) => {
+          const testName = _testName as TestName;
+          const currentTest = test as Tests[TestName];
+          acc[testName] = {
+            ...currentTest,
+            selectedVariant: this.__internal_getTestVariant(testName),
+            variants: currentTest?.variants ?? [],
           };
           return acc;
         },
-        this.#data.tests
+        {} as Record<TestName, ABConfig>
       ),
-      flags: Object.keys(this.#data.flags).reduce((acc, flagName) => {
-        acc[flagName as FlagName] = this.getFeatureFlag(flagName as FlagName);
-        return acc;
-      }, this.#data.flags),
-      remoteConfig: Object.keys(this.#data.remoteConfig).reduce(
-        (acc, remoteConfigName) => {
-          acc[remoteConfigName as RemoteConfigName] = this.getRemoteConfig(
-            remoteConfigName as RemoteConfigName
-          );
+      flags: Object.keys(this.#data.flags).reduce(
+        (acc, _flagName) => {
+          const flagName = _flagName as FlagName;
+
+          acc[flagName] = this.__internal_getFeatureFlag(flagName);
           return acc;
         },
-        this.#data.remoteConfig
+        {} as Record<FlagName, boolean>
+      ),
+      remoteConfig: Object.keys(this.#data.remoteConfig).reduce(
+        (acc, _remoteConfigName) => {
+          const remoteConfigName = _remoteConfigName as RemoteConfigName;
+          acc[remoteConfigName] =
+            this.__internal_getRemoteConfig(remoteConfigName);
+          return acc;
+        },
+        {} as Record<RemoteConfigName, RemoteConfigValue>
       ),
     };
   }
@@ -326,6 +445,7 @@ export class Abby<
     this.log("init()", data);
 
     this.#data = this.responseToLocalData(data);
+    this.log("init() => data", this.#data);
     this.notifyListeners();
 
     if (typeof window !== "undefined" && typeof document !== "undefined") {
@@ -342,12 +462,16 @@ export class Abby<
    * @param key the name of the feature flag
    * @returns the value of the feature flag
    */
+
   getFeatureFlag(key: FlagName): boolean {
+    return this.__internal_getFeatureFlag(this.__internal_getInternalName(key));
+  }
+  private __internal_getFeatureFlag(key: FlagName): boolean {
     this.log("getFeatureFlag()", key);
 
     const storedValue = this.#data.flags[key];
 
-    const localOverride = this.flagOverrides?.get(key as unknown as FlagName);
+    const localOverride = this.flagOverrides?.get(key);
 
     if (localOverride != null) {
       return localOverride;
@@ -361,15 +485,13 @@ export class Abby<
      * 3. DevDefault from config
      */
     if (process.env.NODE_ENV === "development") {
-      const devOverride = (this.config.settings?.flags?.devOverrides as any)?.[
-        key
-      ];
+      const devOverride = this.config.settings?.flags?.devOverrides?.[key];
       if (devOverride != null) {
         return devOverride;
       }
     }
 
-    const defaultValue = this._cfg.settings?.flags?.defaultValue;
+    const defaultValue = this.config.settings?.flags?.defaultValue;
 
     if (storedValue !== undefined) {
       this.log("getFeatureFlag() => storedValue:", storedValue);
@@ -377,18 +499,17 @@ export class Abby<
     }
     // before we return the default value we check if there is a fallback value set
     const hasFallbackValue =
-      key in (this._cfg.settings?.flags?.fallbackValues ?? {});
+      key in (this.config.settings?.flags?.fallbackValues ?? {});
 
     if (hasFallbackValue) {
-      const fallbackValue =
-        this._cfg.settings?.flags?.fallbackValues?.[key as FlagName];
+      const fallbackValue = this.config.settings?.flags?.fallbackValues?.[key];
       if (fallbackValue !== undefined) {
         if (typeof fallbackValue === "boolean") {
           this.log("getFeatureFlag() => fallbackValue:", fallbackValue);
           return fallbackValue;
         }
         const envFallbackValue =
-          fallbackValue[this._cfg.currentEnvironment as string];
+          fallbackValue[this.config.currentEnvironment as string];
 
         if (envFallbackValue !== undefined) {
           this.log("getFeatureFlag() => envFallbackValue:", envFallbackValue);
@@ -408,10 +529,16 @@ export class Abby<
    * @param key the name of the remote config
    * @returns the value of the remote config
    */
-  getRemoteConfig<
-    T extends RemoteConfigName,
-    Curr extends RemoteConfig[T] = RemoteConfig[T],
-  >(key: T): RemoteConfigValueStringToType<Curr> {
+
+  getRemoteConfig<T extends RemoteConfigName>(
+    key: T
+  ): RemoteConfigValueStringToType<RemoteConfig[T]> {
+    return this.__internal_getRemoteConfig(key);
+  }
+
+  private __internal_getRemoteConfig<T extends RemoteConfigName>(
+    key: T
+  ): RemoteConfigValueStringToType<RemoteConfig[T]> {
     this.log("getRemoteConfig()", key);
 
     const storedValue = this.#data.remoteConfig[key];
@@ -432,18 +559,18 @@ export class Abby<
       }
     }
 
-    const defaultValue = this._cfg.remoteConfig?.[key]
-      ? this._cfg.settings?.remoteConfig?.defaultValues?.[
-          this._cfg.remoteConfig?.[key]
+    const defaultValue = this.config.remoteConfig?.[key]
+      ? this.config.settings?.remoteConfig?.defaultValues?.[
+          this.config.remoteConfig?.[key]
         ]
       : null;
 
     if (storedValue === undefined) {
       // before we return the default value we check if there is a fallback value set
       const fallbackValue =
-        key in (this._cfg.settings?.remoteConfig?.fallbackValues ?? {});
+        key in (this.config.settings?.remoteConfig?.fallbackValues ?? {});
       if (fallbackValue) {
-        return this._cfg.settings?.remoteConfig?.fallbackValues?.[
+        return this.config.settings?.remoteConfig?.fallbackValues?.[
           key
         ] as RemoteConfigValueStringToType<RemoteConfig[RemoteConfigName]>;
       }
@@ -468,12 +595,14 @@ export class Abby<
    * @param key The name of the test
    * @returns the value of the test variant
    */
-  getTestVariant<T extends keyof Tests>(key: T): Tests[T]["variants"][number] {
-    this.log("getTestVariant()", key);
+  getTestVariant<T extends TestName>(key: T): Tests[T]["variants"][number] {
+    return this.__internal_getTestVariant(this.__internal_getInternalName(key));
+  }
 
-    const { variants, weights } = (this.#data.tests as LocalData["tests"])[
-      key as keyof LocalData["tests"]
-    ];
+  private __internal_getTestVariant<T extends TestName>(
+    key: T
+  ): Tests[T]["variants"][number] {
+    const { variants, weights } = this.#data.tests[key];
 
     const override = this.testOverrides.get(key);
 
@@ -481,7 +610,7 @@ export class Abby<
       return override;
     }
 
-    const persistedValue = this.persistantTestStorage?.get(key as string);
+    const persistedValue = this.persistantTestStorage?.get(key);
 
     if (persistedValue != null) {
       this.log("getTestVariant() => persistedValue:", persistedValue);
@@ -492,7 +621,7 @@ export class Abby<
       return getVariantWithHeighestWeightOrFirst(variants, weights);
     }
     const weightedVariant = getWeightedRandomVariant(variants, weights);
-    this.persistantTestStorage?.set(key as string, weightedVariant);
+    this.persistantTestStorage?.set(key, weightedVariant);
 
     this.log("getTestVariant() => weightedVariant:", weightedVariant);
 
@@ -504,12 +633,12 @@ export class Abby<
    * @param key the name of the test
    * @param override the value to override the test variant with
    */
-  updateLocalVariant<T extends keyof Tests>(
+  updateLocalVariant<T extends TestName>(
     key: T,
     override: Tests[T]["variants"][number]
   ) {
     this.testOverrides.set(key, override);
-    this.persistantTestStorage?.set(key as string, override);
+    this.persistantTestStorage?.set(key, override);
 
     this.notifyListeners();
   }
@@ -588,7 +717,6 @@ export class Abby<
    */
   setLocalOverrides(cookies: string) {
     const parsedCookies = parseCookies(cookies);
-
     Object.entries(parsedCookies).forEach(([cookieName, cookieValue]) => {
       // this happens if there are multiple abby instances. We only want to use the cookies for this instance
       if (!cookieName.includes(`${this.config.projectId}_`)) {
@@ -609,7 +737,10 @@ export class Abby<
           return;
         }
 
-        this.testOverrides.set(testName as TestName, cookieValue);
+        this.testOverrides.set(
+          this.__internal_getInternalName(testName as TestName),
+          cookieValue
+        );
         this.persistantTestStorage?.set(testName as TestName, cookieValue);
       }
       // FF testing cookie
@@ -620,12 +751,15 @@ export class Abby<
         );
 
         const flagValue = cookieValue === "true";
-        this.flagOverrides.set(flagName, flagValue);
+        this.flagOverrides.set(
+          this.__internal_getInternalName(flagName as FlagName),
+          flagValue
+        );
       }
 
       if (
         cookieName.startsWith(ABBY_RC_STORAGE_PREFIX) &&
-        this._cfg.remoteConfig
+        this.config.remoteConfig
       ) {
         const remoteConfigName = cookieName.replace(
           `${ABBY_RC_STORAGE_PREFIX}${this.config.projectId}_`,
@@ -633,10 +767,14 @@ export class Abby<
         );
 
         const remoteConfigValue = remoteConfigStringToType({
-          remoteConfigType: this._cfg.remoteConfig[remoteConfigName],
+          remoteConfigType:
+            this.config.remoteConfig[remoteConfigName as RemoteConfigName],
           stringifiedValue: cookieValue,
         });
-        this.remoteConfigOverrides.set(remoteConfigName, remoteConfigValue);
+        this.remoteConfigOverrides.set(
+          this.__internal_getInternalName(remoteConfigName as RemoteConfigName),
+          remoteConfigValue
+        );
       }
     });
   }
@@ -671,7 +809,7 @@ export class Abby<
   getFeatureFlags() {
     return (Object.keys(this.#data.flags) as Array<FlagName>).map(
       (flagName) => ({
-        name: flagName,
+        name: this.__internal_getNameMatch(flagName, "flags"),
         value: this.getFeatureFlag(flagName),
       })
     );
@@ -684,7 +822,7 @@ export class Abby<
     return (
       Object.keys(this.#data.remoteConfig) as Array<RemoteConfigName>
     ).map((configName) => ({
-      name: configName,
+      name: this.__internal_getNameMatch(configName, "remoteConfig"),
       value: this.getRemoteConfig(configName),
     })) as Array<{
       name: RemoteConfigName;
@@ -701,10 +839,11 @@ export class Abby<
     this.config.cookies.disableByDefault = false;
     this.persistantTestStorage?.set(this.COOKIE_CONSENT_KEY, "true");
 
-    Object.keys(this.#data.tests).forEach((testName) => {
+    Object.keys(this.#data.tests).forEach((_testName) => {
+      const testName = _testName as TestName;
       this.persistantTestStorage?.set(
-        testName,
-        this.getTestVariant(testName as TestName)
+        this.__internal_getInternalName(testName),
+        this.__internal_getTestVariant(testName)
       );
     });
   }
@@ -718,11 +857,48 @@ export class Abby<
     this.config.cookies.disableByDefault = true;
     this.persistantTestStorage?.set(this.COOKIE_CONSENT_KEY, "false");
 
-    Object.keys(this.#data.tests).forEach((testName) => {
+    Object.keys(this.#data.tests).forEach((_testName) => {
+      const testName = _testName as TestName;
       this.persistantTestStorage?.set(
-        testName,
-        this.getTestVariant(testName as TestName)
+        this.__internal_getInternalName(testName),
+        this.__internal_getTestVariant(testName)
       );
     });
+  }
+
+  __internal_getInternalName<T extends FlagName | RemoteConfigName | TestName>(
+    name: T
+  ): T {
+    return this.config.experimental?.apiVersion === "v2"
+      ? (hashStringToInt32(name).toString() as T)
+      : (name as T);
+  }
+
+  __internal_getNameMatch<T extends FlagName | RemoteConfigName | TestName>(
+    name: T,
+    type: keyof Pick<AbbyConfig, "flags" | "remoteConfig" | "tests">
+  ) {
+    switch (type) {
+      case "flags":
+        return this.config.flags?.find(
+          (f) => this.__internal_getInternalName(f) === name
+        );
+      case "remoteConfig":
+        return Object.keys(this.config.remoteConfig ?? {}).find(
+          (c) => this.__internal_getInternalName(c as RemoteConfigName) === name
+        );
+      case "tests":
+        return Object.keys(this.config.tests ?? {}).find(
+          (t) => this.__internal_getInternalName(t as TestName) === name
+        );
+    }
+  }
+
+  private canUseCookies() {
+    return (
+      (process.env.NODE_ENV === "development" &&
+        !this.config.cookies?.disableInDevelopment) ||
+      !this.config.cookies?.disableByDefault
+    );
   }
 }

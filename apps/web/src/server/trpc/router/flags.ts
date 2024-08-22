@@ -1,5 +1,6 @@
 import { FeatureFlagType } from "@prisma/client";
 import { TRPCError } from "@trpc/server";
+import { safeNameSchema } from "@tryabby/core";
 import { ConfigCache } from "server/common/config-cache";
 import { FlagService } from "server/services/FlagService";
 import { validateFlag } from "utils/validateFlags";
@@ -54,7 +55,7 @@ export const flagRouter = router({
     .input(
       z.object({
         projectId: z.string(),
-        name: z.string(),
+        name: safeNameSchema,
         type: z.nativeEnum(FeatureFlagType),
         value: z.string(),
       })
@@ -76,7 +77,7 @@ export const flagRouter = router({
       z.object({
         flagValueId: z.string(),
         value: z.string(),
-        name: z.string(),
+        name: safeNameSchema,
       })
     )
     .mutation(async ({ ctx, input }) => {
@@ -142,7 +143,7 @@ export const flagRouter = router({
   removeFlag: protectedProcedure
     .input(
       z.object({
-        name: z.string(),
+        name: safeNameSchema,
         projectId: z.string(),
       })
     )
@@ -256,7 +257,7 @@ export const flagRouter = router({
     .input(
       z.object({
         flagId: z.string(),
-        title: z.string().min(1),
+        title: safeNameSchema,
       })
     )
     .mutation(async ({ ctx, input }) => {

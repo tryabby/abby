@@ -53,6 +53,7 @@ export function createAbby<
         projectId: config.projectId,
         environment: config.currentEnvironment,
         url: config.apiUrl,
+        experimental: config.experimental,
       });
       if (data) {
         __abby__.init(data);
@@ -64,7 +65,7 @@ export function createAbby<
     AbbyProvider,
     useAbby,
     useFeatureFlag,
-    withAbby: withAbby(config as AbbyConfig<FlagName, Tests>, __abby__),
+    withAbby: withAbby(config, __abby__),
     getFeatureFlagValue,
     useRemoteConfig,
     useFeatureFlags,
@@ -84,7 +85,7 @@ export function createAbby<
      * @returns the value of the test and a function to set the cookie
      */
     getABTestValue<
-      T extends keyof Tests,
+      T extends TestName,
       TestVariant extends Tests[T]["variants"][number],
       LookupValue,
       const Lookup extends

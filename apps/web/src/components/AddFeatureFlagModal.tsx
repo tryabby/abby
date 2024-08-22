@@ -13,6 +13,7 @@ import { RadioSelect } from "./RadioSelect";
 
 import { Toggle } from "./Toggle";
 
+import { SAFE_NAME_REGEX } from "@tryabby/core";
 import { useTracking } from "lib/tracking";
 import { Input } from "./ui/input";
 
@@ -168,7 +169,6 @@ export const AddFeatureFlagModal = ({
   projectId,
   isRemoteConfig,
 }: Props) => {
-  const _inputRef = useRef<HTMLInputElement>(null);
   const ctx = trpc.useContext();
   const stateRef = useRef<FlagFormValues>();
   const trackEvent = useTracking();
@@ -201,6 +201,11 @@ export const AddFeatureFlagModal = ({
         }
         if (!stateRef.current?.value) {
           errors.value = "Value is required";
+        }
+
+        if (SAFE_NAME_REGEX.test(trimmedName) === false) {
+          errors.name =
+            "Invalid name. Only letters, numbers, and underscores are allowed.";
         }
         if (Object.keys(errors).length > 0) {
           setErrors(errors);
