@@ -20,14 +20,14 @@ import { getProjectPaidPlan, useAbbyStripe } from "lib/stripe";
 import { useTracking } from "lib/tracking";
 import type { GetStaticPaths, GetStaticProps } from "next";
 import { useSession } from "next-auth/react";
+import Link from "next/link";
 import { useRouter } from "next/router";
+import { parseAsStringLiteral, useQueryState } from "nuqs";
 import type { NextPageWithLayout } from "pages/_app";
 import { type FormEvent, useRef, useState } from "react";
 import { toast } from "react-hot-toast";
 import { getLimitByPlan } from "server/common/plans";
 import { trpc } from "utils/trpc";
-import { parseAsStringLiteral, useQueryState } from "nuqs";
-import Link from "next/link";
 
 const SETTINGS_TABS = {
   General: "general",

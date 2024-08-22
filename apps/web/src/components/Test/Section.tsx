@@ -1,6 +1,5 @@
-import type { Event, Test } from "@prisma/client";
+import type { Test } from "@prisma/client";
 import * as Popover from "@radix-ui/react-popover";
-import { AbbyEventType } from "@tryabby/core";
 import { Modal } from "components/Modal";
 import { TitleEdit } from "components/TitleEdit";
 import { Button } from "components/ui/button";
@@ -8,6 +7,7 @@ import { useFeatureFlag } from "lib/abby";
 import { cn } from "lib/utils";
 import Link from "next/link";
 import { useRouter } from "next/router";
+import type { ProjectClientEvents } from "pages/projects/[projectId]";
 import { type ReactNode, useState } from "react";
 import { toast } from "react-hot-toast";
 import { AiOutlineDelete } from "react-icons/ai";
@@ -128,11 +128,13 @@ export const Card = ({
 const Section = ({
   name,
   options = [],
-  events = [],
+  actEvents,
+  pingEvents,
   id,
 }: Test & {
   options: ClientOption[];
-  events: Event[];
+  pingEvents: ProjectClientEvents;
+  actEvents: ProjectClientEvents;
 }) => {
   const router = useRouter();
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
@@ -140,7 +142,7 @@ const Section = ({
   const showAdvancedTestStats = useFeatureFlag("AdvancedTestStats");
 
   const bestVariant = getBestVariant({
-    absPings: events.filter((event) => event.type === AbbyEventType.ACT).length,
+    absPings: actEvents.length + pingEvents.length,
     options,
   }).identifier;
 
@@ -201,12 +203,7 @@ const Section = ({
             </p>
           }
         >
-          <Serves
-            options={options}
-            pingEvents={events.filter(
-              (event) => event.type === AbbyEventType.PING
-            )}
-          />
+          <Serves options={options} pingEvents={pingEvents} />
         </Card>
         <Card
           title="Interactions"
@@ -220,12 +217,7 @@ const Section = ({
             </p>
           }
         >
-          <Metrics
-            options={options}
-            actEvents={events.filter(
-              (event) => event.type === AbbyEventType.ACT
-            )}
-          />
+          <Metrics options={options} actEvents={actEvents} />
         </Card>
       </div>
       <div className="mt-3 flex">

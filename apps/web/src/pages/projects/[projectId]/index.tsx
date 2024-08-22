@@ -1,3 +1,4 @@
+import type { inferRouterOutputs } from "@trpc/server";
 import { AddABTestModal } from "components/AddABTestModal";
 import { DashboardHeader } from "components/DashboardHeader";
 import { Layout } from "components/Layout";
@@ -9,7 +10,11 @@ import type { GetStaticPaths, GetStaticProps } from "next";
 import type { NextPageWithLayout } from "pages/_app";
 import { useState } from "react";
 import { AiOutlinePlus } from "react-icons/ai";
+import type { AppRouter } from "server/trpc/router/_app";
 import { trpc } from "utils/trpc";
+
+export type ProjectClientEvents =
+  inferRouterOutputs<AppRouter>["project"]["getProjectData"]["project"]["tests"][number]["pingEvents"];
 
 const Projects: NextPageWithLayout = () => {
   const [isCreateTestModalOpen, setIsCreateTestModalOpen] = useState(false);
@@ -59,7 +64,12 @@ const Projects: NextPageWithLayout = () => {
       </div>
       <div className="space-y-8">
         {data?.project?.tests.map((test) => (
-          <Section key={test.id} {...test} events={test.events} />
+          <Section
+            key={test.id}
+            {...test}
+            actEvents={test.actEvents}
+            pingEvents={test.pingEvents}
+          />
         ))}
       </div>
     </>
