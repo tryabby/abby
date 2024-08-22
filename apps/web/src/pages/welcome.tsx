@@ -1,10 +1,27 @@
+import Cal, { getCalApi } from "@calcom/embed-react";
 import { DISCORD_INVITE_URL } from "components/Footer";
 import { Input } from "components/Input";
 import { RadioGroupComponent } from "components/RadioGroup";
-import { Select } from "components/Select";
 import { Button } from "components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "components/ui/card";
+import { Label } from "components/ui/label";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "components/ui/select";
 import { AnimatePresence, motion } from "framer-motion";
 import { cn } from "lib/utils";
+import { ChevronRight } from "lucide-react";
 import type { GetServerSideProps, InferGetServerSidePropsType } from "next";
 import { useSession } from "next-auth/react";
 import Link from "next/link";
@@ -71,6 +88,16 @@ const useOnboardingStore = create<{
     set({ experienceLevelTests }),
 }));
 
+const FormItem = ({
+  children,
+  labelText,
+}: { children: React.ReactNode; labelText: string }) => (
+  <div className="grid w-full max-w-sm items-center gap-1.5">
+    <Label>{labelText}</Label>
+    {children}
+  </div>
+);
+
 function WizardFooter() {
   const { previousStep, nextStep, isFirstStep, isLastStep, activeStep } =
     useWizard();
@@ -82,7 +109,7 @@ function WizardFooter() {
     (activeStep === 2 && technologies.length === 0);
 
   return (
-    <div className="flex justify-between">
+    <CardFooter className="flex justify-between">
       <Button
         disabled={isFirstStep}
         onClick={previousStep}
@@ -97,7 +124,7 @@ function WizardFooter() {
       >
         Next
       </Button>
-    </div>
+    </CardFooter>
   );
 }
 
@@ -109,15 +136,18 @@ function Step1() {
       animate={{ opacity: 1, scale: 1 }}
       exit={{ opacity: 0, scale: 0.95 }}
     >
-      <h1 className="mb-1 text-3xl font-semibold">Welcome to Abby</h1>
-      <p>Thank you very much for signing up for Abby</p>
-
-      <form className="mt-6 space-y-3">
+      <CardHeader>
+        <CardTitle>Welcome to Abby</CardTitle>
+        <CardDescription>
+          Thank you very much for signing up for Abby
+        </CardDescription>
+      </CardHeader>
+      <CardContent>
         <label>
           <span>Name</span>
           <Input value={name} onChange={(e) => setName(e.target.value)} />
         </label>
-      </form>
+      </CardContent>
     </motion.div>
   );
 }
@@ -145,19 +175,30 @@ function Step2() {
       animate={{ opacity: 1, scale: 1 }}
       exit={{ opacity: 0, scale: 0.95 }}
     >
-      <h1 className="mb-1 text-3xl font-semibold">About you</h1>
-
-      <form className="mt-6 flex flex-col space-y-5">
-        <label>
-          <span>Role</span>
-          <Select
-            items={ROLES.map((r) => ({ label: r, value: r }))}
-            value={profession}
-            onChange={(value) => setProfession(value)}
-          />
-        </label>
-        <label>
-          <span>How would you rate your experience with Feature Flags</span>
+      <CardHeader>
+        <CardTitle>About you</CardTitle>
+        <CardDescription>Tell us more about you</CardDescription>
+      </CardHeader>
+      <CardContent className="flex flex-col space-y-5">
+        <FormItem labelText="Your current role">
+          <Select value={profession} onValueChange={setProfession}>
+            <SelectTrigger className="-ml-1">
+              <SelectValue placeholder="Role" />
+            </SelectTrigger>
+            <SelectContent>
+              {ROLES.map((role) => (
+                <SelectItem
+                  key={role}
+                  onClick={() => setProfession(role)}
+                  value={role}
+                >
+                  {role}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </FormItem>
+        <FormItem labelText="How would you rate your experience with Feature Flags">
           <RadioGroupComponent
             items={oneToFiveOptions}
             value={experienceLevelFlags.toString()}
@@ -166,9 +207,8 @@ function Step2() {
           <small className="text-xs text-gray-400">
             1 is no experience - 5 is very frequent usage
           </small>
-        </label>
-        <label>
-          <span>How would you rate your experience with A/B Testing</span>
+        </FormItem>
+        <FormItem labelText="How would you rate your experience with A/B Testing">
           <RadioGroupComponent
             items={oneToFiveOptions}
             value={experienceLevelTests.toString()}
@@ -177,8 +217,8 @@ function Step2() {
           <small className="text-xs text-gray-400">
             1 is no experience - 5 is very frequent usage
           </small>
-        </label>
-      </form>
+        </FormItem>
+      </CardContent>
     </motion.div>
   );
 }
@@ -243,18 +283,22 @@ function Step3() {
       animate={{ opacity: 1, scale: 1 }}
       exit={{ opacity: 0, scale: 0.95 }}
     >
-      <h1 className="mb-1 text-3xl font-semibold">Technical Background</h1>
+      <CardHeader>
+        <CardTitle>Technical Background</CardTitle>
+        <CardDescription>
+          What technologies do you use currently?
+        </CardDescription>
+      </CardHeader>
 
-      <form className="mt-6 flex flex-col space-y-5">
-        <label>What technologies do you use currently?</label>
+      <CardContent className="flex flex-col space-y-5">
         <div className="grid grid-cols-4 gap-4">
           {TECHNOLOGIES.map(({ name, icon: Icon }) => (
             <button
               key={name}
               type="button"
               className={cn(
-                "flex aspect-square w-full flex-col items-center justify-center space-y-3 rounded-sm border border-gray-100 p-2 transition-colors",
-                "data-[selected='true']:border-pink-500 data-[selected='true']:bg-gray-800"
+                "flex aspect-square w-full flex-col items-center justify-center space-y-3 rounded-sm border border-gray-600 p-2 transition-colors hover:bg-ab_primary-background",
+                "data-[selected='true']:border-white"
               )}
               data-selected={technologies.includes(name)}
               onClick={() => {
@@ -262,11 +306,11 @@ function Step3() {
               }}
             >
               <Icon className="h-6 w-6" />
-              <p>{name}</p>
+              <p className="font-medium">{name}</p>
             </button>
           ))}
         </div>
-      </form>
+      </CardContent>
     </motion.div>
   );
 }
@@ -278,37 +322,34 @@ function Step4() {
       animate={{ opacity: 1, scale: 1 }}
       exit={{ opacity: 0, scale: 0.95 }}
     >
-      <h1 className="mb-1 text-3xl font-semibold">You&apos;re ready to go!</h1>
-      <div className="mt-12 text-lg">
+      <CardHeader>
+        <CardTitle>You&apos;re ready to go!</CardTitle>
+        <CardDescription>
+          Thank you very much for signing up to Abby. You&apos;re now ready to
+          start using Abby.
+        </CardDescription>
+      </CardHeader>
+      <CardContent className="mt-12 text-lg">
         <p>
-          Thank you very much for signing up to Abby
-          <br />
-          <br />
           If you have any questions, feel free to join our{" "}
-          <Link className="text-pink-500" href={DISCORD_INVITE_URL}>
+          <Link className="text-ab_accent-background" href={DISCORD_INVITE_URL}>
             Discord
           </Link>{" "}
-          or send us an email to{" "}
-          <a className="text-pink-500" href="mailto:tim@tryabby.com">
-            tim@tryabby.com
-          </a>
+          or book a free 1:1 onboarding session with us.
           <br />
           <br />
-          You can also book a <b>free</b> 30 minute onboarding call with us to
-          get you started. Feel free to pick a time that works for you{" "}
-          <a
-            className="text-pink-500"
-            href="https://cal.com/cstrnt/abby-onboarding"
-          >
-            here
-          </a>
+          <Cal
+            namespace="abby-onboarding"
+            calLink="cstrnt/abby-onboarding"
+            style={{ width: "100%", height: "100%", overflow: "scroll" }}
+          />
         </p>
         <Link href="/projects">
-          <Button className="mx-auto mt-12 block w-[150px] bg-pink-500 font-semibold text-white hover:bg-pink-600">
-            Go to Abby
+          <Button className="mx-auto mt-12 w-[150px] flex items-center">
+            Go to Abby <ChevronRight size={18} />
           </Button>
         </Link>
-      </div>
+      </CardContent>
     </motion.div>
   );
 }
@@ -320,23 +361,31 @@ export default function WelcomePage(
     useOnboardingStore.getState().setName(props.user.name ?? "");
   }, [props.user.name]);
 
+  useEffect(() => {
+    (async () => {
+      const cal = await getCalApi({ namespace: "abby-onboarding" });
+      cal("ui", {
+        theme: "dark",
+        styles: { branding: { brandColor: "#f9a8d4" } },
+        hideEventTypeDetails: false,
+        layout: "month_view",
+      });
+    })();
+  }, []);
+
   return (
     <main className="flex min-h-screen items-center justify-center bg-ab_primary-background text-ab_primary-foreground">
-      <div className="flex h-[500px] w-full max-w-2xl flex-col rounded-md border border-ab_accent-background-muted bg-ab_primary-background p-8 text-ab_primary-foreground shadow-md shadow-ab_accent-background">
+      <Card className="max-w-[80vw] min-w-[500px]">
         <Wizard
           footer={<WizardFooter />}
-          wrapper={
-            <div className="mb-6 flex flex-1">
-              <AnimatePresence mode="wait" />
-            </div>
-          }
+          wrapper={<AnimatePresence mode="wait" />}
         >
           <Step1 />
           <Step2 />
           <Step3 />
           <Step4 />
         </Wizard>
-      </div>
+      </Card>
     </main>
   );
 }
