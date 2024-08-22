@@ -10,6 +10,7 @@ import {
   ChartTooltip,
   ChartTooltipContent,
 } from "components/ui/chart";
+import type { ProjectClientEvents } from "pages/projects/[projectId]";
 import { useMemo } from "react";
 
 export function DonutChart({
@@ -21,7 +22,7 @@ export function DonutChart({
   totalVisits: number;
   totalText: string;
   variants: string[];
-  events: Array<{ variant: string; events: number }>;
+  events: ProjectClientEvents;
 }) {
   const chartConfig = useMemo(
     () =>
@@ -42,9 +43,9 @@ export function DonutChart({
 
   const chartData = useMemo(() => {
     return events.map((event) => ({
-      variant: event.variant,
-      events: event.events,
-      fill: `var(--color-${event.variant})`,
+      variant: event.selectedVariant,
+      events: event._count._all,
+      fill: `var(--color-${event.selectedVariant})`,
     }));
   }, [events]);
 

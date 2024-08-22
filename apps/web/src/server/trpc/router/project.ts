@@ -10,8 +10,8 @@ import { z } from "zod";
 export type ClientOption = Omit<Option, "chance"> & {
   chance: number;
 };
-
-import ms from "ms";
+import { AbbyEventType } from "@tryabby/core";
+import dayjs from "dayjs";
 import { updateProjectsOnSession } from "utils/updateSession";
 import { protectedProcedure, router } from "../trpc";
 
@@ -32,13 +32,6 @@ export const projectRouter = router({
           tests: {
             include: {
               options: true,
-              events: {
-                where: {
-                  createdAt: {
-                    gte: new Date(Date.now() - ms("30d")),
-                  },
-                },
-              },
             },
           },
           environments: true,
@@ -53,17 +46,44 @@ export const projectRouter = router({
       const { events: eventsThisPeriod } =
         await EventService.getEventsForCurrentPeriod(project.id);
 
+      const events = await ctx.prisma.event.groupBy({
+        by: ["selectedVariant", "type", "testId"],
+        _count: { _all: true },
+        where: {
+          testId: { in: project.tests.map((test) => test.id) },
+          createdAt: {
+            gte: dayjs().subtract(30, "days").toDate(),
+          },
+        },
+      });
+
       return {
         project: {
           ...project,
           eventsThisPeriod,
-          tests: project.tests.map((test) => ({
-            ...test,
-            options: test.options.map((option) => ({
-              ...option,
-              chance: option.chance.toNumber(),
-            })),
-          })),
+          tests: project.tests.map((test) => {
+            const actEvents: typeof events = [];
+            const pingEvents: typeof events = [];
+            for (const event of events) {
+              if (event.testId === test.id) {
+                if (event.type === AbbyEventType.ACT) {
+                  actEvents.push(event);
+                } else {
+                  pingEvents.push(event);
+                }
+              }
+            }
+            return {
+              ...test,
+
+              actEvents,
+              pingEvents,
+              options: test.options.map((option) => ({
+                ...option,
+                chance: option.chance.toNumber(),
+              })),
+            };
+          }),
         },
       };
     }),
