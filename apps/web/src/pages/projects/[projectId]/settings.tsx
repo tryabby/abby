@@ -1,4 +1,5 @@
 import { ROLE, type User } from "@prisma/client";
+import { GitHubLogoIcon } from "@radix-ui/react-icons";
 import clsx from "clsx";
 import { DashboardButton } from "components/DashboardButton";
 import {
@@ -11,6 +12,7 @@ import { Layout } from "components/Layout";
 import { FullPageLoadingSpinner } from "components/LoadingSpinner";
 import { Progress } from "components/Progress";
 import { RemoveUserModal } from "components/RemoveUserModal";
+import { Integrations } from "components/settings/Integrations";
 import { Button } from "components/ui/button";
 import { Input } from "components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "components/ui/tabs";
@@ -33,6 +35,7 @@ const SETTINGS_TABS = {
   General: "general",
   Team: "team",
   Billing: "billing",
+  Integrations: "integrations",
   Danger: "danger",
 } as const;
 
@@ -47,6 +50,7 @@ const SettingsPage: NextPageWithLayout = () => {
       SETTINGS_TABS.Team,
       SETTINGS_TABS.Billing,
       SETTINGS_TABS.Danger,
+      SETTINGS_TABS.Integrations,
     ] as const).withDefault(SETTINGS_TABS.General)
   );
   const router = useRouter();
@@ -56,9 +60,14 @@ const SettingsPage: NextPageWithLayout = () => {
   const projectNameRef = useRef<HTMLInputElement>(null);
 
   const trpcContext = trpc.useContext();
-  const { data, isLoading, isError } = trpc.project.getProjectData.useQuery({
-    projectId,
-  });
+  const { data, isLoading, isError } = trpc.project.getProjectData.useQuery(
+    {
+      projectId,
+    },
+    {
+      enabled: !!projectId,
+    }
+  );
 
   const session = useSession();
 
@@ -222,6 +231,33 @@ const SettingsPage: NextPageWithLayout = () => {
                     Note: You can only invite users with an existing account.
                   </small>
                 </form>
+              </div>
+            </DashboardSection>
+          </TabsContent>
+          <TabsContent value="integrations">
+            <DashboardSection>
+              <DashboardSectionTitle>Integrations</DashboardSectionTitle>
+              <DashboardSectionSubtitle className="mb-8">
+                Manage your integrations
+              </DashboardSectionSubtitle>
+              <div className="flex flex-col space-y-4">
+                {data.project.integrations.length === 0 ? (
+                  <div className="flex flex-col space-y-3">
+                    <Link
+                      href={`/api/integrations/github?projectId=${projectId}`}
+                    >
+                      <Button
+                        variant="outline"
+                        className="flex space-x-2 mr-auto"
+                      >
+                        <GitHubLogoIcon height={18} width={18} />{" "}
+                        <span>Connect with Github</span>
+                      </Button>
+                    </Link>
+                  </div>
+                ) : (
+                  <Integrations projectId={projectId} />
+                )}
               </div>
             </DashboardSection>
           </TabsContent>

@@ -2,6 +2,7 @@ import { type Option, ROLE } from "@prisma/client";
 import { TRPCError } from "@trpc/server";
 import { PLANS, planNameSchema } from "server/common/plans";
 import { stripe } from "server/common/stripe";
+import { prisma } from "server/db/client";
 import { EventService } from "server/services/EventService";
 import { ProjectService } from "server/services/ProjectService";
 import { generateCodeSnippets } from "utils/snippets";
@@ -12,6 +13,13 @@ export type ClientOption = Omit<Option, "chance"> & {
 };
 import { AbbyEventType } from "@tryabby/core";
 import dayjs from "dayjs";
+import { assertUserHasAcessToProject } from "server/common/auth";
+import {
+  getAllRepositoriesForInstallation,
+  githubApp,
+} from "server/common/github-app";
+import { githubIntegrationSettingsSchema } from "server/common/integrations";
+import { match } from "ts-pattern";
 import { updateProjectsOnSession } from "utils/updateSession";
 import { protectedProcedure, router } from "../trpc";
 
@@ -37,6 +45,7 @@ export const projectRouter = router({
           environments: true,
           featureFlags: true,
           users: { include: { user: true } },
+          integrations: true,
         },
       });
 
@@ -313,5 +322,97 @@ export const projectRouter = router({
         items: logItems,
         nextCursor,
       };
+    }),
+  getIntegrations: protectedProcedure
+    .input(
+      z.object({
+        projectId: z.string(),
+      })
+    )
+    .query(async ({ ctx, input }) => {
+      await assertUserHasAcessToProject(input.projectId, ctx.session.user.id);
+
+      const project = await prisma.project.findUniqueOrThrow({
+        where: { id: input.projectId },
+        include: { integrations: true },
+      });
+
+      return await Promise.all(
+        project.integrations.map((i) =>
+          match(i.type)
+            .with("GITHUB", async () => {
+              const integration =
+                await githubIntegrationSettingsSchema.parseAsync(i.settings);
+
+              const gh = await githubApp.getInstallationOctokit(
+                integration.installationId
+              );
+              const [potentialRepositories, ...installedRepos] =
+                await Promise.all([
+                  getAllRepositoriesForInstallation(integration.installationId),
+                  ...integration.repositoryIds.map((id) =>
+                    gh.request("GET /repositories/:id", {
+                      id,
+                    })
+                  ),
+                ]);
+
+              return {
+                ...i,
+                settings: integration,
+                potentialRepositories: potentialRepositories.map((r) => ({
+                  name: r.name,
+                  owner: r.owner.login,
+                  id: r.id,
+                })),
+                installedRepos: installedRepos.map((r) => ({
+                  name: r.data.name,
+                  owner: r.data.owner.login,
+                  id: r.data.id,
+                })),
+              };
+            })
+            .exhaustive()
+        )
+      );
+    }),
+  updateGithubIntegration: protectedProcedure
+    .input(
+      z.object({
+        integrationId: z.string(),
+        repositoryId: z.number(),
+      })
+    )
+    .mutation(async ({ ctx, input }) => {
+      const integration = await prisma.integration.findUnique({
+        where: {
+          id: input.integrationId,
+        },
+        include: { project: { include: { users: true } } },
+      });
+      if (!integration) throw new TRPCError({ code: "NOT_FOUND" });
+      if (integration.type !== "GITHUB") {
+        throw new TRPCError({ code: "INTERNAL_SERVER_ERROR" });
+      }
+      if (
+        !integration.project.users.some((u) => u.userId === ctx.session.user.id)
+      ) {
+        throw new TRPCError({ code: "UNAUTHORIZED" });
+      }
+
+      const newSettings = await githubIntegrationSettingsSchema.parseAsync(
+        integration.settings
+      );
+      newSettings.repositoryIds = [input.repositoryId];
+
+      return await prisma.integration.update({
+        where: {
+          id: input.integrationId,
+        },
+        data: {
+          settings:
+            await githubIntegrationSettingsSchema.parseAsync(newSettings),
+        },
+      });
     }),
 });

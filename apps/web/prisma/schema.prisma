@@ -107,7 +107,8 @@ model Project {
   stripePriceId        String?
   currentPeriodEnd     DateTime @default(dbgenerated("(CURRENT_TIMESTAMP(3) + INTERVAL 30 DAY)"))
 
-  apiRequests ApiRequest[]
+  apiRequests  ApiRequest[]
+  integrations Integration[]
 }
 
 model ProjectUser {
@@ -309,4 +310,22 @@ model ApiRequest {
   @@index([projectId])
   @@index([createdAt])
   @@index([type])
+}
+
+enum IntegrationType {
+  GITHUB
+}
+
+model Integration {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  type      IntegrationType
+  settings  Json
+  project   Project         @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  projectId String
+
+  @@unique([projectId, type])
+  @@index([projectId])
 }

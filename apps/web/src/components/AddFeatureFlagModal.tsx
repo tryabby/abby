@@ -177,7 +177,9 @@ export const AddFeatureFlagModal = ({
 
   const { mutateAsync } = trpc.flags.addFlag.useMutation({
     onSuccess() {
-      ctx.flags.getFlags.invalidate({ projectId });
+      ctx.flags.getFlags.invalidate({
+        projectId,
+      });
     },
   });
 
