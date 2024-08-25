@@ -31,6 +31,10 @@ export const serverSchema = z.object({
   GOOGLE_CLIENT_ID: z.string().optional(),
   GOOGLE_CLIENT_SECRET: z.string().optional(),
   HASHING_SECRET: z.string().min(1),
+  ENABLE_GITHUB_APP: z.boolean().optional(),
+  GITHUB_APP_ID: z.string().optional(),
+  GITHUB_APP_PRIVATE_KEY: z.string().optional(),
+  OPENAI_API_KEY: z.string().optional(),
 });
 
 /**

@@ -1,5 +1,5 @@
 import type { FeatureFlagType } from "@prisma/client";
-import type { InferQueryResult } from "@trpc/react-query/dist/utils/inferReactQueryProcedure";
+import type { inferRouterOutputs } from "@trpc/server";
 import { AddFeatureFlagModal } from "components/AddFeatureFlagModal";
 import { CreateEnvironmentModal } from "components/CreateEnvironmentModal";
 import {
@@ -15,8 +15,14 @@ import { Tooltip, TooltipContent, TooltipTrigger } from "components/Tooltip";
 import { Input } from "components/ui/input";
 import Fuse from "fuse.js";
 import { useProjectId } from "lib/hooks/useProjectId";
-import { EditIcon, FileEditIcon, Search, TrashIcon } from "lucide-react";
-import { useMemo, useState } from "react";
+import {
+  EditIcon,
+  FileEditIcon,
+  Search,
+  Sparkle,
+  TrashIcon,
+} from "lucide-react";
+import { useEffect, useMemo, useState } from "react";
 import { toast } from "react-hot-toast";
 import { AiOutlinePlus } from "react-icons/ai";
 import { BiInfoCircle } from "react-icons/bi";
@@ -155,9 +161,7 @@ export const FeatureFlagPageContent = ({
   data,
   type,
 }: {
-  data: NonNullable<
-    InferQueryResult<(typeof appRouter)["flags"]["getFlags"]>["data"]
-  >;
+  data: NonNullable<inferRouterOutputs<typeof appRouter>["flags"]["getFlags"]>;
   type: "Flags" | "Remote Config";
 }) => {
   const [isCreateFlagModalOpen, setIsCreateFlagModalOpen] = useState(false);
@@ -170,6 +174,8 @@ export const FeatureFlagPageContent = ({
 
   const [isCreateEnvironmentModalOpen, setIsCreateEnvironmentModalOpen] =
     useState(false);
+  const createFlagRemovalPRMutation =
+    trpc.flags.createFlagRemovalPR.useMutation();
 
   const projectId = useProjectId();
 
@@ -177,6 +183,10 @@ export const FeatureFlagPageContent = ({
     () => new Fuse(data.flags, { keys: ["name"] }),
     [data.flags]
   );
+
+  useEffect(() => {
+    setFlags(data.flags);
+  }, [data.flags]);
 
   const onSearch = (query: string) => {
     if (!query) {
@@ -325,6 +335,26 @@ export const FeatureFlagPageContent = ({
                       >
                         <FileEditIcon className="mr-4 h-4 w-4" />
                         Edit Description
+                      </DropdownMenuItem>
+                      <DropdownMenuItem
+                        disabled={!data.hasGithubIntegration}
+                        className="cursor-pointer bg-gradient-to-r from-blue-800 via-purple-600 to-pink-500 hover:from-purple-700 hover:via-pink-500 hover:to-red-400"
+                        onClick={async () => {
+                          const url = await toast.promise(
+                            createFlagRemovalPRMutation.mutateAsync({
+                              flagId: currentFlag.id,
+                            }),
+                            {
+                              loading: "Creating removal PR...",
+                              success: "Successfully created removal PR",
+                              error: "Failed to create removal PR",
+                            }
+                          );
+                          window.open(url, "_blank");
+                        }}
+                      >
+                        <Sparkle className="mr-4 h-4 w-4" />
+                        Create Removal PR
                       </DropdownMenuItem>
                       <DropdownMenuItem
                         className="cursor-pointer focus:!bg-red-700 focus:!text-white"

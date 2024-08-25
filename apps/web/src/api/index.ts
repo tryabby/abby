@@ -4,6 +4,7 @@ import { Hono } from "hono";
 import { cors } from "hono/cors";
 import { logger } from "hono/logger";
 import { makeHealthRoute } from "./routes/health";
+import { makeIntegrationsRoute } from "./routes/integrations";
 import { makeLegacyProjectDataRoute } from "./routes/legacy_project_data";
 import { makeEventRoute } from "./routes/v1_event";
 
@@ -19,4 +20,5 @@ export const app = new Hono()
   // v1 routes
   .route("/v1/config", makeConfigRoute())
   .route("/v1/data", makeProjectDataRoute())
-  .route("/v1/track", makeEventRoute());
+  .route("/v1/track", makeEventRoute())
+  .route("/integrations", makeIntegrationsRoute());
