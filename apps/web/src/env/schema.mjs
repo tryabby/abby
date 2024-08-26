@@ -36,7 +36,7 @@ export const serverSchema = z.object({
   GITHUB_APP_PRIVATE_KEY: z
     .string()
     .optional()
-    .transform((s) => s.replace(/\\n/g, "\n")),
+    .transform((s) => (s ? s.replace(/\\n/g, "\n") : undefined)),
   OPENAI_API_KEY: z.string().optional(),
 });
 
