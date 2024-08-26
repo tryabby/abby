@@ -23,7 +23,7 @@ COPY .gitignore .gitignore
 COPY --from=builder /app/out/json/ .
 COPY --from=builder /app/out/pnpm-lock.yaml ./pnpm-lock.yaml
 # COPY --from=builder /app/tsconfig.json ./tsconfig.json
-RUN pnpm install
+RUN pnpm install --ignore-scripts --frozen-lockfile
  
 # Build the project
 COPY --from=builder /app/out/full/ .
