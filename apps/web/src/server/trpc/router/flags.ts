@@ -5,7 +5,7 @@ import { getUseFeatureFlagRegex } from "@tryabby/core";
 import { env } from "env/server.mjs";
 import OpenAI from "openai";
 import { ConfigCache } from "server/common/config-cache";
-import { githubApp } from "server/common/github-app";
+import { getGithubApp } from "server/common/github-app";
 import { githubIntegrationSettingsSchema } from "server/common/integrations";
 import { AIFlagRemovalService } from "server/services/AiFlagRemovalService";
 import { FlagService } from "server/services/FlagService";
@@ -354,7 +354,7 @@ export const flagRouter = router({
       const parsedIntegration = githubIntegrationSettingsSchema.parse(
         integration.settings
       );
-      const gh = await githubApp.getInstallationOctokit(
+      const gh = await getGithubApp().getInstallationOctokit(
         parsedIntegration.installationId
       );
       const repositoryId = parsedIntegration.repositoryIds[0];

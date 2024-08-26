@@ -9,17 +9,18 @@ if (
   throw new Error("Missing required environment variables for GitHub App");
 }
 
-export const githubApp = new App({
-  // biome-ignore lint/style/noNonNullAssertion: we check above
-  appId: env.GITHUB_APP_ID!,
-  // biome-ignore lint/style/noNonNullAssertion: we check above
-  privateKey: env.GITHUB_APP_PRIVATE_KEY!,
-});
+export const getGithubApp = () =>
+  new App({
+    // biome-ignore lint/style/noNonNullAssertion: we check above
+    appId: env.GITHUB_APP_ID!,
+    // biome-ignore lint/style/noNonNullAssertion: we check above
+    privateKey: env.GITHUB_APP_PRIVATE_KEY!,
+  });
 
 const PER_PAGE = 100;
 export const getAllRepositoriesForInstallation = memoize(
   async (installationId: number) => {
-    const gh = await githubApp.getInstallationOctokit(installationId);
+    const gh = await getGithubApp().getInstallationOctokit(installationId);
     let count = 0;
     const res = await gh.request("GET /installation/repositories", {
       installation_id: installationId,

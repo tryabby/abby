@@ -1,7 +1,7 @@
 import { zValidator } from "@hono/zod-validator";
 import { authMiddleware } from "api/helpers";
 import { Hono } from "hono";
-import { githubApp } from "server/common/github-app";
+import { getGithubApp } from "server/common/github-app";
 import type { GithubIntegrationSettings } from "server/common/integrations";
 import { prisma } from "server/db/client";
 import { z } from "zod";
@@ -39,7 +39,9 @@ export function makeIntegrationsRoute() {
         searchParams.set("projectId", projectId);
 
         return c.redirect(
-          await githubApp.getInstallationUrl({ state: searchParams.toString() })
+          await getGithubApp().getInstallationUrl({
+            state: searchParams.toString(),
+          })
         );
       }
     )

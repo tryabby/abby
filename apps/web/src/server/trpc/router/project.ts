@@ -16,7 +16,7 @@ import dayjs from "dayjs";
 import { assertUserHasAcessToProject } from "server/common/auth";
 import {
   getAllRepositoriesForInstallation,
-  githubApp,
+  getGithubApp,
 } from "server/common/github-app";
 import { githubIntegrationSettingsSchema } from "server/common/integrations";
 import { match } from "ts-pattern";
@@ -344,7 +344,7 @@ export const projectRouter = router({
               const integration =
                 await githubIntegrationSettingsSchema.parseAsync(i.settings);
 
-              const gh = await githubApp.getInstallationOctokit(
+              const gh = await getGithubApp().getInstallationOctokit(
                 integration.installationId
               );
               const [potentialRepositories, ...installedRepos] =
