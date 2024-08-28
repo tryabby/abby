@@ -62,7 +62,7 @@ export abstract class EventService {
     }
 
     return await prisma.$queryRawTyped(
-      getEventsByTestIdForAllTime(testId, eventType)
+      getEventsByTestIdForAllTime(testId, eventType, testId, eventType)
     );
   }
 
