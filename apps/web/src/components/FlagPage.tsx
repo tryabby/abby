@@ -22,7 +22,7 @@ import {
   Sparkle,
   TrashIcon,
 } from "lucide-react";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { toast } from "react-hot-toast";
 import { AiOutlinePlus } from "react-icons/ai";
 import { BiInfoCircle } from "react-icons/bi";
@@ -164,6 +164,7 @@ export const FeatureFlagPageContent = ({
   data: NonNullable<inferRouterOutputs<typeof appRouter>["flags"]["getFlags"]>;
   type: "Flags" | "Remote Config";
 }) => {
+  const searchQueryRef = useRef<string | null>();
   const [isCreateFlagModalOpen, setIsCreateFlagModalOpen] = useState(false);
   const [activeFlagInfo, setActiveFlagInfo] = useState<{
     id: string;
@@ -185,10 +186,16 @@ export const FeatureFlagPageContent = ({
   );
 
   useEffect(() => {
-    setFlags(data.flags);
-  }, [data.flags]);
+    if (!searchQueryRef.current) {
+      setFlags(data.flags);
+      return;
+    }
+    const results = fuse.search(searchQueryRef.current);
+    setFlags(results.map((result) => result.item));
+  }, [fuse.search, data.flags]);
 
-  const onSearch = (query: string) => {
+  const onSearch = () => {
+    const query = searchQueryRef.current;
     if (!query) {
       setFlags(data.flags);
       return;
@@ -235,7 +242,10 @@ export const FeatureFlagPageContent = ({
                 type="search"
                 placeholder="Search..."
                 className="pl-8 min-w-[250px]"
-                onChange={(e) => onSearch(e.target.value)}
+                onChange={(e) => {
+                  searchQueryRef.current = e.target.value;
+                  onSearch();
+                }}
               />
             </div>
           </div>
