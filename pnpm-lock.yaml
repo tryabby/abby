@@ -117,13 +117,13 @@ importers:
         version: 4.5.1(monaco-editor@0.39.0)(react-dom@18.2.0)(react@18.2.0)
       '@next-auth/prisma-adapter':
         specifier: 1.0.5
-        version: 1.0.5(@prisma/client@5.18.0)(next-auth@4.22.1)
+        version: 1.0.5(@prisma/client@5.19.0)(next-auth@4.22.1)
       '@next/mdx':
         specifier: 14.0.4
         version: 14.0.4(@mdx-js/loader@3.0.0)(@mdx-js/react@3.0.0)
       '@prisma/client':
-        specifier: 5.18.0
-        version: 5.18.0(prisma@5.18.0)
+        specifier: 5.19.0
+        version: 5.19.0(prisma@5.19.0)
       '@radix-ui/react-avatar':
         specifier: ^1.0.3
         version: 1.0.3(@types/react-dom@18.0.5)(@types/react@18.0.14)(react-dom@18.2.0)(react@18.2.0)
@@ -441,8 +441,8 @@ importers:
         specifier: ^0.1.13
         version: 0.1.13(prettier@2.8.8)
       prisma:
-        specifier: 5.18.0
-        version: 5.18.0
+        specifier: 5.19.0
+        version: 5.19.0
       tailwindcss:
         specifier: ^3.3.1
         version: 3.3.2(ts-node@10.9.1)
@@ -7878,13 +7878,13 @@ packages:
       tar-fs: 2.1.1
     dev: true
 
-  /@next-auth/prisma-adapter@1.0.5(@prisma/client@5.18.0)(next-auth@4.22.1):
+  /@next-auth/prisma-adapter@1.0.5(@prisma/client@5.19.0)(next-auth@4.22.1):
     resolution: {integrity: sha512-VqMS11IxPXrPGXw6Oul6jcyS/n8GLOWzRMrPr3EMdtD6eOalM6zz05j08PcNiis8QzkfuYnCv49OvufTuaEwYQ==}
     peerDependencies:
       '@prisma/client': '>=2.26.0 || >=3'
       next-auth: ^4
     dependencies:
-      '@prisma/client': 5.18.0(prisma@5.18.0)
+      '@prisma/client': 5.19.0(prisma@5.19.0)
       next-auth: 4.22.1(next@14.1.1)(nodemailer@6.9.3)(react-dom@18.2.0)(react@18.2.0)
     dev: false
 
@@ -8465,8 +8465,8 @@ packages:
     resolution: {integrity: sha512-P1st0aksCrn9sGZhp8GMYwBnQsbvAWsZAX44oXNNvLHGqAOcoVxmjZiohstwQ7SqKnbR47akdNi+uleWD8+g6A==}
     dev: false
 
-  /@prisma/client@5.18.0(prisma@5.18.0):
-    resolution: {integrity: sha512-BWivkLh+af1kqC89zCJYkHsRcyWsM8/JHpsDMM76DjP3ZdEquJhXa4IeX+HkWPnwJ5FanxEJFZZDTWiDs/Kvyw==}
+  /@prisma/client@5.19.0(prisma@5.19.0):
+    resolution: {integrity: sha512-CzOpau+q1kEWQyoQMvlnXIHqPvwmWbh48xZ4n8KWbAql0p8PC0BIgSTYW5ncxXa4JSEff0tcoxSZB874wDstdg==}
     engines: {node: '>=16.13'}
     requiresBuild: true
     peerDependencies:
@@ -8475,35 +8475,35 @@ packages:
       prisma:
         optional: true
     dependencies:
-      prisma: 5.18.0
+      prisma: 5.19.0
     dev: false
 
-  /@prisma/debug@5.18.0:
-    resolution: {integrity: sha512-f+ZvpTLidSo3LMJxQPVgAxdAjzv5OpzAo/eF8qZqbwvgi2F5cTOI9XCpdRzJYA0iGfajjwjOKKrVq64vkxEfUw==}
+  /@prisma/debug@5.19.0:
+    resolution: {integrity: sha512-+b/G0ubAZlrS+JSiDhXnYV5DF/aTJ3pinktkiV/L4TtLRLZO6SVGyFELgxBsicCTWJ2ZMu5vEV/jTtYCdjFTRA==}
 
-  /@prisma/engines-version@5.18.0-25.4c784e32044a8a016d99474bd02a3b6123742169:
-    resolution: {integrity: sha512-a/+LpJj8vYU3nmtkg+N3X51ddbt35yYrRe8wqHTJtYQt7l1f8kjIBcCs6sHJvodW/EK5XGvboOiwm47fmNrbgg==}
+  /@prisma/engines-version@5.19.0-31.5fe21811a6ba0b952a3bc71400666511fe3b902f:
+    resolution: {integrity: sha512-GimI9aZIFy/yvvR11KfXRn3pliFn1QAkdebVlsXlnoh5uk0YhLblVmeYiHfsu+wDA7BeKqYT4sFfzg8mutzuWw==}
 
-  /@prisma/engines@5.18.0:
-    resolution: {integrity: sha512-ofmpGLeJ2q2P0wa/XaEgTnX/IsLnvSp/gZts0zjgLNdBhfuj2lowOOPmDcfKljLQUXMvAek3lw5T01kHmCG8rg==}
+  /@prisma/engines@5.19.0:
+    resolution: {integrity: sha512-UtW+0m4HYoRSSR3LoDGKF3Ud4BSMWYlLEt4slTnuP1mI+vrV3zaDoiAPmejdAT76vCN5UqnWURbkXxf66nSylQ==}
     requiresBuild: true
     dependencies:
-      '@prisma/debug': 5.18.0
-      '@prisma/engines-version': 5.18.0-25.4c784e32044a8a016d99474bd02a3b6123742169
-      '@prisma/fetch-engine': 5.18.0
-      '@prisma/get-platform': 5.18.0
+      '@prisma/debug': 5.19.0
+      '@prisma/engines-version': 5.19.0-31.5fe21811a6ba0b952a3bc71400666511fe3b902f
+      '@prisma/fetch-engine': 5.19.0
+      '@prisma/get-platform': 5.19.0
 
-  /@prisma/fetch-engine@5.18.0:
-    resolution: {integrity: sha512-I/3u0x2n31rGaAuBRx2YK4eB7R/1zCuayo2DGwSpGyrJWsZesrV7QVw7ND0/Suxeo/vLkJ5OwuBqHoCxvTHpOg==}
+  /@prisma/fetch-engine@5.19.0:
+    resolution: {integrity: sha512-oOiPNtmJX0cP/ebu7BBEouJvCw8T84/MFD/Hf2zlqjxkK4ojl38bB9i9J5LAxotL6WlYVThKdxc7HqoWnPOhqQ==}
     dependencies:
-      '@prisma/debug': 5.18.0
-      '@prisma/engines-version': 5.18.0-25.4c784e32044a8a016d99474bd02a3b6123742169
-      '@prisma/get-platform': 5.18.0
+      '@prisma/debug': 5.19.0
+      '@prisma/engines-version': 5.19.0-31.5fe21811a6ba0b952a3bc71400666511fe3b902f
+      '@prisma/get-platform': 5.19.0
 
-  /@prisma/get-platform@5.18.0:
-    resolution: {integrity: sha512-Tk+m7+uhqcKDgnMnFN0lRiH7Ewea0OEsZZs9pqXa7i3+7svS3FSCqDBCaM9x5fmhhkufiG0BtunJVDka+46DlA==}
+  /@prisma/get-platform@5.19.0:
+    resolution: {integrity: sha512-s9DWkZKnuP4Y8uy6yZfvqQ/9X3/+2KYf3IZUVZz5OstJdGBJrBlbmIuMl81917wp5TuK/1k2TpHNCEdpYLPKmg==}
     dependencies:
-      '@prisma/debug': 5.18.0
+      '@prisma/debug': 5.19.0
 
   /@radix-ui/number@1.0.1:
     resolution: {integrity: sha512-T5gIdVO2mmPW3NNhjNgEP3cqMXjXL9UbO0BzWcXfvdBs+BohbQxvd/K5hSVKmn9/lbTdsQVKbUcP5WLCwvUbBg==}
@@ -22365,13 +22365,15 @@ packages:
     resolution: {integrity: sha512-dKp+C4iXWK4vVYZmYSd0KBH5F/h1HoZRsbJ82AVKRO3PEo8L4lBS/vLwhVtpwwuYcoIsVY+1JYKR268yn480uQ==}
     dev: true
 
-  /prisma@5.18.0:
-    resolution: {integrity: sha512-+TrSIxZsh64OPOmaSgVPH7ALL9dfU0jceYaMJXsNrTkFHO7/3RANi5K2ZiPB1De9+KDxCWn7jvRq8y8pvk+o9g==}
+  /prisma@5.19.0:
+    resolution: {integrity: sha512-Pu7lUKpVyTx8cVwM26dYh8NdvMOkMnJXzE8L6cikFuR4JwyMU5NKofQkWyxJKlTT4fNjmcnibTvklV8oVMrn+g==}
     engines: {node: '>=16.13'}
     hasBin: true
     requiresBuild: true
     dependencies:
-      '@prisma/engines': 5.18.0
+      '@prisma/engines': 5.19.0
+    optionalDependencies:
+      fsevents: 2.3.3
 
   /proc-log@4.2.0:
     resolution: {integrity: sha512-g8+OnU/L2v+wyiVK+D5fA34J7EH8jZ8DDlvwhRCMxmMj7UCBvxiO1mGeN+36JXIKF4zevU4kRBd8lVgG9vLelA==}

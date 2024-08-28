@@ -3,6 +3,7 @@ import dayjs from "dayjs";
 export enum TIME_INTERVAL {
   DAY = "day",
   ALL_TIME = "all",
+  LAST_30_DAYS = "30d",
 }
 
 export const INTERVALS = [
@@ -16,7 +17,7 @@ export const INTERVALS = [
   // },
   {
     label: "Last 30 days",
-    value: "30d",
+    value: TIME_INTERVAL.LAST_30_DAYS,
   },
   // {
   //   label: "Year to Date",
@@ -42,25 +43,12 @@ export function isSpecialTimeInterval(
   return Object.values(TIME_INTERVAL).includes(timeInterval as TIME_INTERVAL);
 }
 
-export function getMSFromSpecialTimeInterval(
-  timeInterval: TIME_INTERVAL
-): number {
-  switch (timeInterval) {
-    case TIME_INTERVAL.DAY: {
-      return 1000 * 60 * 60 * 24;
-    }
-    case TIME_INTERVAL.ALL_TIME: {
-      return Number.POSITIVE_INFINITY;
-    }
-  }
-}
-
 export function getFormattingByInterval(interval: string) {
   switch (interval) {
     case TIME_INTERVAL.DAY: {
       return "HH:mm";
     }
-    case "30d": {
+    case TIME_INTERVAL.LAST_30_DAYS: {
       return "DD MMM";
     }
     case TIME_INTERVAL.ALL_TIME: {
@@ -108,33 +96,6 @@ export function getBaseEventsByInterval(
           .toISOString(),
         ...variantData,
       })).toReversed();
-    }
-  }
-}
-
-export function getLabelsByInterval(
-  interval: (typeof INTERVALS)[number]["value"],
-  fistEventDate: Date
-): Array<string> {
-  const formatting = getFormattingByInterval(interval);
-  switch (interval) {
-    case TIME_INTERVAL.DAY: {
-      const baseData = dayjs().set("minute", 0);
-      return [0, 3, 6, 9, 12, 15, 18, 21].map((hour) =>
-        baseData.set("hour", hour).format(formatting)
-      );
-    }
-    case "30d": {
-      return Array.from({ length: 30 }, (_, i) =>
-        dayjs().subtract(i, "day").format(formatting)
-      ).reverse();
-    }
-    case TIME_INTERVAL.ALL_TIME: {
-      const diff = dayjs().diff(dayjs(fistEventDate), "month");
-
-      return Array.from({ length: Math.max(diff, 6) }, (_, i) =>
-        dayjs(fistEventDate).add(i, "month").format(formatting)
-      ).reverse();
     }
   }
 }

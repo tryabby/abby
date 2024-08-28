@@ -1,11 +1,10 @@
-import type { AbbyEvent } from "@tryabby/core";
-import dayjs from "dayjs";
 import {
-  TIME_INTERVAL,
-  getMSFromSpecialTimeInterval,
-  isSpecialTimeInterval,
-} from "lib/events";
-import ms from "ms";
+  getEventsByTestIdForAllTime,
+  getEventsByTestIdForDay,
+  getEventsByTestIdForLast30Days,
+} from "@prisma/client/sql";
+import type { AbbyEvent, AbbyEventType } from "@tryabby/core";
+import { TIME_INTERVAL, isSpecialTimeInterval } from "lib/events";
 import { PLANS, type PlanName, getLimitByPlan } from "server/common/plans";
 import { prisma } from "server/db/client";
 import { RequestCache } from "./RequestCache";
@@ -43,50 +42,28 @@ export abstract class EventService {
     });
   }
 
-  static async getEventsByTestId(testId: string, timeInterval: string) {
-    const now = new Date().getTime();
-
+  static async getEventsByTestId(
+    testId: string,
+    timeInterval: string,
+    eventType: AbbyEventType
+    // all function should have the same type
+  ): Promise<getEventsByTestIdForDay.Result[]> {
     if (isSpecialTimeInterval(timeInterval)) {
-      const specialIntervalInMs = getMSFromSpecialTimeInterval(timeInterval);
-      return prisma.event.findMany({
-        where: {
-          testId,
-          ...(specialIntervalInMs !== Number.POSITIVE_INFINITY &&
-            timeInterval !== TIME_INTERVAL.DAY && {
-              createdAt: {
-                gte: new Date(now - getMSFromSpecialTimeInterval(timeInterval)),
-              },
-            }),
-          // Special case for day, since we want to include the current day
-          ...(timeInterval === TIME_INTERVAL.DAY && {
-            createdAt: {
-              gte: dayjs().startOf("day").toDate(),
-            },
-          }),
-        },
-        orderBy: {
-          createdAt: "asc",
-        },
-      });
+      if (timeInterval === TIME_INTERVAL.DAY) {
+        return await prisma.$queryRawTyped(
+          getEventsByTestIdForDay(testId, eventType)
+        );
+      }
+      if (timeInterval === TIME_INTERVAL.LAST_30_DAYS) {
+        return await prisma.$queryRawTyped(
+          getEventsByTestIdForLast30Days(testId, eventType)
+        );
+      }
     }
 
-    const parsedInterval = ms(timeInterval) as number | undefined;
-
-    if (parsedInterval === undefined) {
-      throw new Error("Invalid time interval");
-    }
-
-    return prisma.event.findMany({
-      where: {
-        testId,
-        createdAt: {
-          gte: new Date(now - parsedInterval),
-        },
-      },
-      orderBy: {
-        createdAt: "asc",
-      },
-    });
+    return await prisma.$queryRawTyped(
+      getEventsByTestIdForAllTime(testId, eventType)
+    );
   }
 
   static async getEventsForCurrentPeriod(projectId: string) {
