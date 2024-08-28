@@ -51,43 +51,78 @@ export const eventRouter = router({
         throw new TRPCError({ code: "UNAUTHORIZED" });
       }
 
-      const events = await EventService.getEventsByTestId(
-        input.testId,
-        input.interval
-      );
+      const [_actEvents, _pingEvents] = await Promise.all([
+        EventService.getEventsByTestId(
+          input.testId,
+          input.interval,
+          AbbyEventType.ACT
+        ),
+        EventService.getEventsByTestId(
+          input.testId,
+          input.interval,
+          AbbyEventType.PING
+        ),
+      ]);
 
       const potentialVariants = currentTest.options.map((o) => o.identifier);
 
-      const eventsByDate = groupBy(events, (e) => {
+      const baseActEvents =
+        getBaseEventsByInterval(
+          input.interval,
+          potentialVariants,
+          _actEvents[0]?.createdAt ?? new Date()
+        ) ?? [];
+
+      const basePingEvents =
+        getBaseEventsByInterval(
+          input.interval,
+          potentialVariants,
+          _actEvents[0]?.createdAt ?? new Date()
+        ) ?? [];
+
+      const actEventsByDate = groupBy(_actEvents, (e) => {
         const date = dayjs(e.createdAt);
         if (input.interval === TIME_INTERVAL.DAY) {
           // round by 3 hours
           const hour = Math.floor(date.hour() / 3) * 3;
 
-          return date.set("hour", hour).set("minute", 0).toISOString();
+          return date
+            .set("hour", hour)
+            .set("minute", 0)
+            .set("second", 0)
+            .set("millisecond", 0)
+            .toISOString();
         }
         return date.startOf("day").toISOString();
       });
 
-      const baseEvents =
-        getBaseEventsByInterval(
-          input.interval,
-          potentialVariants,
-          events[0]?.createdAt ?? new Date()
-        ) ?? [];
+      const pingEventsByDate = groupBy(_pingEvents, (e) => {
+        const date = dayjs(e.createdAt);
+        if (input.interval === TIME_INTERVAL.DAY) {
+          // round by 3 hours
+          const hour = Math.floor(date.hour() / 3) * 3;
 
-      console.dir(baseEvents, { depth: null });
+          return date
+            .set("hour", hour)
+            .set("minute", 0)
+            .set("second", 0)
+            .set("millisecond", 0)
+            .toISOString();
+        }
+        return date.startOf("day").toISOString();
+      });
 
       const pingEvents = uniqBy(
         [
-          ...Object.entries(eventsByDate).map(([date, events]) => {
-            const tests = groupBy(
-              events.filter((e) => e.type === AbbyEventType.PING),
-              (e) => e.selectedVariant
-            );
+          ...Object.entries(pingEventsByDate).map(([date, events]) => {
+            const tests = groupBy(events, (e) => e.selectedVariant);
+
             const testCount = Object.entries(tests).reduce(
               (acc, [variant, events]) => {
-                acc[variant] = events.length;
+                acc[variant] = events.reduce(
+                  (acc, e) => acc + Number(e.eventCount),
+                  0
+                );
                 return acc;
               },
               {} as Record<string, number>
@@ -102,7 +137,7 @@ export const eventRouter = router({
               [key: string]: number | string;
             };
           }),
-          ...baseEvents,
+          ...basePingEvents,
         ],
         (e) => e.date
       ) as Array<{
@@ -112,14 +147,14 @@ export const eventRouter = router({
 
       const actEvents = uniqBy(
         [
-          ...Object.entries(eventsByDate).map(([date, events]) => {
-            const tests = groupBy(
-              events.filter((e) => e.type === AbbyEventType.ACT),
-              (e) => e.selectedVariant
-            );
+          ...Object.entries(actEventsByDate).map(([date, events]) => {
+            const tests = groupBy(events, (e) => e.selectedVariant);
             const testCount = Object.entries(tests).reduce(
               (acc, [variant, events]) => {
-                acc[variant] = events.length;
+                acc[variant] = events.reduce(
+                  (acc, e) => acc + Number(e.eventCount),
+                  0
+                );
                 return acc;
               },
               {} as Record<string, number>
@@ -129,9 +164,12 @@ export const eventRouter = router({
                 testCount[variant] = 0;
               }
             });
-            return { date, ...testCount };
+            return { date, ...testCount } as {
+              date: string;
+              [key: string]: number | string;
+            };
           }),
-          ...baseEvents,
+          ...baseActEvents,
         ],
         (e) => e.date
       ) as Array<{
