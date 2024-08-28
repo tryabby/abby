@@ -13,11 +13,11 @@ WHERE
 	AND TYPE = ?
 	AND(DATE(createdAt) BETWEEN DATE((
 			SELECT
-				createdAt FROM `Event`
-			ORDER BY
-				createdAt ASC
-			LIMIT 1))
-	AND DATE(NOW()))
+				MIN(createdAt)
+				FROM `Event`
+			WHERE
+				testId = ?
+				AND TYPE = ?))
+		AND DATE(NOW()))
 GROUP BY
-	DATE(createdAt),
-	selectedVariant
+	DATE(createdAt), selectedVariant
