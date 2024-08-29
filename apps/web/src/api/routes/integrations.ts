@@ -1,5 +1,6 @@
 import { zValidator } from "@hono/zod-validator";
 import { authMiddleware } from "api/helpers";
+import { env } from "env/server.mjs";
 import { Hono } from "hono";
 import { getGithubApp } from "server/common/github-app";
 import type { GithubIntegrationSettings } from "server/common/integrations";
@@ -24,7 +25,7 @@ export function makeIntegrationsRoute() {
           where: { id: projectId, users: { some: { userId: user.id } } },
           include: { integrations: true },
         });
-        const referrer = new URL(c.req.header("Referer") ?? "/");
+        const referrer = new URL(c.req.header("Referer") ?? env.NEXTAUTH_URL);
 
         if (!project) {
           referrer.searchParams.set("error", "Unauthorized");

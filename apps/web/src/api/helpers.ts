@@ -26,8 +26,15 @@ export const authMiddleware: MiddlewareHandler<{
     user: UserSession & DefaultSession["user"];
   };
 }> = async (c, next) => {
-  const tokenCookie = getCookie(c, "next-auth.session-token");
-  if (!tokenCookie) return next();
+  const tokenCookie = getCookie(
+    c,
+    env.NODE_ENV === "production"
+      ? "__Secure-next-auth.session-token"
+      : "next-auth.session-token"
+  );
+  if (!tokenCookie) {
+    return c.json({ error: "Unauthorized" }, { status: 401 });
+  }
   if (!env.NEXTAUTH_SECRET) {
     throw new Error("NEXTAUTH_SECRET is not set");
   }
