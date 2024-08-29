@@ -87,7 +87,7 @@ export function Integrations({ projectId }: { projectId: string | undefined }) {
                               {selectedRepository.name}
                             </span>
                           ) : (
-                            "Select framework..."
+                            "Select repository..."
                           )}
                           <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
                         </Button>

@@ -1,4 +1,5 @@
 import { zValidator } from "@hono/zod-validator";
+import { Webhooks } from "@octokit/webhooks";
 import { authMiddleware } from "api/helpers";
 import { env } from "env/server.mjs";
 import { Hono } from "hono";
@@ -91,7 +92,44 @@ export function makeIntegrationsRoute() {
             } satisfies GithubIntegrationSettings,
           },
         });
-        return c.redirect(`/projects/${project.id}/settings`);
+        return c.redirect(
+          `${env.NEXTAUTH_URL}/projects/${project.id}/settings`
+        );
+      }
+    )
+    .post(
+      "/github/webhook",
+
+      async (c) => {
+        if (!env.GITHUB_APP_WEBHOOK_SECRET) {
+          return c.json({ message: "Webhook secret not set" }, { status: 500 });
+        }
+        const webhooks = new Webhooks({
+          secret: env.GITHUB_APP_WEBHOOK_SECRET,
+        });
+
+        webhooks.on("installation.deleted", async ({ payload }) => {
+          const integration = await prisma.integration.findFirst({
+            where: {
+              settings: {
+                path: "$.installationId",
+                equals: payload.installation?.id,
+              },
+            },
+          });
+
+          if (!integration) return;
+          await prisma.integration.delete({ where: { id: integration.id } });
+        });
+
+        await webhooks.verifyAndReceive({
+          id: c.req.header("X-GitHub-Delivery") as string,
+          // biome-ignore lint/suspicious/noExplicitAny: we don't care about the type here
+          name: c.req.header("X-GitHub-Event") as any,
+          signature: c.req.header("X-Hub-Signature-256") as string,
+          payload: await c.req.text(),
+        });
+        return c.json({ message: "ok" });
       }
     );
 }

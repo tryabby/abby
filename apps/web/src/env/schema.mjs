@@ -39,6 +39,7 @@ export const serverSchema = z.object({
     .transform((s) =>
       s ? Buffer.from(s, "base64").toString("ascii") : undefined
     ),
+  GITHUB_APP_WEBHOOK_SECRET: z.string().optional(),
   OPENAI_API_KEY: z.string().optional(),
 });
 
