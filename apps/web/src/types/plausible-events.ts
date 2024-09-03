@@ -29,3 +29,9 @@ export type PlausibleEvents = {
   "Dashboard Help Clicked": never;
   "Dashboard Code Clicked": never;
 };
+
+export type ServerEvents = {
+  flag_removal_pr_created: {
+    files_changed: number;
+  };
+};

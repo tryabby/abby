@@ -41,6 +41,7 @@ export const serverSchema = z.object({
     ),
   GITHUB_APP_WEBHOOK_SECRET: z.string().optional(),
   OPENAI_API_KEY: z.string().optional(),
+  OPENPANEL_CLIENT_SECRET: z.string().optional(),
 });
 
 /**
@@ -56,6 +57,7 @@ export const clientSchema = z.object({
   NEXT_PUBLIC_STRIPE_PRO_PLAN_PRICE_ID: z.string().min(1),
   NEXT_PUBLIC_ABBY_PROJECT_ID: z.string().min(1),
   NEXT_PUBLIC_PLAUSIBLE_DOMAIN: z.string().optional(),
+  NEXT_PUBLIC_OPENPANEL_CLIENT_ID: z.string().optional(),
 });
 
 /**

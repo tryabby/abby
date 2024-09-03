@@ -12,6 +12,7 @@ import { FlagService } from "server/services/FlagService";
 import { validateFlag } from "utils/validateFlags";
 import { z } from "zod";
 import { protectedProcedure, router } from "../trpc";
+import { serverTrackingService } from "server/common/tracking";
 
 export const flagRouter = router({
   getFlags: protectedProcedure
@@ -434,6 +435,11 @@ export const flagRouter = router({
           })
         )
       ).flat();
+
+      serverTrackingService.trackEvent("flag_removal_pr_created", {
+        files_changed: fileContents.length,
+      });
+
       const baseBranchResponse = await gh.rest.git.getRef({
         owner,
         repo: name,

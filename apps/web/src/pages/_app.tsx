@@ -12,6 +12,7 @@ import { AbbyDevtools, AbbyProvider, withAbby } from "lib/abby";
 import type { NextPage } from "next";
 import { useRouter } from "next/router";
 import type { ReactElement, ReactNode } from "react";
+import { OpenPanelComponent } from "@openpanel/nextjs";
 import "@fontsource/martian-mono/600.css";
 
 import "../styles/shadcn.css";
@@ -40,6 +41,12 @@ const MyApp: AppType<{ session: Session | null }> = ({
   const getLayout = Component.getLayout ?? ((page) => page);
   return (
     <>
+      {env.NEXT_PUBLIC_OPENPANEL_CLIENT_ID && (
+        <OpenPanelComponent
+          clientId={env.NEXT_PUBLIC_OPENPANEL_CLIENT_ID}
+          trackScreenViews={true}
+        />
+      )}
       <AbbyProvider initialData={__ABBY_PROJECT_DATA__}>
         {/* we render different devtools on the landing page */}
         {router.asPath !== "/" && <AbbyDevtools />}
