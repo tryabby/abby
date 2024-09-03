@@ -28,3 +28,4 @@ WHERE
 		AND DATE(NOW()))
 GROUP BY
 	DATE(createdAt), selectedVariant
+ORDER BY createdAt ASC;

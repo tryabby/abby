@@ -21,3 +21,4 @@ WHERE
 GROUP BY
 	HOUR(createdAt),
 	selectedVariant
+ORDER BY createdAt ASC;

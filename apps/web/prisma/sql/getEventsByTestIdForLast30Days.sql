@@ -16,7 +16,8 @@ FROM
 WHERE
 	testId = ?
 	AND TYPE = ?
-	AND DATE(NOW()) - INTERVAL 1 MONTH
+	AND createdAt >= DATE_SUB(CURDATE(), INTERVAL 30 DAY)
 GROUP BY
 	DATE(createdAt),
 	selectedVariant
+ORDER BY createdAt ASC;
