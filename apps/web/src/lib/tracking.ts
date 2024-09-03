@@ -4,12 +4,12 @@ import { useCallback } from "react";
 import type { EventOptionsTuple } from "server/common/tracking";
 import type { PlausibleEvents } from "types/plausible-events";
 
-export const useTracking = <const N extends keyof PlausibleEvents>() => {
+export const useTracking = () => {
   const trackPlausible = usePlausible<PlausibleEvents>();
   const { track: trackOpenPanel } = useOpenPanel();
 
   return useCallback(
-    (
+    <N extends keyof PlausibleEvents>(
       eventName: N,
       ...rest: PlausibleEvents[N] extends never
         ? []
