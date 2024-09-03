@@ -1,12 +1,275 @@
 import { TRPCError } from "@trpc/server";
-import { AbbyEventType } from "@tryabby/core";
-import dayjs from "dayjs";
-import { TIME_INTERVAL, getBaseEventsByInterval } from "lib/events";
 import { groupBy, uniqBy } from "lodash-es";
 import { EventService } from "server/services/EventService";
 import { ProjectService } from "server/services/ProjectService";
 import { z } from "zod";
 import { protectedProcedure, router } from "../trpc";
+import { AbbyEventType } from "@tryabby/core";
+import dayjs from "dayjs";
+import { getBaseEventsByInterval, TIME_INTERVAL } from "lib/events";
+import memoize from "memoize";
+
+export const getEventData = memoize(
+  async (testId: string, interval: string, potentialVariants: string[]) => {
+    const [_actEvents, _pingEvents] = await Promise.all([
+      EventService.getEventsByTestId(testId, interval, AbbyEventType.ACT),
+      EventService.getEventsByTestId(testId, interval, AbbyEventType.PING),
+    ]);
+
+    const baseActEvents =
+      getBaseEventsByInterval(
+        interval,
+        potentialVariants,
+        _actEvents[0]?.createdAt ?? new Date()
+      ) ?? [];
+
+    const basePingEvents =
+      getBaseEventsByInterval(
+        interval,
+        potentialVariants,
+        _actEvents[0]?.createdAt ?? new Date()
+      ) ?? [];
+
+    const actEventsByDate = groupBy(_actEvents, (e) => {
+      const date = dayjs(e.createdAt);
+      if (interval === TIME_INTERVAL.DAY) {
+        // round by 3 hours
+        const hour = Math.floor(date.hour() / 3) * 3;
+
+        return date
+          .set("hour", hour)
+          .set("minute", 0)
+          .set("second", 0)
+          .set("millisecond", 0)
+          .toISOString();
+      }
+      return date.startOf("day").toISOString();
+    });
+
+    const pingEventsByDate = groupBy(_pingEvents, (e) => {
+      const date = dayjs(e.createdAt);
+      if (interval === TIME_INTERVAL.DAY) {
+        // round by 3 hours
+        const hour = Math.floor(date.hour() / 3) * 3;
+
+        return date
+          .set("hour", hour)
+          .set("minute", 0)
+          .set("second", 0)
+          .set("millisecond", 0)
+          .toISOString();
+      }
+      return date.startOf("day").toISOString();
+    });
+
+    const pingEvents = uniqBy(
+      [
+        ...Object.entries(pingEventsByDate).map(([date, events]) => {
+          const tests = groupBy(events, (e) => e.selectedVariant);
+
+          const testCount = Object.entries(tests).reduce(
+            (acc, [variant, events]) => {
+              acc[variant] = {
+                totalEventCount: events.reduce(
+                  (acc, e) => acc + Number(e.eventCount),
+                  0
+                ),
+                uniqueEventCount: events.reduce(
+                  (acc, e) => acc + Number(e.uniqueEventCount),
+                  0
+                ),
+              };
+              return acc;
+            },
+            {} as Record<
+              string,
+              {
+                totalEventCount: number;
+                uniqueEventCount: number;
+              }
+            >
+          );
+          potentialVariants.forEach((variant) => {
+            if (!testCount[variant]) {
+              testCount[variant] = {
+                totalEventCount: 0,
+                uniqueEventCount: 0,
+              };
+            }
+          });
+          return { date, ...testCount } as {
+            date: string;
+            [key: string]: number | string;
+          };
+        }),
+        ...basePingEvents,
+      ].toSorted((a, b) => (dayjs(a.date).isBefore(dayjs(b.date)) ? -1 : 1)),
+      (e) => e.date
+    ) as Array<{
+      date: string;
+      [key: string]:
+        | {
+            totalEventCount: number;
+            uniqueEventCount: number;
+          }
+        | string;
+    }>;
+
+    const actEvents = uniqBy(
+      [
+        ...Object.entries(actEventsByDate).map(([date, events]) => {
+          const tests = groupBy(events, (e) => e.selectedVariant);
+          const testCount = Object.entries(tests).reduce(
+            (acc, [variant, events]) => {
+              acc[variant] = {
+                totalEventCount: events.reduce(
+                  (acc, e) => acc + Number(e.eventCount),
+                  0
+                ),
+                uniqueEventCount: events.reduce(
+                  (acc, e) => acc + Number(e.uniqueEventCount),
+                  0
+                ),
+              };
+              return acc;
+            },
+            {} as Record<
+              string,
+              {
+                totalEventCount: number;
+                uniqueEventCount: number;
+              }
+            >
+          );
+          potentialVariants.forEach((variant) => {
+            if (!testCount[variant]) {
+              testCount[variant] = {
+                totalEventCount: 0,
+                uniqueEventCount: 0,
+              };
+            }
+          });
+          return { date, ...testCount } as {
+            date: string;
+            [key: string]:
+              | {
+                  totalEventCount: number;
+                  uniqueEventCount: number;
+                }
+              | string;
+          };
+        }),
+        ...baseActEvents,
+      ].toSorted((a, b) => (dayjs(a.date).isBefore(dayjs(b.date)) ? -1 : 1)),
+      (e) => e.date
+    ) as Array<{
+      [key: string]:
+        | {
+            totalEventCount: number;
+            uniqueEventCount: number;
+          }
+        | string;
+    }>;
+
+    const totalPingEvents = pingEvents.map((e) => {
+      return {
+        date: e.date,
+        ...Object.entries(e).reduce(
+          (acc, [key, value]) => {
+            if (key === "date") return acc;
+            if (typeof value === "string") {
+              acc[key] = 0;
+              return acc;
+            }
+
+            acc[key] = value.totalEventCount;
+            return acc;
+          },
+          {} as {
+            [key: string]: number | string;
+          }
+        ),
+      } as {
+        date: string;
+        [key: string]: string;
+      };
+    });
+
+    const uniquePingEvents = pingEvents.map((e) => {
+      return {
+        date: e.date,
+        ...Object.entries(e).reduce(
+          (acc, [key, value]) => {
+            if (key === "date") return acc;
+            if (typeof value === "string") return acc;
+            acc[key] = value.uniqueEventCount;
+            return acc;
+          },
+          {} as {
+            [key: string]: number | string;
+          }
+        ),
+      } as {
+        date: string;
+        [key: string]: string;
+      };
+    });
+
+    const totalActEvents = actEvents.map((e) => {
+      return {
+        date: e.date,
+        ...Object.entries(e).reduce(
+          (acc, [key, value]) => {
+            if (key === "date") return acc;
+            if (typeof value === "string") return acc;
+            acc[key] = value.totalEventCount;
+            return acc;
+          },
+          {} as {
+            [key: string]: number | string;
+          }
+        ),
+      } as {
+        date: string;
+        [key: string]: string;
+      };
+    });
+
+    const uniqueActEvents = actEvents.map((e) => {
+      return {
+        date: e.date,
+        ...Object.entries(e).reduce(
+          (acc, [key, value]) => {
+            if (key === "date") return acc;
+            if (typeof value === "string") return acc;
+            acc[key] = value.uniqueEventCount;
+            return acc;
+          },
+          {} as {
+            [key: string]: number | string;
+          }
+        ),
+      } as {
+        date: string;
+        [key: string]: string;
+      };
+    });
+
+    return {
+      totalPingEvents,
+      uniquePingEvents,
+      totalActEvents,
+      uniqueActEvents,
+      potentialVariants,
+    };
+  },
+  {
+    maxAge: 1000 * 10,
+    cacheKey: ([testId, interval, potentialVariants]) => {
+      return `${testId}-${interval}-${potentialVariants.join("-")}`;
+    },
+  }
+);
 
 export const eventRouter = router({
   getEvents: protectedProcedure
@@ -51,267 +314,15 @@ export const eventRouter = router({
         throw new TRPCError({ code: "UNAUTHORIZED" });
       }
 
-      const [_actEvents, _pingEvents] = await Promise.all([
-        EventService.getEventsByTestId(
-          input.testId,
-          input.interval,
-          AbbyEventType.ACT
-        ),
-        EventService.getEventsByTestId(
-          input.testId,
-          input.interval,
-          AbbyEventType.PING
-        ),
-      ]);
-
       const potentialVariants = currentTest.options.map((o) => o.identifier);
-
-      const baseActEvents =
-        getBaseEventsByInterval(
-          input.interval,
-          potentialVariants,
-          _actEvents[0]?.createdAt ?? new Date()
-        ) ?? [];
-
-      const basePingEvents =
-        getBaseEventsByInterval(
-          input.interval,
-          potentialVariants,
-          _actEvents[0]?.createdAt ?? new Date()
-        ) ?? [];
-
-      const actEventsByDate = groupBy(_actEvents, (e) => {
-        const date = dayjs(e.createdAt);
-        if (input.interval === TIME_INTERVAL.DAY) {
-          // round by 3 hours
-          const hour = Math.floor(date.hour() / 3) * 3;
-
-          return date
-            .set("hour", hour)
-            .set("minute", 0)
-            .set("second", 0)
-            .set("millisecond", 0)
-            .toISOString();
-        }
-        return date.startOf("day").toISOString();
-      });
-
-      const pingEventsByDate = groupBy(_pingEvents, (e) => {
-        const date = dayjs(e.createdAt);
-        if (input.interval === TIME_INTERVAL.DAY) {
-          // round by 3 hours
-          const hour = Math.floor(date.hour() / 3) * 3;
-
-          return date
-            .set("hour", hour)
-            .set("minute", 0)
-            .set("second", 0)
-            .set("millisecond", 0)
-            .toISOString();
-        }
-        return date.startOf("day").toISOString();
-      });
-
-      const pingEvents = uniqBy(
-        [
-          ...Object.entries(pingEventsByDate).map(([date, events]) => {
-            const tests = groupBy(events, (e) => e.selectedVariant);
-
-            const testCount = Object.entries(tests).reduce(
-              (acc, [variant, events]) => {
-                acc[variant] = {
-                  totalEventCount: events.reduce(
-                    (acc, e) => acc + Number(e.eventCount),
-                    0
-                  ),
-                  uniqueEventCount: events.reduce(
-                    (acc, e) => acc + Number(e.uniqueEventCount),
-                    0
-                  ),
-                };
-                return acc;
-              },
-              {} as Record<
-                string,
-                {
-                  totalEventCount: number;
-                  uniqueEventCount: number;
-                }
-              >
-            );
-            potentialVariants.forEach((variant) => {
-              if (!testCount[variant]) {
-                testCount[variant] = {
-                  totalEventCount: 0,
-                  uniqueEventCount: 0,
-                };
-              }
-            });
-            return { date, ...testCount } as {
-              date: string;
-              [key: string]: number | string;
-            };
-          }),
-          ...basePingEvents,
-        ].toSorted((a, b) => (dayjs(a.date).isBefore(dayjs(b.date)) ? -1 : 1)),
-        (e) => e.date
-      ) as Array<{
-        date: string;
-        [key: string]:
-          | {
-              totalEventCount: number;
-              uniqueEventCount: number;
-            }
-          | string;
-      }>;
-
-      const actEvents = uniqBy(
-        [
-          ...Object.entries(actEventsByDate).map(([date, events]) => {
-            const tests = groupBy(events, (e) => e.selectedVariant);
-            const testCount = Object.entries(tests).reduce(
-              (acc, [variant, events]) => {
-                acc[variant] = {
-                  totalEventCount: events.reduce(
-                    (acc, e) => acc + Number(e.eventCount),
-                    0
-                  ),
-                  uniqueEventCount: events.reduce(
-                    (acc, e) => acc + Number(e.uniqueEventCount),
-                    0
-                  ),
-                };
-                return acc;
-              },
-              {} as Record<
-                string,
-                {
-                  totalEventCount: number;
-                  uniqueEventCount: number;
-                }
-              >
-            );
-            potentialVariants.forEach((variant) => {
-              if (!testCount[variant]) {
-                testCount[variant] = {
-                  totalEventCount: 0,
-                  uniqueEventCount: 0,
-                };
-              }
-            });
-            return { date, ...testCount } as {
-              date: string;
-              [key: string]:
-                | {
-                    totalEventCount: number;
-                    uniqueEventCount: number;
-                  }
-                | string;
-            };
-          }),
-          ...baseActEvents,
-        ].toSorted((a, b) => (dayjs(a.date).isBefore(dayjs(b.date)) ? -1 : 1)),
-        (e) => e.date
-      ) as Array<{
-        [key: string]:
-          | {
-              totalEventCount: number;
-              uniqueEventCount: number;
-            }
-          | string;
-      }>;
-
-      const totalPingEvents = pingEvents.map((e) => {
-        return {
-          date: e.date,
-          ...Object.entries(e).reduce(
-            (acc, [key, value]) => {
-              if (key === "date") return acc;
-              if (typeof value === "string") {
-                acc[key] = 0;
-                return acc;
-              }
-
-              acc[key] = value.totalEventCount;
-              return acc;
-            },
-            {} as {
-              [key: string]: number | string;
-            }
-          ),
-        } as {
-          date: string;
-          [key: string]: string;
-        };
-      });
-
-      const uniquePingEvents = pingEvents.map((e) => {
-        return {
-          date: e.date,
-          ...Object.entries(e).reduce(
-            (acc, [key, value]) => {
-              if (key === "date") return acc;
-              if (typeof value === "string") return acc;
-              acc[key] = value.uniqueEventCount;
-              return acc;
-            },
-            {} as {
-              [key: string]: number | string;
-            }
-          ),
-        } as {
-          date: string;
-          [key: string]: string;
-        };
-      });
-
-      const totalActEvents = actEvents.map((e) => {
-        return {
-          date: e.date,
-          ...Object.entries(e).reduce(
-            (acc, [key, value]) => {
-              if (key === "date") return acc;
-              if (typeof value === "string") return acc;
-              acc[key] = value.totalEventCount;
-              return acc;
-            },
-            {} as {
-              [key: string]: number | string;
-            }
-          ),
-        } as {
-          date: string;
-          [key: string]: string;
-        };
-      });
-
-      const uniqueActEvents = actEvents.map((e) => {
-        return {
-          date: e.date,
-          ...Object.entries(e).reduce(
-            (acc, [key, value]) => {
-              if (key === "date") return acc;
-              if (typeof value === "string") return acc;
-              acc[key] = value.uniqueEventCount;
-              return acc;
-            },
-            {} as {
-              [key: string]: number | string;
-            }
-          ),
-        } as {
-          date: string;
-          [key: string]: string;
-        };
-      });
 
       return {
         currentTest,
-        totalPingEvents,
-        uniquePingEvents,
-        totalActEvents,
-        uniqueActEvents,
-        potentialVariants,
+        ...(await getEventData(
+          input.testId,
+          input.interval,
+          potentialVariants
+        )),
       };
     }),
 });

@@ -1,5 +1,4 @@
 import dayjs from "dayjs";
-
 export enum TIME_INTERVAL {
   DAY = "day",
   ALL_TIME = "all",
