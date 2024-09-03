@@ -8,18 +8,42 @@ import { TIME_INTERVAL, isSpecialTimeInterval } from "lib/events";
 import { PLANS, type PlanName, getLimitByPlan } from "server/common/plans";
 import { prisma } from "server/db/client";
 import { RequestCache } from "./RequestCache";
+import crypto from "node:crypto";
+import { env } from "env/server.mjs";
+import dayjs from "dayjs";
+import timezone from "dayjs/plugin/timezone";
+import utc from "dayjs/plugin/utc";
+
+dayjs.extend(utc);
+dayjs.extend(timezone);
 
 export abstract class EventService {
+  private static hashUserInfo(ipAddress: string, userAgent: string) {
+    return crypto
+      .createHmac("sha256", env.HASHING_SECRET)
+      .update(`${ipAddress}-${userAgent}`)
+      .digest("hex");
+  }
   static async createEvent({
     projectId,
     selectedVariant,
     testName,
     type,
-  }: AbbyEvent) {
+    ipAddress,
+    userAgent,
+  }: AbbyEvent & {
+    ipAddress: string;
+    userAgent: string;
+  }) {
+    console.log({
+      ipAddress,
+      userAgent,
+    });
     return prisma.event.create({
       data: {
         selectedVariant,
         type,
+        anonymousId: EventService.hashUserInfo(ipAddress, userAgent),
         test: {
           connect: {
             projectId_name: {
@@ -51,7 +75,7 @@ export abstract class EventService {
     if (isSpecialTimeInterval(timeInterval)) {
       if (timeInterval === TIME_INTERVAL.DAY) {
         return await prisma.$queryRawTyped(
-          getEventsByTestIdForDay(testId, eventType)
+          getEventsByTestIdForDay(testId, eventType, dayjs().hour(12).toDate())
         );
       }
       if (timeInterval === TIME_INTERVAL.LAST_30_DAYS) {

@@ -104,14 +104,28 @@ const TestDetailPage: NextPageWithLayout = () => {
         <EventGraph
           title="Visits"
           subtitle="The amount of times a user has seen this test"
-          events={getEventsQuery.data.pingEvents ?? []}
+          events={getEventsQuery.data.totalPingEvents ?? []}
           variants={getEventsQuery.data.potentialVariants}
           interval={interval}
         />
         <EventGraph
           title="Conversions"
           subtitle="The amount of times a user has converted in this test"
-          events={getEventsQuery.data.actEvents ?? []}
+          events={getEventsQuery.data.totalActEvents ?? []}
+          variants={getEventsQuery.data.potentialVariants}
+          interval={interval}
+        />
+        <EventGraph
+          title="Unique Visists"
+          subtitle="The amount of times a user has converted in this test"
+          events={getEventsQuery.data.uniquePingEvents ?? []}
+          variants={getEventsQuery.data.potentialVariants}
+          interval={interval}
+        />
+        <EventGraph
+          title="Unique Conversions"
+          subtitle="The amount of times a user has converted in this test"
+          events={getEventsQuery.data.uniqueActEvents ?? []}
           variants={getEventsQuery.data.potentialVariants}
           interval={interval}
         />

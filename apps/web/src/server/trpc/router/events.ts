@@ -119,17 +119,32 @@ export const eventRouter = router({
 
             const testCount = Object.entries(tests).reduce(
               (acc, [variant, events]) => {
-                acc[variant] = events.reduce(
-                  (acc, e) => acc + Number(e.eventCount),
-                  0
-                );
+                acc[variant] = {
+                  totalEventCount: events.reduce(
+                    (acc, e) => acc + Number(e.eventCount),
+                    0
+                  ),
+                  uniqueEventCount: events.reduce(
+                    (acc, e) => acc + Number(e.uniqueEventCount),
+                    0
+                  ),
+                };
                 return acc;
               },
-              {} as Record<string, number>
+              {} as Record<
+                string,
+                {
+                  totalEventCount: number;
+                  uniqueEventCount: number;
+                }
+              >
             );
             potentialVariants.forEach((variant) => {
               if (!testCount[variant]) {
-                testCount[variant] = 0;
+                testCount[variant] = {
+                  totalEventCount: 0,
+                  uniqueEventCount: 0,
+                };
               }
             });
             return { date, ...testCount } as {
@@ -138,11 +153,16 @@ export const eventRouter = router({
             };
           }),
           ...basePingEvents,
-        ],
+        ].toSorted((a, b) => (dayjs(a.date).isBefore(dayjs(b.date)) ? -1 : 1)),
         (e) => e.date
       ) as Array<{
         date: string;
-        [key: string]: string;
+        [key: string]:
+          | {
+              totalEventCount: number;
+              uniqueEventCount: number;
+            }
+          | string;
       }>;
 
       const actEvents = uniqBy(
@@ -151,32 +171,147 @@ export const eventRouter = router({
             const tests = groupBy(events, (e) => e.selectedVariant);
             const testCount = Object.entries(tests).reduce(
               (acc, [variant, events]) => {
-                acc[variant] = events.reduce(
-                  (acc, e) => acc + Number(e.eventCount),
-                  0
-                );
+                acc[variant] = {
+                  totalEventCount: events.reduce(
+                    (acc, e) => acc + Number(e.eventCount),
+                    0
+                  ),
+                  uniqueEventCount: events.reduce(
+                    (acc, e) => acc + Number(e.uniqueEventCount),
+                    0
+                  ),
+                };
                 return acc;
               },
-              {} as Record<string, number>
+              {} as Record<
+                string,
+                {
+                  totalEventCount: number;
+                  uniqueEventCount: number;
+                }
+              >
             );
             potentialVariants.forEach((variant) => {
               if (!testCount[variant]) {
-                testCount[variant] = 0;
+                testCount[variant] = {
+                  totalEventCount: 0,
+                  uniqueEventCount: 0,
+                };
               }
             });
             return { date, ...testCount } as {
               date: string;
-              [key: string]: number | string;
+              [key: string]:
+                | {
+                    totalEventCount: number;
+                    uniqueEventCount: number;
+                  }
+                | string;
             };
           }),
           ...baseActEvents,
-        ],
+        ].toSorted((a, b) => (dayjs(a.date).isBefore(dayjs(b.date)) ? -1 : 1)),
         (e) => e.date
       ) as Array<{
-        date: string;
-        [key: string]: string;
+        [key: string]:
+          | {
+              totalEventCount: number;
+              uniqueEventCount: number;
+            }
+          | string;
       }>;
 
-      return { currentTest, pingEvents, actEvents, potentialVariants };
+      const totalPingEvents = pingEvents.map((e) => {
+        return {
+          date: e.date,
+          ...Object.entries(e).reduce(
+            (acc, [key, value]) => {
+              if (key === "date") return acc;
+              if (typeof value === "string") {
+                acc[key] = 0;
+                return acc;
+              }
+
+              acc[key] = value.totalEventCount;
+              return acc;
+            },
+            {} as {
+              [key: string]: number | string;
+            }
+          ),
+        } as {
+          date: string;
+          [key: string]: string;
+        };
+      });
+
+      const uniquePingEvents = pingEvents.map((e) => {
+        return {
+          date: e.date,
+          ...Object.entries(e).reduce(
+            (acc, [key, value]) => {
+              if (key === "date") return acc;
+              if (typeof value === "string") return acc;
+              acc[key] = value.uniqueEventCount;
+              return acc;
+            },
+            {} as {
+              [key: string]: number | string;
+            }
+          ),
+        } as {
+          date: string;
+          [key: string]: string;
+        };
+      });
+
+      const totalActEvents = actEvents.map((e) => {
+        return {
+          date: e.date,
+          ...Object.entries(e).reduce(
+            (acc, [key, value]) => {
+              if (key === "date") return acc;
+              if (typeof value === "string") return acc;
+              acc[key] = value.totalEventCount;
+              return acc;
+            },
+            {} as {
+              [key: string]: number | string;
+            }
+          ),
+        } as {
+          date: string;
+          [key: string]: string;
+        };
+      });
+
+      const uniqueActEvents = actEvents.map((e) => {
+        return {
+          date: e.date,
+          ...Object.entries(e).reduce(
+            (acc, [key, value]) => {
+              if (key === "date") return acc;
+              if (typeof value === "string") return acc;
+              acc[key] = value.uniqueEventCount;
+              return acc;
+            },
+            {} as {
+              [key: string]: number | string;
+            }
+          ),
+        } as {
+          date: string;
+          [key: string]: string;
+        };
+      });
+
+      return {
+        currentTest,
+        totalPingEvents,
+        uniquePingEvents,
+        totalActEvents,
+        uniqueActEvents,
+        potentialVariants,
+      };
     }),
 });

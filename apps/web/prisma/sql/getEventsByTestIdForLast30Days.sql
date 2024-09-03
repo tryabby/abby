@@ -1,6 +1,12 @@
 -- @param {String} $1:testId
 -- @param {Int} $2:type
+
 SELECT
+	COUNT(DISTINCT CASE WHEN anonymousId IS NOT NULL THEN
+			anonymousId
+		ELSE
+			CONCAT('NULL_', UUID())
+		END) AS uniqueEventCount,
 	COUNT(*) AS eventCount,
 	TYPE,
 	createdAt,

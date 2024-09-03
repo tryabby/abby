@@ -10,6 +10,8 @@ import { eventQueue, getQueueingRedisConnection } from "./queues";
 
 export type EventJobPayload = AbbyEvent & {
   functionDuration: number;
+  ipAddress: string;
+  userAgent: string;
 };
 
 const EventTypeToRequestType = {

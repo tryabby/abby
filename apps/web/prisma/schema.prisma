@@ -179,6 +179,8 @@ model Event {
   selectedVariant String
   createdAt       DateTime @default(now())
 
+  anonymousId String?
+
   @@index([testId])
   @@index([type])
   @@index([selectedVariant])

@@ -4,6 +4,11 @@
 -- @param {Int} $4:typeAgain
 
 SELECT
+	COUNT(DISTINCT CASE WHEN anonymousId IS NOT NULL THEN
+			anonymousId
+		ELSE
+			CONCAT('NULL_', UUID())
+		END) AS uniqueEventCount,
 	COUNT(*) AS eventCount,
 	TYPE,
 	createdAt,
