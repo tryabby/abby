@@ -1,29 +1,12 @@
 import { env } from "env/server.mjs";
-import type { Context, MiddlewareHandler } from "hono";
+import type { MiddlewareHandler } from "hono";
 import { getCookie } from "hono/cookie";
-import type { GetServerSidePropsContext } from "next";
-import type { DefaultSession } from "next-auth";
+import type { Session } from "next-auth";
 import { decode } from "next-auth/jwt";
-import { getServerAuthSession } from "server/common/get-server-auth-session";
-import type { UserSession } from "types/next-auth";
-
-export async function getHonoSession(c: Context) {
-  return await getServerAuthSession({
-    req: {
-      ...c.req.raw.clone(),
-      cookies: getCookie(c),
-    } as unknown as GetServerSidePropsContext["req"],
-    res: {
-      ...c.res,
-      getHeader: (h: string) => c.req.header(h),
-      setHeader: (h: string, v: string) => c.header(h, v),
-    } as unknown as GetServerSidePropsContext["res"],
-  });
-}
 
 export const authMiddleware: MiddlewareHandler<{
   Variables: {
-    user: UserSession & DefaultSession["user"];
+    user: NonNullable<Session["user"]>;
   };
 }> = async (c, next) => {
   const tokenCookie = getCookie(

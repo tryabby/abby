@@ -80,10 +80,6 @@ export function makeProjectDataRoute() {
   const app = new Hono()
     .get(
       "/:projectId",
-      cors({
-        origin: "*",
-        maxAge: 86400,
-      }),
       zValidator(
         "query",
         z.object({
