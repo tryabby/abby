@@ -61,6 +61,7 @@
     "@react-email/render": "0.0.5",
     "@react-email/section": "0.0.4",
     "@react-email/text": "0.0.3",
+    "@sentry/nextjs": "^8",
     "@stripe/stripe-js": "^1.52.1",
     "@tanstack/react-query": "^4.29.1",
     "@tiptap/extension-bubble-menu": "2.4.0",

@@ -7,6 +7,15 @@ export async function register() {
       import("server/queue/event"),
     ]);
 
+    if (process.env.NEXT_RUNTIME === "nodejs") {
+      await import("../sentry.server.config");
+    }
+
+    // biome-ignore lint/suspicious/noExplicitAny: typings are off
+    if (process.env.NEXT_RUNTIME === ("edge" as any)) {
+      await import("../sentry.edge.config");
+    }
+
     const gracefulShutdown = async (signal: string) => {
       console.log(`Received ${signal}, closing server...`);
       await Promise.all(workers.map((w) => w.default.close()));
