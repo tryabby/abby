@@ -35,10 +35,6 @@ export abstract class EventService {
     ipAddress: string;
     userAgent: string;
   }) {
-    console.log({
-      ipAddress,
-      userAgent,
-    });
     return prisma.event.create({
       data: {
         selectedVariant,
