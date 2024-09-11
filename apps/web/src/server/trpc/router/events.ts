@@ -326,7 +326,7 @@ export const eventRouter = router({
         )),
       };
     }),
-  getEventCount: publicProcedure.query(async ({ ctx }) => {
+  getEventCount: publicProcedure.query(async () => {
     return await getTotalEventCount();
   }),
 });
@@ -340,6 +340,6 @@ const getTotalEventCount = memoize(
     return eventCount + apiRequestCount;
   },
   {
-    maxAge: 1000 * 60,
+    maxAge: 1000 * 60 * 60,
   }
 );
