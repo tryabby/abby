@@ -3,11 +3,12 @@ import { groupBy, uniqBy } from "lodash-es";
 import { EventService } from "server/services/EventService";
 import { ProjectService } from "server/services/ProjectService";
 import { z } from "zod";
-import { protectedProcedure, router } from "../trpc";
+import { protectedProcedure, publicProcedure, router } from "../trpc";
 import { AbbyEventType } from "@tryabby/core";
 import dayjs from "dayjs";
 import { getBaseEventsByInterval, TIME_INTERVAL } from "lib/events";
 import memoize from "memoize";
+import type { Context } from "../context";
 
 export const getEventData = memoize(
   async (testId: string, interval: string, potentialVariants: string[]) => {
@@ -325,4 +326,20 @@ export const eventRouter = router({
         )),
       };
     }),
+  getEventCount: publicProcedure.query(async ({ ctx }) => {
+    return await getTotalEventCount(ctx);
+  }),
 });
+
+const getTotalEventCount = memoize(
+  async (ctx: Context) => {
+    const [eventCount, apiRequestCount] = await Promise.all([
+      ctx.prisma.event.count(),
+      ctx.prisma.apiRequest.count(),
+    ]);
+    return eventCount + apiRequestCount;
+  },
+  {
+    maxAge: 1000 * 60,
+  }
+);

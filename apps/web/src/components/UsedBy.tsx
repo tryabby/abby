@@ -2,7 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 import DynabaseLogo from "../../public/img/companies/dynabase.svg";
 import IgusLogo from "../../public/img/companies/igus.svg";
-import MavenoidLogo from "../../public/img/companies/mavenoid.svg";
+
 import RBTXLogo from "../../public/img/companies/rbtx.svg";
 
 const COMPANIES = [
@@ -20,11 +20,6 @@ const COMPANIES = [
     name: "Dynabase",
     logo: DynabaseLogo,
     companyUrl: "https://dynabase.de/",
-  },
-  {
-    name: "Mavenoid",
-    logo: MavenoidLogo,
-    companyUrl: "https://mavenoid.com/",
   },
 ] satisfies Array<{
   logo: React.ReactNode;

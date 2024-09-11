@@ -29,6 +29,7 @@ import { twMerge } from "tailwind-merge";
 import { generateCodeSnippets } from "utils/snippets";
 import abbyScreenshot from "../../public/screenshot.png";
 import type { NextPageWithLayout } from "./_app";
+import { EventCounter } from "components/EventCounter";
 
 const { useAbby, AbbyProvider, useFeatureFlag, __abby__, withDevtools } =
   createAbby({
@@ -137,6 +138,7 @@ const Home: NextPageWithLayout<
               Start free, scale at a fair price.
             </span>
           </div>
+          <EventCounter />
           {heroMediaVariant === "Image" && (
             <Image
               src={abbyScreenshot}

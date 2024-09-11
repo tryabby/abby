@@ -66,12 +66,6 @@ const config = {
   },
 };
 
-console.log({
-  "process.env.SENTRY_ORG": process.env.SENTRY_ORG,
-  "process.env.SENTRY_PROJECT": process.env.SENTRY_PROJECT,
-
-})
-
 const withSentry =
   process.env.SENTRY_ORG && process.env.SENTRY_PROJECT
     ? withSentryConfig
