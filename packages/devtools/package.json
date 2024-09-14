@@ -35,7 +35,7 @@
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "storybook": "^7.0.5",
-    "svelte": "^3.55.1",
+    "svelte": "^4.2.19",
     "svelte-check": "^2.10.3",
     "tslib": "^2.5.0",
     "typescript": "5.5.4",
