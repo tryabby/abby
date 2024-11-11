@@ -1,0 +1,11 @@
+{
+    "extends": "tsconfig/base.json",
+    "display": "Vue Library",
+    "compilerOptions": {
+        "jsx": "preserve",
+        "jsxImportSource": "vue",
+        "module": "ESNext",
+        "lib": ["ESNext", "DOM"],
+        "types": ["vitest/globals"]
+    }
+}

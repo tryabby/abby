@@ -1,0 +1,47 @@
+{
+  "name": "@tryabby/vue",
+  "version": "0.1.0",
+  "description": "",
+  "main": "dist/index.js",
+  "files": ["dist"],
+  "module": "dist/index.mjs",
+  "types": "dist/index.d.ts",
+  ".": {
+    "types": "./dist/index.d.ts",
+    "import": "./dist/index.mjs",
+    "require": "./dist/index.js"
+  },
+  "scripts": {
+    "build": "tsup src/",
+    "dev": "pnpm run build --watch",
+    "test": "vitest"
+  },
+  "homepage": "https://docs.tryabby.com",
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@testing-library/jest-dom": "^5.16.5",
+    "@testing-library/react": "^13.4.0",
+    "@testing-library/vue": "^8.1.0",
+    "@vue/test-utils": "^2.4.6",
+    "@tryabby/devtools": "workspace:*",
+    "@types/js-cookie": "^3.0.3",
+    "@vitejs/plugin-vue": "5.1.4",
+    "jsdom": "^20.0.3",
+    "msw": "^0.49.1",
+    "node-fetch": "^3.3.0",
+    "tsconfig": "workspace:*",
+    "tsup": "^6.5.0",
+    "typescript": "5.5.4",
+    "vite": "5.4.0",
+    "vitest": "2.0.5"
+  },
+  "peerDependencies": {
+    "vue": "^3.5.12"
+  },
+  "dependencies": {
+    "@tryabby/core": "workspace:*",
+    "js-cookie": "^3.0.1"
+  }
+}
