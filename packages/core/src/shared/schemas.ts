@@ -23,6 +23,17 @@ export const remoteConfigValueStringSchema = z.union([
   z.literal("JSON"),
 ]);
 
+const validatorType = z.object({
+  type: z.union([
+    z.literal("string"),
+    z.literal("number"),
+    z.literal("boolean"),
+  ]),
+  optional: z.boolean().optional(),
+});
+
+export type ValidatorType = z.infer<typeof validatorType>;
+
 export const abbyConfigSchema = z.object({
   projectId: z.string(),
   apiUrl: z.string().optional(),
@@ -67,6 +78,7 @@ export const abbyConfigSchema = z.object({
     })
     .optional(),
   __experimentalCdnUrl: z.string().optional(),
+  user: z.record(z.string(), validatorType).optional(),
 }) satisfies z.ZodType<AbbyConfig>;
 
 export type AbbyConfigFile = z.infer<typeof abbyConfigSchema>;

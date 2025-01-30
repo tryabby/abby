@@ -1,5 +1,6 @@
 import { Abby } from "../src";
 import { defineConfig } from "../src/defineConfig";
+import * as validation from "../src/validation";
 
 describe("defineConfig", () => {
   const cfg = defineConfig(
@@ -17,6 +18,11 @@ describe("defineConfig", () => {
           variants: ["true", "false"],
         },
       },
+      user: {
+        name: validation.string(),
+        age: validation.number(),
+        isDeveloper: validation.boolean(),
+      },
     }
   );
 
@@ -32,5 +38,10 @@ describe("defineConfig", () => {
     >();
 
     expectTypeOf(abby.getVariants).parameter(0).toEqualTypeOf<"abTest">();
+    expectTypeOf(abby.updateUserProperties).parameter(0).toEqualTypeOf<{
+      name?: string;
+      age?: number;
+      isDeveloper?: boolean;
+    }>();
   });
 });

@@ -19,6 +19,7 @@ import {
   remoteConfigStringToType,
   stringifyRemoteConfigValue,
 } from "./shared/";
+import type { ValidatorType, Infer } from "./validation";
 
 export * from "./shared/index";
 export {
@@ -93,6 +94,7 @@ export type AbbyConfig<
     RemoteConfigName,
     RemoteConfigValueString
   > = Record<RemoteConfigName, RemoteConfigValueString>,
+  User extends Record<string, ValidatorType> = Record<string, ValidatorType>,
 > = {
   projectId: string;
   apiUrl?: string;
@@ -109,6 +111,7 @@ export type AbbyConfig<
     expiresInDays?: number;
   };
   __experimentalCdnUrl?: string;
+  user?: User;
 };
 
 export class Abby<
@@ -118,6 +121,10 @@ export class Abby<
   const RemoteConfig extends Record<RemoteConfigName, RemoteConfigValueString>,
   const RemoteConfigName extends Extract<keyof RemoteConfig, string>,
   const Environments extends Array<string> = Array<string>,
+  const User extends Record<string, ValidatorType> = Record<
+    string,
+    ValidatorType
+  >,
 > {
   private log = (...args: any[]) =>
     this.config.debug ? console.log("core.Abby", ...args) : () => {};
@@ -144,6 +151,7 @@ export class Abby<
   private remoteConfigOverrides = new Map<string, RemoteConfigValue>();
 
   private COOKIE_CONSENT_KEY = "$_abcc_$";
+  private user = {} as User;
 
   constructor(
     private config: AbbyConfig<
@@ -151,7 +159,8 @@ export class Abby<
       Tests,
       Environments,
       RemoteConfigName,
-      RemoteConfig
+      RemoteConfig,
+      User
     >,
     private persistantTestStorage?: PersistentStorage,
     private persistantFlagStorage?: PersistentStorage,
@@ -724,5 +733,16 @@ export class Abby<
         this.getTestVariant(testName as TestName)
       );
     });
+  }
+
+  updateUserProperties(
+    user: Partial<{
+      -readonly [K in keyof User]: Infer<User[K]>;
+    }>
+  ) {
+    this.user = {
+      ...this.user,
+      ...user,
+    };
   }
 }

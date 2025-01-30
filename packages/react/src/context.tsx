@@ -4,8 +4,10 @@ import {
   type AbbyConfig,
   type RemoteConfigValueString,
   type RemoteConfigValueStringToType,
+  type ValidatorType,
 } from "@tryabby/core";
 import { HttpService } from "@tryabby/core";
+import type { Infer } from "@tryabby/core/validation";
 import { type AbbyDataResponse, AbbyEventType } from "@tryabby/core";
 import type { AbbyDevtoolProps, DevtoolsFactory } from "@tryabby/devtools";
 import React, {
@@ -40,13 +42,18 @@ export function createAbby<
   const Tests extends Record<TestName, ABConfig>,
   const RemoteConfig extends Record<RemoteConfigName, RemoteConfigValueString>,
   const RemoteConfigName extends Extract<keyof RemoteConfig, string>,
+  const User extends Record<string, ValidatorType> = Record<
+    string,
+    ValidatorType
+  >,
 >(
   abbyConfig: AbbyConfig<
     FlagName,
     Tests,
     string[],
     RemoteConfigName,
-    RemoteConfig
+    RemoteConfig,
+    User
   >
 ) {
   const abby = new Abby<
@@ -54,7 +61,9 @@ export function createAbby<
     TestName,
     Tests,
     RemoteConfig,
-    RemoteConfigName
+    RemoteConfigName,
+    string[],
+    User
   >(
     abbyConfig,
     {
@@ -356,6 +365,14 @@ export function createAbby<
     return abby.getVariants(name);
   };
 
+  const updateUserProperties = (
+    user: Partial<{
+      -readonly [K in keyof User]: Infer<User[K]>;
+    }>
+  ) => {
+    abby.updateUserProperties(user);
+  };
+
   return {
     useAbby,
     AbbyProvider,
@@ -370,5 +387,6 @@ export function createAbby<
     getVariants,
     useFeatureFlags,
     useRemoteConfigVariables,
+    updateUserProperties,
   };
 }

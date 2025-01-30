@@ -3,6 +3,7 @@ import {
   type AbbyDataResponse,
   HttpService,
   type RemoteConfigValueString,
+  type ValidatorType,
 } from "@tryabby/core";
 import {
   type ABConfig,
@@ -26,8 +27,19 @@ export function createAbby<
   const Tests extends Record<TestName, ABConfig>,
   const RemoteConfig extends Record<RemoteConfigName, RemoteConfigValueString>,
   const RemoteConfigName extends Extract<keyof RemoteConfig, string>,
+  const User extends Record<string, ValidatorType> = Record<
+    string,
+    ValidatorType
+  >,
 >(
-  config: AbbyConfig<FlagName, Tests, string[], RemoteConfigName, RemoteConfig>
+  config: AbbyConfig<
+    FlagName,
+    Tests,
+    string[],
+    RemoteConfigName,
+    RemoteConfig,
+    User
+  >
 ) {
   const {
     AbbyProvider,
@@ -42,9 +54,15 @@ export function createAbby<
     withDevtools,
     useFeatureFlags,
     useRemoteConfigVariables,
-  } = baseCreateAbby<FlagName, TestName, Tests, RemoteConfig, RemoteConfigName>(
-    config
-  );
+    updateUserProperties,
+  } = baseCreateAbby<
+    FlagName,
+    TestName,
+    Tests,
+    RemoteConfig,
+    RemoteConfigName,
+    User
+  >(config);
 
   const AbbyRemixProvider = ({ children }: PropsWithChildren) => {
     const matches = useMatches();
@@ -115,5 +133,6 @@ export function createAbby<
     withDevtools: withDevtools as withDevtoolsFunction,
     getAbbyData,
     getABTestValue,
+    updateUserProperties,
   };
 }

@@ -19,6 +19,11 @@
       "require": "./dist/defineConfig/index.js",
       "import": "./dist/defineConfig/index.js",
       "types": "./dist/defineConfig/index.d.ts"
+    },
+    "./validation": {
+      "require": "./dist/validation/index.js",
+      "import": "./dist/validation/index.js",
+      "types": "./dist/validation/index.d.ts"
     }
   },
   "scripts": {
