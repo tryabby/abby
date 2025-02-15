@@ -24,6 +24,11 @@
       "require": "./dist/validation/index.js",
       "import": "./dist/validation/index.js",
       "types": "./dist/validation/index.d.ts"
+    },
+    "./schema": {
+      "require": "./dist/shared/schemas.js",
+      "import": "./dist/shared/schemas.js",
+      "types": "./dist/shared/schemas.d.ts"
     }
   },
   "scripts": {

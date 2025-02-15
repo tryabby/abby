@@ -3,6 +3,7 @@ import { ABBY_WINDOW_KEY, type AbbyDataResponse } from "@tryabby/core";
 import { type Context, Hono } from "hono";
 import { cors } from "hono/cors";
 import { endTime, startTime, timing } from "hono/timing";
+import type { FlagRuleSet } from "@tryabby/core/schema";
 import { transformFlagValue } from "lib/flags";
 import { ConfigCache } from "server/common/config-cache";
 import { prisma } from "server/db/client";
@@ -44,7 +45,7 @@ async function getAbbyResponseWithCache({
           projectId,
         },
       },
-      include: { flag: { select: { name: true, type: true } } },
+      include: { flag: { select: { name: true, type: true } }, ruleSets: true },
     }),
   ]);
   endTime(c, "db");
@@ -60,6 +61,9 @@ async function getAbbyResponseWithCache({
         return {
           name: flagValue.flag.name,
           value: transformFlagValue(flagValue.value, flagValue.flag.type),
+          ruleSet: flagValue.ruleSets.at(0)?.rules
+            ? (flagValue.ruleSets.at(0)?.rules as FlagRuleSet)
+            : undefined,
         };
       }),
     remoteConfig: flags
@@ -68,6 +72,9 @@ async function getAbbyResponseWithCache({
         return {
           name: flagValue.flag.name,
           value: transformFlagValue(flagValue.value, flagValue.flag.type),
+          ruleSet: flagValue.ruleSets.at(0)?.rules
+            ? (flagValue.ruleSets.at(0)?.rules as FlagRuleSet)
+            : undefined,
         };
       }),
   } satisfies AbbyDataResponse;

@@ -29,17 +29,38 @@ export type Infer<T> = T extends StringValidatorType
         : boolean
       : never;
 
-type Errors = Array<{
+export type ValidationErrors = Array<{
   property: string;
   message: string;
 }>;
+
+export function validateProperty<T extends ValidatorType>(
+  property: T,
+  value: unknown
+): string | undefined {
+  if (value === undefined && "optional" in property) {
+    return;
+  }
+
+  if (property.type === "string" && typeof value !== "string") {
+    return `Expected string but got ${typeof value}`;
+  }
+
+  if (property.type === "number" && typeof value !== "number") {
+    return `Expected number but got ${typeof value}`;
+  }
+
+  if (property.type === "boolean" && typeof value !== "boolean") {
+    return `Expected boolean but got ${typeof value}`;
+  }
+}
 
 export function validate<T extends Record<string, ValidatorType>>(
   userValidator: T,
   user: Record<string, unknown>
 ):
   | {
-      errors: Errors;
+      errors: ValidationErrors;
       value?: never;
     }
   | {
@@ -51,35 +72,20 @@ export function validate<T extends Record<string, ValidatorType>>(
   const returnObject: {
     [key in keyof T]: Infer<T[keyof T]>;
   } = {} as any;
-  const errors: Errors = [];
+  const errors: ValidationErrors = [];
   for (const key in userValidator) {
     const validator = userValidator[key];
     const value = user[key];
 
-    if (value === undefined && "optional" in validator) {
+    const error = validateProperty(validator, value);
+    if (error) {
+      errors.push({
+        property: key,
+        message: error,
+      });
       continue;
     }
 
-    if (validator.type === "string" && typeof value !== "string") {
-      errors.push({
-        property: key,
-        message: `Expected string but got ${typeof value}`,
-      });
-    }
-
-    if (validator.type === "number" && typeof value !== "number") {
-      errors.push({
-        property: key,
-        message: `Expected number but got ${typeof value}`,
-      });
-    }
-
-    if (validator.type === "boolean" && typeof value !== "boolean") {
-      errors.push({
-        property: key,
-        message: `Expected boolean but got ${typeof value}`,
-      });
-    }
     returnObject[key] = value as Infer<typeof validator>;
   }
   if (errors.length > 0) {

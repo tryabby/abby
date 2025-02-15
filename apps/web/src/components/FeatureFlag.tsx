@@ -15,6 +15,7 @@ import { ChangeFlagForm, type FlagFormValues } from "./AddFeatureFlagModal";
 import { Avatar } from "./Avatar";
 import { LoadingSpinner } from "./LoadingSpinner";
 import { Modal } from "./Modal";
+import Link from "next/link";
 
 dayjs.extend(relativeTime);
 
@@ -208,7 +209,7 @@ export function FeatureFlag({
   }
 
   return (
-    <>
+    <Link href={`/projects/${projectId}/flags/${flagValueId}`}>
       <span className="flex w-full items-center justify-between space-x-3 rounded-lg bg-card py-3 pl-3 pr-4 text-sm font-medium text-gray-300">
         <div className="flex items-center space-x-2">
           <p>{environmentName}</p>
@@ -248,6 +249,6 @@ export function FeatureFlag({
         type={flag.type}
         currentValue={currentFlagValue}
       />
-    </>
+    </Link>
   );
 }

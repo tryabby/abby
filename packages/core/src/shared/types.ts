@@ -1,4 +1,4 @@
-import type { ABConfig, RemoteConfigValue } from "..";
+import type { ABConfig, FlagRuleSet, RemoteConfigValue } from "..";
 
 export enum AbbyEventType {
   PING = 0,
@@ -13,8 +13,13 @@ export type AbbyDataResponse = {
   flags: Array<{
     name: string;
     value: boolean;
+    ruleSet?: FlagRuleSet;
   }>;
-  remoteConfig: Array<{ name: string; value: RemoteConfigValue }>;
+  remoteConfig: Array<{
+    name: string;
+    value: RemoteConfigValue;
+    ruleSet?: FlagRuleSet;
+  }>;
 };
 
 export type LegacyAbbyDataResponse = {

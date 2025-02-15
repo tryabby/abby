@@ -13,6 +13,7 @@ import { validateFlag } from "utils/validateFlags";
 import { z } from "zod";
 import { protectedProcedure, router } from "../trpc";
 import { serverTrackingService } from "server/common/tracking";
+import { flagRulesSetSchema } from "@tryabby/core/schema";
 
 export const flagRouter = router({
   getFlags: protectedProcedure
@@ -484,5 +485,73 @@ export const flagRouter = router({
       });
 
       return response.data.html_url;
+    }),
+  getFlagByValueId: protectedProcedure
+    .input(
+      z.object({
+        flagValueId: z.string(),
+      })
+    )
+    .query(async ({ ctx, input }) => {
+      return ctx.prisma.featureFlagValue.findUnique({
+        where: {
+          id: input.flagValueId,
+        },
+        include: {
+          flag: {
+            include: {
+              project: {
+                include: {
+                  userSegments: true,
+                },
+              },
+            },
+          },
+          ruleSets: true,
+        },
+      });
+    }),
+  updateFlagRuleSet: protectedProcedure
+    .input(
+      z.object({
+        flagValueId: z.string(),
+        ruleSet: flagRulesSetSchema,
+        ruleSetId: z.string().optional(),
+      })
+    )
+    .mutation(async ({ ctx, input }) => {
+      const flagValue = await ctx.prisma.featureFlagValue.findFirst({
+        where: {
+          id: input.flagValueId,
+          flag: {
+            project: {
+              users: {
+                some: {
+                  userId: ctx.session.user.id,
+                },
+              },
+            },
+          },
+        },
+      });
+      if (!flagValue) throw new TRPCError({ code: "NOT_FOUND" });
+      if (!input.ruleSetId) {
+        await ctx.prisma.flagRuleSet.create({
+          data: {
+            flagValueId: flagValue.id,
+            rules: input.ruleSet,
+            name: "Default",
+          },
+        });
+      } else {
+        await ctx.prisma.flagRuleSet.update({
+          where: {
+            id: input.ruleSetId,
+          },
+          data: {
+            rules: input.ruleSet,
+          },
+        });
+      }
     }),
 });

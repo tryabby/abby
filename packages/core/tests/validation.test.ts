@@ -42,6 +42,7 @@ describe("validation", () => {
       age: validation.number(),
       isDeveloper: validation.boolean(),
     };
+
     const user = {
       name: "John",
       age: 25,

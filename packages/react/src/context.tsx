@@ -202,7 +202,7 @@ export function createAbby<
 
   const useFeatureFlag = (name: FlagName) => {
     const data = useAbbyData();
-    return data.flags[name];
+    return data.flags[name].value;
   };
 
   /**
@@ -212,7 +212,7 @@ export function createAbby<
     const data = useAbbyData();
     return (Object.keys(data.flags) as Array<FlagName>).map((flagName) => ({
       name: flagName,
-      value: data.flags[flagName],
+      value: data.flags[flagName].value,
     }));
   };
 
@@ -224,7 +224,7 @@ export function createAbby<
     return (Object.keys(data.remoteConfig) as Array<RemoteConfigName>).map(
       (configName) => ({
         name: configName,
-        value: data.remoteConfig[configName],
+        value: data.remoteConfig[configName].value,
       })
     ) as Array<{
       name: RemoteConfigName;
@@ -279,9 +279,8 @@ export function createAbby<
     remoteConfigName: T
   ): RemoteConfigValueStringToType<Config> => {
     const abby = useAbbyData();
-    return abby.remoteConfig[
-      remoteConfigName
-    ] as RemoteConfigValueStringToType<Config>;
+    return abby.remoteConfig[remoteConfigName]
+      .value as RemoteConfigValueStringToType<Config>;
   };
 
   const getRemoteConfig = <

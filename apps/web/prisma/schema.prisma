@@ -109,6 +109,7 @@ model Project {
 
   apiRequests  ApiRequest[]
   integrations Integration[]
+  userSegments UserSegment[]
 }
 
 model ProjectUser {
@@ -213,6 +214,8 @@ model FeatureFlagValue {
 
   value   String               @db.LongText
   history FeatureFlagHistory[]
+
+  ruleSets FlagRuleSet[]
 
   @@index([flagId])
   @@index([environmentId])
@@ -330,4 +333,32 @@ model Integration {
 
   @@unique([projectId, type])
   @@index([projectId])
+}
+
+model UserSegment {
+  id        String  @id @default(cuid())
+  projectId String
+  project   Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  name      String
+  schema    Json
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([projectId, name])
+  @@index([projectId])
+}
+
+model FlagRuleSet {
+  id          String           @id @default(cuid())
+  flagValueId String
+  flagValue   FeatureFlagValue @relation(fields: [flagValueId], references: [id], onDelete: Cascade)
+  name        String
+  rules       Json
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([flagValueId, name])
+  @@index([flagValueId])
 }
