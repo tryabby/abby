@@ -11,8 +11,10 @@ import {
 import { Editor } from "components/Editor";
 import { FeatureFlag } from "components/FeatureFlag";
 import { Modal } from "components/Modal";
-import { Tooltip, TooltipContent, TooltipTrigger } from "components/Tooltip";
+import {} from "components/Tooltip";
 import { Input } from "components/ui/input";
+import { Card, CardContent, CardHeader, CardTitle } from "components/ui/card";
+import { Button } from "components/ui/button";
 import Fuse from "fuse.js";
 import { useProjectId } from "lib/hooks/useProjectId";
 import {
@@ -21,15 +23,16 @@ import {
   Search,
   Sparkle,
   TrashIcon,
+  ChevronRight,
 } from "lucide-react";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { toast } from "react-hot-toast";
 import { AiOutlinePlus } from "react-icons/ai";
-import { BiInfoCircle } from "react-icons/bi";
 import { BsThreeDotsVertical } from "react-icons/bs";
 import type { appRouter } from "server/trpc/router/_app";
 import { trpc } from "utils/trpc";
-import { Button } from "./ui/button";
+import { useRouter } from "next/router";
+import { EnvironmentBadge } from "components/ui/environment-badge";
 
 const EditTitleModal = ({
   flagId,
@@ -172,13 +175,12 @@ export const FeatureFlagPageContent = ({
   } | null>(null);
 
   const [flags, setFlags] = useState(data.flags);
-
   const [isCreateEnvironmentModalOpen, setIsCreateEnvironmentModalOpen] =
     useState(false);
   const createFlagRemovalPRMutation =
     trpc.flags.createFlagRemovalPR.useMutation();
-
   const projectId = useProjectId();
+  const router = useRouter();
 
   const fuse = useMemo(
     () => new Fuse(data.flags, { keys: ["name"] }),
@@ -211,7 +213,7 @@ export const FeatureFlagPageContent = ({
     return (
       <div className="mt-48 flex flex-col items-center justify-center">
         <h1 className="text-2xl font-semibold">
-          You don&apos;t have any environments set up!
+          You don't have any environments set up!
         </h1>
         <h2>
           You need to have at least one environment to set up{" "}
@@ -232,156 +234,166 @@ export const FeatureFlagPageContent = ({
     );
 
   return (
-    <>
-      <div>
-        <div className="flex justify-between">
-          <div>
-            <div className="relative">
-              <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
-              <Input
-                type="search"
-                placeholder="Search..."
-                className="pl-8 min-w-[250px]"
-                onChange={(e) => {
-                  searchQueryRef.current = e.target.value;
-                  onSearch();
-                }}
-              />
+    <div className="space-y-6">
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-6">
+          <div className="relative w-[300px]">
+            <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
+            <Input
+              type="search"
+              placeholder="Search flags..."
+              className="pl-8 w-full"
+              onChange={(e) => {
+                searchQueryRef.current = e.target.value;
+                onSearch();
+              }}
+            />
+          </div>
+          <div className="flex flex-col gap-2">
+            <span className="text-sm font-medium text-muted-foreground">
+              Available Environments
+            </span>
+            <div className="flex gap-2">
+              {data.environments.map((env) => (
+                <EnvironmentBadge key={env.id} name={env.name} size="default" />
+              ))}
             </div>
           </div>
-          <div className="flex  space-x-2">
-            <Button
-              className="mb-4 flex items-center space-x-2"
-              onClick={() => setIsCreateEnvironmentModalOpen(true)}
-              variant="secondary"
-            >
-              <AiOutlinePlus /> <span>Add Env</span>
-            </Button>
-            <Button
-              className="mb-4 flex items-center space-x-2 text-primary-foreground"
-              onClick={() => setIsCreateFlagModalOpen(true)}
-            >
-              <AiOutlinePlus />{" "}
-              <span>Add {type === "Flags" ? "Flag" : "Config"}</span>
-            </Button>
-            <AddFeatureFlagModal
-              isOpen={isCreateFlagModalOpen}
-              onClose={() => setIsCreateFlagModalOpen(false)}
-              projectId={projectId}
-              isRemoteConfig={type === "Remote Config"}
-            />
-            <CreateEnvironmentModal
-              isOpen={isCreateEnvironmentModalOpen}
-              onClose={() => setIsCreateEnvironmentModalOpen(false)}
-              projectId={projectId}
-            />
-          </div>
         </div>
+        <div className="flex gap-2">
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => setIsCreateEnvironmentModalOpen(true)}
+          >
+            <AiOutlinePlus className="h-4 w-4 mr-2" />
+            Add Environment
+          </Button>
+          <Button size="sm" onClick={() => setIsCreateFlagModalOpen(true)}>
+            <AiOutlinePlus className="h-4 w-4 mr-2" />
+            Add {type === "Flags" ? "Flag" : "Config"}
+          </Button>
+        </div>
+      </div>
 
-        <div className="space-y-3">
-          {flags.map((currentFlag) => {
-            return (
-              <section
-                key={currentFlag.id}
-                className="w-full rounded-md bg-secondary p-4"
-              >
-                <div className="flex justify-between">
-                  <div className="flex items-center space-x-3">
-                    <h2 className="font-bold text-pink-200">
-                      {currentFlag.name}
-                    </h2>
-
-                    <Tooltip>
-                      <TooltipTrigger asChild>
-                        <button type="button">
-                          <BiInfoCircle />
-                        </button>
-                      </TooltipTrigger>
-
-                      <TooltipContent
-                        side="bottom"
-                        align="start"
-                        alignOffset={-35}
-                        className="w-[250px]"
+      <div className="grid gap-4">
+        {flags.map((currentFlag) => (
+          <Card
+            key={currentFlag.id}
+            className="group relative hover:shadow-md transition-all duration-200 hover:border-primary/20 overflow-hidden"
+          >
+            <div className="absolute top-0 right-0 h-full w-1.5 bg-gradient-to-b from-primary/20 to-primary/5" />
+            <CardHeader className="pb-3">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  <div className="flex flex-col">
+                    <div className="flex items-center gap-3">
+                      <CardTitle className="text-base font-semibold group-hover:text-primary transition-colors">
+                        {currentFlag.name}
+                      </CardTitle>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        className="h-7 px-2 text-xs bg-muted/50 hover:bg-muted"
+                        onClick={() =>
+                          router.push(
+                            `/projects/${projectId}/flags/${currentFlag.values[0]?.id}`
+                          )
+                        }
                       >
-                        <h1 className="mb-4 font-semibold">Description:</h1>
-                        <p
-                          className="prose prose-invert text-pink-50"
-                          // biome-ignore lint/security/noDangerouslySetInnerHtml:
-                          dangerouslySetInnerHTML={{
-                            __html:
-                              currentFlag.description ??
-                              "<p>No description</p>",
-                          }}
-                        />
-                      </TooltipContent>
-                    </Tooltip>
+                        Configure
+                        <ChevronRight className="ml-1 h-3 w-3" />
+                      </Button>
+                      {currentFlag.type !== "BOOLEAN" && (
+                        <span className="px-2 py-0.5 text-xs rounded-md bg-blue-500/10 text-blue-500">
+                          {currentFlag.type.toLowerCase()}
+                        </span>
+                      )}
+                    </div>
+                    {currentFlag.description && (
+                      <p className="text-sm text-muted-foreground mt-1.5 line-clamp-1">
+                        {currentFlag.description.replace(/<[^>]*>/g, "")}
+                      </p>
+                    )}
                   </div>
-                  <DropdownMenu>
-                    <DropdownMenuTrigger>
-                      <BsThreeDotsVertical />
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end">
-                      <DropdownMenuItem
-                        className="cursor-pointer"
-                        onClick={() => {
-                          setActiveFlagInfo({
-                            id: currentFlag.id,
-                            action: "editName",
-                          });
-                        }}
-                      >
-                        <EditIcon className="mr-4 h-4 w-4" />
-                        Edit Name
-                      </DropdownMenuItem>
-                      <DropdownMenuItem
-                        className="cursor-pointer"
-                        onClick={() => {
-                          setActiveFlagInfo({
-                            id: currentFlag.id,
-                            action: "editDescription",
-                          });
-                        }}
-                      >
-                        <FileEditIcon className="mr-4 h-4 w-4" />
-                        Edit Description
-                      </DropdownMenuItem>
-                      <DropdownMenuItem
-                        disabled={!data.hasGithubIntegration}
-                        className="cursor-pointer bg-gradient-to-r from-blue-800 via-purple-600 to-pink-500 hover:from-purple-700 hover:via-pink-500 hover:to-red-400"
-                        onClick={async () => {
-                          const url = await toast.promise(
-                            createFlagRemovalPRMutation.mutateAsync({
-                              flagId: currentFlag.id,
-                            }),
-                            {
-                              loading: "Creating removal PR...",
-                              success: "Successfully created removal PR",
-                              error: "Failed to create removal PR",
-                            }
-                          );
-                          window.open(url, "_blank");
-                        }}
-                      >
-                        <Sparkle className="mr-4 h-4 w-4" />
-                        Create Removal PR
-                      </DropdownMenuItem>
-                      <DropdownMenuItem
-                        className="cursor-pointer focus:!bg-red-700 focus:!text-white"
-                        onClick={() => {
-                          setActiveFlagInfo({
-                            id: currentFlag.id,
-                            action: "delete",
-                          });
-                        }}
-                      >
-                        <TrashIcon className="mr-4 h-4 w-4" />
-                        Delete {type === "Flags" ? "Flag" : "Config"}
-                      </DropdownMenuItem>
-                    </DropdownMenuContent>
-                  </DropdownMenu>
                 </div>
-                <div className="relative mt-3 grid grid-cols-[repeat(auto-fill,minmax(205px,1fr))] gap-x-8 gap-y-4 pr-2">
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      className="h-8 w-8 p-0 relative z-10"
+                      onClick={(e) => e.stopPropagation()}
+                    >
+                      <span className="sr-only">Open menu</span>
+                      <BsThreeDotsVertical className="h-4 w-4" />
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end">
+                    <DropdownMenuItem
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setActiveFlagInfo({
+                          id: currentFlag.id,
+                          action: "editName",
+                        });
+                      }}
+                    >
+                      <EditIcon className="mr-2 h-4 w-4" />
+                      Edit Name
+                    </DropdownMenuItem>
+                    <DropdownMenuItem
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setActiveFlagInfo({
+                          id: currentFlag.id,
+                          action: "editDescription",
+                        });
+                      }}
+                    >
+                      <FileEditIcon className="mr-2 h-4 w-4" />
+                      Edit Description
+                    </DropdownMenuItem>
+                    <DropdownMenuItem
+                      disabled={!data.hasGithubIntegration}
+                      onClick={async (e) => {
+                        e.stopPropagation();
+                        const url = await toast.promise(
+                          createFlagRemovalPRMutation.mutateAsync({
+                            flagId: currentFlag.id,
+                          }),
+                          {
+                            loading: "Creating removal PR...",
+                            success: "Successfully created removal PR",
+                            error: "Failed to create removal PR",
+                          }
+                        );
+                        window.open(url, "_blank");
+                      }}
+                    >
+                      <Sparkle className="mr-2 h-4 w-4" />
+                      Create Removal PR
+                    </DropdownMenuItem>
+                    <DropdownMenuItem
+                      className="text-destructive focus:text-destructive"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setActiveFlagInfo({
+                          id: currentFlag.id,
+                          action: "delete",
+                        });
+                      }}
+                    >
+                      <TrashIcon className="mr-2 h-4 w-4" />
+                      Delete {type === "Flags" ? "Flag" : "Config"}
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              </div>
+            </CardHeader>
+            <CardContent>
+              <div className="grid gap-6">
+                <div className="grid grid-cols-[repeat(auto-fill,minmax(250px,1fr))] gap-4">
                   {currentFlag.values
                     .sort(
                       (a, b) =>
@@ -395,14 +407,27 @@ export const FeatureFlagPageContent = ({
                         environmentName={flagValue.environment.name}
                         flagValueId={flagValue.id}
                         type={currentFlag.type}
+                        minimal
                       />
                     ))}
                 </div>
-              </section>
-            );
-          })}
-        </div>
+              </div>
+            </CardContent>
+          </Card>
+        ))}
       </div>
+
+      <AddFeatureFlagModal
+        isOpen={isCreateFlagModalOpen}
+        onClose={() => setIsCreateFlagModalOpen(false)}
+        projectId={projectId}
+        isRemoteConfig={type === "Remote Config"}
+      />
+      <CreateEnvironmentModal
+        isOpen={isCreateEnvironmentModalOpen}
+        onClose={() => setIsCreateEnvironmentModalOpen(false)}
+        projectId={projectId}
+      />
       {activeFlag && (
         <>
           <EditTitleModal
@@ -428,6 +453,6 @@ export const FeatureFlagPageContent = ({
           />
         </>
       )}
-    </>
+    </div>
   );
 };

@@ -111,7 +111,7 @@ const flagValueSchema = z.union([
 ]);
 
 const stringFlagRuleSchema = z.object({
-  propertyName: z.string(),
+  propertyName: z.string().min(1),
   propertyType: z.literal("string"),
   operator: z.union([
     z.literal("eq"),
@@ -127,7 +127,7 @@ const stringFlagRuleSchema = z.object({
 });
 
 const numberFlagRuleSchema = z.object({
-  propertyName: z.string(),
+  propertyName: z.string().min(1),
   propertyType: z.literal("number"),
   operator: z.union([
     z.literal("eq"),
@@ -142,7 +142,7 @@ const numberFlagRuleSchema = z.object({
 });
 
 const booleanFlagRuleSchema = z.object({
-  propertyName: z.string(),
+  propertyName: z.string().min(1),
   propertyType: z.literal("boolean"),
   operator: z.literal("eq"),
   value: z.boolean(),
@@ -165,7 +165,7 @@ export const flagRulesSetSchema = z.array(
   flagRuleSchema.or(
     z.object({
       operator: z.union([z.literal("and"), z.literal("or")]),
-      rules: z.array(subFlagRuleSchema),
+      rules: z.array(subFlagRuleSchema).min(1),
       thenValue: flagValueSchema,
     })
   )

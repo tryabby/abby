@@ -498,6 +498,8 @@ export const flagRouter = router({
           id: input.flagValueId,
         },
         include: {
+          environment: true,
+          history: { include: { user: true } },
           flag: {
             include: {
               project: {
