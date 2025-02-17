@@ -3,10 +3,10 @@ import { ABBY_AB_STORAGE_PREFIX } from "@tryabby/core";
 import Koa from "koa";
 import fetch from "node-fetch";
 import { createAbbyMiddleWare } from "../src/koa";
+import getPort from "get-port";
 
 const app = new Koa();
-const PORT = 5556;
-const SERVER_URL = `http://localhost:${PORT}`;
+let SERVER_URL = "http://localhost:";
 
 let server: Server | undefined = undefined;
 
@@ -19,6 +19,7 @@ const test2Variants = [
 ] as const;
 
 const { middleware, abby } = createAbbyMiddleWare({
+  currentEnvironment: "development",
   environments: [],
   projectId: "123",
   tests: {
@@ -54,7 +55,9 @@ app.use((ctx) => {
 });
 
 beforeAll(async () => {
+  const PORT = await getPort();
   server = app.listen(PORT);
+  SERVER_URL += PORT;
 });
 
 afterAll(() => {

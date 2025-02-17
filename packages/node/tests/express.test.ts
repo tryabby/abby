@@ -14,6 +14,7 @@ const test2Variants = [
 ] as const;
 
 const { middleware, abby } = createAbbyMiddleWare({
+  currentEnvironment: "development",
   environments: [],
   projectId: "123",
   tests: {
