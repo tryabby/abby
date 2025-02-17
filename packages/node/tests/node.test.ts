@@ -11,6 +11,7 @@ const test2Variants = [
 it("should work properly", async () => {
   const abby = createAbby({
     environments: [],
+    currentEnvironment: "development",
     projectId: "123",
     tests: {
       test: { variants: testVariants },
