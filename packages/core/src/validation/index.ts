@@ -86,7 +86,7 @@ export function validate<T extends Record<string, ValidatorType>>(
       continue;
     }
 
-    returnObject[key] = value as Infer<typeof validator>;
+    returnObject[key] = value as Infer<T[typeof key]>;
   }
   if (errors.length > 0) {
     return { errors };

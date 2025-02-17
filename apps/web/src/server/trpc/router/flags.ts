@@ -493,9 +493,18 @@ export const flagRouter = router({
       })
     )
     .query(async ({ ctx, input }) => {
-      return ctx.prisma.featureFlagValue.findUnique({
+      return ctx.prisma.featureFlagValue.findFirst({
         where: {
           id: input.flagValueId,
+          flag: {
+            project: {
+              users: {
+                some: {
+                  userId: ctx.session.user.id,
+                },
+              },
+            },
+          },
         },
         include: {
           environment: true,
