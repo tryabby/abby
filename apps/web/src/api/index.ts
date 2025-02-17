@@ -6,6 +6,7 @@ import { makeHealthRoute } from "./routes/health";
 import { makeIntegrationsRoute } from "./routes/integrations";
 import { makeLegacyProjectDataRoute } from "./routes/legacy_project_data";
 import { makeEventRoute } from "./routes/v1_event";
+import { makeV2ProjectDataRoute } from "./routes/v2_project_data";
 
 export const app = new Hono()
   .basePath("/api")
@@ -20,4 +21,6 @@ export const app = new Hono()
   .route("/v1/config", makeConfigRoute())
   .route("/v1/data", makeProjectDataRoute())
   .route("/v1/track", makeEventRoute())
+  // v2 routes
+  .route("/v2/data", makeV2ProjectDataRoute())
   .route("/integrations", makeIntegrationsRoute());

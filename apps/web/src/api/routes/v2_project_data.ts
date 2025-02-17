@@ -1,5 +1,6 @@
 import { zValidator } from "@hono/zod-validator";
 import { ABBY_WINDOW_KEY, type AbbyDataResponse } from "@tryabby/core";
+import type { FlagRuleSet } from "@tryabby/core/schema";
 import { type Context, Hono } from "hono";
 import { cors } from "hono/cors";
 import { endTime, startTime, timing } from "hono/timing";
@@ -21,7 +22,10 @@ async function getAbbyResponseWithCache({
   c: Context;
 }) {
   startTime(c, "readCache");
-  const cachedConfig = ConfigCache.getConfig({ environment, projectId });
+  const cachedConfig = ConfigCache.getConfig({
+    environment,
+    projectId,
+  });
   endTime(c, "readCache");
 
   c.header(X_ABBY_CACHE_HEADER, cachedConfig !== undefined ? "HIT" : "MISS");
@@ -60,6 +64,9 @@ async function getAbbyResponseWithCache({
         return {
           name: flagValue.flag.name,
           value: transformFlagValue(flagValue.value, flagValue.flag.type),
+          ruleSet: flagValue.ruleSets.at(0)?.rules
+            ? (flagValue.ruleSets.at(0)?.rules as FlagRuleSet)
+            : undefined,
         };
       }),
     remoteConfig: flags
@@ -68,15 +75,22 @@ async function getAbbyResponseWithCache({
         return {
           name: flagValue.flag.name,
           value: transformFlagValue(flagValue.value, flagValue.flag.type),
+          ruleSet: flagValue.ruleSets.at(0)?.rules
+            ? (flagValue.ruleSets.at(0)?.rules as FlagRuleSet)
+            : undefined,
         };
       }),
   } satisfies AbbyDataResponse;
 
-  ConfigCache.setConfig({ environment, projectId, value: response });
+  ConfigCache.setConfig({
+    environment,
+    projectId,
+    value: response,
+  });
   return response;
 }
 
-export function makeProjectDataRoute() {
+export function makeV2ProjectDataRoute() {
   const app = new Hono()
     .get(
       "/:projectId",
