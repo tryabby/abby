@@ -4,6 +4,7 @@ import { createAbby } from "@tryabby/next";
 import { BaseCodeSnippet } from "components/CodeSnippet";
 import { DevtoolsArrow } from "components/DevtoolsArrow";
 import { Divider } from "components/Divider";
+import { EventCounter } from "components/EventCounter";
 import { Feature } from "components/Feature";
 import { Integrations } from "components/Integrations";
 import { MarketingLayout } from "components/MarketingLayout";
@@ -29,7 +30,6 @@ import { twMerge } from "tailwind-merge";
 import { generateCodeSnippets } from "utils/snippets";
 import abbyScreenshot from "../../public/screenshot.png";
 import type { NextPageWithLayout } from "./_app";
-import { EventCounter } from "components/EventCounter";
 
 const { useAbby, AbbyProvider, useFeatureFlag, __abby__, withDevtools } =
   createAbby({

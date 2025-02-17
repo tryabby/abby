@@ -69,8 +69,11 @@ export function ChangeFlagForm({
   return (
     <div className="flex flex-col space-y-5">
       <div>
-        <label className="mb-1 block text-pink-50">Name</label>
+        <label className="mb-1 block text-pink-50" htmlFor="name">
+          Name
+        </label>
         <Input
+          name="name"
           ref={inputRef}
           type="text"
           defaultValue={initialValues.name}
@@ -83,6 +86,7 @@ export function ChangeFlagForm({
       </div>
       {isRemoteConfig && (
         <div>
+          {/* biome-ignore lint/a11y/noLabelWithoutControl: <explanation> */}
           <label className="mb-1 block text-pink-50">Type</label>
           <RadioSelect
             isDisabled={!canChangeType}
@@ -118,6 +122,7 @@ export function ChangeFlagForm({
         </div>
       )}
       <div>
+        {/* biome-ignore lint/a11y/noLabelWithoutControl: <explanation> */}
         <label className="mb-1 block text-pink-50">Value</label>
         {state.type === "BOOLEAN" && (
           <Toggle

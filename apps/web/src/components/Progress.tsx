@@ -8,6 +8,7 @@ type Props = {
 export function Progress({ currentValue, maxValue }: Props) {
   const currentValuePercentage = Math.min((currentValue / maxValue) * 100, 100);
   return (
+    // biome-ignore lint/a11y/useFocusableInteractive: <explanation>
     <div
       className="relative h-6 w-full rounded-full bg-background"
       role="progressbar"

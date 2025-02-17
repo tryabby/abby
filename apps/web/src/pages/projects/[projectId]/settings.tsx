@@ -150,10 +150,11 @@ const SettingsPage: NextPageWithLayout = () => {
               </DashboardSectionTitle>
               <div className="flex flex-col space-y-4">
                 <div className="flex">
-                  <label className="flex flex-col">
+                  <label className="flex flex-col" htmlFor="projectName">
                     Name
                     <div className="col flex space-x-5">
                       <Input
+                        name="projectName"
                         ref={projectNameRef}
                         className="w-52 px-3 py-2"
                         type="text"

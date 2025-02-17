@@ -12,27 +12,27 @@ import { Editor } from "components/Editor";
 import { FeatureFlag } from "components/FeatureFlag";
 import { Modal } from "components/Modal";
 import {} from "components/Tooltip";
-import { Input } from "components/ui/input";
-import { Card, CardContent, CardHeader, CardTitle } from "components/ui/card";
 import { Button } from "components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "components/ui/card";
+import { EnvironmentBadge } from "components/ui/environment-badge";
+import { Input } from "components/ui/input";
 import Fuse from "fuse.js";
 import { useProjectId } from "lib/hooks/useProjectId";
 import {
+  ChevronRight,
   EditIcon,
   FileEditIcon,
   Search,
   Sparkle,
   TrashIcon,
-  ChevronRight,
 } from "lucide-react";
+import { useRouter } from "next/router";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { toast } from "react-hot-toast";
 import { AiOutlinePlus } from "react-icons/ai";
 import { BsThreeDotsVertical } from "react-icons/bs";
 import type { appRouter } from "server/trpc/router/_app";
 import { trpc } from "utils/trpc";
-import { useRouter } from "next/router";
-import { EnvironmentBadge } from "components/ui/environment-badge";
 
 const EditTitleModal = ({
   flagId,

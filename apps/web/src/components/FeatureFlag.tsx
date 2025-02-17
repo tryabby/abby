@@ -5,20 +5,20 @@ import { P, match } from "ts-pattern";
 
 import type { FeatureFlagHistory, FeatureFlagType } from "@prisma/client";
 import { Tooltip, TooltipContent, TooltipTrigger } from "components/Tooltip";
+import { Button } from "components/ui/button";
+import { Label } from "components/ui/label";
 import relativeTime from "dayjs/plugin/relativeTime";
+import { getEnvironmentStyle } from "lib/environment-styles";
 import { cn } from "lib/utils";
-import { useState, useMemo } from "react";
+import { Settings } from "lucide-react";
+import { useRouter } from "next/router";
+import { useMemo, useState } from "react";
 import { toast } from "react-hot-toast";
 import { type RouterOutputs, trpc } from "utils/trpc";
 import { ChangeFlagForm, type FlagFormValues } from "./AddFeatureFlagModal";
 import { Avatar } from "./Avatar";
 import { LoadingSpinner } from "./LoadingSpinner";
 import { Modal } from "./Modal";
-import { useRouter } from "next/router";
-import { Button } from "components/ui/button";
-import { Settings } from "lucide-react";
-import { Label } from "components/ui/label";
-import { getEnvironmentStyle } from "lib/environment-styles";
 
 dayjs.extend(relativeTime);
 

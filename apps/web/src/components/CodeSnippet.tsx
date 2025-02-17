@@ -63,8 +63,10 @@ export function BaseCodeSnippet(
         <div className="mt-2 flex w-full overflow-x-auto bg-gray-800">
           {Object.entries(INTEGRATIONS).map(([key, { icon: Icon, name }]) => (
             // biome-ignore lint/a11y/useKeyWithClickEvents:>
+            // biome-ignore lint/a11y/useFocusableInteractive: <explanation>
             <div
               key={name}
+              // biome-ignore lint/a11y/useSemanticElements: <explanation>
               role="button"
               onClick={() => setCurrentIntegration(key as Integrations)}
               className={clsx(

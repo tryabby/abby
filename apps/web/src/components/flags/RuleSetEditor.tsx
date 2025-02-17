@@ -1,12 +1,11 @@
 "use client";
 
-import { useState } from "react";
+import type { FeatureFlagType } from "@prisma/client";
+import type { ValidatorType } from "@tryabby/core";
+import type { FlagRuleSet } from "@tryabby/core/schema";
 import { Button } from "components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "components/ui/card";
-import type { FlagRuleSet } from "@tryabby/core/schema";
-import { FlagRuleEditor, ThenValueInput } from "./FlagRuleEditor";
-import type { ValidatorType } from "@tryabby/core";
-import type { FeatureFlagType } from "@prisma/client";
+import { Label } from "components/ui/label";
 import {
   Select,
   SelectContent,
@@ -14,8 +13,9 @@ import {
   SelectTrigger,
   SelectValue,
 } from "components/ui/select";
-import { Label } from "components/ui/label";
 import { ArrowRight, Plus, Trash } from "lucide-react";
+import { useState } from "react";
+import { FlagRuleEditor, ThenValueInput } from "./FlagRuleEditor";
 
 export function FlagRulesEditor({
   userSchema,

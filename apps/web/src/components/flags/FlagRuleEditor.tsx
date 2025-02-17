@@ -1,8 +1,14 @@
+import type { FeatureFlagType } from "@prisma/client";
+import type { FlagRule, SubFlagRule, ValidatorType } from "@tryabby/core";
 import {
   type FlagRuleSet,
   getDisplayNameForOperator,
   getOperatorsForType,
 } from "@tryabby/core/schema";
+import { JSONEditor } from "components/JSONEditor";
+import { Button } from "components/ui/button";
+import { Input } from "components/ui/input";
+import { Label } from "components/ui/label";
 import {
   Select,
   SelectContent,
@@ -10,15 +16,9 @@ import {
   SelectTrigger,
   SelectValue,
 } from "components/ui/select";
-import { Input } from "components/ui/input";
-import { Button } from "components/ui/button";
 import { Switch } from "components/ui/switch";
-import type { FlagRule, SubFlagRule, ValidatorType } from "@tryabby/core";
-import type { FeatureFlagType } from "@prisma/client";
-import { match } from "ts-pattern";
-import { Label } from "components/ui/label";
-import { JSONEditor } from "components/JSONEditor";
 import { ArrowRight, Trash } from "lucide-react";
+import { match } from "ts-pattern";
 
 export function ThenValueInput({
   flagType,

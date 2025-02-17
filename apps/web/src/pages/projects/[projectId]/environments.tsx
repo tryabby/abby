@@ -258,14 +258,12 @@ const EnvironmentPage: NextPageWithLayout = () => {
         </section>
       </div>
       {activeEnvironment && (
-        <>
-          <DeleteEnvironmentModal
-            environment={activeEnvironment}
-            projectId={projectId}
-            isOpen={activeEnvironmentInfo?.action === "delete"}
-            onClose={() => setActiveEnvironmentInfo(null)}
-          />
-        </>
+        <DeleteEnvironmentModal
+          environment={activeEnvironment}
+          projectId={projectId}
+          isOpen={activeEnvironmentInfo?.action === "delete"}
+          onClose={() => setActiveEnvironmentInfo(null)}
+        />
       )}
     </>
   );

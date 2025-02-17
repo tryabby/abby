@@ -1,5 +1,5 @@
-import { cn } from "lib/utils";
 import { getEnvironmentStyle } from "lib/environment-styles";
+import { cn } from "lib/utils";
 
 interface EnvironmentBadgeProps {
   name: string;
