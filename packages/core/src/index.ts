@@ -810,10 +810,17 @@ export class Abby<
       );
     }
 
+    const oldUser = { ...this.user };
     this.user = {
       ...this.user,
       ...user,
     };
+
+    // Only notify if user properties actually changed
+    if (JSON.stringify(oldUser) !== JSON.stringify(this.user)) {
+      this.log("updateUserProperties()", this.user);
+      this.notifyListeners();
+    }
   }
 
   private evaluateUserProperties<T extends boolean | RemoteConfigValue>(
@@ -965,7 +972,6 @@ export class Abby<
         }
       }
       const result = evaluateRule(rule);
-      console.log("result", { result, rule });
       if (!result) continue;
       return result.thenValue as T;
     }

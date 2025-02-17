@@ -10,11 +10,10 @@ import { FlagIcon } from "./FlagIcon";
 import { JSONEditor } from "./JSONEditor";
 import { Modal } from "./Modal";
 import { RadioSelect } from "./RadioSelect";
-
 import { Toggle } from "./Toggle";
-
 import { useTracking } from "lib/tracking";
 import { Input } from "./ui/input";
+import { Label } from "./ui/label";
 
 type Props = {
   onClose: () => void;
@@ -43,9 +42,7 @@ export function ChangeFlagForm({
   isRemoteConfig?: boolean;
 }) {
   const inputRef = useRef<HTMLInputElement>(null);
-
   const [state, setState] = useState<FlagFormValues>(initialValues);
-
   const valueRef = useRef<Record<FeatureFlagType, string>>({
     [FeatureFlagType.BOOLEAN]: "false",
     [FeatureFlagType.STRING]: "",
@@ -55,43 +52,39 @@ export function ChangeFlagForm({
 
   const onChange = (values: Partial<FlagFormValues>) => {
     const newState = { ...state, ...values };
-
-    // if type changed, save the value
     if (values.type != null && values.type !== state.type) {
       valueRef.current[state.type] = state.value;
       newState.value = valueRef.current[newState.type] ?? "";
     }
-
     setState(newState);
     onChangeHandler(newState);
   };
 
   return (
-    <div className="flex flex-col space-y-5">
-      <div>
-        <label className="mb-1 block text-pink-50" htmlFor="name">
-          Name
-        </label>
+    <div className="space-y-6">
+      <div className="grid gap-2">
+        <Label htmlFor="name">Name</Label>
         <Input
+          id="name"
           name="name"
           ref={inputRef}
           type="text"
           defaultValue={initialValues.name}
           onChange={(e) => onChange({ name: e.target.value })}
           placeholder={isRemoteConfig ? "My Remote Config" : "My Feature Flag"}
+          className="w-full"
         />
         {errors.name && (
-          <p className="mt-1 text-sm text-red-500">{errors.name}</p>
+          <p className="text-sm text-destructive">{errors.name}</p>
         )}
       </div>
+
       {isRemoteConfig && (
-        <div>
-          {/* biome-ignore lint/a11y/noLabelWithoutControl: <explanation> */}
-          <label className="mb-1 block text-pink-50">Type</label>
+        <div className="grid gap-2">
+          <Label>Type</Label>
           <RadioSelect
             isDisabled={!canChangeType}
             options={Object.entries(FeatureFlagType)
-              // we omit boolean for remote config
               .filter(
                 ([, flagType]) => isRemoteConfig && flagType !== "BOOLEAN"
               )
@@ -99,11 +92,11 @@ export function ChangeFlagForm({
                 label: (
                   <div
                     className={cn(
-                      "flex items-center",
+                      "flex items-center gap-2",
                       getFlagTypeClassName(flagType)
                     )}
                   >
-                    <FlagIcon type={flagType} className="mr-2 inline-block" />
+                    <FlagIcon type={flagType} />
                     <span>{transformDBFlagTypeToclient(flagType)}</span>
                   </div>
                 ),
@@ -111,7 +104,6 @@ export function ChangeFlagForm({
               }))}
             onChange={(value) => {
               if (!canChangeType) return;
-
               onChange({
                 type: value,
                 value: value === "BOOLEAN" ? "false" : "",
@@ -121,9 +113,9 @@ export function ChangeFlagForm({
           />
         </div>
       )}
-      <div>
-        {/* biome-ignore lint/a11y/noLabelWithoutControl: <explanation> */}
-        <label className="mb-1 block text-pink-50">Value</label>
+
+      <div className="grid gap-2">
+        <Label>Value</Label>
         {state.type === "BOOLEAN" && (
           <Toggle
             isChecked={state.value === "true"}
@@ -147,7 +139,6 @@ export function ChangeFlagForm({
             value={state.value}
             onChange={(e) => onChange({ value: e.target.value })}
             onKeyDown={(e) => {
-              // prevent e, E, +, -
               ["e", "E", "+", "-"].includes(e.key) && e.preventDefault();
             }}
             placeholder="123"
@@ -160,7 +151,7 @@ export function ChangeFlagForm({
           />
         )}
         {errors.value && (
-          <p className="mt-1 text-sm text-red-500">{errors.value}</p>
+          <p className="text-sm text-destructive">{errors.value}</p>
         )}
       </div>
     </div>

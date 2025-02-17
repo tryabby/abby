@@ -1,23 +1,20 @@
-import { Popover, PopoverContent, PopoverTrigger } from "components/ui/popover";
+import {} from "components/ui/popover";
 import dayjs from "dayjs";
-import { FaHistory } from "react-icons/fa";
 import { P, match } from "ts-pattern";
 
 import type { FeatureFlagHistory, FeatureFlagType } from "@prisma/client";
-import { Tooltip, TooltipContent, TooltipTrigger } from "components/Tooltip";
+import {} from "components/Tooltip";
 import { Button } from "components/ui/button";
 import { Label } from "components/ui/label";
 import relativeTime from "dayjs/plugin/relativeTime";
 import { getEnvironmentStyle } from "lib/environment-styles";
 import { cn } from "lib/utils";
-import { Settings } from "lucide-react";
+import { Settings, Pencil } from "lucide-react";
 import { useRouter } from "next/router";
 import { useMemo, useState } from "react";
 import { toast } from "react-hot-toast";
 import { type RouterOutputs, trpc } from "utils/trpc";
 import { ChangeFlagForm, type FlagFormValues } from "./AddFeatureFlagModal";
-import { Avatar } from "./Avatar";
-import { LoadingSpinner } from "./LoadingSpinner";
 import { Modal } from "./Modal";
 
 dayjs.extend(relativeTime);
@@ -40,68 +37,7 @@ export const getHistoryEventDescription = (event: FeatureFlagHistory) => {
     )
     .run();
 };
-
-const HistoryButton = ({ flagValueId }: { flagValueId: string }) => {
-  const {
-    data,
-    isLoading,
-    refetch: loadHistory,
-  } = trpc.flags.getHistory.useQuery({ flagValueId }, { enabled: false });
-  return (
-    <Tooltip>
-      <TooltipContent>
-        <span>Show History</span>
-      </TooltipContent>
-      <Popover>
-        <PopoverTrigger asChild>
-          <TooltipTrigger asChild>
-            <button
-              type="button"
-              onClick={() => loadHistory()}
-              className="focus:outline-none focus:ring-0"
-            >
-              <FaHistory />
-            </button>
-          </TooltipTrigger>
-        </PopoverTrigger>
-
-        <PopoverContent
-          className="w-full max-w-xl select-none text-sm"
-          sideOffset={5}
-        >
-          {isLoading && <LoadingSpinner />}
-          {data !== undefined && (
-            <>
-              <p className="text-xs">Edited {data.length} times</p>
-              <hr className="-mx-2 my-1 border-gray-700" />
-              <div className="max-h-48 space-y-4 overflow-y-auto py-2">
-                {data.map((history) => (
-                  <div key={history.id} className="flex items-center space-x-3">
-                    <div>
-                      <Avatar
-                        userName={
-                          history.user.name ?? history.user.email ?? undefined
-                        }
-                        imageUrl={history.user.image ?? undefined}
-                        className="h-5 w-5 rounded-lg text-[10px]"
-                      />
-                    </div>
-                    <span>
-                      {history.user.name ?? history.user.email}{" "}
-                      {getHistoryEventDescription(history)} this flag{" "}
-                      {dayjs(history.createdAt).fromNow()}
-                    </span>
-                  </div>
-                ))}
-              </div>
-            </>
-          )}
-        </PopoverContent>
-      </Popover>
-    </Tooltip>
-  );
-};
-
+ 
 const ConfirmUpdateModal = ({
   isOpen,
   onClose,
@@ -206,12 +142,12 @@ const ConfirmUpdateModal = ({
           </div>
 
           {description && (
-            <div className="mt-6 pt-6 border-t border-border">
-              <Label className="text-sm text-muted-foreground mb-2 block">
+            <div className="pt-6 mt-6 border-t border-border">
+              <Label className="block mb-2 text-sm text-muted-foreground">
                 Description
               </Label>
               <div
-                className="prose prose-sm dark:prose-invert"
+                className="prose-sm prose dark:prose-invert"
                 // biome-ignore lint/security/noDangerouslySetInnerHtml: <explanation>
                 dangerouslySetInnerHTML={{ __html: description }}
               />
@@ -282,42 +218,35 @@ export const FeatureFlag = ({
               router.push(`/projects/${projectId}/flags/${flagValueId}`)
             }
           >
-            <Settings className="h-4 w-4" />
+            <Settings className="w-4 h-4" />
           </Button>
         )}
         <div className={cn("space-y-4 p-4", minimal ? "" : "pr-12")}>
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <div className={cn("h-2 w-2 rounded-full", envStyle.icon)} />
-              <Label className={cn("text-sm font-medium", envStyle.text)}>
-                {environmentName}
-              </Label>
-            </div>
-            {!minimal && <HistoryButton flagValueId={flagValueId} />}
-          </div>
-
           <div className="space-y-3">
             {match(type)
               .with("BOOLEAN", () => (
                 <div className="flex items-center justify-between space-x-2">
                   <Button
                     variant="outline"
-                    className="flex-1 justify-between"
+                    className="justify-between flex-1 group"
                     onClick={() => setIsUpdateModalOpen(true)}
                   >
-                    <span className={cn("text-sm", envStyle.text)}>
-                      Toggle value
-                    </span>
-                    <span
-                      className={cn(
-                        "text-xs font-medium px-2 py-0.5 rounded-full",
-                        flagValue === "true"
-                          ? "bg-green-500/10 text-green-600"
-                          : "bg-muted text-muted-foreground"
-                      )}
-                    >
-                      {flagValue === "true" ? "Enabled" : "Disabled"}
-                    </span>
+                    <div className="flex items-center gap-2">
+                      <span className={cn("text-sm", envStyle.text)}>
+                        Current value:
+                      </span>
+                      <span
+                        className={cn(
+                          "text-xs font-medium px-2 py-0.5 rounded-full",
+                          flagValue === "true"
+                            ? "bg-green-500/10 text-green-600"
+                            : "bg-muted text-muted-foreground"
+                        )}
+                      >
+                        {flagValue === "true" ? "Enabled" : "Disabled"}
+                      </span>
+                    </div>
+                    <Pencil className="w-3.5 h-3.5" />
                   </Button>
                 </div>
               ))
@@ -325,21 +254,24 @@ export const FeatureFlag = ({
                 <div className="space-y-2">
                   <Button
                     variant="outline"
-                    className="w-full justify-between"
+                    className="justify-between w-full group"
                     onClick={() => setIsUpdateModalOpen(true)}
                   >
-                    <span className={cn("text-sm", envStyle.text)}>
-                      Update value
-                    </span>
-                    <code
-                      className={cn(
-                        "px-2 py-1 rounded font-mono",
-                        envStyle.bg,
-                        envStyle.text
-                      )}
-                    >
-                      {flagValue}
-                    </code>
+                    <div className="flex items-center gap-2">
+                      <span className={cn("text-sm", envStyle.text)}>
+                        Current value:
+                      </span>
+                      <code
+                        className={cn(
+                          "px-2 py-1 rounded font-mono",
+                          envStyle.bg,
+                          envStyle.text
+                        )}
+                      >
+                        {flagValue}
+                      </code>
+                    </div>
+                    <Pencil className="w-3.5 h-3.5 opacity-0 group-hover:opacity-100 transition-opacity" />
                   </Button>
                 </div>
               ))
@@ -347,21 +279,24 @@ export const FeatureFlag = ({
                 <div className="space-y-2">
                   <Button
                     variant="outline"
-                    className="w-full justify-between"
+                    className="justify-between w-full group"
                     onClick={() => setIsUpdateModalOpen(true)}
                   >
-                    <span className={cn("text-sm", envStyle.text)}>
-                      Update value
-                    </span>
-                    <code
-                      className={cn(
-                        "px-2 py-1 rounded font-mono max-w-[150px] truncate",
-                        envStyle.bg,
-                        envStyle.text
-                      )}
-                    >
-                      {flagValue || ""}
-                    </code>
+                    <div className="flex items-center gap-2">
+                      <span className={cn("text-sm", envStyle.text)}>
+                        Current value:
+                      </span>
+                      <code
+                        className={cn(
+                          "px-2 py-1 rounded font-mono max-w-[150px] truncate",
+                          envStyle.bg,
+                          envStyle.text
+                        )}
+                      >
+                        {flagValue || ""}
+                      </code>
+                    </div>
+                    <Pencil className="w-3.5 h-3.5 opacity-0 group-hover:opacity-100 transition-opacity" />
                   </Button>
                 </div>
               ))
@@ -369,21 +304,24 @@ export const FeatureFlag = ({
                 <div className="space-y-2">
                   <Button
                     variant="outline"
-                    className="w-full justify-between items-center"
+                    className="items-center justify-between w-full group"
                     onClick={() => setIsUpdateModalOpen(true)}
                   >
-                    <span className={cn("text-sm", envStyle.text)}>
-                      Update JSON
-                    </span>
-                    <code
-                      className={cn(
-                        "px-2 py-1 rounded font-mono text-xs",
-                        envStyle.bg,
-                        envStyle.text
-                      )}
-                    >
-                      {getJSONPreview(flagValue || "")}
-                    </code>
+                    <div className="flex items-center gap-2">
+                      <span className={cn("text-sm", envStyle.text)}>
+                        Current value:
+                      </span>
+                      <code
+                        className={cn(
+                          "px-2 py-1 rounded font-mono text-xs",
+                          envStyle.bg,
+                          envStyle.text
+                        )}
+                      >
+                        {getJSONPreview(flagValue || "")}
+                      </code>
+                    </div>
+                    <Pencil className="w-3.5 h-3.5 opacity-0 group-hover:opacity-100 transition-opacity" />
                   </Button>
                 </div>
               ))

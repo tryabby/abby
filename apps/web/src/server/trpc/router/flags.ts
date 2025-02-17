@@ -535,6 +535,19 @@ export const flagRouter = router({
             },
           },
         },
+        include: {
+          flag: {
+            include: {
+              project: {
+                include: {
+                  environments: {
+                    select: { name: true },
+                  },
+                },
+              },
+            },
+          },
+        },
       });
       if (!flagValue) throw new TRPCError({ code: "NOT_FOUND" });
       if (!input.ruleSetId) {
@@ -555,5 +568,12 @@ export const flagRouter = router({
           },
         });
       }
+
+      flagValue.flag.project.environments.forEach((env) => {
+        ConfigCache.deleteConfig({
+          projectId: flagValue.flag.projectId,
+          environment: env.name,
+        });
+      });
     }),
 });

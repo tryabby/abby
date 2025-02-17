@@ -211,7 +211,7 @@ export const FeatureFlagPageContent = ({
 
   if (data.environments.length === 0)
     return (
-      <div className="mt-48 flex flex-col items-center justify-center">
+      <div className="flex flex-col items-center justify-center mt-48">
         <h1 className="text-2xl font-semibold">
           You don't have any environments set up!
         </h1>
@@ -242,7 +242,7 @@ export const FeatureFlagPageContent = ({
             <Input
               type="search"
               placeholder="Search flags..."
-              className="pl-8 w-full"
+              className="w-full pl-8"
               onChange={(e) => {
                 searchQueryRef.current = e.target.value;
                 onSearch();
@@ -261,16 +261,8 @@ export const FeatureFlagPageContent = ({
           </div>
         </div>
         <div className="flex gap-2">
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => setIsCreateEnvironmentModalOpen(true)}
-          >
-            <AiOutlinePlus className="h-4 w-4 mr-2" />
-            Add Environment
-          </Button>
           <Button size="sm" onClick={() => setIsCreateFlagModalOpen(true)}>
-            <AiOutlinePlus className="h-4 w-4 mr-2" />
+            <AiOutlinePlus className="w-4 h-4 mr-2" />
             Add {type === "Flags" ? "Flag" : "Config"}
           </Button>
         </div>
@@ -280,7 +272,7 @@ export const FeatureFlagPageContent = ({
         {flags.map((currentFlag) => (
           <Card
             key={currentFlag.id}
-            className="group relative hover:shadow-md transition-all duration-200 hover:border-primary/20 overflow-hidden"
+            className="relative overflow-hidden transition-all duration-200 group/flag hover:shadow-md hover:border-primary/20"
           >
             <div className="absolute top-0 right-0 h-full w-1.5 bg-gradient-to-b from-primary/20 to-primary/5" />
             <CardHeader className="pb-3">
@@ -288,22 +280,9 @@ export const FeatureFlagPageContent = ({
                 <div className="flex items-center gap-3">
                   <div className="flex flex-col">
                     <div className="flex items-center gap-3">
-                      <CardTitle className="text-base font-semibold group-hover:text-primary transition-colors">
+                      <CardTitle className="text-base font-semibold transition-colors group-hover/flag:text-primary">
                         {currentFlag.name}
                       </CardTitle>
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        className="h-7 px-2 text-xs bg-muted/50 hover:bg-muted"
-                        onClick={() =>
-                          router.push(
-                            `/projects/${projectId}/flags/${currentFlag.values[0]?.id}`
-                          )
-                        }
-                      >
-                        Configure
-                        <ChevronRight className="ml-1 h-3 w-3" />
-                      </Button>
                       {currentFlag.type !== "BOOLEAN" && (
                         <span className="px-2 py-0.5 text-xs rounded-md bg-blue-500/10 text-blue-500">
                           {currentFlag.type.toLowerCase()}
@@ -322,11 +301,11 @@ export const FeatureFlagPageContent = ({
                     <Button
                       variant="ghost"
                       size="sm"
-                      className="h-8 w-8 p-0 relative z-10"
+                      className="relative z-10 w-8 h-8 p-0"
                       onClick={(e) => e.stopPropagation()}
                     >
                       <span className="sr-only">Open menu</span>
-                      <BsThreeDotsVertical className="h-4 w-4" />
+                      <BsThreeDotsVertical className="w-4 h-4" />
                     </Button>
                   </DropdownMenuTrigger>
                   <DropdownMenuContent align="end">
@@ -339,7 +318,7 @@ export const FeatureFlagPageContent = ({
                         });
                       }}
                     >
-                      <EditIcon className="mr-2 h-4 w-4" />
+                      <EditIcon className="w-4 h-4 mr-2" />
                       Edit Name
                     </DropdownMenuItem>
                     <DropdownMenuItem
@@ -351,7 +330,7 @@ export const FeatureFlagPageContent = ({
                         });
                       }}
                     >
-                      <FileEditIcon className="mr-2 h-4 w-4" />
+                      <FileEditIcon className="w-4 h-4 mr-2" />
                       Edit Description
                     </DropdownMenuItem>
                     <DropdownMenuItem
@@ -371,7 +350,7 @@ export const FeatureFlagPageContent = ({
                         window.open(url, "_blank");
                       }}
                     >
-                      <Sparkle className="mr-2 h-4 w-4" />
+                      <Sparkle className="w-4 h-4 mr-2" />
                       Create Removal PR
                     </DropdownMenuItem>
                     <DropdownMenuItem
@@ -384,7 +363,7 @@ export const FeatureFlagPageContent = ({
                         });
                       }}
                     >
-                      <TrashIcon className="mr-2 h-4 w-4" />
+                      <TrashIcon className="w-4 h-4 mr-2" />
                       Delete {type === "Flags" ? "Flag" : "Config"}
                     </DropdownMenuItem>
                   </DropdownMenuContent>
@@ -400,15 +379,38 @@ export const FeatureFlagPageContent = ({
                         a.environment.sortIndex - b.environment.sortIndex
                     )
                     .map((flagValue) => (
-                      <FeatureFlag
+                      <div
                         key={flagValue.flagId + flagValue.environment.id}
-                        flag={currentFlag}
-                        projectId={projectId}
-                        environmentName={flagValue.environment.name}
-                        flagValueId={flagValue.id}
-                        type={currentFlag.type}
-                        minimal
-                      />
+                        className="space-y-2"
+                      >
+                        <div className="flex items-center justify-between">
+                          <EnvironmentBadge
+                            name={flagValue.environment.name}
+                            size="default"
+                          />
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            className="px-2 text-xs h-7 bg-muted/50 hover:bg-muted group/configure"
+                            onClick={() =>
+                              router.push(
+                                `/projects/${projectId}/flags/${flagValue.id}`
+                              )
+                            }
+                          >
+                            Configure
+                            <ChevronRight className="ml-1 h-3 w-3 group-hover/configure:translate-x-0.5 transition-transform" />
+                          </Button>
+                        </div>
+                        <FeatureFlag
+                          flag={currentFlag}
+                          projectId={projectId}
+                          environmentName={flagValue.environment.name}
+                          flagValueId={flagValue.id}
+                          type={currentFlag.type}
+                          minimal
+                        />
+                      </div>
                     ))}
                 </div>
               </div>
