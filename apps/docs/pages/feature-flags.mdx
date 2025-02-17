@@ -6,5 +6,62 @@ This is useful for testing new features, or for hiding features that are not yet
 A feature flag is always toggled for a certain [Environment](/environments) which allows you to test features in different environments.
 For example, you can have a feature flag that is enabled in the `development` environment, but disabled in the `production` environment.
 
+## Basic Usage
+
 When a feature flag is toggled for an environment, every user will see the same value for that feature flag.
 If you want to test a feature for a specific user, you can use [A/B Tests](/a-b-testing).
+
+## User Segments & Conditional Rules
+
+Feature flags can be made more powerful with user segments and conditional rules. This allows you to dynamically control flag values based on user properties.
+
+### User Properties
+
+First, define the properties you want to use for targeting in your user segment schema. Common properties include:
+
+- User role/type (string)
+- Subscription status (boolean)
+- Usage metrics (number)
+- Location (string)
+- Custom attributes specific to your app
+
+### Conditional Rules
+
+Once you have user properties defined, you can create conditional rules for your feature flags:
+
+- **Single Rules**: Simple conditions like "role equals admin" or "subscriptionActive equals true"
+- **Rule Groups**: Complex logic combining multiple conditions with AND/OR operators
+- **Operators**: Support for various comparisons:
+  - Strings: equals, not equals, contains, not contains, starts with, ends with, regex
+  - Numbers: equals, not equals, greater than, less than, greater/less than or equal
+  - Booleans: equals
+
+### Example Usage
+
+Here's how it works:
+
+1. Define your user properties in the Abby dashboard
+2. Create rules for your feature flags using these properties
+3. Update user properties in your application code:
+
+```typescript
+// Update user properties
+abby.updateUserProperties({
+  role: "admin",
+  subscriptionActive: true,
+  usageCount: 100,
+});
+```
+
+When evaluating feature flags, Abby will:
+
+1. Check the environment value first
+2. Evaluate any conditional rules based on user properties
+3. Return the appropriate flag value
+
+This allows for powerful targeting scenarios like:
+
+- Enable features only for admin users
+- Show premium features to paid subscribers
+- Roll out features gradually based on usage metrics
+- Target specific user segments with custom rules

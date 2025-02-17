@@ -16,6 +16,7 @@
   "remote-config": "Remote Configuration",
   "environments": "Environments",
   "config": "Configuration as Code",
+  "user-segments": "User Segments",
   "a-b-testing": "A/B Tests",
   "-- More --": {
     "type": "separator",

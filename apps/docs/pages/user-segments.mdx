@@ -1,0 +1,105 @@
+# User Segments Guide
+
+This guide demonstrates how to implement user-based targeting with feature flags in a real application.
+
+## Scenario: Premium Feature Access
+
+Let's say you want to:
+
+- Enable a feature for premium users only
+- Allow beta testers to access it regardless of subscription
+- Gradually roll it out to users who've been active for over 30 days
+
+## Step 1: Define User Properties
+
+First, configure the user properties you'll need in your `abby.config.ts`:
+
+```typescript
+import * as validation from "@trabby/abby/validation";
+export default defineConfig(
+  {
+    projectId: "your-project-id",
+    currentEnvironment: "production",
+  },
+  {
+    environments: ["development", "staging", "production"],
+    flags: ["premiumFeature"],
+    user: {
+      subscriptionTier: validation.string(),
+      isBetaTester: validation.boolean(),
+      accountAgeDays: validation.number(),
+    },
+  }
+);
+```
+
+## Step 2: Update User Properties
+
+In your application, update these properties when they change:
+
+```typescript
+// When user logs in or subscription changes
+abby.updateUserProperties({
+  subscriptionTier: user.subscription.tier,
+  isBetaTester: user.betaAccess,
+  accountAgeDays: calculateAccountAge(user.createdAt),
+});
+```
+
+## Step 3: Configure Rules
+
+In the Abby dashboard, set up rules for your feature flag:
+
+1. Enable for premium users:
+
+- Set a rule where subscriptionTier equals "premium"
+
+2. Enable for beta testers:
+
+- Add another rule where isBetaTester equals true
+
+3. Enable for long-time users:
+
+- Create a rule where accountAgeDays is greater than 30
+
+These rules are evaluated in order, and the feature will be enabled if any of them match. You can also adjust the order of rules and add percentage rollouts to gradually enable the feature for each segment.
+
+## Step 4: Use in Components
+
+Now you can use the feature flag in your components:
+
+```tsx
+function PremiumFeature() {
+  const hasAccess = useFeatureFlag("premiumFeature");
+
+  if (!hasAccess) {
+    return <UpgradePrompt />;
+  }
+
+  return <FeatureContent />;
+}
+```
+
+## Best Practices
+
+1. **Validation**: User properties are validated against their defined types. Invalid updates will throw errors.
+
+2. **Performance**: Rule evaluation is optimized and cached until user properties change.
+
+3. **Fallbacks**: If user properties aren't set or rules don't match, the flag falls back to its environment value.
+
+4. **TypeScript Support**: The configuration provides full type safety for flag names and user properties.
+
+## Testing
+
+During development, you can use the Abby DevTools to:
+
+- Override user properties
+- Test different rule combinations
+- Verify rule evaluation logic
+
+Remember to test edge cases like:
+
+- Missing optional properties
+- Invalid property values
+- Rule ordering effects

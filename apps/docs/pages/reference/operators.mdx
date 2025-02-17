@@ -1,0 +1,100 @@
+# Rule Operators
+
+When configuring conditional rules for feature flags, you can use different operators based on the property type.
+
+## String Operators
+
+| Operator    | Description                       | Example                         |
+| ----------- | --------------------------------- | ------------------------------- |
+| eq          | Exact string match                | `role eq "admin"`               |
+| neq         | Not equal                         | `role neq "guest"`              |
+| contains    | String contains substring         | `email contains "@company.com"` |
+| notContains | String does not contain substring | `plan notContains "free"`       |
+| startsWith  | String starts with prefix         | `country startsWith "US"`       |
+| endsWith    | String ends with suffix           | `domain endsWith ".edu"`        |
+| regex       | String matches regular expression | `email regex "^[a-z]+@.*$"`     |
+
+## Number Operators
+
+| Operator | Description              | Example                    |
+| -------- | ------------------------ | -------------------------- |
+| eq       | Equal to                 | `age eq 21`                |
+| neq      | Not equal to             | `loginCount neq 0`         |
+| gt       | Greater than             | `purchaseCount gt 5`       |
+| gte      | Greater than or equal to | `subscriptionMonths gte 3` |
+| lt       | Less than                | `errorCount lt 10`         |
+| lte      | Less than or equal to    | `failedAttempts lte 3`     |
+
+## Boolean Operators
+
+| Operator | Description | Example                |
+| -------- | ----------- | ---------------------- |
+| eq       | Equal to    | `isSubscribed eq true` |
+
+## Rule Groups
+
+Rules can be combined into groups using logical operators:
+
+| Operator | Description                            | Example                                         |
+| -------- | -------------------------------------- | ----------------------------------------------- |
+| and      | All conditions in the group must match | `role eq "admin" AND subscriptionDays gt 30`    |
+| or       | Any condition in the group can match   | `isTeamMember eq true OR hasBetaAccess eq true` |
+
+### Example Rule Sets
+
+```typescript
+// Single rule
+{
+  propertyName: "role",
+  propertyType: "string",
+  operator: "eq",
+  value: "admin",
+  thenValue: true
+}
+
+// Rule group with AND logic
+{
+  operator: "and",
+  rules: [
+    {
+      propertyName: "subscriptionTier",
+      propertyType: "string",
+      operator: "eq",
+      value: "premium"
+    },
+    {
+      propertyName: "usageCount",
+      propertyType: "number",
+      operator: "gt",
+      value: 100
+    }
+  ],
+  thenValue: true
+}
+
+// Rule group with OR logic
+{
+  operator: "or",
+  rules: [
+    {
+      propertyName: "isAdmin",
+      propertyType: "boolean",
+      operator: "eq",
+      value: true
+    },
+    {
+      propertyName: "email",
+      propertyType: "string",
+      operator: "endsWith",
+      value: "@company.com"
+    }
+  ],
+  thenValue: true
+}
+```
+
+When evaluating rules:
+
+1. Rules are evaluated in order
+2. The first matching rule's `thenValue` is used
+3. If no rules match, the environment's default value is used

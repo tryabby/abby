@@ -6,15 +6,16 @@
 
 The `createAbby` function takes an object as a parameter. The object can contain the following properties:
 
-| Name               | Type     | Required | Description                                                        | details               |
-| ------------------ | -------- | :------: | ------------------------------------------------------------------ | --------------------- |
-| projectId          | `string` |    ✅    | The ID of your project in Abby                                     | -                     |
-| apiUrl             | `string` |          | The URL of the Abby API. Defaults to the hosted version            | -                     |
-| currentEnvironment | `string` |    ✅    | The current environment of your application                        | [link](/environments) |
-| tests              | `object` |          | An object containing your defined A/B Tests                        | -                     |
-| flags              | `array`  |          | An array containing your defined Feature Flags                     | -                     |
-| remoteConfig       | `object` |          | An object containing the name of your remote config and their type | -                     |
-| settings           | `object` |          | An object with additional settings for Abby                        | -                     |
+| Name               | Type     | Required | Description                                                                                                                                       | details               |
+| ------------------ | -------- | :------: | ------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------- |
+| projectId          | `string` |    ✅    | The ID of your project in Abby                                                                                                                    | -                     |
+| apiUrl             | `string` |          | The URL of the Abby API. Defaults to the hosted version                                                                                           | -                     |
+| currentEnvironment | `string` |    ✅    | The current environment of your application                                                                                                       | [link](/environments) |
+| tests              | `object` |          | An object containing your defined A/B Tests                                                                                                       | -                     |
+| flags              | `array`  |          | An array containing your defined Feature Flags                                                                                                    | -                     |
+| remoteConfig       | `object` |          | An object containing the name of your remote config and their type                                                                                | -                     |
+| settings           | `object` |          | An object with additional settings for Abby                                                                                                       | -                     |
+| user               | `object` |          | Optional configuration for user properties that can be used for targeting feature flags. This enables conditional rules based on user attributes. | -                     |
 
 #### tests
 
@@ -79,6 +80,25 @@ The settings property is an object containing additional settings for Abby. The 
 
 - `remoteConfig.devOverrides`: An object containing the values of Remote Configuration variables in development mode.
   The keys of the object represent the names of the flags. The value must be assignable to the type of the variable.
+
+#### user
+
+Optional configuration for user properties that can be used for targeting feature flags. This enables conditional rules based on user attributes. The configuration uses validation helpers from `@tryabby/core`:
+
+```typescript
+import * as validation from "@tryabby/core/validation";
+
+const config = createAbby({
+  // ... other config
+  user: {
+    role: validation.string(),
+    isSubscribed: validation.boolean(),
+    purchaseCount: validation.number(),
+    // Optional fields
+    country: validation.optional(validation.string()),
+  },
+});
+```
 
 ### Return Values
 
@@ -329,4 +349,45 @@ export default function SomePage() {
     </div>
   );
 }
+```
+
+#### updateUserProperties
+
+Updates the user properties used for evaluating conditional rules. Properties are validated against their defined types and will throw errors if invalid.
+
+The function:
+
+- Validates each property against its defined type
+- Only updates if validation passes
+- Throws descriptive errors for invalid values
+- Allows partial updates (only updating some properties)
+- Handles optional properties correctly
+
+##### Example
+
+```typescript
+// Valid updates
+abby.updateUserProperties({
+  role: "admin", // string
+  isSubscribed: true, // boolean
+  purchaseCount: 5, // number
+  country: "US", // optional string
+});
+
+// Invalid updates will throw
+abby.updateUserProperties({
+  role: 123, // Error: Expected string but got number
+  isSubscribed: "true", // Error: Expected boolean but got string
+  purchaseCount: "5", // Error: Expected number but got string
+});
+
+// Partial updates are fine
+abby.updateUserProperties({
+  role: "user", // Only updates role
+});
+
+// Optional fields can be undefined
+abby.updateUserProperties({
+  country: undefined, // OK for optional fields
+});
 ```
