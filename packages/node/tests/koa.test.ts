@@ -1,9 +1,9 @@
 import type { Server } from "node:http";
 import { ABBY_AB_STORAGE_PREFIX } from "@tryabby/core";
+import getPort from "get-port";
 import Koa from "koa";
 import fetch from "node-fetch";
 import { createAbbyMiddleWare } from "../src/koa";
-import getPort from "get-port";
 
 const app = new Koa();
 let SERVER_URL = "http://localhost:";
