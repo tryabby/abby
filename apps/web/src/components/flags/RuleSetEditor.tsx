@@ -112,6 +112,7 @@ export function FlagRulesEditor({
                 if ("rules" in rule) {
                   return (
                     <Card
+                      // biome-ignore lint/suspicious/noArrayIndexKey: <explanation>
                       key={index}
                       className="relative border-primary/10 bg-primary/[0.03] shadow-sm"
                     >
@@ -148,6 +149,7 @@ export function FlagRulesEditor({
 
                             <div className="pl-6 border-l-2 border-primary/20 space-y-4">
                               {rule.rules.map((subRule, subRuleIndex) => (
+                                // biome-ignore lint/suspicious/noArrayIndexKey: <explanation>
                                 <div key={subRuleIndex} className="relative">
                                   <FlagRuleEditor
                                     rule={subRule}
@@ -243,6 +245,7 @@ export function FlagRulesEditor({
 
                 return (
                   <Card
+                    // biome-ignore lint/suspicious/noArrayIndexKey: <explanation>
                     key={index}
                     className="relative border-muted bg-muted/5"
                   >
