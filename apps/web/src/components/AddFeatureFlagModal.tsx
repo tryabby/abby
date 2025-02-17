@@ -2,6 +2,7 @@ import { FeatureFlagType } from "@prisma/client";
 import { TRPCClientError } from "@trpc/client";
 import { TRPC_ERROR_CODES_BY_KEY } from "@trpc/server/rpc";
 import { getFlagTypeClassName, transformDBFlagTypeToclient } from "lib/flags";
+import { useTracking } from "lib/tracking";
 import { cn } from "lib/utils";
 import { useRef, useState } from "react";
 import { toast } from "react-hot-toast";
@@ -11,7 +12,6 @@ import { JSONEditor } from "./JSONEditor";
 import { Modal } from "./Modal";
 import { RadioSelect } from "./RadioSelect";
 import { Toggle } from "./Toggle";
-import { useTracking } from "lib/tracking";
 import { Input } from "./ui/input";
 import { Label } from "./ui/label";
 

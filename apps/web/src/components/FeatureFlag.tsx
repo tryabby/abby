@@ -9,7 +9,7 @@ import { Label } from "components/ui/label";
 import relativeTime from "dayjs/plugin/relativeTime";
 import { getEnvironmentStyle } from "lib/environment-styles";
 import { cn } from "lib/utils";
-import { Settings, Pencil } from "lucide-react";
+import { Pencil, Settings } from "lucide-react";
 import { useRouter } from "next/router";
 import { useMemo, useState } from "react";
 import { toast } from "react-hot-toast";
@@ -37,7 +37,7 @@ export const getHistoryEventDescription = (event: FeatureFlagHistory) => {
     )
     .run();
 };
- 
+
 const ConfirmUpdateModal = ({
   isOpen,
   onClose,
