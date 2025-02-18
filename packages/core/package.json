@@ -1,6 +1,6 @@
 {
   "name": "@tryabby/core",
-  "version": "6.0.0",
+  "version": "7.0.0",
   "description": "",
   "main": "dist/index.js",
   "files": ["dist"],
@@ -19,6 +19,16 @@
       "require": "./dist/defineConfig/index.js",
       "import": "./dist/defineConfig/index.js",
       "types": "./dist/defineConfig/index.d.ts"
+    },
+    "./validation": {
+      "require": "./dist/validation/index.js",
+      "import": "./dist/validation/index.js",
+      "types": "./dist/validation/index.d.ts"
+    },
+    "./schema": {
+      "require": "./dist/shared/schemas.js",
+      "import": "./dist/shared/schemas.js",
+      "types": "./dist/shared/schemas.d.ts"
     }
   },
   "scripts": {

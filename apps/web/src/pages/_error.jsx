@@ -1,4 +1,5 @@
 import * as Sentry from "@sentry/nextjs";
+// biome-ignore lint/suspicious/noShadowRestrictedNames: <explanation>
 import Error from "next/error";
 
 const CustomErrorComponent = (props) => {

@@ -2,17 +2,18 @@ import { randomUUID } from "node:crypto";
 import { FeatureFlagType } from "@prisma/client";
 import { TRPCError } from "@trpc/server";
 import { getUseFeatureFlagRegex } from "@tryabby/core";
+import { flagRulesSetSchema } from "@tryabby/core/schema";
 import { env } from "env/server.mjs";
 import OpenAI from "openai";
 import { ConfigCache } from "server/common/config-cache";
 import { getGithubApp } from "server/common/github-app";
 import { githubIntegrationSettingsSchema } from "server/common/integrations";
+import { serverTrackingService } from "server/common/tracking";
 import { AIFlagRemovalService } from "server/services/AiFlagRemovalService";
 import { FlagService } from "server/services/FlagService";
 import { validateFlag } from "utils/validateFlags";
 import { z } from "zod";
 import { protectedProcedure, router } from "../trpc";
-import { serverTrackingService } from "server/common/tracking";
 
 export const flagRouter = router({
   getFlags: protectedProcedure
@@ -484,5 +485,104 @@ export const flagRouter = router({
       });
 
       return response.data.html_url;
+    }),
+  getFlagByValueId: protectedProcedure
+    .input(
+      z.object({
+        flagValueId: z.string(),
+      })
+    )
+    .query(async ({ ctx, input }) => {
+      return ctx.prisma.featureFlagValue.findFirst({
+        where: {
+          id: input.flagValueId,
+          flag: {
+            project: {
+              users: {
+                some: {
+                  userId: ctx.session.user.id,
+                },
+              },
+            },
+          },
+        },
+        include: {
+          environment: true,
+          history: { include: { user: true } },
+          flag: {
+            include: {
+              project: {
+                include: {
+                  userSegments: true,
+                },
+              },
+            },
+          },
+          ruleSets: true,
+        },
+      });
+    }),
+  updateFlagRuleSet: protectedProcedure
+    .input(
+      z.object({
+        flagValueId: z.string(),
+        ruleSet: flagRulesSetSchema,
+        ruleSetId: z.string().optional(),
+      })
+    )
+    .mutation(async ({ ctx, input }) => {
+      const flagValue = await ctx.prisma.featureFlagValue.findFirst({
+        where: {
+          id: input.flagValueId,
+          flag: {
+            project: {
+              users: {
+                some: {
+                  userId: ctx.session.user.id,
+                },
+              },
+            },
+          },
+        },
+        include: {
+          flag: {
+            include: {
+              project: {
+                include: {
+                  environments: {
+                    select: { name: true },
+                  },
+                },
+              },
+            },
+          },
+        },
+      });
+      if (!flagValue) throw new TRPCError({ code: "NOT_FOUND" });
+      if (!input.ruleSetId) {
+        await ctx.prisma.flagRuleSet.create({
+          data: {
+            flagValueId: flagValue.id,
+            rules: input.ruleSet,
+            name: "Default",
+          },
+        });
+      } else {
+        await ctx.prisma.flagRuleSet.update({
+          where: {
+            id: input.ruleSetId,
+          },
+          data: {
+            rules: input.ruleSet,
+          },
+        });
+      }
+
+      flagValue.flag.project.environments.forEach((env) => {
+        ConfigCache.deleteConfig({
+          projectId: flagValue.flag.projectId,
+          environment: env.name,
+        });
+      });
     }),
 });

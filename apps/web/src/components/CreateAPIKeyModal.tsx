@@ -41,8 +41,11 @@ export const CreateAPIKeyModal = ({ onClose, isOpen }: Props) => {
         }
       }}
     >
-      <label className="mb-1 block text-pink-50">Name</label>
+      <label className="mb-1 block text-pink-50" htmlFor="name">
+        Name
+      </label>
       <Input
+        name="name"
         ref={inputRef}
         type="text"
         value={name}

@@ -3,7 +3,7 @@ import {
   getVariantWithHeighestWeightOrFirst,
   getWeightedRandomVariant,
 } from "./mathHelpers";
-import { HttpService } from "./shared";
+import { type FlagRuleSet, HttpService, type SubFlagRule } from "./shared";
 import {
   ABBY_AB_STORAGE_PREFIX,
   ABBY_FF_STORAGE_PREFIX,
@@ -19,6 +19,7 @@ import {
   remoteConfigStringToType,
   stringifyRemoteConfigValue,
 } from "./shared/";
+import * as validation from "./validation";
 
 export * from "./shared/index";
 export {
@@ -75,8 +76,11 @@ type LocalData<
       selectedVariant?: string;
     }
   >;
-  flags: Record<FlagName, boolean>;
-  remoteConfig: Record<RemoteConfigName, RemoteConfigValue>;
+  flags: Record<FlagName, { value: boolean; ruleSet?: FlagRuleSet }>;
+  remoteConfig: Record<
+    RemoteConfigName,
+    { value: RemoteConfigValue; ruleSet?: FlagRuleSet }
+  >;
 };
 
 interface PersistentStorage {
@@ -93,6 +97,10 @@ export type AbbyConfig<
     RemoteConfigName,
     RemoteConfigValueString
   > = Record<RemoteConfigName, RemoteConfigValueString>,
+  User extends Record<string, validation.ValidatorType> = Record<
+    string,
+    validation.ValidatorType
+  >,
 > = {
   projectId: string;
   apiUrl?: string;
@@ -109,6 +117,7 @@ export type AbbyConfig<
     expiresInDays?: number;
   };
   __experimentalCdnUrl?: string;
+  user?: User;
 };
 
 export class Abby<
@@ -118,6 +127,10 @@ export class Abby<
   const RemoteConfig extends Record<RemoteConfigName, RemoteConfigValueString>,
   const RemoteConfigName extends Extract<keyof RemoteConfig, string>,
   const Environments extends Array<string> = Array<string>,
+  const User extends Record<string, validation.ValidatorType> = Record<
+    string,
+    validation.ValidatorType
+  >,
 > {
   private log = (...args: any[]) =>
     this.config.debug ? console.log("core.Abby", ...args) : () => {};
@@ -144,6 +157,9 @@ export class Abby<
   private remoteConfigOverrides = new Map<string, RemoteConfigValue>();
 
   private COOKIE_CONSENT_KEY = "$_abcc_$";
+  private user = {} as {
+    -readonly [K in keyof User]: validation.Infer<User[K]>;
+  };
 
   constructor(
     private config: AbbyConfig<
@@ -151,7 +167,8 @@ export class Abby<
       Tests,
       Environments,
       RemoteConfigName,
-      RemoteConfig
+      RemoteConfig,
+      User
     >,
     private persistantTestStorage?: PersistentStorage,
     private persistantFlagStorage?: PersistentStorage,
@@ -160,23 +177,26 @@ export class Abby<
     this._cfg = config as AbbyConfig<FlagName, Tests, Environments>;
     this.#data.flags = Object.values(this._cfg.flags ?? {}).reduce(
       (acc, flagName) => {
-        acc[flagName as FlagName] = DEFAULT_FEATURE_FLAG_VALUE;
+        acc[flagName as FlagName] = {
+          value: DEFAULT_FEATURE_FLAG_VALUE,
+        };
         return acc;
       },
-      {} as Record<FlagName, boolean>
+      {} as LocalData["flags"]
     );
     this.#data.tests = config.tests ?? ({} as any);
     this.#data.remoteConfig = Object.keys(config.remoteConfig ?? {}).reduce(
       (acc, remoteConfigName) => {
-        acc[remoteConfigName as RemoteConfigName] =
-          this.getDefaultRemoteConfigValue(
+        acc[remoteConfigName as RemoteConfigName] = {
+          value: this.getDefaultRemoteConfigValue(
             remoteConfigName,
             config.remoteConfig as any
-          );
+          ),
+        };
 
         return acc;
       },
-      {} as Record<RemoteConfigName, RemoteConfigValue>
+      {} as LocalData["remoteConfig"]
     );
 
     if (persistantTestStorage) {
@@ -264,18 +284,30 @@ export class Abby<
         (this.config.tests ?? {}) as any
       ),
       flags: data.flags.reduce(
-        (acc, { name, value }) => {
-          acc[name] = value;
+        (acc, { name, value, ruleSet }) => {
+          const evaluatedValue = ruleSet
+            ? this.evaluateUserProperties<typeof value>(ruleSet)
+            : value;
+          acc[name] = {
+            value: evaluatedValue ?? value,
+            ruleSet,
+          };
           return acc;
         },
-        {} as Record<string, boolean>
+        {} as LocalData["flags"]
       ),
       remoteConfig: (data.remoteConfig ?? []).reduce(
-        (acc, { name, value }) => {
-          acc[name] = value;
+        (acc, { name, value, ruleSet }) => {
+          const evaluatedValue = ruleSet
+            ? this.evaluateUserProperties<typeof value>(ruleSet)
+            : value;
+          acc[name] = {
+            value: evaluatedValue ?? value,
+            ruleSet,
+          };
           return acc;
         },
-        {} as Record<string, RemoteConfigValue>
+        {} as LocalData["remoteConfig"]
       ),
     };
   }
@@ -300,14 +332,20 @@ export class Abby<
         this.#data.tests
       ),
       flags: Object.keys(this.#data.flags).reduce((acc, flagName) => {
-        acc[flagName as FlagName] = this.getFeatureFlag(flagName as FlagName);
+        acc[flagName as FlagName] = {
+          value: this.getFeatureFlag(flagName as FlagName),
+          ruleSet: this.#data.flags[flagName as FlagName].ruleSet,
+        };
         return acc;
       }, this.#data.flags),
       remoteConfig: Object.keys(this.#data.remoteConfig).reduce(
         (acc, remoteConfigName) => {
-          acc[remoteConfigName as RemoteConfigName] = this.getRemoteConfig(
-            remoteConfigName as RemoteConfigName
-          );
+          acc[remoteConfigName as RemoteConfigName] = {
+            value: this.getRemoteConfig(remoteConfigName as RemoteConfigName),
+            ruleSet:
+              this.#data.remoteConfig[remoteConfigName as RemoteConfigName]
+                .ruleSet,
+          };
           return acc;
         },
         this.#data.remoteConfig
@@ -373,7 +411,12 @@ export class Abby<
 
     if (storedValue !== undefined) {
       this.log("getFeatureFlag() => storedValue:", storedValue);
-      return storedValue;
+
+      const evaluatedValue = storedValue.ruleSet
+        ? this.evaluateUserProperties<boolean>(storedValue.ruleSet)
+        : storedValue.value;
+
+      return evaluatedValue ?? storedValue.value;
     }
     // before we return the default value we check if there is a fallback value set
     const hasFallbackValue =
@@ -456,9 +499,21 @@ export class Abby<
     }
 
     this.log("getRemoteConfig() => storedValue:", storedValue);
-    return storedValue as RemoteConfigValueStringToType<
-      RemoteConfig[RemoteConfigName]
-    >;
+
+    const evaluatedValue = storedValue.ruleSet
+      ? this.evaluateUserProperties<
+          RemoteConfigValueStringToType<RemoteConfig[RemoteConfigName]>
+        >(storedValue.ruleSet)
+      : (storedValue.value as RemoteConfigValueStringToType<
+          RemoteConfig[RemoteConfigName]
+        >);
+
+    return (
+      evaluatedValue ??
+      (storedValue.value as RemoteConfigValueStringToType<
+        RemoteConfig[RemoteConfigName]
+      >)
+    );
   }
 
   /**
@@ -724,5 +779,202 @@ export class Abby<
         this.getTestVariant(testName as TestName)
       );
     });
+  }
+
+  updateUserProperties(
+    user: Partial<{
+      -readonly [K in keyof User]: validation.Infer<User[K]>;
+    }>
+  ) {
+    if (!this.config.user) {
+      throw new Error("User properties are not defined in the config");
+    }
+
+    const validationErrors: validation.ValidationErrors = [];
+    // validate only the properties that are given as an argument
+    for (const [key, value] of Object.entries(user)) {
+      const validationErrorMessage = validation.validateProperty(
+        this.config.user[key],
+        value
+      );
+      if (validationErrorMessage) {
+        validationErrors.push({
+          property: key,
+          message: validationErrorMessage,
+        });
+      }
+    }
+    if (validationErrors.length > 0) {
+      throw new Error(
+        validationErrors.map((e) => `[${e.property}]: ${e.message}`).join(", ")
+      );
+    }
+
+    const oldUser = { ...this.user };
+    this.user = {
+      ...this.user,
+      ...user,
+    };
+
+    // Only notify if user properties actually changed
+    if (JSON.stringify(oldUser) !== JSON.stringify(this.user)) {
+      this.log("updateUserProperties()", this.user);
+      this.notifyListeners();
+    }
+  }
+
+  private evaluateUserProperties<T extends boolean | RemoteConfigValue>(
+    rules: FlagRuleSet
+  ): T | null {
+    const evaluateRule = <T extends SubFlagRule>(rule: T): T | null => {
+      if (!(rule.propertyName in this.user)) return null;
+
+      const userPropertyValue = this.user[rule.propertyName];
+      switch (rule.propertyType) {
+        case "boolean": {
+          if (typeof userPropertyValue !== "boolean") return null;
+          switch (rule.operator) {
+            case "eq": {
+              if (userPropertyValue === rule.value) {
+                return rule;
+              }
+              break;
+            }
+          }
+          break;
+        }
+        case "string": {
+          if (typeof userPropertyValue !== "string") return null;
+          switch (rule.operator) {
+            case "eq": {
+              if (userPropertyValue === rule.value) {
+                return rule;
+              }
+              break;
+            }
+            case "neq": {
+              if (userPropertyValue !== rule.value) {
+                return rule;
+              }
+              break;
+            }
+            case "contains": {
+              if (userPropertyValue.includes(rule.value)) {
+                return rule;
+              }
+              break;
+            }
+            case "notContains": {
+              if (!userPropertyValue.includes(rule.value)) {
+                return rule;
+              }
+              break;
+            }
+            case "startsWith": {
+              if (userPropertyValue.startsWith(rule.value)) {
+                return rule;
+              }
+              break;
+            }
+            case "endsWith": {
+              if (userPropertyValue.endsWith(rule.value)) {
+                return rule;
+              }
+              break;
+            }
+            case "regex": {
+              if (new RegExp(rule.value).test(userPropertyValue)) {
+                return rule;
+              }
+              break;
+            }
+          }
+          break;
+        }
+        case "number": {
+          if (typeof userPropertyValue !== "number") return null;
+          switch (rule.operator) {
+            case "eq": {
+              if (userPropertyValue === rule.value) {
+                return rule;
+              }
+              break;
+            }
+            case "neq": {
+              if (userPropertyValue !== rule.value) {
+                return rule;
+              }
+              break;
+            }
+            case "gt": {
+              if (userPropertyValue > rule.value) {
+                return rule;
+              }
+              break;
+            }
+            case "gte": {
+              if (userPropertyValue >= rule.value) {
+                return rule;
+              }
+              break;
+            }
+            case "lt": {
+              if (userPropertyValue < rule.value) {
+                return rule;
+              }
+              break;
+            }
+            case "lte": {
+              if (userPropertyValue <= rule.value) {
+                return rule;
+              }
+              break;
+            }
+          }
+          break;
+        }
+        default: {
+          throw new Error("Unsupported property type");
+        }
+      }
+      return null;
+    };
+    for (const rule of rules) {
+      if ("rules" in rule) {
+        switch (rule.operator) {
+          // this means every rule in the array has to be true
+          case "and": {
+            let matches = true;
+            for (const subRule of rule.rules) {
+              if (!evaluateRule(subRule)) {
+                matches = false;
+                break;
+              }
+            }
+            if (matches) {
+              return rule.thenValue as T;
+            }
+            continue;
+          }
+          case "or": {
+            let matches = false;
+            for (const subRule of rule.rules) {
+              if (evaluateRule(subRule)) {
+                matches = true;
+                break;
+              }
+            }
+            if (matches) {
+              return rule.thenValue as T;
+            }
+            continue;
+          }
+        }
+      }
+      const result = evaluateRule(rule);
+      if (!result) continue;
+      return result.thenValue as T;
+    }
+    return null;
   }
 }

@@ -6,15 +6,16 @@
 
 The `createAbby` function takes an object as a parameter. The object can contain the following properties:
 
-| Name               | Type     | Required | Description                                                        | details               |
-| ------------------ | -------- | :------: | ------------------------------------------------------------------ | --------------------- |
-| projectId          | `string` |    ✅    | The ID of your project in Abby                                     | -                     |
-| apiUrl             | `string` |          | The URL of the Abby API. Defaults to the hosted version            | -                     |
-| currentEnvironment | `string` |    ✅    | The current environment of your application                        | [link](/environments) |
-| tests              | `object` |          | An object containing your defined A/B Tests                        | -                     |
-| flags              | `array`  |          | An array containing your defined Feature Flags                     | -                     |
-| remoteConfig       | `object` |          | An object containing the name of your remote config and their type | -                     |
-| settings           | `object` |          | An object with additional settings for Abby                        | -                     |
+| Name               | Type     | Required | Description                                                                                                                                       | details               |
+| ------------------ | -------- | :------: | ------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------- |
+| projectId          | `string` |    ✅    | The ID of your project in Abby                                                                                                                    | -                     |
+| apiUrl             | `string` |          | The URL of the Abby API. Defaults to the hosted version                                                                                           | -                     |
+| currentEnvironment | `string` |    ✅    | The current environment of your application                                                                                                       | [link](/environments) |
+| tests              | `object` |          | An object containing your defined A/B Tests                                                                                                       | -                     |
+| flags              | `array`  |          | An array containing your defined Feature Flags                                                                                                    | -                     |
+| remoteConfig       | `object` |          | An object containing the name of your remote config and their type                                                                                | -                     |
+| settings           | `object` |          | An object with additional settings for Abby                                                                                                       | -                     |
+| user               | `object` |          | Optional configuration for user properties that can be used for targeting feature flags. This enables conditional rules based on user attributes. | -                     |
 
 #### tests
 
@@ -48,6 +49,25 @@ The flags property is an array containing your defined Feature Flags. You probab
 const abby = createAbby({
   // ... your config
   flags: ["test-flag"],
+});
+```
+
+#### user
+
+Optional configuration for user properties that can be used for targeting feature flags. This enables conditional rules based on user attributes. The configuration uses validation helpers from `@tryabby/core`:
+
+```typescript
+import * as validation from "@tryabby/core/validation";
+
+const config = createAbby({
+  // ... other config
+  user: {
+    role: validation.string(),
+    isSubscribed: validation.boolean(),
+    purchaseCount: validation.number(),
+    // Optional fields
+    country: validation.optional(validation.string()),
+  },
 });
 ```
 
@@ -101,7 +121,11 @@ New users will get a random value for a test depending on the defined weights
 
 #### useFeatureFlag
 
-`useFeatureFlag` is a react hook that used to access the value of a Feature Flag.
+`useFeatureFlag` is a React hook that returns the current value of a feature flag. The value is determined by:
+
+1. The environment value
+2. Any conditional rules based on user properties
+3. Default/fallback values
 
 ##### Parameters
 
@@ -110,6 +134,25 @@ The name of the flag, needs to be one of the defined flags.
 ##### Return Value
 
 The value of the flag _Type: `boolean`_
+
+##### Example with User Properties
+
+```tsx
+import { useFeatureFlag } from "./abby";
+
+function PremiumFeature() {
+  // Flag will be true if either:
+  // 1. Enabled in current environment OR
+  // 2. User matches conditions (e.g. isSubscribed === true)
+  const hasPremiumAccess = useFeatureFlag("premiumFeature");
+
+  if (!hasPremiumAccess) {
+    return <UpgradeBanner />;
+  }
+
+  return <PremiumContent />;
+}
+```
 
 #### useFeatureFlags
 
@@ -238,4 +281,45 @@ export default function SomePage() {
     </div>
   );
 }
+```
+
+#### updateUserProperties
+
+Updates the user properties used for evaluating conditional rules. Properties are validated against their defined types and will throw errors if invalid.
+
+The function:
+
+- Validates each property against its defined type
+- Only updates if validation passes
+- Throws descriptive errors for invalid values
+- Allows partial updates (only updating some properties)
+- Handles optional properties correctly
+
+##### Example
+
+```typescript
+// Valid updates
+abby.updateUserProperties({
+  role: "admin", // string
+  isSubscribed: true, // boolean
+  purchaseCount: 5, // number
+  country: "US", // optional string
+});
+
+// Invalid updates will throw
+abby.updateUserProperties({
+  role: 123, // Error: Expected string but got number
+  isSubscribed: "true", // Error: Expected boolean but got string
+  purchaseCount: "5", // Error: Expected number but got string
+});
+
+// Partial updates are fine
+abby.updateUserProperties({
+  role: "user", // Only updates role
+});
+
+// Optional fields can be undefined
+abby.updateUserProperties({
+  country: undefined, // OK for optional fields
+});
 ```

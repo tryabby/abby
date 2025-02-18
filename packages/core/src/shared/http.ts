@@ -18,7 +18,7 @@ export abstract class HttpService {
     try {
       const res = await fetch(
         __experimentalCdnUrl ??
-          `${url ?? ABBY_BASE_URL}api/v1/data/${projectId}${
+          `${url ?? ABBY_BASE_URL}api/v2/data/${projectId}${
             environment ? `?environment=${environment}` : ""
           }`
       );

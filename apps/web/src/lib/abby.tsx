@@ -13,6 +13,7 @@ export const {
   getABTestValue,
   withAbbyApiHandler,
   getABResetFunction,
+  updateUserProperties,
 } = createAbby(abbyConfig);
 
 export const AbbyDevtools = withDevtools(abbyDevtools, {});

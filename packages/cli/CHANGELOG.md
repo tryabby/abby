@@ -1,5 +1,11 @@
 # @tryabby/cli
 
+## 3.0.0
+
+### Major Changes
+
+- add rules and user segments
+
 ## 2.0.0
 
 ### Major Changes

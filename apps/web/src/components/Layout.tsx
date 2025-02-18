@@ -33,7 +33,7 @@ export const Layout = ({ children }: { children: ReactNode }) => {
     <>
       <NextSeo title={currentProject?.project.name} />
       <div className={twMerge("dark flex h-screen flex-col bg-background")}>
-        <nav className="border-b border-border px-8 py-3 lg:px-10">
+        <nav className="px-8 py-3 border-b border-border lg:px-10">
           <div className="flex items-center justify-between">
             <div className="flex space-x-8">
               {!currentProject ? null : (
@@ -63,25 +63,25 @@ export const Layout = ({ children }: { children: ReactNode }) => {
                   <DropdownMenuItem disabled>Need help?</DropdownMenuItem>
                   <Link href={DOCS_URL}>
                     <DropdownMenuItem>
-                      <Book className="mr-2 h-4 w-4" />
+                      <Book className="w-4 h-4 mr-2" />
                       Documentation
                     </DropdownMenuItem>
                   </Link>
                   <Link href="mailto:tim@tryabby.com">
                     <DropdownMenuItem>
-                      <Mail className="mr-2 h-4 w-4" />
+                      <Mail className="w-4 h-4 mr-2" />
                       Send a Mail
                     </DropdownMenuItem>
                   </Link>
                   <Link href="https://cal.com/cstrnt/abby-help">
                     <DropdownMenuItem>
-                      <Video className="mr-2 h-4 w-4" />
+                      <Video className="w-4 h-4 mr-2" />
                       Book a free Call
                     </DropdownMenuItem>
                   </Link>
                   <Link href={DISCORD_INVITE_URL}>
                     <DropdownMenuItem>
-                      <FaDiscord className="mr-2 h-4 w-4" />
+                      <FaDiscord className="w-4 h-4 mr-2" />
                       Join our Discord
                     </DropdownMenuItem>
                   </Link>
@@ -91,12 +91,12 @@ export const Layout = ({ children }: { children: ReactNode }) => {
             </div>
           </div>
           <AppNav
-            className="mt-3 min-w-full overflow-x-auto py-3 md:hidden"
+            className="min-w-full py-3 mt-3 overflow-x-auto md:hidden"
             linkClassName="flex-none"
           />
         </nav>
-        <main className="relative w-full flex-1 overflow-y-auto overflow-x-hidden text-white">
-          <div className="p-8 lg:p-10 h-full">{children}</div>
+        <main className="relative flex-1 w-full overflow-x-hidden overflow-y-auto text-white">
+          <div className="h-full p-8 lg:p-10">{children}</div>
         </main>
       </div>
     </>

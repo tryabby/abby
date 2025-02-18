@@ -1,6 +1,7 @@
 import { Inject, Injectable } from "@angular/core";
 import type { Route } from "@angular/router";
 import type {
+  FlagRuleSet,
   RemoteConfigValue,
   RemoteConfigValueString,
   RemoteConfigValueStringToType,
@@ -43,8 +44,11 @@ type LocalData<
       selectedVariant?: string;
     }
   >;
-  flags: Record<FlagName, boolean>;
-  remoteConfig: Record<RemoteConfigName, RemoteConfigValue>;
+  flags: Record<FlagName, { value: boolean; ruleSet?: FlagRuleSet }>;
+  remoteConfig: Record<
+    RemoteConfigName,
+    { value: RemoteConfigValue; ruleSet?: FlagRuleSet }
+  >;
 };
 
 export type InferFlagNames<C extends AbbyConfig> = InferFlags<C>[number];
@@ -91,7 +95,9 @@ export class AbbyService<
     RemoteConfig
   >;
 
-  private projectData$?: Observable<LocalData<FlagName, TestName>>;
+  private projectData$?: Observable<
+    LocalData<FlagName, TestName, RemoteConfigName>
+  >;
 
   private cookieChanged$ = new Subject<void>();
 
@@ -228,7 +234,9 @@ export class AbbyService<
     );
   }
 
-  private resolveData(): Observable<LocalData<FlagName, TestName>> {
+  private resolveData(): Observable<
+    LocalData<FlagName, TestName, RemoteConfigName>
+  > {
     this.projectData$ ??= from(this.abby.getProjectDataAsync()).pipe(
       switchMap((data) => {
         const initialData$ = of(data); // Create an observable with the initial data
@@ -240,7 +248,9 @@ export class AbbyService<
       }),
       shareReplay(1)
     );
-    return this.projectData$;
+    return this.projectData$ as Observable<
+      LocalData<FlagName, TestName, RemoteConfigName>
+    >;
   }
 
   public getAbbyInstance(): Abby<

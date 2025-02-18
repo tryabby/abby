@@ -1,10 +1,10 @@
 import {
   type IStorageService,
+  type StorageServiceOptions,
   getABStorageKey,
   getFFStorageKey,
   getRCStorageKey,
 } from "@tryabby/core";
-import type { StorageServiceOptions } from "@tryabby/core/dist/shared/interfaces";
 import Cookie from "js-cookie";
 
 const DEFAULT_COOKIE_AGE = 365;

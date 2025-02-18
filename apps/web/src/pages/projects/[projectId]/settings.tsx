@@ -13,6 +13,7 @@ import { FullPageLoadingSpinner } from "components/LoadingSpinner";
 import { Progress } from "components/Progress";
 import { RemoveUserModal } from "components/RemoveUserModal";
 import { Integrations } from "components/settings/Integrations";
+import { UserSegmentDisplay } from "components/settings/Segments";
 import { Button } from "components/ui/button";
 import { Input } from "components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "components/ui/tabs";
@@ -35,6 +36,7 @@ const SETTINGS_TABS = {
   General: "general",
   Team: "team",
   Billing: "billing",
+  Segments: "segments",
   Integrations: "integrations",
   Danger: "danger",
 } as const;
@@ -49,6 +51,7 @@ const SettingsPage: NextPageWithLayout = () => {
       SETTINGS_TABS.General,
       SETTINGS_TABS.Team,
       SETTINGS_TABS.Billing,
+      SETTINGS_TABS.Segments,
       SETTINGS_TABS.Danger,
       SETTINGS_TABS.Integrations,
     ] as const).withDefault(SETTINGS_TABS.General)
@@ -150,10 +153,11 @@ const SettingsPage: NextPageWithLayout = () => {
               </DashboardSectionTitle>
               <div className="flex flex-col space-y-4">
                 <div className="flex">
-                  <label className="flex flex-col">
+                  <label className="flex flex-col" htmlFor="projectName">
                     Name
                     <div className="col flex space-x-5">
                       <Input
+                        name="projectName"
                         ref={projectNameRef}
                         className="w-52 px-3 py-2"
                         type="text"
@@ -232,6 +236,44 @@ const SettingsPage: NextPageWithLayout = () => {
                   </small>
                 </form>
               </div>
+            </DashboardSection>
+          </TabsContent>
+          <TabsContent value={SETTINGS_TABS.Segments}>
+            <DashboardSection>
+              <DashboardSectionTitle>User Segments</DashboardSectionTitle>
+              <DashboardSectionSubtitle className="mb-8">
+                User segments let you target specific groups of users with
+                different feature flags and experiments. Define rules based on
+                user properties to create powerful, targeted experiences.
+              </DashboardSectionSubtitle>
+
+              {data.project.userSegments[0] ? (
+                <div>
+                  <p className="text-gray-400 mb-6">
+                    Your active user segment will be applied to all feature
+                    flags and experiments that use segmentation.
+                  </p>
+                  <UserSegmentDisplay segment={data.project.userSegments[0]} />
+                </div>
+              ) : (
+                <div className="text-center py-8">
+                  <p className="text-gray-400 mb-4">
+                    No user segments configured yet
+                  </p>
+                  <p className="text-gray-400 mb-6">
+                    User segments help you target specific users with different
+                    features based on properties like role, location, or any
+                    custom attributes.
+                  </p>
+                  <Link
+                    href="https://docs.tryabby.com/features/segments"
+                    target="_blank"
+                    className="text-pink-400 hover:text-pink-300 underline"
+                  >
+                    Learn how to set up user segments in our docs →
+                  </Link>
+                </div>
+              )}
             </DashboardSection>
           </TabsContent>
           <TabsContent value="integrations">

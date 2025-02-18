@@ -61,7 +61,7 @@ export function withAbby<
           appOrPageCtx as any
         );
         const originalPageProps = isApp
-          ? originalProps.pageProps ?? {}
+          ? (originalProps.pageProps ?? {})
           : originalProps;
 
         pageProps = {

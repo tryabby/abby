@@ -1,5 +1,6 @@
 import type { RemoteConfigValueStringToType } from "../dist";
 import { Abby, type AbbyConfig } from "../src/index";
+import * as validation from "../src/validation";
 
 describe("types", () => {
   it("produces proper types", () => {
@@ -41,6 +42,27 @@ describe("types", () => {
 
     expectTypeOf<DevOverrides>().toEqualTypeOf<{
       flag1?: boolean;
+    }>();
+  });
+});
+
+describe("user types", () => {
+  it("produces proper types", () => {
+    const abby = new Abby({
+      environments: [""],
+      currentEnvironment: "",
+      projectId: "",
+      user: {
+        name: validation.string(),
+        age: validation.number(),
+        isDeveloper: validation.boolean(),
+      },
+    });
+
+    expectTypeOf(abby.updateUserProperties).parameter(0).toEqualTypeOf<{
+      name?: string;
+      age?: number;
+      isDeveloper?: boolean;
     }>();
   });
 });

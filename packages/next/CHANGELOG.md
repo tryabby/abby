@@ -1,5 +1,16 @@
 # @tryabby/next
 
+## 7.0.0
+
+### Major Changes
+
+- add rules and user segments
+
+### Patch Changes
+
+- Updated dependencies
+  - @tryabby/react@7.0.0
+
 ## 6.0.0
 
 ### Major Changes

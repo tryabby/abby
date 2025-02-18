@@ -1,5 +1,12 @@
 # @tryabby/svelte
 
+## 3.0.1
+
+### Patch Changes
+
+- Updated dependencies
+  - @tryabby/core@7.0.0
+
 ## 3.0.0
 
 ### Major Changes

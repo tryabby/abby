@@ -17,10 +17,18 @@ const returnData: AbbyDataResponse = {
       name: "flag1",
       value: true,
     },
+    {
+      name: "flag2",
+      value: false,
+    },
   ],
-  remoteConfig: [{ name: "remoteConfig1", value: "asdf" }],
+  remoteConfig: [
+    {
+      name: "remoteConfig1",
+      value: "FooBar",
+    },
+  ],
 };
-
 export const handlers = [
   rest.get(
     `${ABBY_BASE_URL}api/dashboard/:projectId/data`,
@@ -28,7 +36,7 @@ export const handlers = [
       return res(ctx.json(returnData));
     }
   ),
-  rest.get(`${ABBY_BASE_URL}api/v1/data/:projectId`, (_req, res, ctx) => {
+  rest.get(`${ABBY_BASE_URL}api/v2/data/:projectId`, (_req, res, ctx) => {
     return res(ctx.json(returnData));
   }),
 ];

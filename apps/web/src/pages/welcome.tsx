@@ -143,9 +143,13 @@ function Step1() {
         </CardDescription>
       </CardHeader>
       <CardContent>
-        <label>
+        <label htmlFor="name">
           <span>Name</span>
-          <Input value={name} onChange={(e) => setName(e.target.value)} />
+          <Input
+            name="name"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+          />
         </label>
       </CardContent>
     </motion.div>

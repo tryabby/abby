@@ -75,6 +75,16 @@ export async function handlePUT({
   projectId: string;
   config: AbbyConfigFile;
 }) {
+  await prisma.project.findFirstOrThrow({
+    where: {
+      id: projectId,
+      users: {
+        some: {
+          userId,
+        },
+      },
+    },
+  });
   // create all missing environments
   if (config.environments) {
     const currentEnvironments = await prisma.environment.findMany({
@@ -166,4 +176,15 @@ export async function handlePUT({
       });
     })
   );
+
+  await prisma.userSegment.upsert({
+    where: {
+      projectId_name: {
+        projectId,
+        name: "default",
+      },
+    },
+    create: { name: "default", schema: config.user ?? "null", projectId },
+    update: { schema: config.user },
+  });
 }

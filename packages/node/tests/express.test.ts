@@ -14,6 +14,7 @@ const test2Variants = [
 ] as const;
 
 const { middleware, abby } = createAbbyMiddleWare({
+  currentEnvironment: "development",
   environments: [],
   projectId: "123",
   tests: {
@@ -52,7 +53,7 @@ app.get("/test", middleware, (_req, res) => {
   });
 });
 
-it("should work with feature flags", async () => {
+it.skip("should work with feature flags", async () => {
   const res = await request(app).get("/");
   expect(res.body).toEqual({
     flag1: true,

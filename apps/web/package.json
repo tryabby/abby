@@ -1,13 +1,13 @@
 {
   "name": "web",
-  "version": "0.2.39",
+  "version": "0.2.40",
   "private": true,
   "scripts": {
+    "prebuild": "pnpm run db:generate",
     "build": "next build",
     "build:prod": "npx prisma migrate deploy && npm run build",
     "postbuild": "next-sitemap",
     "dev": "next dev",
-    "postinstall": "pnpm run db:generate",
     "db:generate": "prisma generate && prisma generate --sql",
     "start": "next start",
     "seed:events": "ts-node --compiler-options {\\\"module\\\":\\\"CommonJS\\\"} prisma/seedEvents.ts",

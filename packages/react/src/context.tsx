@@ -4,9 +4,11 @@ import {
   type AbbyConfig,
   type RemoteConfigValueString,
   type RemoteConfigValueStringToType,
+  type ValidatorType,
 } from "@tryabby/core";
 import { HttpService } from "@tryabby/core";
 import { type AbbyDataResponse, AbbyEventType } from "@tryabby/core";
+import type { Infer } from "@tryabby/core/validation";
 import type { AbbyDevtoolProps, DevtoolsFactory } from "@tryabby/devtools";
 import React, {
   useCallback,
@@ -40,13 +42,18 @@ export function createAbby<
   const Tests extends Record<TestName, ABConfig>,
   const RemoteConfig extends Record<RemoteConfigName, RemoteConfigValueString>,
   const RemoteConfigName extends Extract<keyof RemoteConfig, string>,
+  const User extends Record<string, ValidatorType> = Record<
+    string,
+    ValidatorType
+  >,
 >(
   abbyConfig: AbbyConfig<
     FlagName,
     Tests,
     string[],
     RemoteConfigName,
-    RemoteConfig
+    RemoteConfig,
+    User
   >
 ) {
   const abby = new Abby<
@@ -54,7 +61,9 @@ export function createAbby<
     TestName,
     Tests,
     RemoteConfig,
-    RemoteConfigName
+    RemoteConfigName,
+    string[],
+    User
   >(
     abbyConfig,
     {
@@ -193,7 +202,7 @@ export function createAbby<
 
   const useFeatureFlag = (name: FlagName) => {
     const data = useAbbyData();
-    return data.flags[name];
+    return data.flags[name].value;
   };
 
   /**
@@ -203,7 +212,7 @@ export function createAbby<
     const data = useAbbyData();
     return (Object.keys(data.flags) as Array<FlagName>).map((flagName) => ({
       name: flagName,
-      value: data.flags[flagName],
+      value: data.flags[flagName].value,
     }));
   };
 
@@ -215,7 +224,7 @@ export function createAbby<
     return (Object.keys(data.remoteConfig) as Array<RemoteConfigName>).map(
       (configName) => ({
         name: configName,
-        value: data.remoteConfig[configName],
+        value: data.remoteConfig[configName].value,
       })
     ) as Array<{
       name: RemoteConfigName;
@@ -270,9 +279,8 @@ export function createAbby<
     remoteConfigName: T
   ): RemoteConfigValueStringToType<Config> => {
     const abby = useAbbyData();
-    return abby.remoteConfig[
-      remoteConfigName
-    ] as RemoteConfigValueStringToType<Config>;
+    return abby.remoteConfig[remoteConfigName]
+      .value as RemoteConfigValueStringToType<Config>;
   };
 
   const getRemoteConfig = <
@@ -356,6 +364,14 @@ export function createAbby<
     return abby.getVariants(name);
   };
 
+  const updateUserProperties = (
+    user: Partial<{
+      -readonly [K in keyof User]: Infer<User[K]>;
+    }>
+  ) => {
+    abby.updateUserProperties(user);
+  };
+
   return {
     useAbby,
     AbbyProvider,
@@ -370,5 +386,6 @@ export function createAbby<
     getVariants,
     useFeatureFlags,
     useRemoteConfigVariables,
+    updateUserProperties,
   };
 }

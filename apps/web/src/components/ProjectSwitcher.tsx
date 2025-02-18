@@ -83,6 +83,7 @@ export default function ProjectSwitcher({ className }: ProjectSwitcherProps) {
         <PopoverTrigger asChild>
           <Button
             variant="outline"
+            // biome-ignore lint/a11y/useSemanticElements: <explanation>
             role="combobox"
             aria-expanded={open}
             aria-label="Select a team"

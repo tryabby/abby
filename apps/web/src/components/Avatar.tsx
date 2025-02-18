@@ -18,6 +18,7 @@ type Props = {
 
 export const Avatar = ({ imageUrl, userName, className, ...props }: Props) => (
   <RadixAvatar.Root
+    // biome-ignore lint/a11y/useSemanticElements: <explanation>
     role="button"
     className={twMerge(
       "inline-flex h-[45px] w-[45px] select-none items-center justify-center overflow-hidden rounded-full bg-gray-600 align-middle",

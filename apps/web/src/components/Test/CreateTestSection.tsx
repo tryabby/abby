@@ -134,8 +134,9 @@ export function CreateTestSection({
       <div className="grid grid-cols-1">
         <Card title="Settings" className="bg-gray-800/60">
           <form className="mr-auto flex flex-col space-y-4">
-            <label>Name:</label>
+            <label htmlFor="testName">Name:</label>
             <input
+              name="testName"
               value={testName}
               onChange={(e) => setTestName(e.target.value)}
               className="flex items-center space-x-4 rounded-md bg-gray-700 p-2 pr-4 focus:outline focus:outline-blue-400"

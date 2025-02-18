@@ -1,4 +1,5 @@
 import { defineConfig } from "@tryabby/core";
+import * as validation from "@tryabby/core/validation";
 
 export default defineConfig(
   {
@@ -24,5 +25,9 @@ export default defineConfig(
       abc: "JSON",
     },
     cookies: { disableByDefault: true, expiresInDays: 30 },
+    user: {
+      id: validation.string(),
+      email: validation.string(),
+    },
   }
 );

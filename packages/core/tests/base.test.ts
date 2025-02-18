@@ -1,5 +1,6 @@
 import { Abby } from "../src/index";
 import { validateWeights } from "../src/mathHelpers";
+import * as validation from "../src/validation";
 
 const OLD_ENV = process.env;
 
@@ -352,6 +353,321 @@ describe("Abby", () => {
     expect(abby.getRemoteConfigVariables()).toEqual(configInit);
 
     const _d = abby.getRemoteConfigVariables();
+  });
+
+  it("validates the user properties", () => {
+    const abby = new Abby({
+      environments: ["test"],
+      currentEnvironment: "test",
+      projectId: "",
+      flags: ["flag1"],
+      user: {
+        test: validation.string(),
+      },
+    });
+
+    expect(() => abby.updateUserProperties({ test: 123 as any })).toThrowError(
+      "[test]: Expected string but got number"
+    );
+  });
+
+  it("uses the user rules with AND rule sets", () => {
+    const abby = new Abby({
+      environments: ["test"],
+      currentEnvironment: "test",
+      projectId: "",
+      flags: ["flag1"],
+      user: {
+        test: validation.string(),
+        isTest: validation.boolean(),
+      },
+    });
+
+    abby.init({
+      flags: [
+        {
+          name: "flag1",
+          value: true,
+          ruleSet: [
+            {
+              operator: "and",
+              rules: [
+                {
+                  propertyName: "test",
+                  propertyType: "string",
+                  operator: "eq",
+                  value: "test",
+                },
+                {
+                  propertyName: "isTest",
+                  propertyType: "boolean",
+                  operator: "eq",
+                  value: true,
+                },
+              ],
+              thenValue: false,
+            },
+          ],
+        },
+      ],
+      tests: [],
+      remoteConfig: [],
+    });
+
+    expect(abby.getFeatureFlag("flag1")).toBe(true);
+
+    abby.updateUserProperties({ test: "test", isTest: true });
+
+    expect(abby.getFeatureFlag("flag1")).toBe(false);
+
+    abby.updateUserProperties({ test: "test2", isTest: true });
+
+    expect(abby.getFeatureFlag("flag1")).toBe(true);
+
+    abby.updateUserProperties({ test: "test1", isTest: false });
+
+    expect(abby.getFeatureFlag("flag1")).toBe(true);
+  });
+
+  it("uses the user rules with OR rule sets", () => {
+    const abby = new Abby({
+      environments: ["test"],
+      currentEnvironment: "test",
+      projectId: "",
+      flags: ["flag1"],
+      user: {
+        test: validation.string(),
+        isTest: validation.boolean(),
+      },
+    });
+
+    abby.init({
+      flags: [
+        {
+          name: "flag1",
+          value: true,
+          ruleSet: [
+            {
+              operator: "or",
+              rules: [
+                {
+                  propertyName: "test",
+                  propertyType: "string",
+                  operator: "eq",
+                  value: "test",
+                },
+                {
+                  propertyName: "isTest",
+                  propertyType: "boolean",
+                  operator: "eq",
+                  value: true,
+                },
+              ],
+              thenValue: false,
+            },
+          ],
+        },
+      ],
+      tests: [],
+      remoteConfig: [],
+    });
+
+    expect(abby.getFeatureFlag("flag1")).toBe(true);
+
+    abby.updateUserProperties({ test: "test" });
+
+    expect(abby.getFeatureFlag("flag1")).toBe(false);
+
+    abby.updateUserProperties({ test: "test2", isTest: true });
+
+    expect(abby.getFeatureFlag("flag1")).toBe(false);
+
+    abby.updateUserProperties({ test: "test", isTest: false });
+
+    expect(abby.getFeatureFlag("flag1")).toBe(false);
+  });
+
+  it("uses the user rules with complex rule sets", () => {
+    const abby = new Abby({
+      environments: ["test"],
+      currentEnvironment: "test",
+      projectId: "",
+      remoteConfig: {
+        remoteConfig1: "String",
+      },
+      user: {
+        test: validation.string(),
+        isTest: validation.boolean(),
+      },
+    });
+
+    abby.init({
+      flags: [],
+      tests: [],
+      remoteConfig: [
+        {
+          name: "remoteConfig1",
+          value: "defaultremoteConfig1",
+          ruleSet: [
+            {
+              propertyName: "test",
+              propertyType: "string",
+              operator: "eq",
+              value: "test",
+              thenValue: "isTest",
+            },
+            {
+              propertyName: "test",
+              propertyType: "string",
+              operator: "contains",
+              value: "es",
+              thenValue: "containsES",
+            },
+          ],
+        },
+      ],
+    });
+
+    expect(abby.getRemoteConfig("remoteConfig1")).toBe("defaultremoteConfig1");
+
+    abby.updateUserProperties({
+      test: "test",
+    });
+
+    expect(abby.getRemoteConfig("remoteConfig1")).toBe("isTest");
+
+    abby.updateUserProperties({
+      test: "es",
+    });
+
+    expect(abby.getRemoteConfig("remoteConfig1")).toBe("containsES");
+  });
+
+  it("uses the user rules with complex rule sets and respects the rule order", () => {
+    const abby = new Abby({
+      environments: ["test"],
+      currentEnvironment: "test",
+      projectId: "",
+      remoteConfig: {
+        remoteConfig1: "String",
+      },
+      user: {
+        test: validation.string(),
+        isTest: validation.boolean(),
+      },
+    });
+
+    abby.init({
+      flags: [],
+      tests: [],
+      remoteConfig: [
+        {
+          name: "remoteConfig1",
+          value: "asdf",
+          ruleSet: [
+            {
+              propertyName: "test",
+              propertyType: "string",
+              operator: "contains",
+              value: "es",
+              thenValue: "containsES",
+            },
+            {
+              propertyName: "test",
+              propertyType: "string",
+              operator: "eq",
+              value: "test",
+              thenValue: "isTest",
+            },
+          ],
+        },
+      ],
+    });
+
+    abby.updateUserProperties({
+      test: "test",
+    });
+
+    expect(abby.getRemoteConfig("remoteConfig1")).toBe("containsES");
+
+    // this means neither of the rules were applied so the default value should be returned
+    abby.updateUserProperties({
+      test: "abc",
+    });
+
+    expect(abby.getRemoteConfig("remoteConfig1")).toBe("asdf");
+  });
+
+  it("works with stacked rulesets", () => {
+    const abby = new Abby({
+      environments: ["test"],
+      currentEnvironment: "test",
+      projectId: "",
+      remoteConfig: {
+        remoteConfig1: "String",
+      },
+      user: {
+        test: validation.string(),
+        isTest: validation.boolean(),
+      },
+    });
+
+    abby.init({
+      flags: [],
+      tests: [],
+      remoteConfig: [
+        {
+          name: "remoteConfig1",
+          value: "defaultremoteConfig1",
+          ruleSet: [
+            {
+              propertyName: "test",
+              propertyType: "string",
+              operator: "eq",
+              value: "AB",
+              thenValue: "ABmatched",
+            },
+            {
+              operator: "and",
+              rules: [
+                {
+                  propertyName: "test",
+                  propertyType: "string",
+                  operator: "startsWith",
+                  value: "AA",
+                },
+                {
+                  propertyName: "test",
+                  propertyType: "string",
+                  operator: "endsWith",
+                  value: "BB",
+                },
+              ],
+              thenValue: "andMatched",
+            },
+          ],
+        },
+      ],
+    });
+
+    abby.updateUserProperties({
+      test: "AB",
+    });
+
+    expect(abby.getRemoteConfig("remoteConfig1")).toBe("ABmatched");
+
+    abby.updateUserProperties({
+      test: "AABB",
+    });
+
+    expect(abby.getRemoteConfig("remoteConfig1")).toBe("andMatched");
+
+    // this means neither of the rules were applied so the default value should be returned
+    abby.updateUserProperties({
+      test: "abc",
+    });
+
+    expect(abby.getRemoteConfig("remoteConfig1")).toBe("defaultremoteConfig1");
   });
 });
 

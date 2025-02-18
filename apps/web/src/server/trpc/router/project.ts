@@ -42,6 +42,7 @@ export const projectRouter = router({
               options: true,
             },
           },
+          userSegments: true,
           environments: true,
           featureFlags: true,
           users: { include: { user: true } },

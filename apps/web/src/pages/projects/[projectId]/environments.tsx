@@ -19,15 +19,15 @@ import { DashboardHeader } from "components/DashboardHeader";
 import { Layout } from "components/Layout";
 import { FullPageLoadingSpinner } from "components/LoadingSpinner";
 import { Modal } from "components/Modal";
-import { TitleEdit } from "components/TitleEdit";
 import { Button } from "components/ui/button";
+import { Card, CardContent, CardHeader } from "components/ui/card";
+import { EnvironmentBadge } from "components/ui/environment-badge";
 import { useProjectId } from "lib/hooks/useProjectId";
+import { GripVertical, Pencil, Trash } from "lucide-react";
 import type { GetStaticPaths, GetStaticProps } from "next";
 import type { NextPageWithLayout } from "pages/_app";
 import { useState } from "react";
 import { toast } from "react-hot-toast";
-import { AiOutlineDelete, AiOutlinePlus } from "react-icons/ai";
-import { MdDragIndicator } from "react-icons/md";
 import { trpc } from "utils/trpc";
 
 function EnvironmentItem({
@@ -55,41 +55,53 @@ function EnvironmentItem({
     transform: CSS.Transform.toString(transform),
     transition,
   };
+
   return (
-    <div
-      key={environment.id}
-      className="flex items-center justify-between rounded-lg bg-secondary px-4 py-3"
+    <Card
       ref={setNodeRef}
       style={style}
       {...attributes}
       {...listeners}
+      className="relative group"
     >
-      <div className="flex items-center space-x-2">
-        <button
-          type="button"
-          className="cursor-grab text-pink-50/60 focus:cursor-grabbing"
-        >
-          <MdDragIndicator />
-        </button>
-        <TitleEdit
-          title={environment.name}
-          onSave={(newName) =>
-            renameEnvironment({
-              environmentId: environment.id,
-              name: newName,
-            })
-          }
-        />
-      </div>
-      <Button
-        size="icon"
-        variant="ghost"
-        title="Delete Environment"
-        onClick={() => setDeleteState()}
-      >
-        <AiOutlineDelete />
-      </Button>
-    </div>
+      <CardContent className="flex items-center justify-between p-4">
+        <div className="flex items-center space-x-4">
+          <Button
+            variant="ghost"
+            size="sm"
+            className="h-auto p-0 cursor-grab focus:cursor-grabbing hover:bg-transparent"
+          >
+            <GripVertical className="w-5 h-5 text-muted-foreground/60" />
+          </Button>
+          <EnvironmentBadge name={environment.name} size="lg" />
+        </div>
+        <div className="flex items-center space-x-2">
+          <Button
+            size="sm"
+            variant="ghost"
+            onClick={() => {
+              const newName = prompt("Enter new name", environment.name);
+              if (newName && newName !== environment.name) {
+                renameEnvironment({
+                  environmentId: environment.id,
+                  name: newName,
+                });
+              }
+            }}
+          >
+            <Pencil className="w-4 h-4" />
+          </Button>
+          <Button
+            size="sm"
+            variant="ghost"
+            className="text-destructive hover:text-destructive"
+            onClick={() => setDeleteState()}
+          >
+            <Trash className="w-4 h-4" />
+          </Button>
+        </div>
+      </CardContent>
+    </Card>
   );
 }
 
@@ -108,9 +120,10 @@ const DeleteEnvironmentModal = ({
 
   const { mutate: deleteEnvironment } =
     trpc.environments.deleteEnvironment.useMutation({
-      onSuccess: () => {
+      onSuccess: async () => {
+        await trpcContext.flags.getFlags.invalidate({ projectId });
         toast.success("Deleted environment");
-        trpcContext.flags.getFlags.invalidate({ projectId });
+        onClose();
       },
       onError() {
         toast.error("Failed to delete environment");
@@ -127,7 +140,7 @@ const DeleteEnvironmentModal = ({
     >
       <p>
         Are you sure that you want to delete the environment{" "}
-        <b>{environment.name}</b>?
+        <EnvironmentBadge name={environment.name} />?
       </p>
     </Modal>
   );
@@ -159,8 +172,9 @@ const EnvironmentPage: NextPageWithLayout = () => {
     (environment) => environment.id === activeEnvironmentInfo?.id
   );
   const { mutate } = trpc.environments.updateEnvironmentSort.useMutation({
-    onSuccess: () => {
-      trpcContext.flags.getFlags.invalidate({ projectId });
+    onSuccess: async () => {
+      await trpcContext.flags.getFlags.invalidate({ projectId });
+      toast.success("Successfully updated environment order");
     },
   });
 
@@ -195,7 +209,7 @@ const EnvironmentPage: NextPageWithLayout = () => {
 
   if (data.environments.length === 0)
     return (
-      <div className="mt-48 flex flex-col items-center justify-center">
+      <div className="flex flex-col items-center justify-center mt-48">
         <h1 className="text-2xl font-semibold">
           You don&apos;t have any environments set up!
         </h1>
@@ -214,60 +228,72 @@ const EnvironmentPage: NextPageWithLayout = () => {
     );
 
   return (
-    <>
-      <div className="flex justify-end space-x-2">
+    <div className="space-y-8">
+      <div className="flex items-center justify-between">
+        <div className="flex flex-col gap-1">
+          <h2 className="text-sm font-medium text-muted-foreground">
+            Manage Environments
+          </h2>
+          <p className="text-sm text-muted-foreground">
+            Create and organize environments for your feature flags. Drag to
+            reorder.
+          </p>
+        </div>
         <Button
-          className="mb-4 flex items-center space-x-2 text-primary-foreground"
           onClick={() => setIsCreateEnvironmentModalOpen(true)}
+          className="flex items-center"
         >
-          <AiOutlinePlus /> <span>Add Environment</span>
+          Add Environment
         </Button>
+      </div>
 
-        <CreateEnvironmentModal
-          isOpen={isCreateEnvironmentModalOpen}
-          onClose={() => setIsCreateEnvironmentModalOpen(false)}
-          projectId={projectId}
-        />
-      </div>
-      <div className="space-y-8">
-        <section className="space-y-3">
-          <DndContext
-            sensors={dndSensors}
-            collisionDetection={closestCenter}
-            onDragEnd={handleDragEnd}
-          >
-            <SortableContext
-              items={environments}
-              strategy={verticalListSortingStrategy}
+      <Card>
+        <CardHeader className="pb-3">
+          <div className="grid gap-6">
+            <DndContext
+              sensors={dndSensors}
+              collisionDetection={closestCenter}
+              onDragEnd={handleDragEnd}
             >
-              {environments.map((environment) => (
-                <EnvironmentItem
-                  key={environment.id}
-                  environment={environment}
-                  projectId={projectId}
-                  setDeleteState={() => {
-                    setActiveEnvironmentInfo({
-                      id: environment.id,
-                      action: "delete",
-                    });
-                  }}
-                />
-              ))}
-            </SortableContext>
-          </DndContext>
-        </section>
-      </div>
+              <SortableContext
+                items={environments}
+                strategy={verticalListSortingStrategy}
+              >
+                <div className="grid gap-2">
+                  {environments.map((environment) => (
+                    <EnvironmentItem
+                      key={environment.id}
+                      environment={environment}
+                      projectId={projectId}
+                      setDeleteState={() => {
+                        setActiveEnvironmentInfo({
+                          id: environment.id,
+                          action: "delete",
+                        });
+                      }}
+                    />
+                  ))}
+                </div>
+              </SortableContext>
+            </DndContext>
+          </div>
+        </CardHeader>
+      </Card>
+
+      <CreateEnvironmentModal
+        isOpen={isCreateEnvironmentModalOpen}
+        onClose={() => setIsCreateEnvironmentModalOpen(false)}
+        projectId={projectId}
+      />
       {activeEnvironment && (
-        <>
-          <DeleteEnvironmentModal
-            environment={activeEnvironment}
-            projectId={projectId}
-            isOpen={activeEnvironmentInfo?.action === "delete"}
-            onClose={() => setActiveEnvironmentInfo(null)}
-          />
-        </>
+        <DeleteEnvironmentModal
+          environment={activeEnvironment}
+          projectId={projectId}
+          isOpen={activeEnvironmentInfo?.action === "delete"}
+          onClose={() => setActiveEnvironmentInfo(null)}
+        />
       )}
-    </>
+    </div>
   );
 };
 

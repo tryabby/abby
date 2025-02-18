@@ -1,6 +1,7 @@
 import {
   type AbbyDataResponse,
   type RemoteConfigValueString,
+  type ValidatorType,
   getABStorageKey,
 } from "@tryabby/core";
 import { HttpService } from "@tryabby/core";
@@ -25,8 +26,19 @@ export function createAbby<
   const Tests extends Record<string, ABConfig>,
   const RemoteConfig extends Record<RemoteConfigName, RemoteConfigValueString>,
   const RemoteConfigName extends Extract<keyof RemoteConfig, string>,
+  const User extends Record<string, ValidatorType> = Record<
+    string,
+    ValidatorType
+  >,
 >(
-  config: AbbyConfig<FlagName, Tests, string[], RemoteConfigName, RemoteConfig>
+  config: AbbyConfig<
+    FlagName,
+    Tests,
+    string[],
+    RemoteConfigName,
+    RemoteConfig,
+    User
+  >
 ) {
   const {
     AbbyProvider,
@@ -40,9 +52,15 @@ export function createAbby<
     withDevtools,
     useFeatureFlags,
     useRemoteConfigVariables,
-  } = baseCreateAbby<FlagName, TestName, Tests, RemoteConfig, RemoteConfigName>(
-    config
-  );
+    updateUserProperties,
+  } = baseCreateAbby<
+    FlagName,
+    TestName,
+    Tests,
+    RemoteConfig,
+    RemoteConfigName,
+    User
+  >(config);
 
   const abbyApiHandler =
     <HandlerType extends NextApiHandler | NextMiddleware>(
@@ -75,6 +93,7 @@ export function createAbby<
     withDevtools: withDevtools as withDevtoolsFunction,
     withAbbyEdge: abbyApiHandler<NextMiddleware>,
     withAbbyApiHandler: abbyApiHandler<NextApiHandler>,
+    updateUserProperties,
     /**
      * Isomorphic function to get the value of an A/B test
      * if the value is not set yet it will set it and return the new value

@@ -1,5 +1,11 @@
 # @tryabby/core
 
+## 7.0.0
+
+### Major Changes
+
+- add rules and user segments
+
 ## 6.0.0
 
 ### Major Changes

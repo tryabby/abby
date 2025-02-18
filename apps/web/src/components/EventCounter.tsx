@@ -1,5 +1,4 @@
-import {} from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { AnimatePresence, motion } from "framer-motion";
 import { trpc } from "utils/trpc";
 
 export function EventCounter() {
