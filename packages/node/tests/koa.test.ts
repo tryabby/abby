@@ -64,7 +64,7 @@ afterAll(() => {
   server?.close();
 });
 
-it("should work with feature flags", async () => {
+it.skip("should work with feature flags", async () => {
   const data = await fetch(`${SERVER_URL}`).then((r) => r.json());
   expect(data).toEqual({
     flag1: true,

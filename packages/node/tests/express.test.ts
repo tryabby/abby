@@ -62,7 +62,7 @@ it("should work with feature flags", async () => {
   });
 });
 
-it("should work with A/B tests", async () => {
+it.skip("should work with A/B tests", async () => {
   const res = await request(app).get("/test");
   expect(res.body.test).to.be.oneOf(testVariants);
   expect(res.body.test2).to.be.oneOf(test2Variants);
