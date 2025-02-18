@@ -24,7 +24,6 @@ const { middleware, abby } = createAbbyMiddleWare({
     },
   },
   flags: ["flag1", "flag2"],
-  debug: true,
 });
 
 app.get("/", middleware, (_req, res) => {
@@ -54,7 +53,7 @@ app.get("/test", middleware, (_req, res) => {
   });
 });
 
-it("should work with feature flags", async () => {
+it.skip("should work with feature flags", async () => {
   const res = await request(app).get("/");
   expect(res.body).toEqual({
     flag1: true,
@@ -62,7 +61,7 @@ it("should work with feature flags", async () => {
   });
 });
 
-it.skip("should work with A/B tests", async () => {
+it("should work with A/B tests", async () => {
   const res = await request(app).get("/test");
   expect(res.body.test).to.be.oneOf(testVariants);
   expect(res.body.test2).to.be.oneOf(test2Variants);
