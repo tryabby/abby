@@ -1,6 +1,7 @@
 FROM node:22.8.0-alpine AS base
 ENV PNPM_HOME="/pnpm"
 ENV PATH="$PNPM_HOME:$PATH"
+RUN npm i -g corepack@^0.31.0
 RUN corepack enable
 
 FROM base AS builder
