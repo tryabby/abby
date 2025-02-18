@@ -18,12 +18,12 @@ jobs:
       - name: setup node.js
         uses: actions/setup-node@v3
         with:
-          node-version: "20.12.0"
+          node-version: "22.8.0"
       - uses: pnpm/action-setup@v2
         name: Install pnpm
         id: pnpm-install
         with:
-          version: 8
+          version: 9.9.0
           run_install: false
       - name: Setup npmrc
         run: echo "//registry.npmjs.org/:_authToken=${{ secrets.NPM_TOKEN }}" > .npmrc

@@ -44,7 +44,7 @@ async function getAbbyResponseWithCache({
           projectId,
         },
       },
-      include: { flag: { select: { name: true, type: true } }, ruleSets: true },
+      include: { flag: { select: { name: true, type: true } } },
     }),
   ]);
   endTime(c, "db");
