@@ -6,9 +6,7 @@
   "bin": {
     "abby": "./dist/index.js"
   },
-  "files": [
-    "dist"
-  ],
+  "files": ["dist"],
   "scripts": {
     "dev": "pnpm run build --watch",
     "start": "pnpm run build && ./dist/index.js",
