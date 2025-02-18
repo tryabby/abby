@@ -32,7 +32,7 @@ export const handlers = [
       return res(ctx.json(returnData));
     }
   ),
-  rest.get(`${ABBY_BASE_URL}api/v1/data/:projectId`, (_req, res, ctx) => {
+  rest.get(`${ABBY_BASE_URL}api/v2/data/:projectId`, (_req, res, ctx) => {
     return res(ctx.json(returnData));
   }),
 ];

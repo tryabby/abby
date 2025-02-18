@@ -24,6 +24,7 @@ const { middleware, abby } = createAbbyMiddleWare({
     },
   },
   flags: ["flag1", "flag2"],
+  debug: true,
 });
 
 app.get("/", middleware, (_req, res) => {
