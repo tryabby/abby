@@ -1,6 +1,6 @@
 {
   "name": "web",
-  "version": "0.2.39",
+  "version": "0.2.40",
   "private": true,
   "scripts": {
     "prebuild": "pnpm run db:generate",
