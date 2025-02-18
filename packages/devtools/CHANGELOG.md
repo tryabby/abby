@@ -1,5 +1,11 @@
 # @tryabby/devtools
 
+## 8.0.1
+
+### Patch Changes
+
+- fix build
+
 ## 8.0.0
 
 ### Major Changes

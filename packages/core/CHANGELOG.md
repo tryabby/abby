@@ -1,5 +1,11 @@
 # @tryabby/core
 
+## 7.0.1
+
+### Patch Changes
+
+- fix build
+
 ## 7.0.0
 
 ### Major Changes

@@ -1,10 +1,12 @@
 {
   "name": "@tryabby/svelte",
-  "version": "3.0.1",
+  "version": "3.0.2",
   "main": "dist/index.umd.cjs",
   "homepage": "https://docs.tryabby.dev",
   "type": "module",
-  "files": ["dist"],
+  "files": [
+    "dist"
+  ],
   "module": "dist/index.js",
   "types": "dist/index.d.ts",
   "exports": {

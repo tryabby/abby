@@ -1,9 +1,11 @@
 {
   "name": "@tryabby/next",
-  "version": "7.0.0",
+  "version": "7.0.1",
   "description": "",
   "main": "dist/index.js",
-  "files": ["dist"],
+  "files": [
+    "dist"
+  ],
   "module": "dist/index.mjs",
   "types": "dist/index.d.ts",
   ".": {

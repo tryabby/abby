@@ -1,5 +1,13 @@
 # @tryabby/angular
 
+## 4.0.1
+
+### Patch Changes
+
+- fix build
+- Updated dependencies
+  - @tryabby/core@7.0.1
+
 ## 4.0.0
 
 ### Major Changes
