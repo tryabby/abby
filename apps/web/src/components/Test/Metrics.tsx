@@ -12,12 +12,12 @@ const Metrics = ({
   const labels = options.map((option) => option.identifier);
 
   return (
-    <div className="relative h-full w-full">
+    <div className="h-full w-full">
       <DonutChart
         totalVisits={actEvents.reduce((acc, e) => acc + e._count._all, 0)}
         variants={labels}
         events={actEvents}
-        totalText="Interactions"
+        totalText="Conversions"
       />
     </div>
   );

@@ -1,27 +1,31 @@
 import { TRPCClientError } from "@trpc/client";
 import { TRPC_ERROR_CODES_BY_KEY } from "@trpc/server/rpc";
-
+import { Modal } from "components/Modal";
+import { Card, CardContent } from "components/ui/card";
 import { useTracking } from "lib/tracking";
 import { useState } from "react";
 import { toast } from "react-hot-toast";
 import { trpc } from "utils/trpc";
-import { Modal } from "./Modal";
 import {
   CreateTestSection,
   DEFAULT_NEW_VARIANT_PREFIX,
 } from "./Test/CreateTestSection";
 
-type UIVariant = { name: string; weight: number };
+type UIVariant = { name: string; weight: number; id: string };
 
 const INITIAL_VARIANTS: Array<UIVariant> = [
   {
     name: `${DEFAULT_NEW_VARIANT_PREFIX}1`,
+    id: crypto.randomUUID(),
   },
   {
     name: `${DEFAULT_NEW_VARIANT_PREFIX}2`,
+    id: crypto.randomUUID(),
   },
-  // give each variant a weight of 100 / number of variants
-].map((v, _, array) => ({ ...v, weight: 100 / array.length }));
+].map((v, _, array) => {
+  const weight = Number((100 / array.length).toFixed(2));
+  return { ...v, weight };
+});
 
 const INITIAL_TEST_NAME = "New Test";
 
@@ -33,33 +37,31 @@ type Props = {
 
 export const AddABTestModal = ({ onClose, isOpen, projectId }: Props) => {
   const [testName, setTestName] = useState(INITIAL_TEST_NAME);
-  const [variants, setVariants] =
-    useState<Array<{ name: string; weight: number }>>(INITIAL_VARIANTS);
+  const [variants, setVariants] = useState<Array<UIVariant>>(INITIAL_VARIANTS);
 
   const variantsIncludeDuplicates =
     new Set(variants.map((variant) => variant.name)).size !== variants.length;
 
-  const variantsWeightSum = variants
-    .map(({ weight }) => weight)
-    // biome-ignore lint/suspicious/noAssignInExpressions:
-    // biome-ignore lint/style/noParameterAssign:
-    .reduce((sum, weight) => (sum += weight), 0);
+  const variantsWeightSum = Number(
+    variants
+      .map(({ weight }) => weight)
+      .reduce((sum, weight) => sum + weight, 0)
+      .toFixed(2)
+  );
 
   const isConfirmButtonDisabled =
-    variantsIncludeDuplicates || variantsWeightSum !== 100;
+    variantsIncludeDuplicates || Math.abs(variantsWeightSum - 100) > 0.3;
 
   const createTestMutation = trpc.tests.createTest.useMutation();
-
   const trpcContext = trpc.useContext();
-
   const trackEvent = useTracking();
 
   const onCreateClick = async () => {
     try {
       if (!variants.length || !variants[0]) throw new Error();
 
-      if (variants.reduce((acc, curr) => acc + curr.weight, 0) !== 100) {
-        toast.error("Weights must add up to 100");
+      if (Math.abs(variantsWeightSum - 100) > 0.3) {
+        toast.error("Weights must add up to 100%");
         return;
       }
 
@@ -67,7 +69,7 @@ export const AddABTestModal = ({ onClose, isOpen, projectId }: Props) => {
         name: testName,
         variants: variants.map((v) => ({
           name: v.name,
-          weight: v.weight / 100,
+          weight: Number.parseFloat((v.weight / 100).toFixed(3)), // Convert to decimal with proper precision
         })),
         projectId: projectId,
       });
@@ -105,12 +107,16 @@ export const AddABTestModal = ({ onClose, isOpen, projectId }: Props) => {
       isConfirming={createTestMutation.isLoading}
       isConfirmButtonDisabled={isConfirmButtonDisabled}
     >
-      <CreateTestSection
-        setTestName={setTestName}
-        setVariants={setVariants}
-        testName={testName}
-        variants={variants}
-      />
+      <Card>
+        <CardContent className="pt-6">
+          <CreateTestSection
+            setTestName={setTestName}
+            setVariants={setVariants}
+            testName={testName}
+            variants={variants}
+          />
+        </CardContent>
+      </Card>
     </Modal>
   );
 };

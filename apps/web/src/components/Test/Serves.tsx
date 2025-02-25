@@ -12,7 +12,7 @@ const Serves = ({
   const labels = options.map((option) => option.identifier);
 
   return (
-    <div className="relative h-full w-full">
+    <div className="h-full w-full">
       <DonutChart
         totalVisits={pingEvents.reduce((acc, e) => acc + e._count._all, 0)}
         variants={labels}

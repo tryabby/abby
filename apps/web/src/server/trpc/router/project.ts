@@ -38,6 +38,7 @@ export const projectRouter = router({
         },
         include: {
           tests: {
+            orderBy: { createdAt: "asc" },
             include: {
               options: true,
             },
