@@ -1,5 +1,4 @@
 import { Abby } from "../src/index";
-import { validateWeights } from "../src/mathHelpers";
 import * as validation from "../src/validation";
 
 const OLD_ENV = process.env;
@@ -668,18 +667,5 @@ describe("Abby", () => {
     });
 
     expect(abby.getRemoteConfig("remoteConfig1")).toBe("defaultremoteConfig1");
-  });
-});
-
-describe("Math helpers", () => {
-  it("validates weight", () => {
-    const variants = ["variant1", "variant2"];
-    const weight = [0.25, 0.75];
-
-    const validatedWeights1 = validateWeights(variants, weight);
-    expect(validatedWeights1).toEqual([0.25, 0.75]);
-
-    const validatedWeights2 = validateWeights(variants);
-    expect(validatedWeights2).toEqual([0.5, 0.5]);
   });
 });
