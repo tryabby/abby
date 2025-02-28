@@ -1,6 +1,7 @@
 "use client";
 import { Label, Pie, PieChart } from "recharts";
 
+import { DOCS_URL } from "@tryabby/core";
 import { Card, CardContent, CardFooter } from "components/ui/card";
 import {
   type ChartConfig,
@@ -10,6 +11,7 @@ import {
   ChartTooltip,
   ChartTooltipContent,
 } from "components/ui/chart";
+import Link from "next/link";
 import type { ProjectClientEvents } from "pages/projects/[projectId]";
 import { useMemo } from "react";
 
@@ -55,13 +57,20 @@ export function DonutChart({
   );
   return (
     <Card className="flex flex-col shadow-none w-full h-full">
-      <CardContent className="flex-1 pb-0 relative">
+      <CardContent className="flex-1 pb-0 h-full">
         {hasNoData ? (
           <p className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 leading-none text-muted-foreground text-sm text-center">
             Unfortunatly, there is no data to display.
             <br />
             <br />
             Start by sending events from your app.
+            <br />
+            <br />
+            Read more in the{" "}
+            <Link href={DOCS_URL} className="underline text-primary">
+              docs
+            </Link>
+            .
           </p>
         ) : (
           <ChartContainer

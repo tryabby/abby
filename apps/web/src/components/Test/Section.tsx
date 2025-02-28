@@ -3,14 +3,14 @@ import * as Popover from "@radix-ui/react-popover";
 import { Modal } from "components/Modal";
 import { TitleEdit } from "components/TitleEdit";
 import { Button } from "components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "components/ui/card";
 import { useFeatureFlag } from "lib/abby";
 import { cn } from "lib/utils";
-import Link from "next/link";
+import { ChevronRight, TrashIcon } from "lucide-react";
 import { useRouter } from "next/router";
 import type { ProjectClientEvents } from "pages/projects/[projectId]";
 import { type ReactNode, useState } from "react";
 import { toast } from "react-hot-toast";
-import { AiOutlineDelete } from "react-icons/ai";
 import { BiInfoCircle } from "react-icons/bi";
 import type { ClientOption } from "server/trpc/router/project";
 import { trpc } from "utils/trpc";
@@ -81,7 +81,7 @@ const DeleteTestModal = ({
   );
 };
 
-export const Card = ({
+export const MetricCard = ({
   title,
   children,
   tooltip,
@@ -93,35 +93,32 @@ export const Card = ({
   className?: string;
 }) => {
   return (
-    <div
-      className={cn(
-        "my-4 flex flex-col rounded-md bg-card p-4 shadow-lg",
-        className
-      )}
-    >
-      <div className="flex justify-between text-primary">
-        <h4 className="mb-2 font-bold">{title}</h4>
-        {tooltip && (
-          <Popover.Root>
-            <Popover.Trigger asChild>
-              <button type="button">
-                <BiInfoCircle />
-              </button>
-            </Popover.Trigger>
-            <Popover.Portal>
-              <Popover.Content
-                className="max-w-sm select-none rounded-[4px] bg-accent px-[15px] py-[10px] text-[15px] leading-none text-pink-50 shadow-md will-change-[transform,opacity] data-[state=delayed-open]:data-[side=bottom]:animate-slideUpAndFade data-[state=delayed-open]:data-[side=left]:animate-slideRightAndFade data-[state=delayed-open]:data-[side=right]:animate-slideLeftAndFade data-[state=delayed-open]:data-[side=top]:animate-slideDownAndFade"
-                sideOffset={5}
-              >
-                {tooltip}
-                <Popover.Arrow className="fill-gray-800" />
-              </Popover.Content>
-            </Popover.Portal>
-          </Popover.Root>
-        )}
-      </div>
-      {children}
-    </div>
+    <Card className={cn("relative overflow-hidden", className)}>
+      <CardHeader className="pb-2">
+        <div className="flex items-center justify-between">
+          <CardTitle className="text-sm font-medium">{title}</CardTitle>
+          {tooltip && (
+            <Popover.Root>
+              <Popover.Trigger asChild>
+                <Button variant="ghost" size="icon" className="h-6 w-6 p-0">
+                  <BiInfoCircle className="h-4 w-4" />
+                </Button>
+              </Popover.Trigger>
+              <Popover.Portal>
+                <Popover.Content
+                  className="w-[260px] rounded-md bg-popover p-4 text-popover-foreground shadow-md"
+                  sideOffset={5}
+                >
+                  {tooltip}
+                  <Popover.Arrow className="fill-popover" />
+                </Popover.Content>
+              </Popover.Portal>
+            </Popover.Root>
+          )}
+        </div>
+      </CardHeader>
+      <CardContent>{children}</CardContent>
+    </Card>
   );
 };
 
@@ -157,85 +154,82 @@ const Section = ({
   });
 
   return (
-    <section className="w-full rounded-lg bg-secondary p-4">
-      <div className="flex justify-between px-2">
-        <TitleEdit
-          title={name}
-          onSave={(newName) => updateTestName({ name: newName, testId: id })}
-        />
-        <Button
-          title="Delete Test"
-          onClick={() => {
-            setIsDeleteModalOpen(true);
-          }}
-          size="icon"
-          variant="destructive"
-        >
-          <AiOutlineDelete />
-        </Button>
-        <DeleteTestModal
-          isOpen={isDeleteModalOpen}
-          onClose={() => setIsDeleteModalOpen(false)}
-          testId={id}
-          testName={name}
-        />
-      </div>
-      <div className="grid grid-cols-1 gap-2 md:grid-cols-3">
-        <Card
-          title="Weight"
-          tooltip={
-            <p>
-              The weights define the chances for your defined variants to be
-              served. <br />
-              This means that if you have 2 variants with a weight of 50%, each
-              variant will be served 50% of the time.
-            </p>
-          }
-        >
-          <Weights options={options} />
-        </Card>
-        <Card
-          title="Visits"
-          tooltip={
-            <p>
-              A visit means that a user has visited a page where the A/B test
-              takes place. Think of it like a page visit on a website.
-            </p>
-          }
-        >
-          <Serves options={options} pingEvents={pingEvents} />
-        </Card>
-        <Card
-          title="Interactions"
-          tooltip={
-            <p>
-              An interaction is triggered when the
-              <code className="mx-1 rounded-md bg-gray-600 px-1 py-0.5">
-                onAct
-              </code>
-              is called in your code.
-            </p>
-          }
-        >
-          <Metrics options={options} actEvents={actEvents} />
-        </Card>
-      </div>
-      <div className="mt-3 flex">
-        {bestVariant && (
-          <p className="text-pink-50">
-            The variant <b>{bestVariant}</b> is currently performing best
-          </p>
-        )}
-        {showAdvancedTestStats && (
-          <Link
-            href={`/projects/${router.query.projectId}/tests/${id}`}
-            className="contents"
+    <Card className="relative overflow-hidden transition-all duration-200 group/test hover:shadow-md hover:border-primary/20">
+      <div className="absolute top-0 right-0 h-full w-1.5 bg-gradient-to-b from-primary/20 to-primary/5" />
+      <CardHeader className="pb-3">
+        <div className="flex items-center justify-between">
+          <TitleEdit
+            title={name}
+            onSave={(newName) => updateTestName({ name: newName, testId: id })}
+          />
+          <Button
+            variant="ghost"
+            size="sm"
+            className="h-8 w-8 p-0"
+            onClick={() => setIsDeleteModalOpen(true)}
           >
-            <Button className="ml-auto">See More</Button>
-          </Link>
-        )}
-      </div>
-    </section>
+            <TrashIcon className="h-4 w-4" />
+          </Button>
+        </div>
+      </CardHeader>
+      <CardContent>
+        <div className="grid gap-4 md:grid-cols-3">
+          <MetricCard
+            title="Weight Distribution"
+            tooltip="The weights define the chances for your defined variants to be served. This means that if you have 2 variants with a weight of 50%, each variant will be served 50% of the time."
+          >
+            <Weights options={options} />
+          </MetricCard>
+          <MetricCard
+            title="Visits"
+            tooltip="A visit means that a user has visited a page where the A/B test takes place. Think of it like a page visit on a website."
+          >
+            <Serves options={options} pingEvents={pingEvents} />
+          </MetricCard>
+          <MetricCard
+            title="Conversions"
+            tooltip={
+              <p>
+                A conversion is triggered when the{" "}
+                <code className="px-1 py-0.5 rounded-md bg-muted">onAct</code>{" "}
+                is called in your code.
+              </p>
+            }
+          >
+            <Metrics options={options} actEvents={actEvents} />
+          </MetricCard>
+        </div>
+
+        <div className="mt-4 flex items-center justify-between">
+          {bestVariant && (
+            <p className="text-sm text-muted-foreground">
+              The variant{" "}
+              <span className="font-medium text-foreground">{bestVariant}</span>{" "}
+              is currently performing best
+            </p>
+          )}
+          {showAdvancedTestStats && (
+            <Button
+              variant="ghost"
+              size="sm"
+              className="ml-auto"
+              onClick={() =>
+                router.push(`/projects/${router.query.projectId}/tests/${id}`)
+              }
+            >
+              View Details
+              <ChevronRight className="ml-1 h-3 w-3" />
+            </Button>
+          )}
+        </div>
+      </CardContent>
+      <DeleteTestModal
+        isOpen={isDeleteModalOpen}
+        onClose={() => setIsDeleteModalOpen(false)}
+        testId={id}
+        testName={name}
+      />
+    </Card>
   );
 };
 
