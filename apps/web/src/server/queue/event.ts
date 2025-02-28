@@ -22,7 +22,6 @@ const EventTypeToRequestType = {
 const eventWorker = new Worker<EventJobPayload>(
   eventQueue.name,
   async ({ data: event }) => {
-    // TODO: add those to a queue and process them in a background job as they are not critical
     switch (event.type) {
       case AbbyEventType.PING:
       case AbbyEventType.ACT: {

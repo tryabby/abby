@@ -1,4 +1,4 @@
-import { validateWeights, getWeightedRandomVariant } from "../src/mathHelpers";
+import { getWeightedRandomVariant, validateWeights } from "../src/mathHelpers";
 
 describe("Math helpers", () => {
   it("validates weight", () => {
@@ -39,12 +39,6 @@ describe("Math helpers", () => {
     // Check that each variant appears roughly 1/3 of the time (within 5% margin)
     const expectedCount = iterations / 3;
     const marginOfError = 0.05 * iterations; // 5% margin of error
-
-    console.log({
-      counts,
-      expectedCount,
-      marginOfError,
-    });
 
     Object.values(counts).forEach((count) => {
       expect(count).toBeGreaterThan(expectedCount - marginOfError);

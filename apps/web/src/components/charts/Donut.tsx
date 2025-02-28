@@ -1,6 +1,7 @@
 "use client";
 import { Label, Pie, PieChart } from "recharts";
 
+import { DOCS_URL } from "@tryabby/core";
 import { Card, CardContent, CardFooter } from "components/ui/card";
 import {
   type ChartConfig,
@@ -10,10 +11,9 @@ import {
   ChartTooltip,
   ChartTooltipContent,
 } from "components/ui/chart";
+import Link from "next/link";
 import type { ProjectClientEvents } from "pages/projects/[projectId]";
 import { useMemo } from "react";
-import Link from "next/link";
-import { DOCS_URL } from "@tryabby/core";
 
 export function DonutChart({
   totalVisits,

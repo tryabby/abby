@@ -6,15 +6,15 @@ import { FullPageLoadingSpinner } from "components/LoadingSpinner";
 import Section from "components/Test/Section";
 import { Button } from "components/ui/button";
 import { Input } from "components/ui/input";
+import Fuse from "fuse.js";
 import { useProjectId } from "lib/hooks/useProjectId";
+import { Search } from "lucide-react";
 import type { GetStaticPaths, GetStaticProps } from "next";
 import type { NextPageWithLayout } from "pages/_app";
 import { useMemo, useState } from "react";
 import { AiOutlinePlus } from "react-icons/ai";
-import { Search } from "lucide-react";
 import type { AppRouter } from "server/trpc/router/_app";
 import { trpc } from "utils/trpc";
-import Fuse from "fuse.js";
 
 export type ProjectClientEvents =
   inferRouterOutputs<AppRouter>["project"]["getProjectData"]["project"]["tests"][number]["pingEvents"];

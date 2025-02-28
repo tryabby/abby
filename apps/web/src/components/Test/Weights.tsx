@@ -1,4 +1,5 @@
 import { Button } from "components/ui/button";
+import { Input } from "components/ui/input";
 import {
   Select,
   SelectContent,
@@ -6,20 +7,19 @@ import {
   SelectTrigger,
   SelectValue,
 } from "components/ui/select";
-import { Input } from "components/ui/input";
-import { useRouter } from "next/router";
-import { useState, useMemo, useEffect, useRef } from "react";
-import { toast } from "react-hot-toast";
-import type { ClientOption } from "server/trpc/router/project";
-import { trpc } from "utils/trpc";
-import { cn } from "lib/utils";
-import { RotateCcw, PieChart } from "lucide-react";
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
 } from "components/ui/tooltip";
+import { cn } from "lib/utils";
+import { PieChart, RotateCcw } from "lucide-react";
+import { useRouter } from "next/router";
+import { useEffect, useMemo, useRef, useState } from "react";
+import { toast } from "react-hot-toast";
+import type { ClientOption } from "server/trpc/router/project";
+import { trpc } from "utils/trpc";
 
 // Distribution color palette using tailwind colors that work well in both modes
 const WEIGHT_COLORS = [
