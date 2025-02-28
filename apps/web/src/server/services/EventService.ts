@@ -95,7 +95,7 @@ export abstract class EventService {
       RequestCache.get(projectId),
     ]);
 
-    if (!project) throw new Error("Project not found");
+    if (!project) throw new Error(`Project not found: ${projectId}`);
 
     const plan = Object.keys(PLANS).find(
       (plan) => PLANS[plan as PlanName] === project.stripePriceId
