@@ -183,7 +183,7 @@ const Weights = ({ options }: { options: ClientOption[] }) => {
   const weightsSum = Number(
     weights.reduce((sum, curr) => sum + curr, 0).toFixed(2)
   );
-  const isValidWeightSum = Math.abs(weightsSum - 100) <= 0.3;
+  const isValidWeightSum = Math.abs(weightsSum - 100) <= 0.1;
 
   // Add debounced error display
   useEffect(() => {

@@ -220,7 +220,7 @@ export function CreateTestSection({
   const weightSum = Number(
     variants.reduce((sum, { weight }) => sum + weight, 0).toFixed(2)
   );
-  const isValidWeightSum = Math.abs(weightSum - 100) <= 0.3;
+  const isValidWeightSum = Math.abs(weightSum - 100) <= 0.1;
 
   useEffect(() => {
     const timer = setTimeout(() => {
