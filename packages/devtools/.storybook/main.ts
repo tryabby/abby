@@ -1,5 +1,8 @@
 import type { StorybookConfig } from "@storybook/svelte-vite";
 const config: StorybookConfig = {
+  core: {
+    disableTelemetry: true,
+  },
   stories: ["../src/**/*.mdx", "../src/**/*.stories.@(js|jsx|ts|tsx|svelte)"],
   addons: [
     "@storybook/addon-links",

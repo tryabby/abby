@@ -1,5 +1,11 @@
 # @tryabby/devtools
 
+## 8.0.2
+
+### Patch Changes
+
+- improve ui/ux
+
 ## 8.0.1
 
 ### Patch Changes

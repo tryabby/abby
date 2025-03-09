@@ -5,56 +5,100 @@
   export let onChange: (newValue: string) => void;
 </script>
 
-<label>
-  {label}
-  <select
-    bind:value
-    on:change={(e) => {
-      onChange(e.currentTarget.value);
-    }}
-  >
-    {#each options as option}
-      <option value={option.value}>{option.label}</option>
-    {/each}
-  </select>
-</label>
+<div class="select-container">
+  <label class="select-label">
+    {label}
+    <div class="select-wrapper">
+      <select
+        bind:value
+        on:change={(e) => {
+          onChange(e.currentTarget.value);
+        }}
+      >
+        {#each options as option}
+          <option value={option.value}>{option.label}</option>
+        {/each}
+      </select>
+      <div class="select-icon">
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="16"
+          height="16"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        >
+          <polyline points="6 9 12 15 18 9"></polyline>
+        </svg>
+      </div>
+    </div>
+  </label>
+</div>
 
 <style lang="scss">
-  label {
+  .select-container {
+    padding: 0.5rem;
+    border-radius: 6px;
+    background: rgba(255, 255, 255, 0.03);
+    transition: background 0.2s ease;
+
+    &:hover {
+      background: rgba(255, 255, 255, 0.06);
+    }
+  }
+
+  .select-label {
     display: flex;
     flex-direction: column;
-    margin: 10px 0;
+    font-size: 0.875rem;
+    width: 100%;
+  }
+
+  .select-wrapper {
+    position: relative;
+    margin-top: 0.5rem;
+    width: 100%;
+  }
+
+  .select-icon {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    pointer-events: none;
+    color: rgb(249, 168, 212);
+    display: flex;
+    align-items: center;
+    justify-content: center;
   }
 
   select {
     -webkit-appearance: none;
-    padding: 7px 40px 7px 12px;
+    appearance: none;
     width: 100%;
-    border-radius: 5px;
-    border: 1px solid hsl(252 4% 45.2%);
-    background: transparent;
-    cursor: pointer;
+    padding: 0.5rem 2.25rem 0.5rem 0.75rem;
+    border-radius: 6px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    background: rgba(0, 0, 0, 0.2);
+    color: white;
     font-family: inherit;
-    font-size: 16px;
-    transition: all 150ms ease;
-    margin-top: 5px;
-    color: var(--pink);
-
-    &:required:invalid {
-      color: #5a667f;
-    }
-
-    option {
-      color: #223254;
-      &[value=""][disabled] {
-        display: none;
-      }
-    }
+    font-size: 0.875rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
 
     &:focus {
       outline: none;
-      border-color: var(--pink);
-      box-shadow: 0 0 0 2px rgba(var(--pink), 0.2);
+      border-color: rgb(249, 168, 212);
+      box-shadow: 0 0 0 1px rgb(249, 168, 212, 0.4);
+    }
+
+    option {
+      background-color: #121929;
+      color: white;
+      padding: 0.5rem;
     }
   }
 </style>

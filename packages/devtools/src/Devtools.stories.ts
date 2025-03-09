@@ -9,13 +9,13 @@ const abbyMock = {
   subscribe: () => () => {},
   getProjectData: () => ({
     flags: {
-      "flag-1": true,
-      "flag-2": false,
+      "flag-1": { value: true },
+      "flag-2": { value: false },
     },
     remoteConfig: {
-      "config-1": "string-value",
-      "config-2": 42,
-      "config-3": { type: "object/json" },
+      "config-1": { value: "string-value" },
+      "config-2": { value: 42 },
+      "config-3": { value: { type: "object/json" } },
     },
     tests: {
       "test-1": { selectedVariant: "A", variants: ["A", "B"] },
