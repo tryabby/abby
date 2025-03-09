@@ -6,8 +6,13 @@
   export let id: string;
 </script>
 
-<label>
-  {label}
+<div class="input-container">
+  <label class="input-label" for={id}>
+    {label}
+    <span class="input-label__type"
+      >{type === "number" ? "Number" : "String"}</span
+    >
+  </label>
   <input
     {id}
     {type}
@@ -20,36 +25,52 @@
       onChange(e.currentTarget.value);
     }}
   />
-</label>
+</div>
 
 <style lang="scss">
-  label {
+  .input-container {
+    padding: 0.5rem;
+    border-radius: 6px;
+    background: rgba(255, 255, 255, 0.03);
+    transition: background 0.2s ease;
+
     display: flex;
     flex-direction: column;
-    margin: 10px 0;
+    gap: 0.5rem;
+
+    &:hover {
+      background: rgba(255, 255, 255, 0.06);
+    }
+  }
+
+  .input-label {
+    font-size: 0.875rem;
+
+    &__type {
+      font-size: 0.75rem;
+      color: rgba(255, 255, 255, 0.4);
+      margin-left: 0.5rem;
+    }
   }
 
   input {
-    padding: 7px 40px 7px 12px;
-    width: 100%;
-    border-radius: 5px;
-    border: 1px solid hsl(252 4% 45.2%);
-    background: transparent;
+    padding: 0.5rem 0.75rem;
+    border-radius: 6px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    background: rgba(0, 0, 0, 0.2);
+    color: white;
     font-family: inherit;
-    font-size: 16px;
-    transition: all 150ms ease;
-    margin-top: 5px;
-    color: var(--pink);
-    box-sizing: border-box;
-
-    &:required:invalid {
-      color: #5a667f;
-    }
+    font-size: 0.875rem;
+    transition: all 0.2s ease;
 
     &:focus {
       outline: none;
-      border-color: var(--pink);
-      box-shadow: 0 0 0 2px rgba(var(--pink), 0.2);
+      border-color: rgb(249, 168, 212);
+      box-shadow: 0 0 0 1px rgba(249, 168, 212, 0.4);
+    }
+
+    &::placeholder {
+      color: rgba(255, 255, 255, 0.4);
     }
   }
 </style>
