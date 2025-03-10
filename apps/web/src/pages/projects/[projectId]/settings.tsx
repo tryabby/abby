@@ -266,7 +266,7 @@ const SettingsPage: NextPageWithLayout = () => {
                     custom attributes.
                   </p>
                   <Link
-                    href="https://docs.tryabby.com/features/segments"
+                    href="https://docs.tryabby.com/user-segments"
                     target="_blank"
                     className="text-pink-400 hover:text-pink-300 underline"
                   >
