@@ -13,8 +13,8 @@
     "seed:events": "ts-node --compiler-options {\\\"module\\\":\\\"CommonJS\\\"} prisma/seedEvents.ts",
     "db:migrate": "prisma migrate dev",
     "generate:coupons": "pnpm ts-node -r tsconfig-paths/register  --compiler-options {\\\"module\\\":\\\"CommonJS\\\"} prisma/generateCoupons.ts",
-    "mailhog:up": "docker-compose -f docker-compose.mailhog.yaml up",
-    "mailhog:down": "docker-compose -f docker-compose.mailhog.yaml down",
+    "mailhog:up": "docker compose -f docker-compose.mailhog.yaml up",
+    "mailhog:down": "docker compose -f docker-compose.mailhog.yaml down",
     "test": "vitest",
     "start:docker": "npx prisma migrate deploy || { echo 'Migration failed, exiting'; exit 1; } && node server.js"
   },

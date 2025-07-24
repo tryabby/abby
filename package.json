@@ -14,10 +14,10 @@
     "dev:all": "turbo run dev --filter=!./apps/docs",
     "lint": "biome lint --fix",
     "format": "biome format --write",
-    "db:start": "docker-compose up -d",
+    "db:start": "docker compose up -d",
     "db:migrate": "turbo run db:migrate --filter=./apps/web",
     "db:generate": "turbo run db:generate --filter=./apps/web",
-    "db:stop": "docker-compose down",
+    "db:stop": "docker compose down",
     "ci:publish": "pnpm publish -r --access public"
   },
   "devDependencies": {
