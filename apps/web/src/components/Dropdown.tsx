@@ -41,7 +41,7 @@ export const Dropdown = ({ triggerIcon: Icon, children, className }: Props) => {
 type ItemProps = {
   children: React.ReactNode;
   shortcut?: string;
-} & DropdownMenu.MenuItemProps;
+} & DropdownMenu.DropdownMenuItemProps;
 
 export const Item = ({
   children,

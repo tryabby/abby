@@ -14,6 +14,7 @@ import { RadioSelect } from "./RadioSelect";
 import { Toggle } from "./Toggle";
 import { Input } from "./ui/input";
 import { Label } from "./ui/label";
+import TextareaAutosize from "react-textarea-autosize";
 
 type Props = {
   onClose: () => void;
@@ -124,13 +125,13 @@ export function ChangeFlagForm({
           />
         )}
         {state.type === "STRING" && (
-          <Input
-            type="text"
+          <TextareaAutosize
             value={state.value}
             onChange={(e) => onChange({ value: e.target.value })}
             placeholder={
               isRemoteConfig ? "My Remote Config" : "My Feature Flag"
             }
+            className="w-full resize-none rounded-md border border-input bg-background px-3 py-2 text-sm shadow-sm placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring overflow-hidden"
           />
         )}
         {state.type === "NUMBER" && (

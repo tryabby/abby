@@ -115,6 +115,7 @@
     "react-hook-form": "^7.44.3",
     "react-hot-toast": "^2.4.0",
     "react-icons": "^4.11.0",
+    "react-textarea-autosize": "^8.5.9",
     "react-use-wizard": "^2.2.3",
     "recharts": "^2.12.7",
     "sharp": "^0.33.4",

@@ -50,7 +50,9 @@ export const Modal = ({
       <DialogContent className={cn(size === "full" && "sm:max-w-[980px]")}>
         <DialogTitle> {title} </DialogTitle>
         <DialogDescription>{subtitle}</DialogDescription>
-        <div className="my-6 text-pink-50">{children}</div>
+        <div className="my-6 text-pink-50 max-h-[60vh] overflow-y-auto">
+          {children}
+        </div>
 
         <DialogFooter>
           <Button variant="secondary" onClick={onClose}>

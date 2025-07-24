@@ -191,7 +191,9 @@ export const FeatureFlag = ({
         }
         const keys = Object.keys(parsed);
         if (keys.length === 0) return "{ }";
-        return `{ ${keys[0]}: ..., ${keys.length > 1 ? `+${keys.length - 1} more` : ""} }`;
+        return `{ ${keys[0]}: ..., ${
+          keys.length > 1 ? `+${keys.length - 1} more` : ""
+        } }`;
       }
       return value;
     } catch {
@@ -257,13 +259,13 @@ export const FeatureFlag = ({
                     className="justify-between w-full group"
                     onClick={() => setIsUpdateModalOpen(true)}
                   >
-                    <div className="flex items-center gap-2">
+                    <div className="flex items-center gap-2 overflow-hidden">
                       <span className={cn("text-sm", envStyle.text)}>
                         Current value:
                       </span>
                       <code
                         className={cn(
-                          "px-2 py-1 rounded font-mono",
+                          "px-2 py-1 rounded font-mono max-w-[150px] truncate",
                           envStyle.bg,
                           envStyle.text
                         )}
@@ -282,7 +284,7 @@ export const FeatureFlag = ({
                     className="justify-between w-full group"
                     onClick={() => setIsUpdateModalOpen(true)}
                   >
-                    <div className="flex items-center gap-2">
+                    <div className="flex items-center gap-2 overflow-hidden">
                       <span className={cn("text-sm", envStyle.text)}>
                         Current value:
                       </span>
@@ -307,7 +309,7 @@ export const FeatureFlag = ({
                     className="items-center justify-between w-full group"
                     onClick={() => setIsUpdateModalOpen(true)}
                   >
-                    <div className="flex items-center gap-2">
+                    <div className="flex items-center gap-2 overflow-hidden">
                       <span className={cn("text-sm", envStyle.text)}>
                         Current value:
                       </span>
