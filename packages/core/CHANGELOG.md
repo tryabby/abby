@@ -190,7 +190,7 @@
 
 ### Minor Changes
 
-- remove enviroments config options
+- remove environments config options
 
 ## 1.6.0
 

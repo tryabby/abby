@@ -368,7 +368,7 @@
 
 ### Minor Changes
 
-- remove enviroments config options
+- remove environments config options
 
 ### Patch Changes
 
