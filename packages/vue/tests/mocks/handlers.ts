@@ -1,0 +1,33 @@
+import { ABBY_BASE_URL, type AbbyDataResponse } from "@tryabby/core";
+import { rest } from "msw";
+
+const returnData: AbbyDataResponse = {
+  tests: [
+    {
+      name: "test",
+      weights: [1, 0],
+    },
+  ],
+  flags: [
+    {
+      name: "flag1",
+      value: true,
+    },
+    {
+      name: "flag2",
+      value: false,
+    },
+  ],
+  remoteConfig: [
+    {
+      name: "remoteConfig1",
+      value: "FooBar",
+    },
+  ],
+};
+
+export const handlers = [
+  rest.get(`${ABBY_BASE_URL}api/v2/data/:projectId`, (_req, res, ctx) => {
+    return res(ctx.json(returnData));
+  }),
+];
