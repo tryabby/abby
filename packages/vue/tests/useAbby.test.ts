@@ -5,6 +5,10 @@ import { createAbby } from "../src";
 import { TestStorageService } from "../src/StorageService";
 
 describe("useAbby", () => {
+  beforeEach(() => {
+    vi.spyOn(HttpService, "sendData").mockImplementation(() => undefined);
+  });
+
   afterEach(() => {
     vi.restoreAllMocks();
   });
@@ -121,7 +125,6 @@ describe("useAbby", () => {
   });
 
   it("notifies the server with onAct", () => {
-    const spy = vi.spyOn(HttpService, "sendData");
     const { AbbyProvider, useAbby } = createAbby({
       environments: [""],
       currentEnvironment: "",
@@ -145,7 +148,7 @@ describe("useAbby", () => {
       },
     });
 
-    expect(spy).toHaveBeenCalledWith(
+    expect(HttpService.sendData).toHaveBeenCalledWith(
       expect.objectContaining({ type: AbbyEventType.ACT })
     );
   });
