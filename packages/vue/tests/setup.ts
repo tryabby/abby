@@ -1,0 +1,18 @@
+import fetch from "node-fetch";
+import { afterAll, afterEach, beforeAll } from "vitest";
+import { server } from "./mocks/server";
+
+(global as any).fetch = fetch;
+
+// Establish API mocking before all tests.
+beforeAll(() => server.listen());
+
+// Clean up after the tests are finished.
+afterAll(() => server.close());
+
+// runs a cleanup after each test case (e.g. clearing jsdom)
+afterEach(() => {
+  // Reset any request handlers that we may add during the tests,
+  // so they don't affect other tests.
+  server.resetHandlers();
+});
