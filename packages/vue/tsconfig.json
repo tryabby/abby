@@ -1,0 +1,12 @@
+{
+  "extends": "tsconfig/base.json",
+  "compilerOptions": {
+    "lib": ["ESNext", "DOM"],
+    "types": ["vitest/globals"],
+    "jsx": "preserve",
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    "target": "es6"
+  },
+  "include": ["src", "tests", "vite.config.ts", "tsup.config.ts"]
+}
