@@ -1,9 +1,8 @@
 import fetch from "node-fetch";
-import { afterEach } from "vitest";
+import { afterAll, afterEach, beforeAll } from "vitest";
 import { server } from "./mocks/server";
 
-/// @ts-ignore
-global.fetch = fetch;
+(global as any).fetch = fetch;
 
 // Establish API mocking before all tests.
 beforeAll(() => server.listen());
