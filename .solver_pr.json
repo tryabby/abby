@@ -1,0 +1,11 @@
+{
+  "title": "feat: add Vue integration package (@tryabby/vue)",
+  "summary": "This PR adds the `@tryabby/vue` integration package for Abby, following the same patterns as the existing React and Svelte integrations.\n\nThe package lives in `packages/vue`, is named `@tryabby/vue`, and consumes `@tryabby/core` internally. It exports a `createAbby` factory function that returns Vue 3 composables:\n\n- **`useAbby(testName, lookupObject?)`** — returns a `ComputedRef<variant>` and an `onAct()` function that sends ACT events; sends a PING event immediately on call\n- **`useFeatureFlag(flagName)`** — returns a `ComputedRef<boolean>` that reacts to data changes\n- **`useRemoteConfig(remoteConfigName)`** — returns a `ComputedRef<RemoteConfigValueStringToType<...>>` that reacts to data changes\n\nReactivity is implemented via a shared `ref` counter that increments whenever `abby.subscribe()` fires, causing all `computed()` values to recompute. The `StorageService` uses `js-cookie` identical to the React package. Type-level tests are included using `expectTypeOf` to verify correct inference for test names, variants, lookup objects, feature flags, and remote config.",
+  "testing": "Ran `pnpm run test` in `packages/vue` — all 17 tests pass (useAbby, useFeatureFlag, useRemoteConfig, and type-level tests). Ran `pnpm run build` in `packages/vue` — CJS + ESM + DTS output all succeed. Ran `npx @biomejs/biome lint packages/vue/src/ packages/vue/tests/` — no issues.",
+  "screenshots": [],
+  "verification": {
+    "ran_tests": "true",
+    "tests_passed": "true",
+    "confident": "true"
+  }
+}
