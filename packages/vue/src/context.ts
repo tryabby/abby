@@ -84,7 +84,9 @@ export function createAbby<
         return FlagStorageService.get(config.projectId, key);
       },
       set: (key: string, value: string) => {
-        if (typeof window === "undefined") return;
+        if (typeof window === "undefined" || config.cookies?.disableByDefault) {
+          return;
+        }
         FlagStorageService.set(config.projectId, key, value);
       },
     },
@@ -94,7 +96,9 @@ export function createAbby<
         return RemoteConfigStorageService.get(config.projectId, key);
       },
       set: (key: string, value: string) => {
-        if (typeof window === "undefined") return;
+        if (typeof window === "undefined" || config.cookies?.disableByDefault) {
+          return;
+        }
         RemoteConfigStorageService.set(config.projectId, key, value);
       },
     }

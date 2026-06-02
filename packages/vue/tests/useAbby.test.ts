@@ -5,6 +5,10 @@ import { createAbby } from "../src";
 import { TestStorageService } from "../src/StorageService";
 
 describe("useAbby", () => {
+  afterEach(() => {
+    vi.restoreAllMocks();
+  });
+
   it("returns a variant ref and onAct handler", async () => {
     const { AbbyProvider, useAbby } = createAbby({
       environments: [""],
