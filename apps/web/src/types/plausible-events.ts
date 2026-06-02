@@ -28,6 +28,7 @@ export type PlausibleEvents = {
   };
   "Dashboard Help Clicked": never;
   "Dashboard Code Clicked": never;
+  "Dashboard CLI Instructions Clicked": never;
 };
 
 export type ServerEvents = {

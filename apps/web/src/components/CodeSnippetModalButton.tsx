@@ -1,12 +1,9 @@
-import { Dialog } from "@headlessui/react";
+import { DOCS_URL } from "@tryabby/core";
 import { useProjectId } from "lib/hooks/useProjectId";
 import { useTracking } from "lib/tracking";
-import { Code, Copy } from "lucide-react";
-import { useRouter } from "next/router";
-import { useState } from "react";
+import { Copy, Terminal } from "lucide-react";
 import { toast } from "react-hot-toast";
 import { BsCodeSlash } from "react-icons/bs";
-import { CodeSnippet } from "./CodeSnippet";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -15,35 +12,9 @@ import {
 } from "./DropdownMenu";
 import { Button } from "./ui/button";
 
-function CodeSnippetModal({
-  isOpen,
-  onClose,
-}: {
-  isOpen: boolean;
-  onClose: () => void;
-}) {
-  const projectId = useRouter().query.projectId as string;
-
-  return (
-    <Dialog open={isOpen} onClose={onClose} className="relative z-50">
-      {/* The backdrop, rendered as a fixed sibling to the panel container */}
-      <div className="fixed inset-0 bg-black/70" aria-hidden="true" />
-
-      {/* Full-screen container to center the panel */}
-      <div className="fixed inset-0 flex items-center justify-center p-4">
-        {/* The actual dialog panel  */}
-        <Dialog.Panel className="mx-auto w-full max-w-4xl">
-          <CodeSnippet projectId={projectId} />
-        </Dialog.Panel>
-      </div>
-    </Dialog>
-  );
-}
-
 export function CodeSnippetModalButton() {
   const trackEvent = useTracking();
   const projectId = useProjectId();
-  const [isOpen, setIsOpen] = useState(false);
 
   const onCopyProjectId = async () => {
     toast.promise(navigator.clipboard.writeText(projectId), {
@@ -71,12 +42,20 @@ export function CodeSnippetModalButton() {
           <Copy className="mr-2 h-4 w-4" />
           Copy Project ID
         </DropdownMenuItem>
-        <DropdownMenuItem onClick={() => setIsOpen(true)}>
-          <Code className="mr-2 h-4 w-4" />
-          Generate Code Snippet
+        <DropdownMenuItem
+          onClick={() => {
+            trackEvent("Dashboard CLI Instructions Clicked");
+            window.open(
+              `${DOCS_URL}reference/cli`,
+              "_blank",
+              "noopener,noreferrer"
+            );
+          }}
+        >
+          <Terminal className="mr-2 h-4 w-4" />
+          Setup via CLI
         </DropdownMenuItem>
       </DropdownMenuContent>
-      <CodeSnippetModal isOpen={isOpen} onClose={() => setIsOpen(false)} />
     </DropdownMenu>
   );
 }
