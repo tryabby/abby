@@ -24,9 +24,7 @@ class ABStorageService implements IStorageService {
     options?: StorageServiceOptions
   ): void {
     Cookie.set(getABStorageKey(projectId, testName), value, {
-      expires: options?.expiresInDays
-        ? options.expiresInDays
-        : DEFAULT_COOKIE_AGE,
+      expires: options?.expiresInDays ?? DEFAULT_COOKIE_AGE,
     });
   }
 
@@ -57,7 +55,9 @@ class FFStorageService implements IStorageService {
 class RCStorageService implements IStorageService {
   get(projectId: string, key: string): string | null {
     const retrievedValue = Cookie.get(getRCStorageKey(projectId, key));
-    return retrievedValue ?? null;
+    if (!retrievedValue) return null;
+
+    return retrievedValue;
   }
 
   set(projectId: string, key: string, value: string): void {

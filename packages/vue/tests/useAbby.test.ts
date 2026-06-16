@@ -1,11 +1,20 @@
 import { mount } from "@vue/test-utils";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { defineComponent, h } from "vue";
+import Cookie from "js-cookie";
 import { createAbby } from "../src";
 import { TestStorageService } from "../src/StorageService";
 
 beforeEach(() => {
-  document.cookie = "";
+  const cookies = document.cookie.split(";");
+  for (const cookie of cookies) {
+    const eqPos = cookie.indexOf("=");
+    const name = eqPos > -1 ? cookie.substring(0, eqPos).trim() : cookie.trim();
+    if (name) {
+      Cookie.remove(name);
+      document.cookie = `${name}=;expires=Thu, 01 Jan 1970 00:00:00 GMT;path=/`;
+    }
+  }
 });
 
 describe("Vue SDK Wrapper", () => {
@@ -18,6 +27,7 @@ describe("Vue SDK Wrapper", () => {
         test: { variants: ["OldFooter", "NewFooter"] },
       },
       flags: ["flag1"],
+      cookies: { disableByDefault: true },
     });
 
     const TestComponent = defineComponent({
@@ -41,6 +51,7 @@ describe("Vue SDK Wrapper", () => {
       tests: {
         test: { variants: ["OldFooter", "NewFooter"] },
       },
+      cookies: { disableByDefault: true },
     });
 
     const TestComponent = defineComponent({

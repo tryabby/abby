@@ -9,7 +9,7 @@ import {
 import { HttpService } from "@tryabby/core";
 import { AbbyEventType } from "@tryabby/core";
 import type { Infer } from "@tryabby/core/validation";
-import { type ComputedRef, computed, inject, provide, shallowRef } from "vue";
+import { type ComputedRef, computed, inject, provide, shallowRef, type ShallowRef, watch } from "vue";
 import {
   FlagStorageService,
   RemoteConfigStorageService,
@@ -92,9 +92,30 @@ export function createAbby<
   const config = abbyConfig;
   const abbyDataRef = shallowRef<AbbyProjectData | null>(abby.getProjectData());
 
+  let isLoaderInitialized = false;
+  const initGlobalLoader = () => {
+    if (isLoaderInitialized) return;
+    isLoaderInitialized = true;
+    if (typeof window !== "undefined") {
+      abby.loadProjectData().then((data) => {
+        if (data) {
+          abbyDataRef.value = data;
+        }
+      });
+
+      abby.subscribe((data) => {
+        abbyDataRef.value = data;
+      });
+    }
+  };
+
   const useAbbyData = () => {
-    const injected = inject<any>(ABBY_INJECT_KEY, null);
-    return injected || abbyDataRef;
+    const injected = inject<ShallowRef<AbbyProjectData | null> | null>(ABBY_INJECT_KEY, null);
+    if (!injected) {
+      initGlobalLoader();
+      return abbyDataRef;
+    }
+    return injected;
   };
 
   const useAbby = <
@@ -134,7 +155,15 @@ export function createAbby<
       });
     };
 
-    notify();
+    watch(
+      selectedVariant,
+      (newVariant, oldVariant) => {
+        if (newVariant && newVariant !== oldVariant) {
+          notify();
+        }
+      },
+      { immediate: true }
+    );
 
     const onAct = () => {
       const variant = selectedVariant.value;
@@ -172,7 +201,7 @@ export function createAbby<
   const useFeatureFlags = () => {
     const dataRef = useAbbyData();
     return computed(() => {
-      const flags = dataRef.value?.flags ?? {};
+      const flags = dataRef.value?.flags ?? ({} as Record<FlagName, any>);
       return (Object.keys(flags) as Array<FlagName>).map((flagName) => ({
         name: flagName,
         value: flags[flagName].value,
@@ -183,7 +212,7 @@ export function createAbby<
   const useRemoteConfigVariables = () => {
     const dataRef = useAbbyData();
     return computed(() => {
-      const remoteConfig = dataRef.value?.remoteConfig ?? {};
+      const remoteConfig = dataRef.value?.remoteConfig ?? ({} as Record<RemoteConfigName, any>);
       return (Object.keys(remoteConfig) as Array<RemoteConfigName>).map(
         (configName) => ({
           name: configName,
@@ -207,6 +236,7 @@ export function createAbby<
   };
 
   const getFeatureFlagValue = (name: FlagName) => {
+    initGlobalLoader();
     return abby.getFeatureFlag(name);
   };
 
@@ -216,6 +246,7 @@ export function createAbby<
   >(
     remoteConfigName: T
   ): RemoteConfigValueStringToType<Config> => {
+    initGlobalLoader();
     return abby.getRemoteConfig(remoteConfigName);
   };
 
@@ -230,6 +261,7 @@ export function createAbby<
     testName: TestName,
     lookupObject?: Lookup
   ): ABTestReturnValue<Lookup, TestVariant> => {
+    initGlobalLoader();
     const variant = abby.getTestVariant(testName);
     if (lookupObject === undefined) {
       return variant as any;
@@ -244,6 +276,7 @@ export function createAbby<
   };
 
   const getVariants = <T extends keyof Tests>(name: T) => {
+    initGlobalLoader();
     return abby.getVariants(name);
   };
 
@@ -255,17 +288,7 @@ export function createAbby<
     abby.updateUserProperties(user);
   };
 
-  if (typeof window !== "undefined") {
-    abby.loadProjectData().then((data) => {
-      if (data) {
-        abbyDataRef.value = data;
-      }
-    });
 
-    abby.subscribe((data) => {
-      abbyDataRef.value = data;
-    });
-  }
 
   const AbbyProvider = {
     name: "AbbyProvider",

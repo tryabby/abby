@@ -18,8 +18,9 @@ var ABStorageService = class {
     return retrievedValue;
   }
   set(projectId, testName, value, options) {
+    var _a;
     Cookie__default.default.set(core.getABStorageKey(projectId, testName), value, {
-      expires: (options == null ? void 0 : options.expiresInDays) ? options.expiresInDays : DEFAULT_COOKIE_AGE
+      expires: (_a = options == null ? void 0 : options.expiresInDays) != null ? _a : DEFAULT_COOKIE_AGE
     });
   }
   remove(projectId, testName) {
@@ -45,7 +46,9 @@ var FFStorageService = class {
 var RCStorageService = class {
   get(projectId, key) {
     const retrievedValue = Cookie__default.default.get(core.getRCStorageKey(projectId, key));
-    return retrievedValue != null ? retrievedValue : null;
+    if (!retrievedValue)
+      return null;
+    return retrievedValue;
   }
   set(projectId, key, value) {
     Cookie__default.default.set(core.getRCStorageKey(projectId, key), value, {
@@ -105,9 +108,29 @@ function createAbby(abbyConfig) {
   );
   const config = abbyConfig;
   const abbyDataRef = vue.shallowRef(abby.getProjectData());
+  let isLoaderInitialized = false;
+  const initGlobalLoader = () => {
+    if (isLoaderInitialized)
+      return;
+    isLoaderInitialized = true;
+    if (typeof window !== "undefined") {
+      abby.loadProjectData().then((data) => {
+        if (data) {
+          abbyDataRef.value = data;
+        }
+      });
+      abby.subscribe((data) => {
+        abbyDataRef.value = data;
+      });
+    }
+  };
   const useAbbyData = () => {
     const injected = vue.inject(ABBY_INJECT_KEY, null);
-    return injected || abbyDataRef;
+    if (!injected) {
+      initGlobalLoader();
+      return abbyDataRef;
+    }
+    return injected;
   };
   const useAbby = (name, lookupObject) => {
     const dataRef = useAbbyData();
@@ -129,7 +152,15 @@ function createAbby(abbyConfig) {
         }
       });
     };
-    notify();
+    vue.watch(
+      selectedVariant,
+      (newVariant, oldVariant) => {
+        if (newVariant && newVariant !== oldVariant) {
+          notify();
+        }
+      },
+      { immediate: true }
+    );
     const onAct = () => {
       const variant2 = selectedVariant.value;
       if (!variant2)
@@ -192,12 +223,15 @@ function createAbby(abbyConfig) {
     });
   };
   const getFeatureFlagValue = (name) => {
+    initGlobalLoader();
     return abby.getFeatureFlag(name);
   };
   const getRemoteConfig = (remoteConfigName) => {
+    initGlobalLoader();
     return abby.getRemoteConfig(remoteConfigName);
   };
   const getABTestValue = (testName, lookupObject) => {
+    initGlobalLoader();
     const variant = abby.getTestVariant(testName);
     if (lookupObject === void 0) {
       return variant;
@@ -210,21 +244,12 @@ function createAbby(abbyConfig) {
     };
   };
   const getVariants = (name) => {
+    initGlobalLoader();
     return abby.getVariants(name);
   };
   const updateUserProperties = (user) => {
     abby.updateUserProperties(user);
   };
-  if (typeof window !== "undefined") {
-    abby.loadProjectData().then((data) => {
-      if (data) {
-        abbyDataRef.value = data;
-      }
-    });
-    abby.subscribe((data) => {
-      abbyDataRef.value = data;
-    });
-  }
   const AbbyProvider = {
     name: "AbbyProvider",
     props: {

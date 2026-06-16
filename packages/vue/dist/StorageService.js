@@ -17,8 +17,9 @@ var ABStorageService = class {
     return retrievedValue;
   }
   set(projectId, testName, value, options) {
+    var _a;
     Cookie__default.default.set(core.getABStorageKey(projectId, testName), value, {
-      expires: (options == null ? void 0 : options.expiresInDays) ? options.expiresInDays : DEFAULT_COOKIE_AGE
+      expires: (_a = options == null ? void 0 : options.expiresInDays) != null ? _a : DEFAULT_COOKIE_AGE
     });
   }
   remove(projectId, testName) {
@@ -44,7 +45,9 @@ var FFStorageService = class {
 var RCStorageService = class {
   get(projectId, key) {
     const retrievedValue = Cookie__default.default.get(core.getRCStorageKey(projectId, key));
-    return retrievedValue != null ? retrievedValue : null;
+    if (!retrievedValue)
+      return null;
+    return retrievedValue;
   }
   set(projectId, key, value) {
     Cookie__default.default.set(core.getRCStorageKey(projectId, key), value, {
