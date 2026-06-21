@@ -25,11 +25,21 @@ export function createAbby<
   const abby = new Abby<FlagName, TestName, Tests, RemoteConfig, RemoteConfigName>(config, {
     get: (key: string) => {
       if (typeof window === "undefined") return null;
-      return localStorage.getItem(key);
+      try {
+        return window.localStorage.getItem(key);
+      } catch {
+        // localStorage can throw SecurityError in private/restricted contexts
+        // or when storage access is blocked; fall back to no stored value.
+        return null;
+      }
     },
     set: (key: string, value: string) => {
       if (typeof window === "undefined") return;
-      localStorage.setItem(key, value);
+      try {
+        window.localStorage.setItem(key, value);
+      } catch {
+        // Ignore SecurityError (private mode) and QuotaExceededError (storage full).
+      }
     },
   });
 

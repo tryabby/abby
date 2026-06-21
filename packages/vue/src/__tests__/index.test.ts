@@ -1,4 +1,5 @@
-import { describe, it, expect, vi, beforeEach } from "vitest";
+import { describe, it, expect, expectTypeOf, vi, beforeEach } from "vitest";
+import { AbbyEventType, HttpService } from "@tryabby/core";
 import { createAbby } from "../index";
 
 vi.mock("@tryabby/core", async (importOriginal) => {
@@ -76,7 +77,11 @@ describe("createAbby", () => {
       expect(typeof onAct).toBe("function");
     });
 
-    it("onAct can be called without throwing", () => {
+    it("onAct sends the correct ACT payload", () => {
+      const sendDataSpy = vi
+        .spyOn(HttpService, "sendData")
+        .mockReturnValue(undefined as never);
+
       const { useAbby } = createAbby({
         projectId: "test-project",
         environments: [],
@@ -88,8 +93,45 @@ describe("createAbby", () => {
         remoteConfig: {},
       });
 
-      const { onAct } = useAbby("buttonColor");
-      expect(() => onAct()).not.toThrow();
+      const { variant, onAct } = useAbby("buttonColor");
+      onAct();
+
+      expect(sendDataSpy).toHaveBeenCalledTimes(1);
+      const payload = sendDataSpy.mock.calls[0]![0];
+      expect(payload.type).toBe(AbbyEventType.ACT);
+      expect(payload.data).toMatchObject({
+        projectId: "test-project",
+        testName: "buttonColor",
+        selectedVariant: variant.value,
+      });
+
+      sendDataSpy.mockRestore();
+    });
+  });
+
+  describe("useRemoteConfig", () => {
+    it("returns a ref with the remote config value (runtime + type)", () => {
+      const { useRemoteConfig } = createAbby({
+        projectId: "test-project",
+        environments: [],
+        currentEnvironment: "",
+        tests: {},
+        flags: [],
+        remoteConfig: { theme: "String" },
+        settings: {
+          remoteConfig: {
+            defaultValues: {
+              String: "default-theme",
+            },
+          },
+        },
+      });
+
+      const config = useRemoteConfig("theme");
+      expect(config).toHaveProperty("value");
+      expect(config.value).toBe("default-theme");
+      // A "String" remote config resolves to a string-typed ref value.
+      expectTypeOf(config.value).toBeString();
     });
   });
 
