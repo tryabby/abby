@@ -1,0 +1,46 @@
+{
+  "name": "@tryabby/vue",
+  "version": "0.1.0",
+  "description": "Vue 3 & Nuxt integration for Abby",
+  "main": "dist/index.js",
+  "files": ["dist"],
+  "module": "dist/index.mjs",
+  "types": "dist/index.d.ts",
+  "homepage": "https://docs.tryabby.com",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.js"
+    }
+  },
+  "scripts": {
+    "build": "tsup src/index.ts",
+    "dev": "pnpm run build --watch",
+    "test": "vitest",
+    "typecheck": "tsc --noEmit"
+  },
+  "keywords": ["abby", "vue", "nuxt", "feature-flags", "ab-testing"],
+  "author": "",
+  "license": "ISC",
+  "peerDependencies": {
+    "vue": "^3.3.0"
+  },
+  "devDependencies": {
+    "@types/js-cookie": "^3.0.3",
+    "@vue/test-utils": "^2.4.6",
+    "jsdom": "^20.0.3",
+    "msw": "^0.49.1",
+    "node-fetch": "^3.3.0",
+    "tsconfig": "workspace:*",
+    "tsup": "^6.5.0",
+    "typescript": "5.5.4",
+    "vite": "5.4.0",
+    "vitest": "2.0.5",
+    "vue": "^3.4.0"
+  },
+  "dependencies": {
+    "@tryabby/core": "workspace:*",
+    "js-cookie": "^3.0.5"
+  }
+}
