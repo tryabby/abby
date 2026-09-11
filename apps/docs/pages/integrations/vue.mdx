@@ -1,0 +1,152 @@
+import { Tab, Tabs, Callout } from "nextra-theme-docs";
+
+# Vue
+
+Our Vue integration works with Vue 3 and Nuxt. It supports Single Page Applications as well as Server Side Rendered applications.
+
+## Installation
+
+To get started, install `@tryabby/vue` using your preferred package manager.
+
+<Tabs items={["npm", "yarn", "pnpm"]}>
+  <Tab>
+    ```bash
+    npm i @tryabby/vue vue
+    ```
+  </Tab>
+  <Tab>
+    ```bash
+    yarn add @tryabby/vue vue
+    ```
+  </Tab>
+  <Tab>
+    ```bash
+    pnpm i @tryabby/vue vue
+    ```
+  </Tab>
+</Tabs>
+
+### Create your config
+
+Configure your project by defining an `abby.config.ts` file in your root folder:
+
+```ts
+// abby.config.ts
+import { defineConfig } from "@tryabby/vue";
+
+export default defineConfig({
+  projectId: "<YOUR_PROJECT_ID>",
+  currentEnvironment: process.env.NODE_ENV,
+  environments: ["production", "development"],
+  tests: {
+    bannerVariant: { variants: ["blue", "green"] },
+  },
+  flags: ["newFeature", "darkMode"],
+  remoteConfig: {
+    customButtonText: "String",
+  },
+});
+```
+
+### Create your Instance
+
+Create your typed composables, plugin, and provider using `createAbby`:
+
+```ts
+// abby.ts
+import { createAbby } from "@tryabby/vue";
+import abbyConfig from "./abby.config";
+
+export const {
+  AbbyProvider,
+  AbbyPlugin,
+  useAbby,
+  useFeatureFlag,
+  useRemoteConfig,
+  getFeatureFlagValue,
+  getRemoteConfig,
+} = createAbby(abbyConfig);
+```
+
+### Setup your Application
+
+You can register Abby either via the Vue plugin:
+
+```ts
+// main.ts
+import { createApp } from "vue";
+import App from "./App.vue";
+import { AbbyPlugin } from "./abby";
+
+const app = createApp(App);
+app.use(AbbyPlugin);
+app.mount("#app");
+```
+
+Or by wrapping your application in `<AbbyProvider>`:
+
+```vue
+<script setup lang="ts">
+import { AbbyProvider } from "./abby";
+</script>
+
+<template>
+  <AbbyProvider>
+    <router-view />
+  </AbbyProvider>
+</template>
+```
+
+## Usage
+
+### useAbby
+
+The `useAbby` composable returns the currently active variant (reactive) and an `onAct` function for tracking conversions:
+
+```vue
+<script setup lang="ts">
+import { useAbby } from "./abby";
+
+const { variant, onAct } = useAbby("bannerVariant");
+</script>
+
+<template>
+  <div>
+    <button :class="variant" @click="onAct">
+      Click Me
+    </button>
+  </div>
+</template>
+```
+
+### useFeatureFlag
+
+Access feature flags reactively:
+
+```vue
+<script setup lang="ts">
+import { useFeatureFlag } from "./abby";
+
+const isDarkMode = useFeatureFlag("darkMode");
+</script>
+
+<template>
+  <div v-if="isDarkMode">Dark Mode Active</div>
+</template>
+```
+
+### useRemoteConfig
+
+Access dynamic remote configuration values:
+
+```vue
+<script setup lang="ts">
+import { useRemoteConfig } from "./abby";
+
+const buttonText = useRemoteConfig("customButtonText");
+</script>
+
+<template>
+  <button>{{ buttonText }}</button>
+</template>
+```
