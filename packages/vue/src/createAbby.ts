@@ -18,6 +18,7 @@ import {
   onUnmounted,
   provide,
   ref,
+  watch,
   type App,
   type ComputedRef,
   type Ref,
@@ -142,7 +143,6 @@ export function createAbby<
     };
 
     onMounted(() => {
-      syncVariant();
       if (!name || !selectedVariant.value) return;
       HttpService.sendData({
         url: config.apiUrl,
@@ -154,6 +154,8 @@ export function createAbby<
         },
       });
     });
+
+    watch(data, syncVariant, { immediate: true });
 
     const onAct = () => {
       if (!selectedVariant.value) return;
@@ -169,8 +171,11 @@ export function createAbby<
     };
 
     const variant = computed(() => {
-      syncVariant();
-      const current = selectedVariant.value;
+      const current =
+        data.value?.tests[name as unknown as TestName]?.selectedVariant ??
+        abby.getProjectData().tests[name as unknown as TestName]
+          ?.selectedVariant ??
+        "";
       if (lookupObject) {
         return lookupObject[current as TestVariant];
       }
