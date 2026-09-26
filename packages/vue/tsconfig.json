@@ -1,0 +1,17 @@
+{
+  "extends": "tsconfig/base.json",
+  "compilerOptions": {
+    "lib": ["ESNext", "DOM"],
+    "types": ["vitest/globals"],
+    "jsx": "preserve",
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    "target": "ES2018",
+    "baseUrl": ".",
+    "paths": {
+      "@tryabby/core": ["../core/src/index.ts"],
+      "@tryabby/core/validation": ["../core/src/validation/index.ts"]
+    }
+  },
+  "include": ["src", "tests"]
+}
