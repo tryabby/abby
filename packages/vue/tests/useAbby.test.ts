@@ -154,19 +154,21 @@ describe("useAbby", () => {
   });
 
   it("should ping the current info on mount", async () => {
+    vi.restoreAllMocks();
+    document.cookie = "";
     const spy = vi.spyOn(HttpService, "sendData");
     const { AbbyProvider, useAbby } = createAbby({
       environments: [""],
       currentEnvironment: "",
-      projectId: "123",
+      projectId: "ping-test-123",
       tests: {
-        test: { variants: ["A", "B", "C"] },
+        pingTest: { variants: ["A", "B", "C"] },
       },
     });
 
     const TestComponent = defineComponent({
       setup() {
-        const { variant, onAct } = useAbby("test");
+        const { variant, onAct } = useAbby("pingTest");
         return { variant, onAct };
       },
       render() {
@@ -185,7 +187,12 @@ describe("useAbby", () => {
     await nextTick();
 
     expect(spy).toHaveBeenCalledWith(
-      expect.objectContaining({ type: AbbyEventType.PING })
+      expect.objectContaining({
+        type: AbbyEventType.PING,
+        data: expect.objectContaining({
+          selectedVariant: expect.stringMatching(/^(A|B|C)$/),
+        }),
+      })
     );
   });
 
