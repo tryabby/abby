@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Abby · Vue integration</title>
+    <link rel="icon" href="data:," />
+    <style>
+      :root { color-scheme: light; font-family: system-ui, sans-serif; color: #19312d; background: #fafbf7; }
+      body { max-width: 760px; margin: 56px auto; padding: 0 24px; }
+      h1 { font-size: clamp(28px, 5vw, 40px); letter-spacing: -.04em; margin-bottom: 12px; }
+      p { line-height: 1.6; }
+      table { width: 100%; border-collapse: collapse; margin: 28px 0; text-align: left; }
+      th, td { border-bottom: 1px solid #c8d0c8; padding: 16px 8px; }
+      th { width: 55%; }
+      code { overflow-wrap: anywhere; font-size: .9em; }
+      button { font: inherit; cursor: pointer; padding: 11px 16px; color: inherit; background: white; border: 1px solid #677a72; border-radius: 4px; }
+      button:hover { background: #eaf1e9; }
+      button:active { background: #dce8da; }
+      button:focus-visible { outline: 3px solid #186b55; outline-offset: 3px; }
+      button:disabled { cursor: wait; opacity: .6; }
+      .actions { display: flex; flex-wrap: wrap; gap: 12px; }
+      #message { min-height: 28px; }
+      pre { white-space: pre-wrap; overflow-wrap: anywhere; background: #eef2eb; padding: 20px; }
+      small { color: #4c6159; }
+      @media (max-width: 480px) { body { margin-top: 24px; padding: 0 16px; } th, td { padding: 12px 4px; } th { width: 65%; } }
+    </style>
+  </head>
+  <body>
+    <h1>Abby for Vue</h1>
+    <p>A local example of feature flags, remote configuration and A/B conversion events.</p>
+    <small>All data is synthetic. Requests stay on this local server.</small>
+    <div id="app"></div>
+    <noscript><p>Enable JavaScript to run the Vue example.</p></noscript>
+    <script type="module" src="/main.ts"></script>
+  </body>
+</html>

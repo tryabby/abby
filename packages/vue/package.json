@@ -1,0 +1,42 @@
+{
+  "name": "@tryabby/vue",
+  "version": "0.0.0",
+  "description": "Vue 3 composables for Abby",
+  "main": "dist/index.js",
+  "module": "dist/index.mjs",
+  "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.js"
+    }
+  },
+  "files": ["dist"],
+  "sideEffects": false,
+  "license": "AGPL-3.0-only",
+  "scripts": {
+    "build": "tsup src/index.ts",
+    "dev": "pnpm build --watch",
+    "example": "vite --config example/vite.config.ts",
+    "test": "vitest run && pnpm typecheck",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@tryabby/core": "workspace:*",
+    "js-cookie": "^3.0.1"
+  },
+  "peerDependencies": {
+    "vue": "^3.3.0"
+  },
+  "devDependencies": {
+    "@types/js-cookie": "^3.0.3",
+    "jsdom": "^20.0.3",
+    "tsconfig": "workspace:*",
+    "tsup": "^6.5.0",
+    "typescript": "5.5.4",
+    "vite": "5.4.0",
+    "vitest": "2.0.5",
+    "vue": "3.5.12"
+  }
+}
