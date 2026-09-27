@@ -1,0 +1,89 @@
+# API Reference (Vue)
+
+## createAbby
+
+### Parameters
+
+The `createAbby` function takes an object as a parameter. The object can contain the following properties:
+
+| Name               | Type     | Required | Description                                                                                                                                       |
+| ------------------ | -------- | :------: | ------------------------------------------------------------------------------------------------------------------------------------------------- |
+| projectId          | `string` |    YES   | The ID of your project in Abby                                                                                                                    |
+| apiUrl             | `string` |          | The URL of the Abby API. Defaults to the hosted version                                                                                            |
+| currentEnvironment | `string` |    YES   | The current environment of your application                                                                                                        |
+| tests              | `object` |          | An object containing your defined A/B Tests                                                                                                       |
+| flags              | `array`  |          | An array containing your defined Feature Flags                                                                                                    |
+| remoteConfig       | `object` |          | An object containing the name of your remote config and their type                                                                                |
+| settings           | `object` |          | An object with additional settings for Abby                                                                                                        |
+| user               | `object` |          | Optional configuration for user properties that can be used for targeting feature flags. This enables conditional rules based on user attributes. |
+
+### Return value
+
+| Name                       | Type                                                | Description                                                                             |
+| -------------------------- | --------------------------------------------------- | --------------------------------------------------------------------------------------- |
+| `AbbyProvider`             | `Component`                                         | Loads the project data and provides it to all child components                            |
+| `AbbyPlugin`               | `Plugin`                                            | Vue plugin, install it with `app.use(AbbyPlugin, initialData?)`                           |
+| `useAbby`                  | `(name, lookupObject?) => { variant, onAct }`        | Returns the current variant of a test and a function to track an act                       |
+| `useFeatureFlag`           | `(name) => ComputedRef<boolean>`                     | Returns the value of a feature flag                                                       |
+| `useFeatureFlags`          | `() => ComputedRef<Array<{ name, value }>>`          | Returns all feature flags with their current value                                        |
+| `useRemoteConfig`          | `(name) => ComputedRef<value>`                       | Returns the value of a remote config                                                      |
+| `useRemoteConfigVariables` | `() => ComputedRef<Array<{ name, value }>>`          | Returns all remote config variables with their current value                               |
+| `getFeatureFlagValue`      | `(name) => boolean`                                  | Non reactive helper to read a feature flag                                                |
+| `getRemoteConfig`          | `(name) => value`                                    | Non reactive helper to read a remote config                                               |
+| `getABTestValue`           | `(name, lookupObject?) => value`                     | Non reactive helper to read the variant of a test                                         |
+| `getVariants`              | `(name) => string[]`                                 | Returns all variants of a test                                                            |
+| `getABResetFunction`       | `() => void`                                          | Returns a function which resets the persisted variant of a test                           |
+| `updateUserProperties`     | `(userProperties) => void`                           | Updates the user properties which are sent to Abby                                        |
+| `__abby__`                 | `Abby`                                               | The underlying `Abby` instance of `@tryabby/core`                                          |
+
+## AbbyProvider
+
+### Props
+
+| Name          | Type               | Required | Description                                                                                                |
+| ------------- | ------------------ | :------: | ---------------------------------------------------------------------------------------------------------- |
+| `initialData` | `AbbyDataResponse` |          | Project data which is used instead of fetching it from the Abby API (for example during server rendering)   |
+
+## useAbby
+
+### Parameters
+
+| Name           | Type     | Required | Description                                                                            |
+| -------------- | -------- | :------: | -------------------------------------------------------------------------------------- |
+| `name`         | `string` |    YES   | The name of your A/B test                                                               |
+| `lookupObject` | `object` |          | A map from variant to the value you want to get back from `variant`, e.g. a component    |
+
+### Return value
+
+| Name      | Type                                  | Description                                                |
+| --------- | ------------------------------------- | ---------------------------------------------------------- |
+| `variant` | `ComputedRef<Variant \| LookupValue>` | The currently selected variant (or its mapped value)        |
+| `onAct`   | `() => void`                          | Call this function to track an act for the current variant   |
+
+## useFeatureFlag
+
+### Parameters
+
+| Name   | Type     | Required | Description                     |
+| ------ | -------- | :------: | ------------------------------- |
+| `name` | `string` |    YES   | The name of your feature flag   |
+
+### Return value
+
+| Name    | Type                    | Description                   |
+| ------- | ----------------------- | ----------------------------- |
+| `value` | `ComputedRef<boolean>`  | The value of the feature flag  |
+
+## useRemoteConfig
+
+### Parameters
+
+| Name   | Type     | Required | Description                    |
+| ------ | -------- | :------: | ------------------------------ |
+| `name` | `string` |    YES   | The name of your remote config  |
+
+### Return value
+
+| Name    | Type                        | Description                     |
+| ------- | --------------------------- | ------------------------------- |
+| `value` | `ComputedRef<ConfigValue>`  | The value of the remote config  |

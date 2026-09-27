@@ -3,6 +3,7 @@
   "react": "React",
   "remix": "Remix",
   "svelte": "Svelte",
+  "vue": "Vue",
   "angular": "Angular",
   "http": "HTTP API",
   "cli": "CLI",
