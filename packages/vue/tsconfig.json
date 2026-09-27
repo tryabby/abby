@@ -1,0 +1,7 @@
+{
+    "extends": "tsconfig/react-library.json",
+    "compilerOptions": {
+        "lib": ["ESNext", "DOM"],
+        "types": ["vitest/globals"]
+    }
+}
