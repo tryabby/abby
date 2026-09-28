@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>@tryabby/vue demo (issue #68)</title>
+  <style>body{font-family:system-ui,sans-serif;max-width:640px;margin:40px auto;padding:0 16px} .card{border:1px solid #ddd;border-radius:8px;padding:16px;margin:12px 0} button{padding:8px 16px;cursor:pointer}</style>
+  <script type="importmap">
+    {"imports": {
+      "vue": "/packages/vue/node_modules/vue/dist/vue.esm-bundler.js",
+      "@tryabby/vue": "/packages/vue/dist/index.mjs",
+      "@tryabby/core": "/packages/core/dist/index.mjs",
+      "js-cookie": "/packages/vue/node_modules/js-cookie/dist/js.cookie.mjs",
+      "@vue/runtime-dom": "/node_modules/.pnpm/@vue+runtime-dom@3.5.43/node_modules/@vue/runtime-dom/dist/runtime-dom.esm-bundler.js",
+      "@vue/runtime-core": "/node_modules/.pnpm/@vue+runtime-dom@3.5.43/node_modules/@vue/runtime-core/dist/runtime-core.esm-bundler.js",
+      "@vue/shared": "/node_modules/.pnpm/@vue+runtime-dom@3.5.43/node_modules/@vue/shared/dist/shared.esm-bundler.js",
+      "@vue/reactivity": "/node_modules/.pnpm/@vue+runtime-dom@3.5.43/node_modules/@vue/reactivity/dist/reactivity.esm-bundler.js",
+      "@vue/compiler-dom": "/node_modules/.pnpm/@vue+compiler-dom@3.5.43/node_modules/@vue/compiler-dom/dist/compiler-dom.esm-bundler.js",
+      "@vue/compiler-core": "/node_modules/.pnpm/@vue+compiler-core@3.5.43/node_modules/@vue/compiler-core/dist/compiler-core.esm-bundler.js"
+    }}
+  </script>
+</head>
+<body>
+  <h1>@tryabby/vue demo</h1>
+  <div id="app">loading…</div>
+  <script>window.process = window.process || { env: { NODE_ENV: 'development' } };</script>
+  <script type="module">
+    import { createApp, h } from 'vue';
+    import { createAbby } from '@tryabby/vue';
+
+    const { AbbyProvider, useAbby, useFeatureFlag, useRemoteConfig } = createAbby({
+      environments: [''],
+      currentEnvironment: '',
+      projectId: 'demo',
+      tests: { footer: { variants: ['OldFooter', 'NewFooter'] } },
+      flags: ['newHeader'],
+      remoteConfig: { welcomeText: 'String' },
+    });
+
+    // deterministic: weights [0,1] always select NewFooter
+    const initialData = {
+      tests: [{ name: 'footer', weights: [0, 1] }],
+      flags: [{ name: 'newHeader', value: true }],
+      remoteConfig: [{ name: 'welcomeText', value: 'Hello from Abby Vue!' }],
+    };
+
+    const Demo = {
+      setup() {
+        const { variant, onAct } = useAbby('footer');
+        const header = useFeatureFlag('newHeader');
+        const welcome = useRemoteConfig('welcomeText');
+        return () => h('div', [
+          h('div', { class: 'card' }, ['useAbby("footer") → variant: ', h('b', String(variant.value))]),
+          h('div', { class: 'card' }, ['useFeatureFlag("newHeader") → ', h('b', String(header.value))]),
+          h('div', { class: 'card' }, ['useRemoteConfig("welcomeText") → ', h('b', String(welcome.value))]),
+          h('button', { onClick: onAct }, 'onAct() (sends ACT ping)'),
+        ]);
+      },
+    };
+
+    createApp({ render: () => h(AbbyProvider, { initialData }, { default: () => h(Demo) }) }).mount('#app');
+  </script>
+</body>
+</html>

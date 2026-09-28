@@ -1,0 +1,10 @@
+{
+    "extends": "tsconfig/base.json",
+    "compilerOptions": {
+        "lib": ["ESNext", "DOM"],
+        "module": "ESNext",
+        "moduleResolution": "bundler",
+        "target": "es2017",
+        "types": ["vitest/globals"]
+    }
+}
