@@ -1,0 +1,59 @@
+{
+  "name": "@tryabby/vue",
+  "version": "0.0.1",
+  "description": "Vue integration for Abby A/B testing, feature flags, and remote config.",
+  "keywords": [
+    "abby",
+    "vue",
+    "nuxt",
+    "ab-testing",
+    "feature-flags",
+    "remote-config"
+  ],
+  "author": "Abby Team",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/tryabby/abby.git",
+    "directory": "packages/vue"
+  },
+  "main": "./dist/index.js",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsup",
+    "dev": "tsup --watch",
+    "test": "vitest",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@tryabby/core": "workspace:^"
+  },
+  "peerDependencies": {
+    "vue": "^3.0.0"
+  },
+  "devDependencies": {
+    "@tryabby/core": "workspace:^",
+    "@vue/test-utils": "^2.4.6",
+    "jsdom": "^24.0.0",
+    "tsup": "^8.0.2",
+    "typescript": "^5.4.5",
+    "vite": "^5.2.11",
+    "vitest": "^1.6.0",
+    "vue": "^3.4.27"
+  },
+  "publishConfig": {
+    "access": "public"
+  }
+}
+
