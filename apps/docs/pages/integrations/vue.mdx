@@ -1,0 +1,110 @@
+import { Tab, Tabs, Callout } from "nextra-theme-docs";
+
+# Vue
+
+Our Vue integration works with Vue 3 and is designed for SPAs as well as Nuxt apps.
+
+<Callout>
+  Prefer the React docs for conceptual overlap: [React integration](/integrations/react)
+</Callout>
+
+## Installation
+
+<Tabs items={["npm", "yarn", "pnpm"]}>
+  <Tab>
+    ```bash
+    npm i @tryabby/vue
+    ```
+  </Tab>
+  <Tab>
+    ```bash
+    yarn add @tryabby/vue
+    ```
+  </Tab>
+  <Tab>
+    ```bash
+    pnpm i @tryabby/vue
+    ```
+  </Tab>
+</Tabs>
+
+## Create your config
+
+```ts
+// abby.ts
+import { createAbby, defineConfig } from "@tryabby/vue";
+
+export const abby = createAbby({
+  projectId: "your-project-id",
+  currentEnvironment: process.env.NODE_ENV!,
+  environments: ["development", "production"],
+  tests: {
+    Home: {
+      variants: ["A", "B"],
+    },
+  },
+  flags: ["showBanner"],
+  remoteConfig: {
+    title: "String",
+  },
+});
+
+export const {
+  AbbyProvider,
+  AbbyPlugin,
+  useAbby,
+  useFeatureFlag,
+  useRemoteConfig,
+} = abby;
+```
+
+You can also share the same config object via `defineConfig` like the other packages.
+
+## Provider vs Plugin
+
+Wrap part of your tree with `AbbyProvider`, or install `AbbyPlugin` on the Vue app (recommended for Nuxt / whole-app setup):
+
+```ts
+import { createApp } from "vue";
+import { AbbyPlugin } from "./abby";
+import App from "./App.vue";
+
+createApp(App).use(AbbyPlugin).mount("#app");
+```
+
+## useAbby
+
+```vue
+<script setup lang="ts">
+import { useAbby } from "./abby";
+
+const { variant, onAct } = useAbby("Home");
+</script>
+
+<template>
+  <div>
+    <p>You are in variant {{ variant }}</p>
+    <button @click="onAct">Convert</button>
+  </div>
+</template>
+```
+
+`variant` is a `ComputedRef`. Optional lookup maps work the same as in React:
+
+```ts
+const { variant } = useAbby("Home", {
+  A: "Control copy",
+  B: "New copy",
+});
+```
+
+## useFeatureFlag / useRemoteConfig
+
+```ts
+const showBanner = useFeatureFlag("showBanner"); // ComputedRef<boolean>
+const title = useRemoteConfig("title"); // ComputedRef<string>
+```
+
+## Sync helpers
+
+`getABTestValue`, `getFeatureFlagValue`, `getRemoteConfig`, `getVariants`, and `getABResetFunction` match the React package and can be used outside of `setup()`.
