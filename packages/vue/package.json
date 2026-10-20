@@ -1,0 +1,33 @@
+{
+  "name": "@tryabby/vue",
+  "version": "1.0.0",
+  "main": "./dist/index.js",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.ts",
+  "sideEffects": false,
+  "license": "MIT",
+  "files": [
+    "dist/**"
+  ],
+  "scripts": {
+    "build": "tsup",
+    "dev": "tsup --watch",
+    "test": "vitest run",
+    "check-types": "tsc --noEmit"
+  },
+  "peerDependencies": {
+    "vue": "^3.2.0"
+  },
+  "dependencies": {
+    "@tryabby/core": "workspace:*",
+    "js-cookie": "^3.0.5"
+  },
+  "devDependencies": {
+    "tsconfig": "workspace:*",
+    "@types/js-cookie": "^3.0.3",
+    "tsup": "^6.6.3",
+    "typescript": "5.5.4",
+    "vitest": "2.0.5",
+    "vue": "^3.4.0"
+  }
+}
