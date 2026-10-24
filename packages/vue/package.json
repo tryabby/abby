@@ -1,0 +1,43 @@
+{
+  "name": "@tryabby/vue",
+  "version": "0.1.0",
+  "description": "Typed Vue composables for Abby feature flags, A/B tests and remote config",
+  "main": "dist/index.js",
+  "module": "dist/index.mjs",
+  "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.js"
+    }
+  },
+  "files": ["dist"],
+  "sideEffects": false,
+  "scripts": {
+    "build": "tsup src/index.ts",
+    "dev": "pnpm run build --watch",
+    "test": "pnpm --filter @tryabby/core build && pnpm run build && vitest run && tsc --noEmit -p tsconfig.test.json",
+    "demo:build": "vite build --config demo/vite.config.ts"
+  },
+  "homepage": "https://docs.tryabby.com",
+  "license": "ISC",
+  "dependencies": {
+    "@tryabby/core": "workspace:*",
+    "js-cookie": "^3.0.1"
+  },
+  "peerDependencies": { "vue": "^3.3.0" },
+  "devDependencies": {
+    "@types/js-cookie": "^3.0.3",
+    "@types/node": "^22.5.1",
+    "@vue/server-renderer": "3.5.13",
+    "@vue/test-utils": "2.4.6",
+    "jsdom": "^20.0.3",
+    "tsconfig": "workspace:*",
+    "tsup": "^6.5.0",
+    "typescript": "5.5.4",
+    "vite": "5.4.0",
+    "vitest": "2.0.5",
+    "vue": "3.5.13"
+  }
+}

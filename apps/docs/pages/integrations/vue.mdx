@@ -1,0 +1,46 @@
+# Vue
+
+Use `@tryabby/vue` with Vue 3.3 or later. It builds on Abby core and provides typed, reactive A/B tests, feature flags and remote config.
+
+```sh
+pnpm add @tryabby/vue
+```
+
+```ts
+// abby.ts (client-only app)
+import { createAbby } from "@tryabby/vue";
+
+export const abby = createAbby({
+  projectId: "YOUR_PROJECT_ID",
+  environments: ["production"],
+  currentEnvironment: "production",
+  tests: { checkout: { variants: ["original", "fresh"] } },
+  flags: ["premium"],
+  remoteConfig: { headline: "String" },
+});
+```
+
+Wrap the app with `abby.AbbyProvider`, then call the composables in a descendant's setup function:
+
+```vue
+<script setup lang="ts">
+import { abby } from "./abby";
+const { variant, onAct } = abby.useAbby("checkout");
+const premium = abby.useFeatureFlag("premium");
+const headline = abby.useRemoteConfig("headline");
+</script>
+
+<template>
+  <h1>{{ headline }}</h1>
+  <button v-if="variant" type="button" @click="onAct">{{ variant }}</button>
+  <p v-if="premium">Premium is enabled</p>
+</template>
+```
+
+Values are readonly computed refs. Vue unwraps them in templates; use `.value` in TypeScript. A/B variants are pending (`undefined`) through SSR and initial hydration, then resolve after mount. Names, variant unions, complete lookup objects and remote config return types are inferred from your configuration.
+
+The provider fetches once on mount unless `initialData` was supplied. It accepts an SSR cookie header through `cookies` and typed targeting properties through `userProperties`. Direct getters, list composables, reset helpers, consent controls and the existing devtools are also supported.
+
+For SSR, create a fresh SDK instance for each request and pass matching initial data to hydration. A Nuxt plugin can create this instance and expose it as `$abby`; do not export a shared SDK singleton from a server module.
+
+See the [Vue package guide](https://github.com/tryabby/abby/tree/main/packages/vue#readme) for the complete API, provider setup, cookie behavior, devtools and a Nuxt plugin example.
