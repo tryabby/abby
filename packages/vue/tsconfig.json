@@ -1,0 +1,16 @@
+{
+  "extends": "tsconfig/base.json",
+  "include": [
+    "src",
+    "tests"
+  ],
+  "compilerOptions": {
+    "lib": [
+      "ESNext",
+      "DOM"
+    ],
+    "types": [
+      "vitest/globals"
+    ]
+  }
+}
