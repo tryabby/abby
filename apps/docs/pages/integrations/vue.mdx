@@ -1,0 +1,205 @@
+import { Tab, Tabs, Callout } from "nextra-theme-docs";
+
+# Vue
+
+Our Vue integration works with Vue 3.5 or later. It works with SPAs as well as server side rendered apps like [Nuxt](#nuxt).
+
+## Installation
+
+To get started make sure to install the package using your favorite package manager.
+
+<Tabs items={["npm", "yarn", "pnpm"]}>
+  <Tab>
+    ```bash
+    npm i @tryabby/vue
+    ```
+  </Tab>
+  <Tab>
+    ```bash
+    yarn add @tryabby/vue
+    ```
+  </Tab>
+  <Tab>
+    ```bash
+    pnpm i @tryabby/vue
+    ```
+  </Tab>
+</Tabs>
+
+### Create your config
+
+To use Abby you need to create your config first. You can do this by creating a file called `abby.config.ts` in your `root` folder. This file will be used to configure your project.
+
+```ts
+// abby.config.ts
+import { defineConfig } from "@tryabby/vue";
+
+export default defineConfig({
+  projectId: "<YOUR_PROJECT_ID>",
+  currentEnvironment: process.env.NODE_ENV,
+  environments: ["production", "development"],
+  tests: {
+    test: { variants: ["A", "B"] },
+    footer: { variants: ["dark", "orange", "green"] },
+    // ... your tests
+  },
+  flags: ["darkMode", "newFeature"],
+  remoteConfig: {
+    customButtonText: "String",
+  },
+});
+```
+
+### Create your Instance
+
+To use Abby in your code you will need to create typed composables and a plugin first. You can do this by using the `createAbby` function.
+Please copy the id of your project from the dashboard to get started.
+
+```ts
+// abby.ts
+import { createAbby } from "@tryabby/vue";
+import abbyConfig from "../abby.config";
+
+export const { AbbyPlugin, useAbby, useFeatureFlag, useRemoteConfig } =
+  createAbby(abbyConfig);
+```
+
+### Install the plugin
+
+The composables need the `AbbyPlugin` to be installed in your app. The plugin loads your project's data in the background.
+
+```ts
+// main.ts
+import { createApp } from "vue";
+import App from "./App.vue";
+import { AbbyPlugin } from "./abby";
+
+createApp(App).use(AbbyPlugin).mount("#app");
+```
+
+You can now import the composables created by `createAbby` and use them in your components.
+
+## Usage
+
+The composables return [computed refs](https://vuejs.org/api/reactivity-core.html#computed), so your components update automatically
+when your data is loaded or when you change something in the [Devtools](/devtools).
+
+### useAbby
+
+The `useAbby` composable returns an object with the following values:
+
+- `variant` - A computed ref with the variant that is currently active
+- `onAct` - A function that you can call to trigger any kind of interaction with the tested component (will be used to track conversions)
+
+```vue
+<script setup lang="ts">
+import { useAbby } from "./abby";
+
+const { variant, onAct } = useAbby("footer");
+</script>
+
+<template>
+  <button
+    :class="{
+      'bg-gray-900': variant === 'dark',
+      'bg-orange-500': variant === 'orange',
+      'bg-green-500': variant === 'green',
+    }"
+    @click="onAct"
+  >
+    Cool Button
+  </button>
+</template>
+```
+
+Optionally, you can pass a lookup object to automatically map the selected variant to a custom value.
+
+```vue
+<script setup lang="ts">
+import { useAbby } from "./abby";
+
+const { variant, onAct } = useAbby("footer", {
+  dark: "bg-gray-900",
+  orange: "bg-orange-500",
+  green: "bg-green-500",
+});
+</script>
+
+<template>
+  <button :class="variant" @click="onAct">Cool Button</button>
+</template>
+```
+
+<Callout>
+  The variant is an empty string until the component is mounted and the project data is loaded. The server can't know which
+  variant a user is going to see, so the variant is selected in the browser, using the weights from your dashboard.
+  This way server side rendering won't cause any hydration mismatches.
+</Callout>
+
+### useFeatureFlag
+
+The `useFeatureFlag` composable returns a computed boolean that indicates if the flag is active or not.
+
+```vue
+<script setup lang="ts">
+import { useFeatureFlag } from "./abby";
+
+const hasNewFeature = useFeatureFlag("newFeature");
+</script>
+
+<template>
+  <p v-if="hasNewFeature">Here is the new feature</p>
+</template>
+```
+
+### useRemoteConfig
+
+The `useRemoteConfig` composable returns a computed value as specified in your `abby.config.ts`.
+The type of the returned value will automatically be inferred from your config.
+
+```vue
+<script setup lang="ts">
+import { useRemoteConfig } from "./abby";
+
+const customButtonText = useRemoteConfig("customButtonText");
+</script>
+
+<template>
+  <button>{{ customButtonText }}</button>
+</template>
+```
+
+### Devtools
+
+To use the [Devtools](/devtools) you need to install the `@tryabby/devtools` package and render the component created by `withDevtools`.
+They are only shown in development unless you pass `dangerouslyForceShow: true`.
+
+```vue
+<script setup lang="ts">
+import AbbyDevtoolsFactory from "@tryabby/devtools";
+import { withDevtools } from "./abby";
+
+const AbbyDevtools = withDevtools(AbbyDevtoolsFactory);
+</script>
+
+<template>
+  <AbbyDevtools />
+</template>
+```
+
+## Nuxt
+
+In Nuxt you install the plugin in a [Nuxt plugin](https://nuxt.com/docs/guide/directory-structure/plugins). If you load the data with `loadInitialData`,
+your flags and remote config are already rendered on the server, and the client reuses the data from the payload instead of fetching it again.
+
+```ts
+// plugins/abby.ts
+import { AbbyPlugin, loadInitialData } from "~/abby";
+
+export default defineNuxtPlugin(async (nuxtApp) => {
+  const { data } = await useAsyncData("abby", () => loadInitialData());
+  nuxtApp.vueApp.use(AbbyPlugin, { initialData: data.value ?? undefined });
+});
+```
+
+Make sure to also export `loadInitialData` from your `abby.ts`.
