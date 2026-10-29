@@ -5,6 +5,7 @@ import GithubProvider from "next-auth/providers/github";
 import GoogleProvider from "next-auth/providers/google";
 
 import { trackSignup } from "lib/logsnag";
+import { UTM_COOKIE_NAME, parseUtmCookie } from "lib/utm";
 import { env } from "../../../env/server.mjs";
 import { prisma } from "../../../server/db/client";
 import { ProjectService } from "../../../server/services/ProjectService";
@@ -121,5 +122,28 @@ export default (req: NextApiRequest, res: NextApiResponse) => {
     console.log("Suspicous request to /api/auth/callback/email", req.method);
     return res.status(200).end();
   }
-  return NextAuth(authOptions)(req, res);
+  return NextAuth({
+    ...authOptions,
+    events: {
+      ...authOptions.events,
+      // the request is only available here, so the UTM cookie is read per request
+      async createUser(message) {
+        // saved first, so a failing project creation or LogSnag call doesn't skip it
+        await saveUtmParams(message.user.id, req.cookies[UTM_COOKIE_NAME]);
+        await authOptions.events?.createUser?.(message);
+      },
+    },
+  })(req, res);
 };
+
+async function saveUtmParams(userId: string, cookieValue: string | undefined) {
+  const utmParams = parseUtmCookie(cookieValue);
+  if (!utmParams) return;
+
+  try {
+    await prisma.user.update({ where: { id: userId }, data: utmParams });
+  } catch (error) {
+    // attribution is nice to have, it should never break a signup
+    console.error("Failed to save UTM parameters", error);
+  }
+}

@@ -1,0 +1,7 @@
+-- AlterTable
+ALTER TABLE `User` ADD COLUMN `utmCampaign` VARCHAR(191) NULL,
+    ADD COLUMN `utmContent` VARCHAR(191) NULL,
+    ADD COLUMN `utmMedium` VARCHAR(191) NULL,
+    ADD COLUMN `utmSource` VARCHAR(191) NULL,
+    ADD COLUMN `utmTerm` VARCHAR(191) NULL;
+

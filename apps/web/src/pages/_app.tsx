@@ -10,9 +10,10 @@ import { OpenPanelComponent } from "@openpanel/nextjs";
 import { TooltipProvider } from "components/Tooltip";
 import { env } from "env/client.mjs";
 import { AbbyDevtools, AbbyProvider, withAbby } from "lib/abby";
+import { rememberUtmParams } from "lib/utm";
 import type { NextPage } from "next";
 import { useRouter } from "next/router";
-import type { ReactElement, ReactNode } from "react";
+import { type ReactElement, type ReactNode, useEffect } from "react";
 import "@fontsource/martian-mono/600.css";
 
 import "../styles/shadcn.css";
@@ -35,6 +36,11 @@ const MyApp: AppType<{ session: Session | null }> = ({
   pageProps: { session, __ABBY_PROJECT_DATA__, ...pageProps },
 }: AppPropsWithLayout) => {
   const router = useRouter();
+
+  // biome-ignore lint/correctness/useExhaustiveDependencies: run again on client side navigation
+  useEffect(() => {
+    rememberUtmParams(window.location.search);
+  }, [router.asPath]);
 
   const currentPageUrl = `https://www.tryabby.com${router.asPath}`;
   // Use the layout defined at the page level, if available

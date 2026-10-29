@@ -81,6 +81,13 @@ model User {
   technologies           Json? // gonna be an array of strings
   experienceLevelFlags   Int?
   experienceLevelTests   Int?
+
+  // UTM parameters the user arrived with when signing up
+  utmSource   String?
+  utmMedium   String?
+  utmCampaign String?
+  utmTerm     String?
+  utmContent  String?
 }
 
 model VerificationToken {

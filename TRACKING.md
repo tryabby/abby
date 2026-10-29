@@ -14,3 +14,11 @@ our API.
 | Feature Flag Created       | a user creates a new feature flag on the dashboard                                                                                       | Feature Flag Type: The type of feature flag created (Boolean, String, Number, Json) |
 | Devtools Opened            | a user tries the devtools for the first time                                                                                             | None                                                                                |
 | API Project Data Retrieved | an API call to the endpoint for retrieving the Abby settings for a project, has been sent (We do not track the User-Agent, in this case) |                                                                                     |
+
+## UTM parameters
+
+When someone visits the website with UTM parameters (`utm_source`,
+`utm_medium`, `utm_campaign`, `utm_term`, `utm_content`), they are stored in a
+first-party cookie (`abby_utm`) for 30 days. If that person signs up, the
+parameters are saved on their user so we know which campaign brought them in.
+The cookie is never sent to third parties.

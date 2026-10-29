@@ -7,6 +7,7 @@ Abby is a open source feature management and A/B testing platform. It is designe
 Besides its official SDKS it also offers a friendly and easy to understand Dashboard for the non-developers in your team.
 
 Abby focuses on privacy. This means it won't track any personalized user data and uses no marketing cookies.
+Signups on tryabby.com also store the UTM parameters they came with, see [TRACKING.md](./TRACKING.md).
 You can self host it or use the hosted version available at [tryabby.com](https://www.tryabby.com).
 
 ## Getting Started
