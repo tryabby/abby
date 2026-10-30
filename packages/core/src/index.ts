@@ -496,6 +496,11 @@ export class Abby<
           RemoteConfig[RemoteConfigName]
         >;
       }
+
+      return this.getDefaultRemoteConfigValue(
+        key,
+        this._cfg.remoteConfig as unknown as RemoteConfig
+      ) as RemoteConfigValueStringToType<RemoteConfig[RemoteConfigName]>;
     }
 
     this.log("getRemoteConfig() => storedValue:", storedValue);

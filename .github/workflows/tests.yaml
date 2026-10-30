@@ -45,3 +45,4 @@ jobs:
       - run: pnpm i
       - run: pnpm build:packages
       - run: pnpm test:packages
+      - run: pnpm --filter @tryabby/vue typecheck
