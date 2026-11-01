@@ -360,13 +360,17 @@ export class Abby<
    * @param data
    * @returns
    */
-  init(data: AbbyDataResponse) {
+  init(data: AbbyDataResponse, applyLocalOverrides = true) {
     this.log("init()", data);
 
     this.#data = this.responseToLocalData(data);
     this.notifyListeners();
 
-    if (typeof window !== "undefined" && typeof document !== "undefined") {
+    if (
+      applyLocalOverrides &&
+      typeof window !== "undefined" &&
+      typeof document !== "undefined"
+    ) {
       this.setLocalOverrides(document.cookie);
     }
 
