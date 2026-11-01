@@ -90,6 +90,17 @@ afterEach(() => {
 });
 
 describe("Vue integration with actual core", () => {
+  it("loads project data despite malformed unrelated cookies", async () => {
+    document.cookie = "broken=%E0%A4%A;path=/";
+    const fetchData = vi
+      .spyOn(HttpService, "getProjectData")
+      .mockResolvedValue(data());
+    const api = make();
+    const mounted = mount(api, () => api.useAbbyStatus(), null);
+    await vi.waitFor(() => expect(mounted.value.value).toBe(true));
+    expect(fetchData).toHaveBeenCalledTimes(1);
+  });
+
   it("defers browser flag overrides until initial-data hydration completes", async () => {
     const api = make();
     const child = defineComponent({

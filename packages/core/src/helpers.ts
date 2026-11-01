@@ -6,7 +6,11 @@ export function parseCookies(cookieHeader: string) {
   // biome-ignore lint/suspicious/noImplicitAnyLet:>
   for (let m; (m = cookieRegexp.exec(cookieHeader)); ) {
     const [, cookieName, cookieValue] = m;
-    cookies[decodeURIComponent(cookieName)] = decodeURIComponent(cookieValue);
+    try {
+      cookies[decodeURIComponent(cookieName)] = decodeURIComponent(cookieValue);
+    } catch {
+      // An unrelated malformed cookie must not disable all local overrides.
+    }
   }
 
   return cookies;

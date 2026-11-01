@@ -116,8 +116,12 @@ export function createAbby<
       });
       onMounted(async () => {
         mounted.value = true;
-        if (typeof document !== "undefined")
-          client.setLocalOverrides(document.cookie);
+        try {
+          if (typeof document !== "undefined")
+            client.setLocalOverrides(document.cookie);
+        } catch (error) {
+          emit("error", error);
+        }
         revision.value += 1;
         if (props.initialData) return;
         try {
