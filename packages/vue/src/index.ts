@@ -104,9 +104,7 @@ export function createAbby<
       const revision = shallowRef(0);
       const mounted = shallowRef(false);
       const loaded = shallowRef(Boolean(props.initialData));
-      if (props.initialData) client.init(props.initialData);
-      if (typeof document !== "undefined")
-        client.setLocalOverrides(document.cookie);
+      if (props.initialData) client.init(props.initialData, false);
       const unsubscribe = client.subscribe(() => {
         revision.value += 1;
       });
@@ -118,6 +116,9 @@ export function createAbby<
       });
       onMounted(async () => {
         mounted.value = true;
+        if (typeof document !== "undefined")
+          client.setLocalOverrides(document.cookie);
+        revision.value += 1;
         if (props.initialData) return;
         try {
           await client.loadProjectData();

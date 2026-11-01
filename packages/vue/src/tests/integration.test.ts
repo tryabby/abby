@@ -3,6 +3,7 @@ import {
   AbbyEventType,
   HttpService,
   getABStorageKey,
+  getFFStorageKey,
 } from "@tryabby/core";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import {
@@ -89,6 +90,37 @@ afterEach(() => {
 });
 
 describe("Vue integration with actual core", () => {
+  it("defers browser flag overrides until initial-data hydration completes", async () => {
+    const api = make();
+    const child = defineComponent({
+      setup() {
+        const flag = api.useFeatureFlag("banner");
+        return () => h("span", String(flag.value));
+      },
+    });
+    const component = {
+      render: () =>
+        h(
+          api.AbbyProvider,
+          { initialData: data() },
+          { default: () => h(child) }
+        ),
+    };
+    const root = document.createElement("div");
+    root.innerHTML = await renderToString(createSSRApp(component));
+    expect(root.textContent).toBe("true");
+    document.cookie = `${getFFStorageKey("vue-tests", "banner")}=false;path=/`;
+    const error = vi.spyOn(console, "error").mockImplementation(() => {});
+    const warn = vi.spyOn(console, "warn").mockImplementation(() => {});
+    const app = createSSRApp(component);
+    app.mount(root);
+    cleanup.push(() => app.unmount());
+    await nextTick();
+    expect(root.textContent).toBe("false");
+    expect(error).not.toHaveBeenCalled();
+    expect(warn).not.toHaveBeenCalled();
+  });
+
   it("hydrates server markup before exposing the client variant", async () => {
     const api = make();
     const child = defineComponent({
