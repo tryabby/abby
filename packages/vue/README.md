@@ -152,6 +152,11 @@ In a Nuxt component's setup, obtain `const { $abby } = useNuxtApp()` and call `$
 
 ## Run the local demonstration
 
+The [public synthetic-data playground](https://microusada.com/demos/abby-vue/)
+and its [26-second browser-captured walkthrough](https://microusada.com/demos/abby-vue/walkthrough.mp4)
+show the same demonstration. The video is a captioned sequence of actual browser
+captures, not a recording of a live Abby project or a claim about network performance.
+
 From the repository root, with workspace dependencies already installed:
 
 ```sh

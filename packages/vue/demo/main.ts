@@ -425,6 +425,8 @@ const App = defineComponent({
               "Corresponding source"
             ),
             " · ",
+            h("a", { href: "./walkthrough.mp4" }, "26-second walkthrough"),
+            " · ",
             h("a", { href: "./LICENSE.txt" }, "AGPL-3.0 license"),
             " · ",
             h(
