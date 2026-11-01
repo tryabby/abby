@@ -1108,6 +1108,37 @@ importers:
 
   packages/tsconfig: {}
 
+  packages/vue:
+    dependencies:
+      "@tryabby/core":
+        specifier: workspace:*
+        version: link:../core
+      js-cookie:
+        specifier: ^3.0.1
+        version: 3.0.5
+    devDependencies:
+      "@types/js-cookie":
+        specifier: ^3.0.3
+        version: 3.0.3
+      jsdom:
+        specifier: ^20.0.3
+        version: 20.0.3
+      tsup:
+        specifier: ^6.5.0
+        version: 6.7.0(postcss@8.5.32)(ts-node@10.9.1(@types/node@22.1.0)(typescript@5.5.4))(typescript@5.5.4)
+      typescript:
+        specifier: 5.5.4
+        version: 5.5.4
+      vite:
+        specifier: 5.4.0
+        version: 5.4.0(@types/node@22.1.0)(less@4.2.0)(sass@1.77.8)(terser@5.31.1)
+      vitest:
+        specifier: 2.0.5
+        version: 2.0.5(@types/node@22.1.0)(jsdom@20.0.3)(less@4.2.0)(sass@1.77.8)(terser@5.31.1)
+      vue:
+        specifier: 3.5.13
+        version: 3.5.13(typescript@5.5.4)
+
 packages:
 
   '@adobe/css-tools@4.2.0':
@@ -14388,6 +14419,72 @@ packages:
 
   zwitch@2.0.4:
     resolution: {integrity: sha512-bXE4cR/kVZhKZX/RjPEflHaKVhUVl85noU3v6b8apfQEc1x4A+zBxjZ4lN8LqGd6WZ3dl98pY4o717VFmoPp+A==}
+
+  postcss@8.5.32:
+    resolution:
+      integrity: sha512-LJlKCCAUFKOuZxipUdYw1NzIITEsPcgyOG9LkvRJvuKj/bRzbuRY0ARXvL0pWGpsZvn8jku+LMep2eU0seHp8g==
+    engines:
+      node: ^10 || ^12 || >=14
+  nanoid@3.3.20:
+    resolution:
+      integrity: sha512-uKdg2G3GNCKQn9byYOpxbGqrT2fGO5KRt5J/8b3pok8rT6qxGWF6hxMyJiEYtAf+FVyYuD9hRaDqX5uPFYJ4ZQ==
+    engines:
+      node: ^10 || ^12 || ^13.7 || ^14 || >=15.0.1
+    hasBin: true
+  picocolors@1.1.1:
+    resolution:
+      integrity: sha512-xceH2snhtb5M9liqDsmEw56le376mTZkEX/jEb/RxNFyegNul7eNslCXP9FDj/Lcu0X8KEyMceP2ntpaHrDEVA==
+  source-map-js@1.2.2:
+    resolution:
+      integrity: sha512-KGj/8Y43x35aZVDtt+J4mK1hoLGHULMYfSkODJNQjNDC3oW1PqPoxMwo0pLUsWM/UEGzON/NxeHywEfNXNP3Vw==
+    engines:
+      node: ">=0.10.0"
+  vue@3.5.13:
+    resolution:
+      integrity: sha512-wmeiSMxkZCSc+PM2w2VRsOYAZC8GdipNFRTsLSfodVqI9mbejKeXEGr8SckuLnrQPGe3oJN5c3K0vpoU9q/wCQ==
+    peerDependencies:
+      typescript: "*"
+    peerDependenciesMeta:
+      typescript:
+        optional: true
+  "@vue/compiler-dom@3.5.13":
+    resolution:
+      integrity: sha512-ZOJ46sMOKUjO3e94wPdCzQ6P1Lx/vhp2RSvfaab88Ajexs0AHeV0uasYhi99WPaogmBlRHNRuly8xV75cNTMDA==
+  "@vue/compiler-core@3.5.13":
+    resolution:
+      integrity: sha512-oOdAkwqUfW1WqpwSYJce06wvt6HljgY3fGeM9NcVA1HaYOij3mZG9Rkysn0OHuyUAGMbEbARIpsG+LPVlBJ5/Q==
+  "@vue/shared@3.5.13":
+    resolution:
+      integrity: sha512-/hnE/qP5ZoGpol0a5mDi45bOd7t3tjYJBjsgCsivow7D48cJeV5l05RD82lPqi7gRiphZM37rnhW1l6ZoCNNnQ==
+  "@vue/compiler-sfc@3.5.13":
+    resolution:
+      integrity: sha512-6VdaljMpD82w6c2749Zhf5T9u5uLBWKnVue6XWxprDobftnletJ8+oel7sexFfM3qIxNmVE7LSFGTpv6obNyaQ==
+  "@vue/compiler-ssr@3.5.13":
+    resolution:
+      integrity: sha512-wMH6vrYHxQl/IybKJagqbquvxpWCuVYpoUJfCqFZwa/JY1GdATAQ+TgVtgrwwMZ0D07QhA99rs/EAAWfvG6KpA==
+  magic-string@0.30.21:
+    resolution:
+      integrity: sha512-vd2F4YUyEXKGcLHoq+TEyCjxueSeHnFxyyjNp80yg0XV4vUhnDer/lvvlqM/arB5bXQN5K2/3oinyCRyx8T2CQ==
+  "@jridgewell/sourcemap-codec@1.6.0":
+    resolution:
+      integrity: sha512-T7jf+5zgsZHwNJ4lvQ7/aezbyk0nNX+zJVWpmHA7VYsEx7a7qr5Rg5IbtJFqkgze5Y2sruq1RUY8Q837Od7iFw==
+  "@vue/runtime-dom@3.5.13":
+    resolution:
+      integrity: sha512-dLaj94s93NYLqjLiyFzVs9X6dWhTdAlEAciC3Moq7gzAc13VJUdCnjjRurNM6uTLFATRHexHCTu/Xp3eW6yoog==
+  "@vue/reactivity@3.5.13":
+    resolution:
+      integrity: sha512-NaCwtw8o48B9I6L1zl2p41OHo/2Z4wqYGGIK1Khu5T7yxrn+ATOixn/Udn2m+6kZKB/J7cuT9DbWWhRxqixACg==
+  "@vue/runtime-core@3.5.13":
+    resolution:
+      integrity: sha512-Fj4YRQ3Az0WTZw1sFe+QDb0aXCerigEpw418pw1HBUKFtnQHWzwojaukAs2X/c9DQz4MQ4bsXTGlcpGxU/RCIw==
+  csstype@3.2.3:
+    resolution:
+      integrity: sha512-z1HGKcYy2xA8AGQfwrn0PAy+PB7X/GSj3UVJW9qKyn43xWa+gl5nXmU4qqLMRzWVLFC8KusUX8T/0kCiOYpAIQ==
+  "@vue/server-renderer@3.5.13":
+    resolution:
+      integrity: sha512-wAi4IRJV/2SAW3htkTlB+dHeRmpTiVIK1OGLWV1yeStVSebSQQOwGwIq0D3ZIoBj2C2qpgz5+vX9iEBkTdk5YA==
+    peerDependencies:
+      vue: 3.5.13
 
 snapshots:
 
@@ -31399,3 +31496,100 @@ snapshots:
       react: 18.2.0
 
   zwitch@2.0.4: {}
+
+  tsup@6.7.0(postcss@8.5.32)(ts-node@10.9.1(@types/node@22.1.0)(typescript@5.5.4))(typescript@5.5.4):
+    dependencies:
+      bundle-require: 4.0.1(esbuild@0.17.19)
+      cac: 6.7.14
+      chokidar: 3.6.0
+      debug: 4.3.5
+      esbuild: 0.17.19
+      execa: 5.1.1
+      globby: 11.1.0
+      joycon: 3.1.1
+      postcss-load-config: 3.1.4(postcss@8.5.32)(ts-node@10.9.1(@types/node@22.1.0)(typescript@5.5.4))
+      resolve-from: 5.0.0
+      rollup: 3.29.4
+      source-map: 0.8.0-beta.0
+      sucrase: 3.32.0
+      tree-kill: 1.2.2
+    optionalDependencies:
+      postcss: 8.5.32
+      typescript: 5.5.4
+    transitivePeerDependencies:
+      - supports-color
+      - ts-node
+  postcss-load-config@3.1.4(postcss@8.5.32)(ts-node@10.9.1(@types/node@22.1.0)(typescript@5.5.4)):
+    dependencies:
+      lilconfig: 2.1.0
+      yaml: 1.10.2
+    optionalDependencies:
+      postcss: 8.5.32
+      ts-node: 10.9.1(@types/node@22.1.0)(typescript@5.5.4)
+  postcss@8.5.32:
+    dependencies:
+      nanoid: 3.3.20
+      picocolors: 1.1.1
+      source-map-js: 1.2.2
+  nanoid@3.3.20: {}
+  picocolors@1.1.1: {}
+  source-map-js@1.2.2: {}
+  vue@3.5.13(typescript@5.5.4):
+    dependencies:
+      "@vue/compiler-dom": 3.5.13
+      "@vue/compiler-sfc": 3.5.13
+      "@vue/runtime-dom": 3.5.13
+      "@vue/server-renderer": 3.5.13(vue@3.5.13(typescript@5.5.4))
+      "@vue/shared": 3.5.13
+    optionalDependencies:
+      typescript: 5.5.4
+  "@vue/compiler-dom@3.5.13":
+    dependencies:
+      "@vue/compiler-core": 3.5.13
+      "@vue/shared": 3.5.13
+  "@vue/compiler-core@3.5.13":
+    dependencies:
+      "@babel/parser": 7.25.3
+      "@vue/shared": 3.5.13
+      entities: 4.5.0
+      estree-walker: 2.0.2
+      source-map-js: 1.2.0
+  "@vue/shared@3.5.13": {}
+  "@vue/compiler-sfc@3.5.13":
+    dependencies:
+      "@babel/parser": 7.25.3
+      "@vue/compiler-core": 3.5.13
+      "@vue/compiler-dom": 3.5.13
+      "@vue/compiler-ssr": 3.5.13
+      "@vue/shared": 3.5.13
+      estree-walker: 2.0.2
+      magic-string: 0.30.21
+      postcss: 8.5.32
+      source-map-js: 1.2.0
+  "@vue/compiler-ssr@3.5.13":
+    dependencies:
+      "@vue/compiler-dom": 3.5.13
+      "@vue/shared": 3.5.13
+  magic-string@0.30.21:
+    dependencies:
+      "@jridgewell/sourcemap-codec": 1.6.0
+  "@jridgewell/sourcemap-codec@1.6.0": {}
+  "@vue/runtime-dom@3.5.13":
+    dependencies:
+      "@vue/reactivity": 3.5.13
+      "@vue/runtime-core": 3.5.13
+      "@vue/shared": 3.5.13
+      csstype: 3.2.3
+  "@vue/reactivity@3.5.13":
+    dependencies:
+      "@vue/shared": 3.5.13
+  "@vue/runtime-core@3.5.13":
+    dependencies:
+      "@vue/reactivity": 3.5.13
+      "@vue/shared": 3.5.13
+  csstype@3.2.3: {}
+  "@vue/server-renderer@3.5.13(vue@3.5.13(typescript@5.5.4))":
+    dependencies:
+      "@vue/compiler-ssr": 3.5.13
+      "@vue/shared": 3.5.13
+      vue: 3.5.13(typescript@5.5.4)
