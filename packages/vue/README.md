@@ -30,9 +30,14 @@ app.use(sdk.AbbyPlugin); // Loads public project data on the client after mount.
 app.mount("#app");
 ```
 
-If the host already has public project data, pass `{ initialData }` as the second argument to `app.use`. Its shape is `AbbyDataResponse` from `@tryabby/core`:
+If the host already has public project data, replace the preceding `main.ts` example with the following. Install the plugin once, with `{ initialData }`, before mounting; calling `app.use` again after installation does not replace its options. The payload has the `AbbyDataResponse` shape from `@tryabby/core`:
 
 ```ts
+// main.ts (alternative to the preceding example)
+import { createApp } from "vue";
+import App from "./App.vue";
+import { sdk } from "./abby";
+
 const initialData = {
   tests: [{ name: "welcome", weights: [1, 0] }],
   flags: [{ name: "showDetails", value: true }],
@@ -42,8 +47,10 @@ const initialData = {
     { name: "appearance", value: { tone: "mint" } },
   ],
 };
+const app = createApp(App);
 app.use(sdk.AbbyPlugin, { initialData }); // Skips the automatic data request.
 // Equivalent plugin form: app.use(sdk, { initialData }).
+app.mount("#app");
 ```
 
 An isolated subtree can instead render `sdk.AbbyProvider` with an optional `initialData` prop. Composables in its descendants use that provider's separate core. Create the component using `h(sdk.AbbyProvider, { initialData }, { default: () => h(Child) })`, or bind the returned component in a Vue template. Do not call a descendant composable in the parent's setup before the provider exists.
@@ -117,6 +124,7 @@ The exposed core supports `init`, `updateFlag`, `updateRemoteConfig`, and other 
 - A/B variants are `undefined` during SSR and the initial hydration render, then become available after client mount. Render the same placeholder on both sides. Feature flags and remote configuration use the supplied initial data or configured defaults.
 - SSR does not automatically fetch, access browser storage, or send events. Without initial data, the client loads project data after mount. With initial data, give server and client the same public payload.
 - Variant persistence uses project-scoped cookies when enabled. Configure consent for your application; `disableCookies` clears this runtime's known values and records disabled consent. Reset helpers clear the selected test's stored assignment; they do not promise a different next variant. No HttpOnly cookie can be read by this client SDK.
+- Cookie-based `Number` remote-config overrides accept finite integers only. Decimal and exponent strings are ignored before reaching core's legacy integer parser, which would otherwise truncate them. This cookie-override restriction does not apply to numeric values supplied in `initialData` or project-data responses.
 - Component/effect-scope subscriptions stop on disposal. Provider unmount and `app.unmount()` dispose their owned runtimes; devtools cleanup runs on unmount. Do not keep using a disposed runtime.
 
 This is a **Nuxt plugin integration example**, not a shipped Nuxt module or a claim that a Nuxt application test suite has run:
