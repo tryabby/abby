@@ -204,7 +204,8 @@ export function createAbby<
   const useFeatureFlag = (name: FlagName): ComputedRef<boolean> => {
     const dataRef = useAbbyData();
     return computed(() => {
-      return Boolean(dataRef.value.flags[name]?.value);
+      const flag = dataRef.value.flags[name];
+      return flag ? Boolean(flag.value) : abby.getFeatureFlag(name);
     });
   };
 
@@ -216,8 +217,15 @@ export function createAbby<
   ): ComputedRef<RemoteConfigValueStringToType<Config>> => {
     const dataRef = useAbbyData();
     return computed(() => {
-      return dataRef.value.remoteConfig[remoteConfigName]
-        ?.value as RemoteConfigValueStringToType<Config>;
+      const rc = dataRef.value.remoteConfig[remoteConfigName];
+      if (rc != null) {
+        return rc.value as RemoteConfigValueStringToType<Config>;
+      }
+      const fallbackValues = config.settings?.remoteConfig?.fallbackValues;
+      if (fallbackValues && remoteConfigName in fallbackValues) {
+        return fallbackValues[remoteConfigName] as RemoteConfigValueStringToType<Config>;
+      }
+      return undefined as unknown as RemoteConfigValueStringToType<Config>;
     });
   };
 

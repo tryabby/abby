@@ -24,9 +24,7 @@ class ABStorageService implements IStorageService {
     options?: StorageServiceOptions
   ): void {
     Cookie.set(getABStorageKey(projectId, testName), value, {
-      expires: options?.expiresInDays
-        ? options.expiresInDays
-        : DEFAULT_COOKIE_AGE,
+      expires: options?.expiresInDays ?? DEFAULT_COOKIE_AGE,
     });
   }
 

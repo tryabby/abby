@@ -149,11 +149,27 @@ abby.getABResetFunction("heroTitle")();
 
 ## Devtools Integration
 
-```ts
-import { withDevtools } from "./abby";
-import { devtools } from "@tryabby/devtools";
+To use the visual Abby Devtools during development:
 
-withDevtools(devtools, {});
+```bash
+npm install @tryabby/devtools --save-dev
+```
+
+In your root component (e.g. `App.vue`):
+
+```vue
+<script setup lang="ts">
+import { onMounted } from "vue";
+import devtools from "@tryabby/devtools";
+import { abby } from "./abby";
+
+onMounted(() => {
+  if (process.env.NODE_ENV === "development") {
+    const unmount = abby.withDevtools(devtools, {});
+    // devtools are now mounted
+  }
+});
+</script>
 ```
 
 ## License

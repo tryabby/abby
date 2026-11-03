@@ -49,6 +49,7 @@
   },
   "dependencies": {
     "@tryabby/core": "workspace:*",
+    "@tryabby/devtools": "workspace:*",
     "js-cookie": "^3.0.1"
   }
 }
