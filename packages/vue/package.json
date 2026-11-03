@@ -1,0 +1,50 @@
+{
+  "name": "@tryabby/vue",
+  "version": "7.0.1",
+  "description": "Vue 3 integration for Abby - Feature Flags, A/B Testing, and Remote Config",
+  "main": "dist/index.js",
+  "files": [
+    "dist"
+  ],
+  "module": "dist/index.mjs",
+  "types": "dist/index.d.ts",
+  ".": {
+    "types": "./dist/index.d.ts",
+    "import": "./dist/index.mjs",
+    "require": "./dist/index.js"
+  },
+  "scripts": {
+    "build": "tsup src/index.ts --dts --format esm,cjs",
+    "dev": "pnpm run build --watch",
+    "test": "vitest"
+  },
+  "homepage": "https://docs.tryabby.com",
+  "keywords": [
+    "vue",
+    "vue3",
+    "nuxt",
+    "feature-flags",
+    "ab-testing",
+    "remote-config"
+  ],
+  "author": "",
+  "license": "ISC",
+  "peerDependencies": {
+    "vue": "^3.3.0"
+  },
+  "dependencies": {
+    "@tryabby/core": "workspace:*",
+    "js-cookie": "^3.0.1"
+  },
+  "devDependencies": {
+    "@tryabby/devtools": "workspace:*",
+    "@types/js-cookie": "^3.0.3",
+    "@types/node": "^20.8.10",
+    "tsconfig": "workspace:*",
+    "tsup": "^6.5.0",
+    "typescript": "5.5.4",
+    "vite": "5.4.0",
+    "vitest": "2.0.5",
+    "vue": "^3.4.0"
+  }
+}
