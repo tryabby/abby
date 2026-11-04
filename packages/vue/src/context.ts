@@ -224,7 +224,17 @@ export function createAbby<
       try {
         return abby.getRemoteConfig(remoteConfigName);
       } catch {
-        return undefined as unknown as RemoteConfigValueStringToType<Config>;
+        const fallback =
+          config.settings?.remoteConfig?.fallbackValues?.[remoteConfigName];
+        if (fallback !== undefined) {
+          return fallback as RemoteConfigValueStringToType<Config>;
+        }
+        const defaultKey = config.remoteConfig?.[remoteConfigName];
+        const defaultValue = defaultKey
+          ? config.settings?.remoteConfig?.defaultValues?.[defaultKey]
+          : undefined;
+        return (defaultValue ??
+          undefined) as unknown as RemoteConfigValueStringToType<Config>;
       }
     });
   };

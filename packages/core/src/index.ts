@@ -398,7 +398,7 @@ export class Abby<
      * 2. DevOverrides from config
      * 3. DevDefault from config
      */
-    if (process.env.NODE_ENV === "development") {
+    if (typeof process !== "undefined" && process.env?.NODE_ENV === "development") {
       const devOverride = (this.config.settings?.flags?.devOverrides as any)?.[
         key
       ];
@@ -466,7 +466,7 @@ export class Abby<
       >;
     }
 
-    if (process.env.NODE_ENV === "development") {
+    if (typeof process !== "undefined" && process.env?.NODE_ENV === "development") {
       const devOverride = (
         this.config.settings?.remoteConfig?.devOverrides as any
       )?.[key];
@@ -532,7 +532,7 @@ export class Abby<
 
     const override = this.testOverrides.get(key);
 
-    if (process.env.NODE_ENV === "development" && override != null) {
+    if (typeof process !== "undefined" && process.env?.NODE_ENV === "development" && override != null) {
       return override;
     }
 
@@ -576,7 +576,7 @@ export class Abby<
    */
   updateFlag(name: FlagName, value: boolean) {
     this.flagOverrides.set(name, value);
-    if (process.env.NODE_ENV === "development") {
+    if (typeof process !== "undefined" && process.env?.NODE_ENV === "development") {
       this.persistantFlagStorage?.set(name, this.stringifiedValue(value));
     }
     this.notifyListeners();
@@ -592,7 +592,7 @@ export class Abby<
     value: RemoteConfigValueStringToType<RemoteConfig[T]>
   ) {
     this.remoteConfigOverrides.set(name, value);
-    if (process.env.NODE_ENV === "development") {
+    if (typeof process !== "undefined" && process.env?.NODE_ENV === "development") {
       this.persistentRemoteConfigStorage?.set(
         name,
         this.stringifiedValue(value)

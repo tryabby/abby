@@ -256,6 +256,35 @@ describe("useRemoteConfig", () => {
     expect(result.text.value).toBe("Hello Vue!");
     expect(result.count.value).toBe(42);
   });
+
+  it("falls back to fallbackValues when omitted from project data and handles environment gracefully", () => {
+    const { AbbyProvider, useRemoteConfig } = createAbby({
+      environments: [""],
+      currentEnvironment: "",
+      projectId: "123",
+      remoteConfig: {
+        bannerText: "String",
+      },
+      settings: {
+        remoteConfig: {
+          fallbackValues: {
+            bannerText: "Fallback Vue!",
+          },
+        },
+      },
+    });
+
+    const { result } = renderHook(
+      () => {
+        const text = useRemoteConfig("bannerText");
+        return { text };
+      },
+      AbbyProvider,
+      { flags: [], tests: [], remoteConfig: [] }
+    );
+
+    expect(result.text.value).toBe("Fallback Vue!");
+  });
 });
 
 describe("synchronous getters and helpers", () => {
