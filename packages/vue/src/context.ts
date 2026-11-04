@@ -221,11 +221,11 @@ export function createAbby<
       if (rc != null) {
         return rc.value as RemoteConfigValueStringToType<Config>;
       }
-      const fallbackValues = config.settings?.remoteConfig?.fallbackValues;
-      if (fallbackValues && remoteConfigName in fallbackValues) {
-        return fallbackValues[remoteConfigName] as RemoteConfigValueStringToType<Config>;
+      try {
+        return abby.getRemoteConfig(remoteConfigName);
+      } catch {
+        return undefined as unknown as RemoteConfigValueStringToType<Config>;
       }
-      return undefined as unknown as RemoteConfigValueStringToType<Config>;
     });
   };
 
