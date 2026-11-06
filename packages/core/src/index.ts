@@ -538,7 +538,7 @@ export class Abby<
 
     const persistedValue = this.persistantTestStorage?.get(key as string);
 
-    if (persistedValue != null) {
+    if (persistedValue != null && variants.includes(persistedValue)) {
       this.log("getTestVariant() => persistedValue:", persistedValue);
 
       return persistedValue;
