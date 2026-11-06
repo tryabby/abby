@@ -517,11 +517,12 @@ export class Abby<
   }
 
   /**
-   * Function to get the value of a test variant. This includes
-   * the overrides from the dev tools and the local overrides if in development mode
-   * if there is no override or a stored variant we generate a new one and store it
-   * @param key The name of the test
-   * @returns the value of the test variant
+   * Selects a test variant, honoring local overrides in development mode.
+   * Reuses a persisted value only if it remains in the configured variants.
+   * Otherwise selects by weight and persists the result when cookies are enabled;
+   * with cookies disabled, uses the highest-weight variant or the first variant.
+   * @param key - The configured A/B test name.
+   * @returns The override, valid persisted variant, or newly selected variant.
    */
   getTestVariant<T extends keyof Tests>(key: T): Tests[T]["variants"][number] {
     this.log("getTestVariant()", key);
@@ -538,7 +539,7 @@ export class Abby<
 
     const persistedValue = this.persistantTestStorage?.get(key as string);
 
-    if (persistedValue != null) {
+    if (persistedValue != null && variants.includes(persistedValue)) {
       this.log("getTestVariant() => persistedValue:", persistedValue);
 
       return persistedValue;
