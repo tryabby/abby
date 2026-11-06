@@ -37,15 +37,33 @@ export type ABTestReturnValue<Lookup, Variant> = Lookup extends undefined
     ? Lookup[Variant]
     : never;
 
+/**
+ * Creates project-scoped cookie storage that is safe to access during SSR.
+ * @param projectId - Project identifier used to namespace cookie keys.
+ * @param keyFor - Builds the cookie key for a project and entry name.
+ * @returns Storage methods that read and write cookies only in the browser.
+ */
 function cookieStorage(
   projectId: string,
   keyFor: (projectId: string, name: string) => string
 ) {
   return {
+    /**
+     * Reads a persisted value from its project-scoped cookie.
+     * @param name - Test, feature flag, or remote-config entry name.
+     * @returns The cookie value, or null if unavailable or rendering on the server.
+     */
     get(name: string): string | null {
       if (typeof document === "undefined") return null;
       return Cookie.get(keyFor(projectId, name)) ?? null;
     },
+    /**
+     * Persists an entry in a browser cookie; does nothing during SSR.
+     * @param name - Test, feature flag, or remote-config entry name.
+     * @param value - Serialized value to persist.
+     * @param options - Optional cookie expiration settings; defaults to 365 days.
+     * @returns Nothing.
+     */
     set(name: string, value: string, options?: StorageServiceOptions): void {
       if (typeof document === "undefined") return;
       Cookie.set(keyFor(projectId, name), value, {
@@ -55,6 +73,12 @@ function cookieStorage(
   };
 }
 
+/**
+ * Creates a typed Vue integration with a provider and project-specific composables.
+ * Each provider owns a separate Core client to avoid sharing mutable SSR state.
+ * @param abbyConfig - Project configuration, including tests, flags, and config types.
+ * @returns The provider, typed composables, and a composable for the Core client.
+ */
 export function createAbby<
   const FlagName extends string,
   const TestName extends string,
@@ -93,6 +117,10 @@ export function createAbby<
 
   const injectionKey: InjectionKey<Context> = Symbol("tryabby-vue");
 
+  /**
+   * Creates an isolated Core client with copied mutable configuration and cookies.
+   * @returns A new client for one provider instance.
+   */
   const createClient = (): Client => {
     // Core enriches tests with weights and can change cookie consent. Each
     // provider gets a fresh config so Vue SSR requests cannot leak state.
@@ -138,12 +166,24 @@ export function createAbby<
     );
   };
 
+  /**
+   * Provides an isolated Abby client to descendants and loads project data on mount.
+   * The initialData prop optionally supplies server-loaded project data.
+   */
   const AbbyProvider = defineComponent({
     name: "AbbyProvider",
     props: {
       initialData: Object as PropType<AbbyDataResponse>,
     },
     emits: ["error"],
+    /**
+     * Initializes provider state, subscriptions, and client-side data loading.
+     * @param props - Provider props containing optional initial project data.
+     * @param context - Vue setup context containing the error emitter and slots.
+     * @param context.emit - Emits project-loading errors to the parent.
+     * @param context.slots - Descendant content rendered within the provider.
+     * @returns A render function for the default slot.
+     */
     setup(props, { emit, slots }) {
       const client = createClient();
       const revision = ref(0);
@@ -179,6 +219,11 @@ export function createAbby<
     },
   });
 
+  /**
+   * Resolves the context belonging to this integration's nearest provider.
+   * @returns The provider's client and reactive lifecycle state.
+   * @throws When called outside the matching AbbyProvider.
+   */
   const useContext = (): Context => {
     const context = inject(injectionKey, null);
     if (!context) {
@@ -189,6 +234,13 @@ export function createAbby<
     return context;
   };
 
+  /**
+   * Tracks a test variant and exposes an action callback for conversion events.
+   * The variant is empty until client mount and project-data initialization finish.
+   * @param name - Configured A/B test name.
+   * @param lookup - Optional mapping from every variant to a typed display value.
+   * @returns A computed variant or mapped value, plus the onAct event callback.
+   */
   const useAbby = <
     Name extends keyof Tests,
     Variant extends Tests[Name]["variants"][number],
@@ -208,6 +260,11 @@ export function createAbby<
       return context.client.getTestVariant(name) as Variant;
     });
 
+    /**
+     * Sends an analytics event only after a nonempty variant has been selected.
+     * @param type - Analytics event kind, such as PING or ACT.
+     * @returns Nothing; the HTTP request is dispatched without awaiting completion.
+     */
     const send = (type: AbbyEventType): void => {
       if (!selected.value) return;
       void HttpService.sendData({
@@ -238,10 +295,19 @@ export function createAbby<
 
     return {
       variant,
+      /**
+       * Records an action for the currently selected variant.
+       * @returns Nothing; no event is sent before a variant is available.
+       */
       onAct: () => send(AbbyEventType.ACT),
     };
   };
 
+  /**
+   * Reads a feature flag reactively from the matching provider's Core client.
+   * @param name - Configured feature-flag name.
+   * @returns A computed boolean that updates when the Core client notifies listeners.
+   */
   const useFeatureFlag = (name: FlagName): ComputedRef<boolean> => {
     const context = useContext();
     return computed(() => {
@@ -250,6 +316,11 @@ export function createAbby<
     });
   };
 
+  /**
+   * Reads a remote-config value reactively while preserving its configured type.
+   * @param name - Configured remote-config entry name.
+   * @returns A computed value typed according to the entry's configured value kind.
+   */
   const useRemoteConfig = <Name extends RemoteConfigName>(
     name: Name
   ): ComputedRef<RemoteConfigValueStringToType<RemoteConfig[Name]>> => {
@@ -265,6 +336,11 @@ export function createAbby<
     useAbby,
     useFeatureFlag,
     useRemoteConfig,
+    /**
+     * Exposes the Core client owned by the matching provider.
+     * @returns The provider-scoped Abby client for imperative updates.
+     * @throws When called outside the matching AbbyProvider.
+     */
     useAbbyClient: () => useContext().client,
   };
 }
