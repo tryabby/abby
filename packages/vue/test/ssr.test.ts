@@ -97,6 +97,72 @@ describe("useAbby", () => {
     expect(serverSideHTML).toContain('data-testid="current"');
     expect(serverSideHTML).not.toContain("Very Secret");
   });
+
+  it("preserves the server-selected variant for client hydration with non-deterministic weights and isolates concurrent SSR renders", async () => {
+    const { AbbyVuePlugin, useAbby, useFeatureFlag } = createAbby({
+      environments: [""],
+      currentEnvironment: "",
+      projectId: "ssr-ab-isolated",
+      flags: ["beta"],
+      tests: {
+        showFooter: {
+          variants: ["current", "new"],
+        },
+      },
+    });
+
+    const Component = defineComponent({
+      setup() {
+        const { variant } = useAbby("showFooter");
+        const beta = useFeatureFlag("beta");
+        return () =>
+          h("div", `${variant.value as string}:${beta.value ? "on" : "off"}`);
+      },
+    });
+
+    const initialDataA = {
+      flags: [{ name: "beta", value: true }],
+      tests: [{ name: "showFooter", weights: [0.5, 0.5] }],
+      remoteConfig: [],
+    };
+    const initialDataB = {
+      flags: [{ name: "beta", value: false }],
+      tests: [{ name: "showFooter", weights: [0, 1] }],
+      remoteConfig: [],
+    };
+
+    const appA = createApp(Component);
+    appA.use(AbbyVuePlugin, { initialData: initialDataA });
+
+    const appB = createApp(Component);
+    appB.use(AbbyVuePlugin, { initialData: initialDataB });
+
+    const [htmlA, htmlB] = await Promise.all([
+      renderToString(appA),
+      renderToString(appB),
+    ]);
+
+    expect(htmlB).toContain("new:off");
+    const chosenVariantA = (initialDataA as any).selectedVariants?.showFooter;
+    expect(["current", "new"]).toContain(chosenVariantA);
+    expect(htmlA).toContain(`${chosenVariantA}:on`);
+
+    // A second render hydrated with initialDataA (even if weights in payload differ) keeps chosenVariantA
+    const hydratedApp = createApp(Component);
+    hydratedApp.use(AbbyVuePlugin, {
+      initialData: {
+        ...initialDataA,
+        tests: [
+          {
+            name: "showFooter",
+            weights: chosenVariantA === "current" ? [0, 1] : [1, 0],
+          },
+        ],
+      },
+    });
+    const hydratedHtml = await renderToString(hydratedApp);
+    expect(hydratedHtml).toContain(`${chosenVariantA}:on`);
+  });
 });
 
 describe("useFeatureFlag", () => {

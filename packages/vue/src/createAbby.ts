@@ -8,6 +8,7 @@ import {
   type RemoteConfigValueString,
   type RemoteConfigValueStringToType,
   type ValidatorType,
+  getABStorageKey,
 } from "@tryabby/core";
 import type { Infer } from "@tryabby/core/validation";
 import {
@@ -55,6 +56,36 @@ export type ABTestReturnValue<Lookup, TestVariant> = Lookup extends undefined
     ? Lookup[TestVariant]
     : never;
 
+export type AbbyInitialData<TestName extends string = string> =
+  AbbyDataResponse & {
+    selectedVariants?: Partial<Record<TestName, string>>;
+  };
+
+/**
+ * Parses a raw HTTP `Cookie` header string into a key-value map.
+ */
+function parseCookieHeader(cookieHeader?: string | null): Map<string, string> {
+  const cookies = new Map<string, string>();
+  if (!cookieHeader) return cookies;
+
+  for (const part of cookieHeader.split(";")) {
+    const separatorIndex = part.indexOf("=");
+    if (separatorIndex === -1) continue;
+    const rawKey = part.slice(0, separatorIndex).trim();
+    const rawValue = part.slice(separatorIndex + 1).trim();
+    if (!rawKey) continue;
+    try {
+      cookies.set(decodeURIComponent(rawKey), decodeURIComponent(rawValue));
+    } catch {
+      cookies.set(rawKey, rawValue);
+    }
+  }
+  return cookies;
+}
+
+/**
+ * Creates a typed Abby instance, Vue composables, provider/plugin, and SSR helpers.
+ */
 export function createAbby<
   const FlagName extends string,
   const TestName extends string,
@@ -75,7 +106,9 @@ export function createAbby<
     User
   >
 ) {
-  const abby = new Abby<
+  const config = abbyConfig;
+
+  type AbbyInstance = Abby<
     FlagName,
     TestName,
     Tests,
@@ -83,85 +116,173 @@ export function createAbby<
     RemoteConfigName,
     string[],
     User
-  >(
-    abbyConfig,
-    {
-      get: (key: string) => {
-        if (typeof window === "undefined") return null;
-        return TestStorageService.get(abbyConfig.projectId, key);
-      },
-      set: (key: string, value: any) => {
-        if (
-          typeof window === "undefined" ||
-          abbyConfig.cookies?.disableByDefault
-        )
-          return;
-        TestStorageService.set(abbyConfig.projectId, key, value);
-      },
-    },
-    {
-      get: (key: string) => {
-        if (typeof window === "undefined") return null;
-        return FlagStorageService.get(abbyConfig.projectId, key);
-      },
-      set: (key: string, value: any) => {
-        if (typeof window === "undefined") return;
-        FlagStorageService.set(abbyConfig.projectId, key, value);
-      },
-    },
-    {
-      get: (key: string) => {
-        if (typeof window === "undefined") return null;
-        return RemoteConfigStorageService.get(abbyConfig.projectId, key);
-      },
-      set: (key: string, value: any) => {
-        if (typeof window === "undefined") return;
-        RemoteConfigStorageService.set(abbyConfig.projectId, key, value);
-      },
-    }
-  );
+  >;
+  type AbbyProjectData = ReturnType<AbbyInstance["getProjectData"]>;
 
-  const config = abbyConfig;
-
-  type AbbyProjectData = ReturnType<typeof abby.getProjectData>;
-
-  const abbyState = shallowRef<AbbyProjectData>({
-    tests: {},
-    flags: {},
-    remoteConfig: {},
-  } as AbbyProjectData);
-
-  abby.subscribe((data) => {
-    abbyState.value = data as AbbyProjectData;
-  });
-
-  let inited = false;
-
-  const initData = (initialData?: AbbyDataResponse) => {
-    if (initialData) {
-      inited = true;
-      abbyState.value = abby.init(initialData);
-      return;
-    }
-    if (inited || typeof window === "undefined") return;
-    inited = true;
-
-    abby.loadProjectData().then((data) => {
-      if (!data) return;
-      abbyState.value = data;
-    });
+  type AbbyScopedContext = {
+    abby: AbbyInstance;
+    state: ShallowRef<AbbyProjectData>;
+    initData: (initialData?: AbbyInitialData<TestName>) => void;
   };
 
-  const AbbyKey: InjectionKey<ShallowRef<AbbyProjectData>> = Symbol(
+  /**
+   * Creates an isolated Abby instance and reactive state container so SSR requests do not share mutable state.
+   */
+  const createScopedContext = (
+    requestVariants?: Map<string, string>
+  ): AbbyScopedContext => {
+    const serverTestStore = new Map<string, string>(requestVariants);
+
+    const instanceConfig: AbbyConfig<
+      FlagName,
+      Tests,
+      string[],
+      RemoteConfigName,
+      RemoteConfig,
+      User
+    > = {
+      ...config,
+      cookies: config.cookies ? { ...config.cookies } : undefined,
+    };
+
+    const instance = new Abby<
+      FlagName,
+      TestName,
+      Tests,
+      RemoteConfig,
+      RemoteConfigName,
+      string[],
+      User
+    >(
+      instanceConfig,
+      {
+        get: (key: string) => {
+          if (typeof window === "undefined") {
+            return serverTestStore.get(key) ?? null;
+          }
+          return (
+            TestStorageService.get(instanceConfig.projectId, key) ??
+            serverTestStore.get(key) ??
+            null
+          );
+        },
+        set: (key: string, value: any) => {
+          if (instanceConfig.cookies?.disableByDefault) return;
+          serverTestStore.set(key, String(value));
+          if (typeof window !== "undefined") {
+            TestStorageService.set(instanceConfig.projectId, key, value);
+          }
+        },
+      },
+      {
+        get: (key: string) => {
+          if (typeof window === "undefined") return null;
+          return FlagStorageService.get(instanceConfig.projectId, key);
+        },
+        set: (key: string, value: any) => {
+          if (typeof window === "undefined") return;
+          FlagStorageService.set(instanceConfig.projectId, key, value);
+        },
+      },
+      {
+        get: (key: string) => {
+          if (typeof window === "undefined") return null;
+          return RemoteConfigStorageService.get(instanceConfig.projectId, key);
+        },
+        set: (key: string, value: any) => {
+          if (typeof window === "undefined") return;
+          RemoteConfigStorageService.set(instanceConfig.projectId, key, value);
+        },
+      }
+    );
+
+    const state = shallowRef<AbbyProjectData>({
+      tests: {},
+      flags: {},
+      remoteConfig: {},
+    } as AbbyProjectData);
+
+    instance.subscribe((data) => {
+      state.value = data as AbbyProjectData;
+    });
+
+    let inited = false;
+
+    const initData = (initialData?: AbbyInitialData<TestName>) => {
+      if (initialData) {
+        inited = true;
+        if (
+          initialData.selectedVariants &&
+          !instanceConfig.cookies?.disableByDefault
+        ) {
+          for (const [testName, selected] of Object.entries(
+            initialData.selectedVariants
+          )) {
+            if (typeof selected !== "string" || !selected) continue;
+            serverTestStore.set(testName, selected);
+            if (
+              typeof window !== "undefined" &&
+              !TestStorageService.get(instanceConfig.projectId, testName)
+            ) {
+              TestStorageService.set(
+                instanceConfig.projectId,
+                testName,
+                selected
+              );
+            }
+          }
+        }
+
+        const initialized = instance.init(initialData);
+        state.value = initialized;
+
+        if (!instanceConfig.cookies?.disableByDefault) {
+          const serializedVariants: Partial<Record<TestName, string>> = {
+            ...initialData.selectedVariants,
+          };
+          for (const [testName, testData] of Object.entries(
+            initialized.tests
+          )) {
+            const selected = (testData as { selectedVariant?: string })
+              ?.selectedVariant;
+            if (selected) {
+              serializedVariants[testName as TestName] = selected;
+            }
+          }
+          initialData.selectedVariants = serializedVariants;
+        }
+        return;
+      }
+
+      if (inited || typeof window === "undefined") return;
+      inited = true;
+
+      instance.loadProjectData().then((data) => {
+        if (!data) return;
+        state.value = data;
+      });
+    };
+
+    return {
+      abby: instance,
+      state,
+      initData,
+    };
+  };
+
+  const defaultContext = createScopedContext();
+  const abby = defaultContext.abby;
+
+  const AbbyKey: InjectionKey<AbbyScopedContext> = Symbol(
     `abby:${config.projectId}`
   );
 
-  const resolveState = (): ShallowRef<AbbyProjectData> => {
+  const resolveContext = (): AbbyScopedContext => {
     const instance = getCurrentInstance();
     const injected = instance ? inject(AbbyKey, undefined) : undefined;
     if (injected) return injected;
-    initData();
-    return abbyState;
+    defaultContext.initData();
+    return defaultContext;
   };
 
   const useAbby = <
@@ -178,7 +299,7 @@ export function createAbby<
     variant: ComputedRef<ABTestReturnValue<Lookup, TestVariant>>;
     onAct: () => void;
   } => {
-    const state = resolveState();
+    const { state } = resolveContext();
 
     const selectedVariant = computed(
       () =>
@@ -224,17 +345,17 @@ export function createAbby<
   };
 
   const useFeatureFlag = (name: FlagName): ComputedRef<boolean> => {
-    const state = resolveState();
+    const ctx = resolveContext();
     return computed(() => {
-      void state.value;
-      return abby.getFeatureFlag(name);
+      void ctx.state.value;
+      return ctx.abby.getFeatureFlag(name);
     });
   };
 
   const useFeatureFlags = (): ComputedRef<
     Array<{ name: FlagName; value: boolean }>
   > => {
-    const state = resolveState();
+    const { state } = resolveContext();
     return computed(() =>
       (Object.keys(state.value.flags) as Array<FlagName>).map((flagName) => ({
         name: flagName,
@@ -249,7 +370,7 @@ export function createAbby<
       value: RemoteConfigValueStringToType<RemoteConfig[RemoteConfigName]>;
     }>
   > => {
-    const state = resolveState();
+    const { state } = resolveContext();
     return computed(() =>
       (Object.keys(state.value.remoteConfig) as Array<RemoteConfigName>).map(
         (configName) => ({
@@ -269,10 +390,10 @@ export function createAbby<
   >(
     remoteConfigName: T
   ): ComputedRef<RemoteConfigValueStringToType<Config>> => {
-    const state = resolveState();
+    const ctx = resolveContext();
     return computed(() => {
-      void state.value;
-      return abby.getRemoteConfig(
+      void ctx.state.value;
+      return ctx.abby.getRemoteConfig(
         remoteConfigName
       ) as RemoteConfigValueStringToType<Config>;
     });
@@ -282,28 +403,36 @@ export function createAbby<
     name: "AbbyProvider",
     props: {
       initialData: {
-        type: Object as PropType<AbbyDataResponse>,
+        type: Object as PropType<AbbyInitialData<TestName>>,
         required: false,
         default: undefined,
       },
     },
     setup(props, { slots }) {
-      provide(AbbyKey, abbyState);
-      initData(props.initialData);
+      const scoped =
+        typeof window === "undefined"
+          ? createScopedContext()
+          : defaultContext;
+      provide(AbbyKey, scoped);
+      scoped.initData(props.initialData);
 
       return () => slots.default?.() ?? null;
     },
   });
 
   const AbbyVuePlugin: Plugin = {
-    install(app: App, options?: { initialData?: AbbyDataResponse }) {
-      app.provide(AbbyKey, abbyState);
-      initData(options?.initialData);
+    install(app: App, options?: { initialData?: AbbyInitialData<TestName> }) {
+      const scoped =
+        typeof window === "undefined"
+          ? createScopedContext()
+          : defaultContext;
+      app.provide(AbbyKey, scoped);
+      scoped.initData(options?.initialData);
     },
   };
 
   const getFeatureFlagValue = (name: FlagName) => {
-    return abby.getFeatureFlag(name);
+    return resolveContext().abby.getFeatureFlag(name);
   };
 
   const getRemoteConfig = <
@@ -312,7 +441,7 @@ export function createAbby<
   >(
     remoteConfigName: T
   ): RemoteConfigValueStringToType<Config> => {
-    return abby.getRemoteConfig(remoteConfigName);
+    return resolveContext().abby.getRemoteConfig(remoteConfigName);
   };
 
   const getABTestValue = <
@@ -326,7 +455,7 @@ export function createAbby<
     testName: TestName,
     lookupObject?: Lookup
   ): ABTestReturnValue<Lookup, TestVariant> => {
-    const variant = abby.getTestVariant(testName);
+    const variant = resolveContext().abby.getTestVariant(testName);
     if (lookupObject === undefined) {
       return variant as any;
     }
@@ -338,6 +467,7 @@ export function createAbby<
     return defineComponent({
       name: "AbbyDevtools",
       setup() {
+        const ctx = resolveContext();
         let destroy: (() => void) | undefined;
 
         onMounted(() => {
@@ -348,7 +478,7 @@ export function createAbby<
             return;
           }
 
-          destroy = factory.create({ ...props, abby });
+          destroy = factory.create({ ...props, abby: ctx.abby });
         });
 
         onUnmounted(() => {
@@ -367,7 +497,7 @@ export function createAbby<
   };
 
   const getVariants = <T extends keyof Tests>(name: T) => {
-    return abby.getVariants(name);
+    return resolveContext().abby.getVariants(name);
   };
 
   const updateUserProperties = (
@@ -375,7 +505,7 @@ export function createAbby<
       -readonly [K in keyof User]: Infer<User[K]>;
     }>
   ) => {
-    abby.updateUserProperties(user);
+    resolveContext().abby.updateUserProperties(user);
   };
 
   const withAbby = <Handler extends (event?: any) => any>(
@@ -384,18 +514,38 @@ export function createAbby<
     return async (event?: any) => {
       const data = await handler?.(event);
 
-      const __abby__data = await HttpService.getProjectData({
+      const rawProjectData = await HttpService.getProjectData({
         url: config.apiUrl,
         projectId: config.projectId,
         environment: config.currentEnvironment,
       });
 
+      let __abby__data: AbbyInitialData<TestName> | null = rawProjectData
+        ? { ...rawProjectData }
+        : null;
+
+      if (__abby__data && !config.cookies?.disableByDefault) {
+        const rawCookieHeader =
+          event?.node?.req?.headers?.cookie ??
+          event?.request?.headers?.get?.("cookie");
+        const parsedCookies = parseCookieHeader(rawCookieHeader);
+        const requestVariants = new Map<string, string>();
+
+        for (const testName of Object.keys(config.tests ?? {})) {
+          const storageKey = getABStorageKey(config.projectId, testName);
+          const cookieVariant = parsedCookies.get(storageKey);
+          if (cookieVariant) {
+            requestVariants.set(testName, cookieVariant);
+          }
+        }
+
+        const requestScoped = createScopedContext(requestVariants);
+        requestScoped.initData(__abby__data);
+      }
+
       return {
         ...data,
         __abby__data,
-        __abby_cookie:
-          event?.node?.req?.headers?.cookie ??
-          event?.request?.headers?.get?.("cookie"),
       };
     };
   };
