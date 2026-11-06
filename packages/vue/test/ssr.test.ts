@@ -1,10 +1,38 @@
+import { HttpService, getABStorageKey } from "@tryabby/core";
+import * as v from "@tryabby/core/validation";
 import { renderToString } from "@vue/server-renderer";
-import { createApp, defineComponent, h } from "vue";
+import { createApp, createSSRApp, defineComponent, h } from "vue";
 import { createAbby } from "../src";
+import { TestStorageService } from "../src/StorageService";
 
 const OLD_ENV = process.env;
 
+async function runOnServer<T>(fn: () => Promise<T> | T): Promise<T> {
+  const originalWindow = globalThis.window;
+  // Simulate Node.js SSR where window is undefined
+  Object.defineProperty(globalThis, "window", {
+    value: undefined,
+    configurable: true,
+    writable: true,
+  });
+  try {
+    return await fn();
+  } finally {
+    Object.defineProperty(globalThis, "window", {
+      value: originalWindow,
+      configurable: true,
+      writable: true,
+    });
+  }
+}
+
 beforeEach(() => {
+  document.cookie.split(";").forEach((cookie) => {
+    document.cookie = cookie
+      .replace(/^ +/, "")
+      .replace(/=.*/, `=;expires=${new Date(0).toUTCString()};path=/`);
+  });
+  vi.restoreAllMocks();
   vi.resetModules();
   process.env = { ...OLD_ENV };
 });
@@ -44,9 +72,11 @@ describe("useAbby", () => {
       },
     });
 
-    const app = createApp(ComponentWithTest);
-    app.use(AbbyVuePlugin);
-    const serverSideHTML = await renderToString(app);
+    const serverSideHTML = await runOnServer(async () => {
+      const app = createApp(ComponentWithTest);
+      app.use(AbbyVuePlugin);
+      return await renderToString(app);
+    });
 
     expect(serverSideHTML).toContain("SSR!");
     expect(serverSideHTML).not.toContain("data-testid=");
@@ -79,30 +109,32 @@ describe("useAbby", () => {
       },
     });
 
-    const app = createApp(ComponentWithTest);
-    app.use(AbbyVuePlugin, {
-      initialData: {
-        flags: [],
-        tests: [
-          {
-            name: "showFooter",
-            weights: [1, 0],
-          },
-        ],
-        remoteConfig: [],
-      },
+    const serverSideHTML = await runOnServer(async () => {
+      const app = createApp(ComponentWithTest);
+      app.use(AbbyVuePlugin, {
+        initialData: {
+          flags: [],
+          tests: [
+            {
+              name: "showFooter",
+              weights: [1, 0],
+            },
+          ],
+          remoteConfig: [],
+        },
+      });
+      return await renderToString(app);
     });
-    const serverSideHTML = await renderToString(app);
 
     expect(serverSideHTML).toContain('data-testid="current"');
     expect(serverSideHTML).not.toContain("Very Secret");
   });
 
-  it("preserves the server-selected variant for client hydration with non-deterministic weights and isolates concurrent SSR renders", async () => {
+  it("hydrates on the browser client for a first visit without existing cookies and isolates concurrent SSR renders", async () => {
     const { AbbyVuePlugin, useAbby, useFeatureFlag } = createAbby({
       environments: [""],
       currentEnvironment: "",
-      projectId: "ssr-ab-isolated",
+      projectId: "ssr-ab-first-visit",
       flags: ["beta"],
       tests: {
         showFooter: {
@@ -120,36 +152,41 @@ describe("useAbby", () => {
       },
     });
 
-    const initialDataA = {
+    const initialDataA: any = {
       flags: [{ name: "beta", value: true }],
       tests: [{ name: "showFooter", weights: [0.5, 0.5] }],
       remoteConfig: [],
     };
-    const initialDataB = {
+    const initialDataB: any = {
       flags: [{ name: "beta", value: false }],
       tests: [{ name: "showFooter", weights: [0, 1] }],
       remoteConfig: [],
     };
 
-    const appA = createApp(Component);
-    appA.use(AbbyVuePlugin, { initialData: initialDataA });
+    const [htmlA, htmlB] = await runOnServer(async () => {
+      const appA = createSSRApp(Component);
+      appA.use(AbbyVuePlugin, { initialData: initialDataA });
 
-    const appB = createApp(Component);
-    appB.use(AbbyVuePlugin, { initialData: initialDataB });
+      const appB = createSSRApp(Component);
+      appB.use(AbbyVuePlugin, { initialData: initialDataB });
 
-    const [htmlA, htmlB] = await Promise.all([
-      renderToString(appA),
-      renderToString(appB),
-    ]);
+      return await Promise.all([renderToString(appA), renderToString(appB)]);
+    });
 
     expect(htmlB).toContain("new:off");
-    const chosenVariantA = (initialDataA as any).selectedVariants?.showFooter;
+    const chosenVariantA = initialDataA.selectedVariants?.showFooter;
     expect(["current", "new"]).toContain(chosenVariantA);
     expect(htmlA).toContain(`${chosenVariantA}:on`);
+    expect(
+      TestStorageService.get("ssr-ab-first-visit", "showFooter")
+    ).toBeNull();
 
-    // A second render hydrated with initialDataA (even if weights in payload differ) keeps chosenVariantA
-    const hydratedApp = createApp(Component);
-    hydratedApp.use(AbbyVuePlugin, {
+    // Hydrate into a real browser DOM container on the client
+    const container = document.createElement("div");
+    container.innerHTML = htmlA;
+
+    const clientApp = createSSRApp(Component);
+    clientApp.use(AbbyVuePlugin, {
       initialData: {
         ...initialDataA,
         tests: [
@@ -160,8 +197,233 @@ describe("useAbby", () => {
         ],
       },
     });
-    const hydratedHtml = await renderToString(hydratedApp);
-    expect(hydratedHtml).toContain(`${chosenVariantA}:on`);
+    clientApp.mount(container);
+
+    expect(container.textContent).toBe(`${chosenVariantA}:on`);
+    expect(TestStorageService.get("ssr-ab-first-visit", "showFooter")).toBe(
+      chosenVariantA
+    );
+    clientApp.unmount();
+  });
+
+  it("hydrates on the browser client when an existing request cookie is present", async () => {
+    const projectId = "ssr-ab-existing-cookie";
+    vi.spyOn(HttpService, "getProjectData").mockResolvedValue({
+      flags: [],
+      tests: [{ name: "showFooter", weights: [0, 1] }],
+      remoteConfig: [],
+    });
+
+    const { AbbyVuePlugin, useAbby, withAbby } = createAbby({
+      environments: [""],
+      currentEnvironment: "",
+      projectId,
+      tests: {
+        showFooter: {
+          variants: ["current", "new"],
+        },
+      },
+    });
+
+    const Component = defineComponent({
+      setup() {
+        const { variant } = useAbby("showFooter");
+        return () => h("div", variant.value as string);
+      },
+    });
+
+    const cookieKey = getABStorageKey(projectId, "showFooter");
+    const cookieHeader = `${cookieKey}=current`;
+
+    const { serverHtml, initialData } = await runOnServer(async () => {
+      const loader = withAbby(async () => ({ ok: true }));
+      const payload = await loader({
+        node: { req: { headers: { cookie: cookieHeader } } },
+      });
+      const serverApp = createSSRApp(Component);
+      serverApp.use(AbbyVuePlugin, { initialData: payload.__abby__data! });
+      const html = await renderToString(serverApp);
+      return { serverHtml: html, initialData: payload.__abby__data! };
+    });
+
+    expect(serverHtml).toContain("current");
+    expect(initialData.selectedVariants?.showFooter).toBe("current");
+
+    // Browser client already has the cookie and hydrates the server HTML
+    TestStorageService.set(projectId, "showFooter", "current");
+    const container = document.createElement("div");
+    container.innerHTML = serverHtml;
+
+    const clientApp = createSSRApp(Component);
+    clientApp.use(AbbyVuePlugin, { initialData });
+    clientApp.mount(container);
+
+    expect(container.textContent).toBe("current");
+    clientApp.unmount();
+  });
+
+  it("hydrates on the browser client with cookies.disableByDefault enabled", async () => {
+    const projectId = "ssr-ab-disabled-cookies";
+    vi.spyOn(HttpService, "getProjectData").mockResolvedValue({
+      flags: [],
+      tests: [{ name: "showFooter", weights: [0, 1] }],
+      remoteConfig: [],
+    });
+
+    const { AbbyVuePlugin, useAbby, withAbby } = createAbby({
+      environments: [""],
+      currentEnvironment: "",
+      projectId,
+      cookies: { disableByDefault: true },
+      tests: {
+        showFooter: {
+          variants: ["current", "new"],
+        },
+      },
+    });
+
+    const Component = defineComponent({
+      setup() {
+        const { variant } = useAbby("showFooter");
+        return () => h("div", variant.value as string);
+      },
+    });
+
+    const cookieKey = getABStorageKey(projectId, "showFooter");
+    // Even if a stale cookie says "current", disabled cookies must ignore it and use highest weight ("new")
+    TestStorageService.set(projectId, "showFooter", "current");
+
+    const { serverHtml, initialData } = await runOnServer(async () => {
+      const loader = withAbby();
+      const payload = await loader({
+        node: { req: { headers: { cookie: `${cookieKey}=current` } } },
+      });
+      const serverApp = createSSRApp(Component);
+      serverApp.use(AbbyVuePlugin, { initialData: payload.__abby__data! });
+      const html = await renderToString(serverApp);
+      return { serverHtml: html, initialData: payload.__abby__data! };
+    });
+
+    expect(serverHtml).toContain("new");
+    expect(initialData.selectedVariants).toBeUndefined();
+
+    const container = document.createElement("div");
+    container.innerHTML = serverHtml;
+
+    const clientApp = createSSRApp(Component);
+    clientApp.use(AbbyVuePlugin, { initialData });
+    clientApp.mount(container);
+
+    expect(container.textContent).toBe("new");
+    clientApp.unmount();
+  });
+
+  it("clears both cookie and in-memory variant when getABResetFunction is called", async () => {
+    const projectId = "ssr-ab-reset";
+    const { AbbyVuePlugin, getABTestValue, getABResetFunction } = createAbby({
+      environments: [""],
+      currentEnvironment: "",
+      projectId,
+      tests: {
+        showFooter: {
+          variants: ["current", "new"],
+        },
+      },
+    });
+
+    const container = document.createElement("div");
+    const app = createApp(defineComponent({ render: () => h("div") }));
+    app.use(AbbyVuePlugin, {
+      initialData: {
+        flags: [],
+        tests: [{ name: "showFooter", weights: [0, 1] }],
+        remoteConfig: [],
+        selectedVariants: { showFooter: "current" },
+      },
+    });
+    app.mount(container);
+
+    expect(getABTestValue("showFooter")).toBe("current");
+    expect(TestStorageService.get(projectId, "showFooter")).toBe("current");
+
+    const resetShowFooter = getABResetFunction("showFooter");
+    resetShowFooter();
+
+    expect(TestStorageService.get(projectId, "showFooter")).toBeNull();
+    // Next lookup draws using weights [0, 1] ("new") instead of returning stale "current"
+    expect(getABTestValue("showFooter")).toBe("new");
+    app.unmount();
+  });
+
+  it("scopes updateUserProperties per SSR request without leaking across requests", async () => {
+    vi.spyOn(HttpService, "getProjectData").mockResolvedValue({
+      flags: [
+        {
+          name: "proFeature",
+          value: false,
+          ruleSet: [
+            {
+              propertyName: "plan",
+              propertyType: "string",
+              operator: "eq",
+              value: "pro",
+              thenValue: true,
+            },
+          ],
+        },
+      ],
+      tests: [],
+      remoteConfig: [],
+    });
+
+    const { AbbyVuePlugin, useFeatureFlag, withAbby, getFeatureFlagValue } =
+      createAbby({
+        environments: [""],
+        currentEnvironment: "",
+        projectId: "ssr-user-props",
+        flags: ["proFeature"],
+        user: {
+          plan: v.string(),
+        },
+      });
+
+    const Component = defineComponent({
+      setup() {
+        const pro = useFeatureFlag("proFeature");
+        return () => h("div", pro.value ? "PRO" : "FREE");
+      },
+    });
+
+    const [htmlPro, htmlFree] = await runOnServer(async () => {
+      const proLoader = withAbby(async (_event, helpers) => {
+        helpers?.updateUserProperties({ plan: "pro" });
+        return {};
+      });
+      const freeLoader = withAbby(async (_event, helpers) => {
+        helpers?.updateUserProperties({ plan: "free" });
+        return {};
+      });
+
+      const [proPayload, freePayload] = await Promise.all([
+        proLoader(),
+        freeLoader(),
+      ]);
+
+      const appPro = createSSRApp(Component);
+      appPro.use(AbbyVuePlugin, { initialData: proPayload.__abby__data! });
+
+      const appFree = createSSRApp(Component);
+      appFree.use(AbbyVuePlugin, { initialData: freePayload.__abby__data! });
+
+      return await Promise.all([
+        renderToString(appPro),
+        renderToString(appFree),
+      ]);
+    });
+
+    expect(htmlPro).toContain("PRO");
+    expect(htmlFree).toContain("FREE");
+    expect(getFeatureFlagValue("proFeature")).toBe(false);
   });
 });
 

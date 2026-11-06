@@ -56,10 +56,19 @@ export type ABTestReturnValue<Lookup, TestVariant> = Lookup extends undefined
     ? Lookup[TestVariant]
     : never;
 
-export type AbbyInitialData<TestName extends string = string> =
-  AbbyDataResponse & {
-    selectedVariants?: Partial<Record<TestName, string>>;
-  };
+export type AbbyUserProperties<
+  User extends Record<string, ValidatorType> = Record<string, ValidatorType>,
+> = Partial<{
+  -readonly [K in keyof User]: Infer<User[K]>;
+}>;
+
+export type AbbyInitialData<
+  TestName extends string = string,
+  User extends Record<string, ValidatorType> = Record<string, ValidatorType>,
+> = AbbyDataResponse & {
+  selectedVariants?: Partial<Record<TestName, string>>;
+  userProperties?: AbbyUserProperties<User>;
+};
 
 /**
  * Parses a raw HTTP `Cookie` header string into a key-value map.
@@ -122,7 +131,8 @@ export function createAbby<
   type AbbyScopedContext = {
     abby: AbbyInstance;
     state: ShallowRef<AbbyProjectData>;
-    initData: (initialData?: AbbyInitialData<TestName>) => void;
+    initData: (initialData?: AbbyInitialData<TestName, User>) => void;
+    clearTest: (testName: string) => void;
   };
 
   /**
@@ -133,6 +143,19 @@ export function createAbby<
   ): AbbyScopedContext => {
     const serverTestStore = new Map<string, string>(requestVariants);
 
+    const clonedTests = config.tests
+      ? (Object.fromEntries(
+          Object.entries(config.tests).map(([testName, testConfig]) => [
+            testName,
+            {
+              ...testConfig,
+              variants: [...testConfig.variants],
+              weights: testConfig.weights ? [...testConfig.weights] : undefined,
+            },
+          ])
+        ) as Tests)
+      : undefined;
+
     const instanceConfig: AbbyConfig<
       FlagName,
       Tests,
@@ -142,6 +165,7 @@ export function createAbby<
       User
     > = {
       ...config,
+      tests: clonedTests as Tests,
       cookies: config.cookies ? { ...config.cookies } : undefined,
     };
 
@@ -157,6 +181,9 @@ export function createAbby<
       instanceConfig,
       {
         get: (key: string) => {
+          if (instanceConfig.cookies?.disableByDefault) {
+            return null;
+          }
           if (typeof window === "undefined") {
             return serverTestStore.get(key) ?? null;
           }
@@ -208,9 +235,13 @@ export function createAbby<
 
     let inited = false;
 
-    const initData = (initialData?: AbbyInitialData<TestName>) => {
+    const initData = (initialData?: AbbyInitialData<TestName, User>) => {
       if (initialData) {
         inited = true;
+        if (initialData.userProperties) {
+          instance.updateUserProperties(initialData.userProperties);
+        }
+
         if (
           initialData.selectedVariants &&
           !instanceConfig.cookies?.disableByDefault
@@ -267,10 +298,15 @@ export function createAbby<
       abby: instance,
       state,
       initData,
+      clearTest: (testName: string) => {
+        serverTestStore.delete(testName);
+      },
     };
   };
 
   const defaultContext = createScopedContext();
+  let activeClientContext: AbbyScopedContext = defaultContext;
+  let activeServerContext: AbbyScopedContext | undefined;
   const abby = defaultContext.abby;
 
   const AbbyKey: InjectionKey<AbbyScopedContext> = Symbol(
@@ -281,8 +317,11 @@ export function createAbby<
     const instance = getCurrentInstance();
     const injected = instance ? inject(AbbyKey, undefined) : undefined;
     if (injected) return injected;
-    defaultContext.initData();
-    return defaultContext;
+    if (typeof window === "undefined") {
+      return activeServerContext ?? createScopedContext();
+    }
+    activeClientContext.initData();
+    return activeClientContext;
   };
 
   const useAbby = <
@@ -403,16 +442,29 @@ export function createAbby<
     name: "AbbyProvider",
     props: {
       initialData: {
-        type: Object as PropType<AbbyInitialData<TestName>>,
+        type: Object as PropType<AbbyInitialData<TestName, User>>,
+        required: false,
+        default: undefined,
+      },
+      userProperties: {
+        type: Object as PropType<AbbyUserProperties<User>>,
         required: false,
         default: undefined,
       },
     },
     setup(props, { slots }) {
       const scoped =
-        typeof window === "undefined"
+        typeof window === "undefined" ||
+        props.initialData ||
+        props.userProperties
           ? createScopedContext()
           : defaultContext;
+      if (props.userProperties) {
+        scoped.abby.updateUserProperties(props.userProperties);
+      }
+      if (typeof window !== "undefined") {
+        activeClientContext = scoped;
+      }
       provide(AbbyKey, scoped);
       scoped.initData(props.initialData);
 
@@ -421,11 +473,25 @@ export function createAbby<
   });
 
   const AbbyVuePlugin: Plugin = {
-    install(app: App, options?: { initialData?: AbbyInitialData<TestName> }) {
+    install(
+      app: App,
+      options?: {
+        initialData?: AbbyInitialData<TestName, User>;
+        userProperties?: AbbyUserProperties<User>;
+      }
+    ) {
       const scoped =
-        typeof window === "undefined"
+        typeof window === "undefined" ||
+        options?.initialData ||
+        options?.userProperties
           ? createScopedContext()
           : defaultContext;
+      if (options?.userProperties) {
+        scoped.abby.updateUserProperties(options.userProperties);
+      }
+      if (typeof window !== "undefined") {
+        activeClientContext = scoped;
+      }
       app.provide(AbbyKey, scoped);
       scoped.initData(options?.initialData);
     },
@@ -491,8 +557,14 @@ export function createAbby<
   };
 
   const getABResetFunction = <T extends keyof Tests>(name: T) => {
+    const instance = getCurrentInstance();
+    const injected = instance ? inject(AbbyKey, undefined) : undefined;
     return () => {
-      TestStorageService.remove(config.projectId, name as string);
+      const testKey = name as string;
+      TestStorageService.remove(config.projectId, testKey);
+      injected?.clearTest(testKey);
+      activeClientContext.clearTest(testKey);
+      defaultContext.clearTest(testKey);
     };
   };
 
@@ -501,18 +573,62 @@ export function createAbby<
   };
 
   const updateUserProperties = (
-    user: Partial<{
-      -readonly [K in keyof User]: Infer<User[K]>;
-    }>
+    user: AbbyUserProperties<User>,
+    targetInitialData?: AbbyInitialData<TestName, User>
   ) => {
-    resolveContext().abby.updateUserProperties(user);
+    if (targetInitialData) {
+      targetInitialData.userProperties = {
+        ...targetInitialData.userProperties,
+        ...user,
+      };
+    }
+    const instance = getCurrentInstance();
+    const injected = instance ? inject(AbbyKey, undefined) : undefined;
+    if (injected) {
+      injected.abby.updateUserProperties(user);
+      return;
+    }
+    if (typeof window === "undefined") {
+      activeServerContext?.abby.updateUserProperties(user);
+      return;
+    }
+    activeClientContext.abby.updateUserProperties(user);
+    if (activeClientContext !== defaultContext) {
+      defaultContext.abby.updateUserProperties(user);
+    }
   };
 
-  const withAbby = <Handler extends (event?: any) => any>(
+  const withAbby = <
+    Handler extends (
+      event?: any,
+      helpers?: {
+        updateUserProperties: (user: AbbyUserProperties<User>) => void;
+      }
+    ) => any,
+  >(
     handler?: Handler
   ) => {
     return async (event?: any) => {
-      const data = await handler?.(event);
+      let requestUserProperties: AbbyUserProperties<User> | undefined;
+      const requestScoped = createScopedContext();
+      const setRequestUserProperties = (user: AbbyUserProperties<User>) => {
+        requestUserProperties = {
+          ...requestUserProperties,
+          ...user,
+        };
+        requestScoped.abby.updateUserProperties(user);
+      };
+
+      const prevServerContext = activeServerContext;
+      activeServerContext = requestScoped;
+      let data: any;
+      try {
+        data = await handler?.(event, {
+          updateUserProperties: setRequestUserProperties,
+        });
+      } finally {
+        activeServerContext = prevServerContext;
+      }
 
       const rawProjectData = await HttpService.getProjectData({
         url: config.apiUrl,
@@ -520,27 +636,38 @@ export function createAbby<
         environment: config.currentEnvironment,
       });
 
-      let __abby__data: AbbyInitialData<TestName> | null = rawProjectData
-        ? { ...rawProjectData }
-        : null;
+      const __abby__data: AbbyInitialData<TestName, User> | null =
+        rawProjectData
+          ? {
+              ...rawProjectData,
+              ...(requestUserProperties
+                ? { userProperties: requestUserProperties }
+                : {}),
+            }
+          : null;
 
-      if (__abby__data && !config.cookies?.disableByDefault) {
-        const rawCookieHeader =
-          event?.node?.req?.headers?.cookie ??
-          event?.request?.headers?.get?.("cookie");
-        const parsedCookies = parseCookieHeader(rawCookieHeader);
-        const requestVariants = new Map<string, string>();
+      if (__abby__data) {
+        if (!config.cookies?.disableByDefault) {
+          const rawCookieHeader =
+            event?.node?.req?.headers?.cookie ??
+            event?.request?.headers?.get?.("cookie");
+          const parsedCookies = parseCookieHeader(rawCookieHeader);
+          const requestVariants = new Map<string, string>();
 
-        for (const testName of Object.keys(config.tests ?? {})) {
-          const storageKey = getABStorageKey(config.projectId, testName);
-          const cookieVariant = parsedCookies.get(storageKey);
-          if (cookieVariant) {
-            requestVariants.set(testName, cookieVariant);
+          for (const testName of Object.keys(config.tests ?? {})) {
+            const storageKey = getABStorageKey(config.projectId, testName);
+            const cookieVariant = parsedCookies.get(storageKey);
+            if (cookieVariant) {
+              requestVariants.set(testName, cookieVariant);
+            }
           }
-        }
 
-        const requestScoped = createScopedContext(requestVariants);
-        requestScoped.initData(__abby__data);
+          const hydratedContext = createScopedContext(requestVariants);
+          hydratedContext.initData(__abby__data);
+        } else if (__abby__data.userProperties) {
+          const hydratedContext = createScopedContext();
+          hydratedContext.initData(__abby__data);
+        }
       }
 
       return {
