@@ -9,6 +9,7 @@ import {
   HttpService,
   type AbbyDataResponse,
   AbbyEventType,
+  getDefaultRemoteConfigValue,
 } from "@tryabby/core";
 import type { Infer } from "@tryabby/core/validation";
 import type { AbbyDevtoolProps, DevtoolsFactory } from "@tryabby/devtools";
@@ -233,8 +234,16 @@ export function createAbby<
         const defaultValue = defaultKey
           ? config.settings?.remoteConfig?.defaultValues?.[defaultKey]
           : undefined;
-        return (defaultValue ??
-          undefined) as unknown as RemoteConfigValueStringToType<Config>;
+        if (defaultValue !== undefined) {
+          return defaultValue as RemoteConfigValueStringToType<Config>;
+        }
+        return (
+          defaultKey
+            ? (getDefaultRemoteConfigValue(
+                defaultKey
+              ) as RemoteConfigValueStringToType<Config>)
+            : ("" as unknown as RemoteConfigValueStringToType<Config>)
+        );
       }
     });
   };
