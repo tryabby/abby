@@ -299,8 +299,14 @@ export function createAbby<
 
       provide(AbbyContextKey, { data, abby });
 
-      // load the project data if it hasn't been passed in
+      let unsubscribe: (() => void) | undefined;
+
       onMounted(() => {
+        data.value = abby.getProjectData();
+        unsubscribe = abby.subscribe((newData) => {
+          data.value = newData;
+        });
+
         if (props.initialData) return;
 
         abby.loadProjectData().then((newData) => {
@@ -309,13 +315,8 @@ export function createAbby<
         });
       });
 
-      // subscribe to changes in the project data
-      const unsubscribe = abby.subscribe((newData) => {
-        data.value = newData;
-      });
-
       onUnmounted(() => {
-        unsubscribe();
+        unsubscribe?.();
       });
 
       return () => slots.default?.() ?? null;
