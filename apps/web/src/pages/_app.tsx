@@ -12,7 +12,7 @@ import { env } from "env/client.mjs";
 import { AbbyDevtools, AbbyProvider, withAbby } from "lib/abby";
 import type { NextPage } from "next";
 import { useRouter } from "next/router";
-import type { ReactElement, ReactNode } from "react";
+import { useEffect, type ReactElement, type ReactNode } from "react";
 import "@fontsource/martian-mono/600.css";
 
 import "../styles/shadcn.css";
@@ -37,6 +37,21 @@ const MyApp: AppType<{ session: Session | null }> = ({
   const router = useRouter();
 
   const currentPageUrl = `https://www.tryabby.com${router.asPath}`;
+
+  useEffect(() => {
+    if (!router.isReady) return;
+    const { utm_source, utm_medium, utm_campaign, utm_term, utm_content } = router.query;
+    const utmParams: Record<string, string> = {};
+    if (typeof utm_source === "string") utmParams.utm_source = utm_source;
+    if (typeof utm_medium === "string") utmParams.utm_medium = utm_medium;
+    if (typeof utm_campaign === "string") utmParams.utm_campaign = utm_campaign;
+    if (typeof utm_term === "string") utmParams.utm_term = utm_term;
+    if (typeof utm_content === "string") utmParams.utm_content = utm_content;
+
+    Object.entries(utmParams).forEach(([key, val]) => {
+      document.cookie = `${key}=${encodeURIComponent(val)}; path=/; max-age=2592000; SameSite=Lax`;
+    });
+  }, [router.isReady, router.query]);
   // Use the layout defined at the page level, if available
   const getLayout = Component.getLayout ?? ((page) => page);
   return (

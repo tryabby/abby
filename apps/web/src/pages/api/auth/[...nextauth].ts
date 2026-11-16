@@ -11,7 +11,7 @@ import { ProjectService } from "../../../server/services/ProjectService";
 
 import type { NextApiRequest, NextApiResponse } from "next";
 
-export const authOptions: NextAuthOptions = {
+export const getAuthOptions = (req?: NextApiRequest): NextAuthOptions => ({
   pages: {
     signIn: "/login",
     newUser: "/welcome",
@@ -85,6 +85,22 @@ export const authOptions: NextAuthOptions = {
         projectName: "My Project",
       });
       await trackSignup();
+
+      const { utm_source, utm_medium, utm_campaign, utm_term, utm_content } =
+        req?.cookies ?? {};
+
+      if (utm_source || utm_medium || utm_campaign || utm_term || utm_content) {
+        await prisma.user.update({
+          where: { id: user.id },
+          data: {
+            utmSource: utm_source,
+            utmMedium: utm_medium,
+            utmCampaign: utm_campaign,
+            utmTerm: utm_term,
+            utmContent: utm_content,
+          },
+        });
+      }
     },
   },
   // Configure one or more authentication providers
@@ -109,7 +125,9 @@ export const authOptions: NextAuthOptions = {
       : []),
     // ...add more providers here
   ],
-};
+});
+
+export const authOptions: NextAuthOptions = getAuthOptions();
 
 export default (req: NextApiRequest, res: NextApiResponse) => {
   if (
@@ -121,5 +139,5 @@ export default (req: NextApiRequest, res: NextApiResponse) => {
     console.log("Suspicous request to /api/auth/callback/email", req.method);
     return res.status(200).end();
   }
-  return NextAuth(authOptions)(req, res);
+  return NextAuth(req, res, getAuthOptions(req));
 };
