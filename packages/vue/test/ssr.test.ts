@@ -425,6 +425,107 @@ describe("useAbby", () => {
     expect(htmlFree).toContain("FREE");
     expect(getFeatureFlagValue("proFeature")).toBe(false);
   });
+
+  it("does not leak ambient context across overlapping non-LIFO withAbby calls", async () => {
+    vi.spyOn(HttpService, "getProjectData").mockResolvedValue({
+      flags: [
+        {
+          name: "proFeature",
+          value: false,
+          ruleSet: [
+            {
+              propertyName: "plan",
+              propertyType: "string",
+              operator: "eq",
+              value: "pro",
+              thenValue: true,
+            },
+          ],
+        },
+      ],
+      tests: [],
+      remoteConfig: [],
+    });
+
+    const {
+      AbbyVuePlugin,
+      useFeatureFlag,
+      withAbby,
+      getFeatureFlagValue,
+      updateUserProperties,
+    } = createAbby({
+      environments: [""],
+      currentEnvironment: "",
+      projectId: "ssr-overlapping-non-lifo",
+      flags: ["proFeature"],
+      user: {
+        plan: v.string(),
+      },
+    });
+
+    const Component = defineComponent({
+      setup() {
+        const pro = useFeatureFlag("proFeature");
+        return () => h("div", pro.value ? "PRO" : "FREE");
+      },
+    });
+
+    let notifyAStarted!: () => void;
+    const aStarted = new Promise<void>((resolve) => {
+      notifyAStarted = resolve;
+    });
+    let releaseA!: () => void;
+    const finishA = new Promise<void>((resolve) => {
+      releaseA = resolve;
+    });
+    let releaseB!: () => void;
+    const finishB = new Promise<void>((resolve) => {
+      releaseB = resolve;
+    });
+
+    await runOnServer(async () => {
+      const requestA = withAbby(async (_event, helpers) => {
+        helpers?.updateUserProperties({ plan: "pro" });
+        notifyAStarted();
+        await finishA;
+        return {};
+      })();
+
+      await aStarted;
+
+      const requestB = withAbby(async (_event, helpers) => {
+        helpers?.updateUserProperties({ plan: "free" });
+        // Request A finishes BEFORE Request B (non-LIFO completion order)
+        releaseA();
+        await requestA;
+        releaseB();
+        await finishB;
+        return {};
+      })();
+
+      const [payloadA, payloadB] = await Promise.all([requestA, requestB]);
+
+      // Contextless server-side calls after completion must neither read nor mutate either request's state
+      expect(getFeatureFlagValue("proFeature")).toBe(false);
+      updateUserProperties({ plan: "enterprise" });
+      expect(getFeatureFlagValue("proFeature")).toBe(false);
+      expect(payloadA.__abby__data?.userProperties).toEqual({ plan: "pro" });
+      expect(payloadB.__abby__data?.userProperties).toEqual({ plan: "free" });
+
+      const appA = createSSRApp(Component);
+      appA.use(AbbyVuePlugin, { initialData: payloadA.__abby__data! });
+
+      const appB = createSSRApp(Component);
+      appB.use(AbbyVuePlugin, { initialData: payloadB.__abby__data! });
+
+      const [htmlA, htmlB] = await Promise.all([
+        renderToString(appA),
+        renderToString(appB),
+      ]);
+      expect(htmlA).toContain("PRO");
+      expect(htmlB).toContain("FREE");
+    });
+  });
 });
 
 describe("useFeatureFlag", () => {

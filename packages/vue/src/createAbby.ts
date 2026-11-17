@@ -306,7 +306,6 @@ export function createAbby<
 
   const defaultContext = createScopedContext();
   let activeClientContext: AbbyScopedContext = defaultContext;
-  let activeServerContext: AbbyScopedContext | undefined;
   const abby = defaultContext.abby;
 
   const AbbyKey: InjectionKey<AbbyScopedContext> = Symbol(
@@ -318,7 +317,7 @@ export function createAbby<
     const injected = instance ? inject(AbbyKey, undefined) : undefined;
     if (injected) return injected;
     if (typeof window === "undefined") {
-      return activeServerContext ?? createScopedContext();
+      return createScopedContext();
     }
     activeClientContext.initData();
     return activeClientContext;
@@ -589,7 +588,6 @@ export function createAbby<
       return;
     }
     if (typeof window === "undefined") {
-      activeServerContext?.abby.updateUserProperties(user);
       return;
     }
     activeClientContext.abby.updateUserProperties(user);
@@ -619,16 +617,9 @@ export function createAbby<
         requestScoped.abby.updateUserProperties(user);
       };
 
-      const prevServerContext = activeServerContext;
-      activeServerContext = requestScoped;
-      let data: any;
-      try {
-        data = await handler?.(event, {
-          updateUserProperties: setRequestUserProperties,
-        });
-      } finally {
-        activeServerContext = prevServerContext;
-      }
+      const data = await handler?.(event, {
+        updateUserProperties: setRequestUserProperties,
+      });
 
       const rawProjectData = await HttpService.getProjectData({
         url: config.apiUrl,
