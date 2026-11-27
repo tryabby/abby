@@ -6,6 +6,7 @@ import {
   HttpService,
   type RemoteConfigValueString,
   type RemoteConfigValueStringToType,
+  type StorageServiceOptions,
 } from "@tryabby/core";
 import { type ComputedRef, computed, ref } from "vue";
 import {
@@ -42,9 +43,9 @@ export function createAbby<
         if (typeof window === "undefined") return null;
         return TestStorageService.get(config.projectId, key);
       },
-      set: (key: string, value: any) => {
+      set: (key: string, value: any, options?: StorageServiceOptions) => {
         if (typeof window === "undefined") return;
-        TestStorageService.set(config.projectId, key, value);
+        TestStorageService.set(config.projectId, key, value, options);
       },
     },
     {
@@ -104,12 +105,15 @@ export function createAbby<
     variant: ComputedRef<ABTestReturnValue<Lookup, TestVariant>>;
     onAct: () => void;
   } => {
-    const variant = computed<ABTestReturnValue<Lookup, TestVariant>>(() => {
+    const selectedVariant = computed(() => {
       tick.value;
-      const selectedVariant = abby.getTestVariant(testName);
+      return abby.getTestVariant(testName);
+    });
+
+    const variant = computed<ABTestReturnValue<Lookup, TestVariant>>(() => {
       return lookupObject
-        ? lookupObject[selectedVariant as keyof Lookup]
-        : (selectedVariant as any);
+        ? (lookupObject as any)[selectedVariant.value]
+        : (selectedVariant.value as any);
     });
 
     const onAct = () => {
@@ -118,13 +122,13 @@ export function createAbby<
         type: AbbyEventType.ACT,
         data: {
           projectId: config.projectId,
-          selectedVariant: abby.getTestVariant(testName),
+          selectedVariant: selectedVariant.value,
           testName: testName as string,
         },
       });
     };
 
-    notify(testName, abby.getTestVariant(testName));
+    notify(testName, selectedVariant.value);
 
     return { variant, onAct };
   };
@@ -142,6 +146,7 @@ export function createAbby<
   const getABResetFunction = <T extends keyof Tests>(testName: T) => {
     return () => {
       TestStorageService.remove(config.projectId, testName as string);
+      tick.value++;
     };
   };
 
@@ -163,7 +168,7 @@ export function createAbby<
       return variant as any;
     }
 
-    return lookupObject[variant as keyof typeof lookupObject] as any;
+    return (lookupObject as any)[variant] as any;
   };
 
   const getFeatureFlagValue = (featureFlagName: FlagName) => {
