@@ -105,9 +105,18 @@ export function createAbby<
     variant: ComputedRef<ABTestReturnValue<Lookup, TestVariant>>;
     onAct: () => void;
   } => {
+    let cachedVariant:
+      | { tick: number; value: Tests[TestName]["variants"][number] }
+      | undefined;
     const selectedVariant = computed(() => {
-      tick.value;
-      return abby.getTestVariant(testName);
+      const currentTick = tick.value;
+      if (!cachedVariant || cachedVariant.tick !== currentTick) {
+        cachedVariant = {
+          tick: currentTick,
+          value: abby.getTestVariant(testName),
+        };
+      }
+      return cachedVariant.value;
     });
 
     const variant = computed<ABTestReturnValue<Lookup, TestVariant>>(() => {

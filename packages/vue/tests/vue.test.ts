@@ -1,9 +1,26 @@
 import { AbbyEventType, HttpService } from "@tryabby/core";
-import { describe, expect, it, vi } from "vitest";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 import { TestStorageService } from "../src/StorageService";
 import { createAbby } from "../src/createAbby";
 
+const mockRandomSequence = (values: number[]) => {
+  const mathRandom = vi.spyOn(Math, "random");
+  for (const value of values) mathRandom.mockReturnValueOnce(value);
+
+  if (typeof window !== "undefined" && window.crypto) {
+    const remaining = [...values];
+    vi.spyOn(window.crypto, "getRandomValues").mockImplementation((array) => {
+      array[0] = Math.floor((remaining.shift() ?? 0) * 4294967296);
+      return array;
+    });
+  }
+};
+
 describe("useAbby", () => {
+  beforeEach(() => {
+    vi.restoreAllMocks();
+  });
+
   it("returns a valid variant and onAct", () => {
     const { useAbby } = createAbby({
       environments: [""],
@@ -105,6 +122,42 @@ describe("useAbby", () => {
     expect(spy).toHaveBeenCalledWith(
       expect.objectContaining({ type: AbbyEventType.ACT })
     );
+  });
+
+  it("keeps the selected variant stable when computed values are not cached", () => {
+    mockRandomSequence([0.1, 0.9]);
+    const { useAbby } = createAbby({
+      environments: [""],
+      currentEnvironment: "",
+      projectId: "stable-test",
+      tests: {
+        test: { variants: ["A", "B"] },
+      },
+    });
+
+    const { variant } = useAbby("test");
+
+    expect(variant.value).toBe("A");
+    expect(variant.value).toBe("A");
+  });
+
+  it("selects a new variant after reset", () => {
+    mockRandomSequence([0.1, 0.9]);
+    const { useAbby, getABResetFunction } = createAbby({
+      environments: [""],
+      currentEnvironment: "",
+      projectId: "reset-test",
+      tests: {
+        test: { variants: ["A", "B"] },
+      },
+    });
+
+    const { variant } = useAbby("test");
+    expect(variant.value).toBe("A");
+
+    getABResetFunction("test")();
+
+    expect(variant.value).toBe("B");
   });
 
   it("returns the correct possible variant values", () => {
